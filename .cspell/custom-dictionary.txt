@@ -2,3 +2,5 @@
 tauri
 Gridea
 Hexo
+Gitalk
+Disqus

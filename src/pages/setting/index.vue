@@ -3,7 +3,6 @@
         <el-tabs v-model="settingActive">
             <el-tab-pane label="基础设置" name="basic"></el-tab-pane>
             <el-tab-pane label="同步设置" name="sync"></el-tab-pane>
-            <el-tab-pane label="评论设置" name="comment"></el-tab-pane>
         </el-tabs>
         <div class="body">
             <el-scrollbar>

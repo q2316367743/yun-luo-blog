@@ -21,6 +21,12 @@
                 </el-sub-menu>
                 <el-menu-item index="3">
                     <el-icon>
+                        <Sell />
+                    </el-icon>
+                    <span>插件</span>
+                </el-menu-item>
+                <el-menu-item index="4">
+                    <el-icon>
                         <Setting />
                     </el-icon>
                     <span>系统设置</span>
@@ -46,19 +52,19 @@
             </div>
         </div>
         <div id="body">
-            <setting-page v-show="menuId === '3'"></setting-page>
+            <setting-page v-show="menuId === '4'"></setting-page>
         </div>
     </div>
 </template>
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
-import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard } from '@element-plus/icons-vue';
+import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell } from '@element-plus/icons-vue';
 import SettingPage from '@/pages/setting/index.vue';
 
 export default defineComponent({
     components: {
-        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard,
+        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell,
         SettingPage
     },
     data: () => {
