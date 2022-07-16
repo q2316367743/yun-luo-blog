@@ -2,32 +2,24 @@
     <div id="app">
         <div id="side">
             <div id="logo">Hexo编辑器</div>
-            <el-menu default-active="1">
+            <el-menu default-active="1" @select="menuSelect">
                 <el-menu-item index="1">
                     <el-icon>
                         <Document />
                     </el-icon>
                     <span>文章</span>
                 </el-menu-item>
-                <el-menu-item index="2">
-                    <el-icon>
-                        <Sugar />
-                    </el-icon>
-                    <span>主题选择</span>
-                </el-menu-item>
+                <el-sub-menu index="2">
+                    <template #title>
+                        <el-icon>
+                            <Sugar />
+                        </el-icon>
+                        <span>主题</span>
+                    </template>
+                    <el-menu-item index="2-1">列表</el-menu-item>
+                    <el-menu-item index="2-2">设置</el-menu-item>
+                </el-sub-menu>
                 <el-menu-item index="3">
-                    <el-icon>
-                        <MoreFilled />
-                    </el-icon>
-                    <span>主题设置</span>
-                </el-menu-item>
-                <el-menu-item index="4">
-                    <el-icon>
-                        <TrendCharts />
-                    </el-icon>
-                    <span>远程</span>
-                </el-menu-item>
-                <el-menu-item index="5">
                     <el-icon>
                         <Setting />
                     </el-icon>
@@ -53,19 +45,30 @@
                 </div>
             </div>
         </div>
-        <div id="body"></div>
+        <div id="body">
+            <setting-page v-show="menuId === '3'"></setting-page>
+        </div>
     </div>
 </template>
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
 import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard } from '@element-plus/icons-vue';
+import SettingPage from '@/pages/setting/index.vue';
 
 export default defineComponent({
-    components: { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard },
+    components: {
+        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard,
+        SettingPage
+    },
     data: () => {
         return {
             menuId: '1',
+        }
+    },
+    methods: {
+        menuSelect(id: string) {
+            this.menuId = id;
         }
     }
 })
@@ -80,6 +83,7 @@ export default defineComponent({
     bottom: 0;
     margin: 0;
     padding: 0;
+    display: flex;
 }
 
 #side {
@@ -109,10 +113,16 @@ export default defineComponent({
     }
 }
 
+#body {
+    width: 100%;
+    position: relative;
+}
+
 #logo {
     height: 100px;
     width: 200px;
     line-height: 100px;
     font-size: 1.5em;
+    user-select: none;
 }
 </style>
