@@ -56,10 +56,12 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 740,
         "resizable": true,
         "title": "hexo桌面",
-        "width": 800
+        "width": 1180,
+        "minWidth": 980,
+        "minHeight": 560
       }
     ]
   }

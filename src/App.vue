@@ -1,31 +1,118 @@
-<script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+    <div id="app">
+        <div id="side">
+            <div id="logo">Hexo编辑器</div>
+            <el-menu default-active="1">
+                <el-menu-item index="1">
+                    <el-icon>
+                        <Document />
+                    </el-icon>
+                    <span>文章</span>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <el-icon>
+                        <Sugar />
+                    </el-icon>
+                    <span>主题选择</span>
+                </el-menu-item>
+                <el-menu-item index="3">
+                    <el-icon>
+                        <MoreFilled />
+                    </el-icon>
+                    <span>主题设置</span>
+                </el-menu-item>
+                <el-menu-item index="4">
+                    <el-icon>
+                        <TrendCharts />
+                    </el-icon>
+                    <span>远程</span>
+                </el-menu-item>
+                <el-menu-item index="5">
+                    <el-icon>
+                        <Setting />
+                    </el-icon>
+                    <span>系统设置</span>
+                </el-menu-item>
+            </el-menu>
+            <div class="footer">
+                <div>
+                    <el-button type="default">
+                        <el-icon>
+                            <DataBoard />
+                        </el-icon>
+                        <span>预览</span>
+                    </el-button>
+                </div>
+                <div>
+                    <el-button type="primary">
+                        <el-icon>
+                            <Refresh />
+                        </el-icon>
+                        <span>同步</span>
+                    </el-button>
+                </div>
+            </div>
+        </div>
+        <div id="body"></div>
+    </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
+<script lang='ts'>
+import { defineComponent } from 'vue'
+import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard } from '@element-plus/icons-vue';
+
+export default defineComponent({
+    components: { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard },
+    data: () => {
+        return {
+            menuId: '1',
+        }
+    }
+})
+</script>
+
+<style lang="less">
+#app {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+#side {
+    width: 200px;
+    height: 100vh;
+    border-right: #dcdfe6 solid 1px;
+    position: relative;
+
+    .el-menu {
+        border-right: #ffffff !important;
+    }
+
+    .footer {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 10px;
+
+        div {
+            margin: 10px;
+
+            button {
+                margin: 0 auto;
+            }
+        }
+    }
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+#logo {
+    height: 100px;
+    width: 200px;
+    line-height: 100px;
+    font-size: 1.5em;
 }
 </style>
