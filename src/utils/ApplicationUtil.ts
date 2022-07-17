@@ -1,6 +1,5 @@
 import { createDir, BaseDirectory } from '@tauri-apps/api/fs'
-import { documentDir } from '@tauri-apps/api/path';
-import { useLocalStorage } from '@vueuse/core';
+import { documentDir, resolve } from '@tauri-apps/api/path';
 
 /**
  * 启动应用
@@ -15,9 +14,11 @@ export function launch() {
             dir: BaseDirectory.Document
         }).catch(() => { });
         // 创建配置文件夹
-        let configPath = `${path}${basePath}/.config`;
-        createDir(configPath).catch(() => {});
-        // 创建配置文件
-
+        resolve(path, basePath, '.config').then(configPath => {
+            createDir(configPath).catch(() => {});
+        });
+        resolve(path, basePath, 'posts').then(postPath => {
+            createDir(postPath).catch(() => {});
+        })
     })
 }

@@ -1,7 +1,7 @@
 <template>
     <el-form :model="basicSetting" label-width="120px" style="width: 500px">
         <el-form-item label="站点源文件路径">
-            {{basicSetting.path}}
+            <el-link href="#" @click="openFolder">{{basicSetting.path}}</el-link>
         </el-form-item>
         <el-form-item label="node文件路径">
             <el-input v-model="basicSetting.nodePath">
@@ -22,11 +22,10 @@
 <script lang="ts">
 import { defineComponent, markRaw } from "vue";
 import { useLocalStorage } from '@vueuse/core';
-import { documentDir } from '@tauri-apps/api/path';
-
-
 import { Folder } from "@element-plus/icons-vue";
+import { documentDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
+import { open as openWindow } from '@tauri-apps/api/shell';
 
 export default defineComponent({
     setup() {
@@ -71,6 +70,9 @@ export default defineComponent({
                 this.basicSetting.npmPath = (selected as string[])[0];
             }
         },
+        openFolder() {
+            openWindow(this.basicSetting.path)
+        }
     }
 });
 </script>
