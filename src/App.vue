@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <div id="side">
-            <div id="logo">Hexo编辑器</div>
+            <div id="logo">云落博客</div>
             <el-menu default-active="1" @select="menuSelect">
                 <el-menu-item index="1">
                     <el-icon>
@@ -52,7 +52,7 @@
             </div>
         </div>
         <div id="body">
-            <setting-page v-show="menuId === '4'"></setting-page>
+            <setting-page v-if="menuId === '4'"></setting-page>
         </div>
     </div>
 </template>
@@ -61,6 +61,7 @@
 import { defineComponent } from 'vue'
 import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell } from '@element-plus/icons-vue';
 import SettingPage from '@/pages/setting/index.vue';
+import { launch } from '@/utils/ApplicationUtil';
 
 export default defineComponent({
     components: {
@@ -71,6 +72,9 @@ export default defineComponent({
         return {
             menuId: '1',
         }
+    },
+    created() {
+        launch();
     },
     methods: {
         menuSelect(id: string) {

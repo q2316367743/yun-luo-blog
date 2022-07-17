@@ -1,11 +1,11 @@
 [package]
-name = "hexo-desktop"
+name = "cloud-fell-blog"
 version = "0.1.0"
-description = "hexo桌面客户端"
+description = "云落博客"
 authors = ["Esion"]
 license = "Apache-2.0"
-repository = "https://gitea.esion.xyz/Esion/hexo-desktop"
-default-run = "hexo-desktop"
+repository = "https://gitea.esion.xyz/Esion/cloud-fell-blog"
+default-run = "cloud-fell-blog"
 edition = "2021"
 rust-version = "1.57"
 

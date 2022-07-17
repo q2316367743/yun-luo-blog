@@ -12,7 +12,10 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "fs": {
+        "scope": ["$DOCUMENT/cloud-fell-blog", "$DOCUMENT/cloud-fell-blog/*"]
+      }
     },
     "bundle": {
       "active": true,
@@ -58,7 +61,7 @@
         "fullscreen": false,
         "height": 740,
         "resizable": true,
-        "title": "hexo桌面",
+        "title": "云落博客",
         "width": 1180,
         "minWidth": 980,
         "minHeight": 560

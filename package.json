@@ -1,8 +1,9 @@
 {
-  "name": "hexo-desktop",
+  "name": "cloud-fell-blog",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "云落博客",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -12,6 +13,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.6",
     "@tauri-apps/api": "^1.0.2",
+    "@vueuse/core": "^8.9.3",
     "element-plus": "^2.2.9",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
@@ -24,5 +26,16 @@
     "typescript": "^4.6.4",
     "vite": "^3.0.0",
     "vue-tsc": "^0.38.4"
+  },
+  "author": {
+    "name": "Esion",
+    "email": "m17762618644@163.com",
+    "url": "https://blog.esion.xyz"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "directory": "./",
+    "url": "https://gitea.esion.xyz/Esion/cloud-fell-blog"
   }
 }
