@@ -8,7 +8,7 @@ import { documentDir, resolve } from '@tauri-apps/api/path';
 export function launch() {
     // 获取文档目录
     documentDir().then(path => {
-        let basePath = `cloud-fell-blog`;
+        let basePath = 'cloud-fell-blog';
         // 创建基础文件夹
         createDir(basePath, {
             dir: BaseDirectory.Document

@@ -52,7 +52,8 @@
             </div>
         </div>
         <div id="body">
-            <setting-page v-if="menuId === '4'"></setting-page>
+            <post-page v-if="menuId === '1'"></post-page>
+            <setting-page v-else-if="menuId === '4'"></setting-page>
         </div>
     </div>
 </template>
@@ -60,13 +61,16 @@
 <script lang='ts'>
 import { defineComponent } from 'vue'
 import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell } from '@element-plus/icons-vue';
-import SettingPage from '@/pages/setting/index.vue';
+
 import { launch } from '@/utils/ApplicationUtil';
+
+import PostPage from '@/pages/post/index.vue';
+import SettingPage from '@/pages/setting/index.vue';
 
 export default defineComponent({
     components: {
         Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell,
-        SettingPage
+        PostPage, SettingPage
     },
     data: () => {
         return {
@@ -101,6 +105,7 @@ export default defineComponent({
     height: 100vh;
     border-right: #dcdfe6 solid 1px;
     position: relative;
+    text-align: center;
 
     .el-menu {
         border-right: #ffffff !important;
