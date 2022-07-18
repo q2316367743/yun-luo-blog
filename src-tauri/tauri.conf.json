@@ -1,71 +1,109 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
-  "build": {
-    "beforeBuildCommand": "pnpm build",
-    "beforeDevCommand": "pnpm dev",
-    "devPath": "http://localhost:5173",
-    "distDir": "../dist"
-  },
-  "package": {
-    "productName": "yun-luo-blog",
-    "version": "0.1.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": true,
-      "fs": {
-        "scope": ["$DOCUMENT/yun-luo-blog", "$DOCUMENT/yun-luo-blog/*"]
-      }
+    "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+    "build": {
+        "beforeBuildCommand": "pnpm build",
+        "beforeDevCommand": "pnpm dev",
+        "devPath": "http://localhost:5173",
+        "distDir": "../dist"
     },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "com.tauri.dev",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
+    "package": {
+        "productName": "yun-luo-blog",
+        "version": "0.1.0"
     },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "height": 740,
-        "resizable": true,
-        "title": "云落博客",
-        "width": 1180,
-        "minWidth": 980,
-        "minHeight": 560
-      }
-    ]
-  }
+    "tauri": {
+        "allowlist": {
+            "all": true,
+            "fs": {
+                "scope": [
+                    "$DOCUMENT/yun-luo-blog",
+                    "$DOCUMENT/yun-luo-blog/*"
+                ]
+            },
+            "shell": {
+                "all": false,
+                "execute": false,
+                "open": false,
+                "scope": [
+                    {
+                        "name": "npm-init",
+                        "cmd": "npm",
+                        "args": [
+                            "init"
+                        ]
+                    },
+                    {
+                        "name": "npm-install",
+                        "cmd": "npm",
+                        "args": [
+                            "install",
+                            {
+                                "validator": ".*"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "npm-run",
+                        "cmd": "npm",
+                        "args": [
+                            "run",
+                            {
+                                "validator": ".*"
+                            }
+                        ]
+                    }
+                ],
+                "sidecar": false
+            }
+        },
+        "bundle": {
+            "active": true,
+            "category": "DeveloperTool",
+            "copyright": "",
+            "deb": {
+                "depends": []
+            },
+            "externalBin": [],
+            "icon": [
+                "icons/32x32.png",
+                "icons/128x128.png",
+                "icons/128x128@2x.png",
+                "icons/icon.icns",
+                "icons/icon.ico"
+            ],
+            "identifier": "com.tauri.dev",
+            "longDescription": "",
+            "macOS": {
+                "entitlements": null,
+                "exceptionDomain": "",
+                "frameworks": [],
+                "providerShortName": null,
+                "signingIdentity": null
+            },
+            "resources": [],
+            "shortDescription": "",
+            "targets": "all",
+            "windows": {
+                "certificateThumbprint": null,
+                "digestAlgorithm": "sha256",
+                "timestampUrl": ""
+            }
+        },
+        "security": {
+            "csp": null
+        },
+        "updater": {
+            "active": false
+        },
+        "windows": [
+            {
+                "fullscreen": false,
+                "height": 740,
+                "resizable": true,
+                "title": "云落博客",
+                "width": 1180,
+                "minWidth": 980,
+                "minHeight": 560
+            }
+        ]
+    }
 }

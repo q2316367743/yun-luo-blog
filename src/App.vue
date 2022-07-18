@@ -53,32 +53,67 @@
         </div>
         <div id="body">
             <post-page v-if="menuId === '1'"></post-page>
+            <theme-setting v-if="menuId === '2-2'"></theme-setting>
             <setting-page v-else-if="menuId === '4'"></setting-page>
         </div>
+        <guide-page v-if="!isInit"></guide-page>
     </div>
 </template>
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
 import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell } from '@element-plus/icons-vue';
+import { useLocalStorage } from '@vueuse/core';
+import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
+import { resolve, documentDir } from '@tauri-apps/api/path';
 
 import { launch } from '@/utils/ApplicationUtil';
+import constants from '@/global/constant';
 
+import GuidePage from '@/pages/guide/index.vue';
 import PostPage from '@/pages/post/index.vue';
+import ThemeSetting from '@/pages/theme/setting/index.vue';
 import SettingPage from '@/pages/setting/index.vue';
 
 export default defineComponent({
     components: {
         Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell,
-        PostPage, SettingPage
+        GuidePage, PostPage, ThemeSetting, SettingPage
     },
     data: () => {
         return {
             menuId: '1',
+            // 默认不展示
+            isInit: true
         }
     },
     created() {
         launch();
+        let isInit = localStorage.getItem('isInit');
+        if (!isInit) {
+            // 如果不存在相关字段，则进行校验
+            const blogSetting = useLocalStorage('blogSetting', {
+                type: 'hexo'
+            });
+            let type = blogSetting.value.type;
+            // 获取项目目录下全部目录
+            documentDir().then(documentPath => {
+                resolve(documentPath, constants.BASE).then(path => {
+                    readDir(path).then(files => {
+                        for (let file of files) {
+                            // 存在，则为文件夹
+                            if (file.children && file.name === type) {
+                                // 终止处理
+                                break;
+                            }
+                        }
+                        // 执行到这里，正面没有这个文件夹，打开初始化进程
+                        localStorage.removeItem('isInit');
+                        this.isInit = false;
+                    });
+                })
+            })
+        }
     },
     methods: {
         menuSelect(id: string) {

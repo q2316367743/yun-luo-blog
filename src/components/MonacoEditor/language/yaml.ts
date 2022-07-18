@@ -1,6 +1,25 @@
 import * as monaco from 'monaco-editor';
 
 const token = {
+    tokenPostfix: ".yaml",
+    brackets: [{
+        token: "delimiter.bracket",
+        open: "{",
+        close: "}"
+    }, {
+        token: "delimiter.square",
+        open: "[",
+        close: "]"
+    }],
+    keywords: ["true", "True", "TRUE", "false", "False", "FALSE", "null", "Null", "Null", "~"],
+    numberInteger: /(?:0|[+-]?[0-9]+)/,
+    numberFloat: /(?:0|[+-]?[0-9]+)(?:\.[0-9]+)?(?:e[-+][1-9][0-9]*)?/,
+    numberOctal: /0o[0-7]+/,
+    numberHex: /0x[0-9a-fA-F]+/,
+    numberInfinity: /[+-]?\.(?:inf|Inf|INF)/,
+    numberNaN: /\.(?:nan|Nan|NAN)/,
+    numberDate: /\d{4}-\d\d-\d\d([Tt ]\d\d:\d\d:\d\d(\.\d+)?(( ?[+-]\d\d?(:\d\d)?)|Z)?)?/,
+    escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
     tokenizer: {
         root: [{
             include: "@whitespace"

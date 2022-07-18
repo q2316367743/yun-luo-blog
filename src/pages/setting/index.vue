@@ -1,13 +1,15 @@
 <template>
     <div id="setting">
         <el-tabs v-model="settingActive">
-            <el-tab-pane label="系统设置" name="basic"></el-tab-pane>
+            <el-tab-pane label="博客设置" name="blog"></el-tab-pane>
             <el-tab-pane label="同步设置" name="sync"></el-tab-pane>
+            <el-tab-pane label="环境设置" name="environment"></el-tab-pane>
         </el-tabs>
         <div class="body">
             <el-scrollbar>
-                <system-setting v-show="settingActive === 'basic'"></system-setting>
-                <sync-setting v-show="settingActive === 'sync'"></sync-setting>
+                <blog-setting v-if="settingActive === 'blog'"></blog-setting>
+                <sync-setting v-if="settingActive === 'sync'"></sync-setting>
+                <environment-setting v-if="settingActive === 'environment'"></environment-setting>
             </el-scrollbar>
         </div>
     </div>
@@ -15,14 +17,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-import SystemSetting from "./components/SystemSetting.vue";
+import BlogSetting from "./components/BlogSetting.vue";
 import SyncSetting from "./components/SyncSetting.vue";
+import EnvironmentSetting from "./components/EnvironmentSetting.vue";
 
 export default defineComponent({
     name: 'setting',
-    components: { SystemSetting, SyncSetting },
+    components: { BlogSetting, SyncSetting, EnvironmentSetting },
     data: () => ({
-        settingActive: 'basic'
+        settingActive: 'blog'
     }),
 });
 </script>

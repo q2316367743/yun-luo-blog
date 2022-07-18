@@ -24,6 +24,11 @@ export default defineComponent({
             type: String,
             default: '200px'
         },
+        language: {
+            type: String,
+            default: 'json',
+            required: false
+        }
     },
     data: () => ({
         content: '',
@@ -43,6 +48,7 @@ export default defineComponent({
     },
     created() {
         // 创建时注册语言服务
+        monaco.languages.register({id: 'yaml'});
         monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
         monaco.languages.setLanguageConfiguration('yaml', yaml.config);
         // 语法提示
@@ -55,7 +61,7 @@ export default defineComponent({
         }
         instance = monaco.editor.create(container, {
             value: this.modelValue,
-            language: 'json',
+            language: this.language,
             automaticLayout: true
         });
         instance.onDidChangeModelContent((e) => {

@@ -30,7 +30,7 @@ import { open as openWindow } from '@tauri-apps/api/shell';
 export default defineComponent({
     setup() {
         const folder = markRaw(Folder);
-        const basicSetting = useLocalStorage('basicSetting', {
+        const basicSetting = useLocalStorage('environmentSetting', {
             path: '',
             nodePath: '',
             npmPath: ''
@@ -42,7 +42,7 @@ export default defineComponent({
             folder, basicSetting
         }
     },
-    name: 'basic-setting',
+    name: 'environment-setting',
     methods: {
         async openNodeDialog() {
             const selected = await open({
