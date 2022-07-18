@@ -30,9 +30,9 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useLocalStorage } from '@vueuse/core';
-import { createDir, BaseDirectory } from '@tauri-apps/api/fs';
+import { createDir, writeTextFile } from '@tauri-apps/api/fs';
 import { documentDir, resolve } from '@tauri-apps/api/path';
-import { Command } from '@tauri-apps/api/shell';
+import { invoke } from '@tauri-apps/api/tauri';
 
 import DateUtil from '@/utils/DateUtil';
 import constant from '@/global/constant';
@@ -50,6 +50,20 @@ interface Log {
     remark: string;
 
 }
+let packageJson = `{
+  "name": "hexo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hexo": "^6.2.0"
+  }
+}`;
 
 export default defineComponent({
     data: () => ({
@@ -57,6 +71,13 @@ export default defineComponent({
         complete: false,
         consoleList: new Array<Log>()
     }),
+    setup() {
+        const blogSetting = useLocalStorage('blogSetting', {
+            type: 'hexo'
+        });
+        let type = blogSetting.value.type;
+        return { type }
+    },
     methods: {
         formatDateTime: DateUtil.formatDateTime,
         preStep() {
@@ -74,17 +95,14 @@ export default defineComponent({
         },
         initFolder() {
             // 创建目录
-            const blogSetting = useLocalStorage('blogSetting', {
-                type: 'hexo'
-            });
             this.consoleList.push({
                 time: new Date(),
                 remark: '开始创建文件夹【hexo】'
             });
             documentDir().then(path => {
                 // 创建配置文件夹
-                resolve(path, constant.BASE, blogSetting.value.type).then(configPath => {
-                    createDir(configPath).then(() => {
+                resolve(path, constant.BASE, this.type).then(blogPath => {
+                    createDir(blogPath).then(() => {
                         this.consoleList.push({
                             time: new Date(),
                             remark: '文件夹【hexo】创建成功'
@@ -107,15 +125,28 @@ export default defineComponent({
                 time: new Date(),
                 remark: '开始初始化博客'
             });
-            new Command('npm-init', ['npm', 'init']).execute().then((rsp) => {
-                console.log(rsp)
-            }).catch(e => {
-                this.consoleList.push({
-                    time: new Date(),
-                    remark: '初始化博客失败，' + e
+
+            documentDir().then(path => {
+                // 创建配置文件夹
+                resolve(path, constant.BASE, this.type).then(blogPath => {
+                    // 新增文件
+                    resolve(blogPath, constant.PACKAGE_JSON).then(packagePath => {
+                        writeTextFile(packagePath, packageJson);
+                        invoke('npm_install', { currentDir: blogPath }).then(() => {
+                            this.consoleList.push({
+                                time: new Date(),
+                                remark: '初始化npm - 成功'
+                            });
+                        }).catch((e) => {
+                            this.consoleList.push({
+                                time: new Date(),
+                                remark: '初始化npm - 失败，' + e
+                            });
+                        })
+                        this.complete = true;
+                    })
                 });
             })
-            this.complete = true;
         },
         installDependencies() {
             this.complete = true;

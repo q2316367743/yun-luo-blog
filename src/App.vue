@@ -2,30 +2,30 @@
     <div id="app">
         <div id="side">
             <div id="logo">云落博客</div>
-            <el-menu default-active="1" @select="menuSelect">
-                <el-menu-item index="1">
+            <el-menu default-active="/post/list" @select="menuSelect" router>
+                <el-menu-item index="/post/list">
                     <el-icon>
                         <Document />
                     </el-icon>
                     <span>文章</span>
                 </el-menu-item>
-                <el-sub-menu index="2">
+                <el-sub-menu index="/theme">
                     <template #title>
                         <el-icon>
                             <Sugar />
                         </el-icon>
                         <span>主题</span>
                     </template>
-                    <el-menu-item index="2-1">列表</el-menu-item>
-                    <el-menu-item index="2-2">设置</el-menu-item>
+                    <el-menu-item index="/theme/list">列表</el-menu-item>
+                    <el-menu-item index="/theme/setting">设置</el-menu-item>
                 </el-sub-menu>
-                <el-menu-item index="3">
+                <el-menu-item index="/plugin">
                     <el-icon>
                         <Sell />
                     </el-icon>
                     <span>插件</span>
                 </el-menu-item>
-                <el-menu-item index="4">
+                <el-menu-item index="/setting">
                     <el-icon>
                         <Setting />
                     </el-icon>
@@ -52,11 +52,8 @@
             </div>
         </div>
         <div id="body">
-            <post-page v-if="menuId === '1'"></post-page>
-            <theme-setting v-if="menuId === '2-2'"></theme-setting>
-            <setting-page v-else-if="menuId === '4'"></setting-page>
+            <router-view></router-view>
         </div>
-        <guide-page v-if="!isInit"></guide-page>
     </div>
 </template>
 
@@ -70,21 +67,13 @@ import { resolve, documentDir } from '@tauri-apps/api/path';
 import { launch } from '@/utils/ApplicationUtil';
 import constants from '@/global/constant';
 
-import GuidePage from '@/pages/guide/index.vue';
-import PostPage from '@/pages/post/index.vue';
-import ThemeSetting from '@/pages/theme/setting/index.vue';
-import SettingPage from '@/pages/setting/index.vue';
-
 export default defineComponent({
     components: {
-        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell,
-        GuidePage, PostPage, ThemeSetting, SettingPage
+        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell
     },
     data: () => {
         return {
             menuId: '1',
-            // 默认不展示
-            isInit: true
         }
     },
     created() {
@@ -109,7 +98,7 @@ export default defineComponent({
                         }
                         // 执行到这里，正面没有这个文件夹，打开初始化进程
                         localStorage.removeItem('isInit');
-                        this.isInit = false;
+                        this.$router.push('/guide');
                     });
                 })
             })

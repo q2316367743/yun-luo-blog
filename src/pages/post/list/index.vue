@@ -22,7 +22,7 @@
                     <el-button v-if="!showSearch" type="primary" link :icon="search" @click="showSearchClick">
                     </el-button>
                     <el-button type="primary" link :icon="refresh" @click="listPost"></el-button>
-                    <el-button type="primary" link :icon="plus"></el-button>
+                    <el-button type="primary" link :icon="plus" @click="toRouteLink('/post/new')"></el-button>
                 </div>
             </div>
         </header>
@@ -33,7 +33,7 @@
                         <el-checkbox :label="post.path"><br /></el-checkbox>
                     </div>
                     <div class="board">
-                        <div class="title">{{ post.title }}</div>
+                        <div class="title" @click="toPostInfo(post)">{{ post.title }}</div>
                         <div class="description">
                             <div class="status" v-if="post.status === 1">
                                 <span class="badge draft"></span>
@@ -151,6 +151,18 @@ export default defineComponent({
                     });
                 })
             })
+        },
+        toRouteLink(link: string) {
+            this.$router.push(link);
+        },
+        toPostInfo(post: Post) {
+            this.$router.push({
+                path: '/post/new',
+                query: {
+                    title: post.title,
+                    path: post.path
+                }
+            });
         }
     }
 });
