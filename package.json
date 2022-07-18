@@ -1,5 +1,5 @@
 {
-  "name": "cloud-fell-blog",
+  "name": "yun-luo-blog",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -36,6 +36,6 @@
   "repository": {
     "type": "git",
     "directory": "./",
-    "url": "https://gitea.esion.xyz/Esion/cloud-fell-blog"
+    "url": "https://gitea.esion.xyz/Esion/yun-luo-blog"
   }
 }

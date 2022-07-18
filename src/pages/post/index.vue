@@ -13,19 +13,22 @@
             </div>
             <div class="right">
                 <el-input v-model="keyword" placeholder="搜索文章" class="input-with-select" v-if="showSearch"
-                    @blur="searchBlur" ref="searchInput">
+                    @blur="searchBlur" ref="searchInput" @input="searchPost">
                     <template #append>
-                        <el-button :icon="search" />
+                        <el-button :icon="search" @click="searchPost" />
                     </template>
                 </el-input>
-                <el-button v-else type="primary" link :icon="search" @click="showSearchClick"></el-button>
-                <el-button type="primary" link :icon="refresh" @click="listPost"></el-button>
-                <el-button type="primary" link :icon="plus"></el-button>
+                <div class="option">
+                    <el-button v-if="!showSearch" type="primary" link :icon="search" @click="showSearchClick">
+                    </el-button>
+                    <el-button type="primary" link :icon="refresh" @click="listPost"></el-button>
+                    <el-button type="primary" link :icon="plus"></el-button>
+                </div>
             </div>
         </header>
         <main class="main">
-            <el-checkbox-group v-model="deletePostPath">
-                <div v-for="(post, index) in posts" :key="index" class="post">
+            <el-checkbox-group v-model="deletePostPath" v-if="posts.length > 0">
+                <div v-for="(post, index) in showPosts" :key="index" class="post">
                     <div class="choose">
                         <el-checkbox :label="post.path"><br /></el-checkbox>
                     </div>
@@ -66,6 +69,7 @@
                     </div>
                 </div>
             </el-checkbox-group>
+            <el-empty v-else description="暂无文章" style="margin-top: 110px;" />
         </main>
     </div>
 </template>
@@ -92,6 +96,7 @@ export default defineComponent({
         keyword: '',
         showSearch: false,
         posts: new Array<Post>(),
+        showPosts: new Array<Post>(),
         deletePostPath: new Array<string>(),
     }),
     created() {
@@ -108,9 +113,16 @@ export default defineComponent({
             this.showSearch = true;
             this.$nextTick(() => {
                 let searchInput = this.$refs.searchInput as HTMLElement;
-                console.log(this.$refs)
                 searchInput.focus();
             });
+        },
+        searchPost() {
+            this.showPosts = [];
+            this.posts.forEach(post => {
+                if (post.name.indexOf(this.keyword) > -1) {
+                    this.showPosts.push(post);
+                }
+            })
         },
         listPost() {
             // post列表
@@ -131,8 +143,8 @@ export default defineComponent({
                                     tag: ['测试', '开发'],
                                     category: ['产品', '设计']
                                 };
-                                console.log(post)
                                 this.posts.push(post);
+                                this.showPosts.push(post);
                             }
                         })
                     });
@@ -158,18 +170,19 @@ export default defineComponent({
         top: 0;
         left: 0;
         right: 0;
-        height: 32px;
+        height: 42px;
         border-bottom: #eeeeee solid 1px;
 
         .left {
-            padding: 3px;
+            padding: 5px;
             padding-left: 26px;
             font-size: 0.9em;
 
             .left-delete {
                 display: flex;
                 background-color: #fafafa;
-                padding: 3px;
+                padding: 6px;
+                border-radius: 5px;
 
                 &:hover {
                     background-color: #eaeaea;
@@ -179,12 +192,17 @@ export default defineComponent({
         }
 
         .right {
-            padding: 6px;
+            display: flex;
+
+            .option {
+                padding: 11px;
+            }
         }
 
         .el-input {
             width: 200px;
-            margin-right: 20px;
+            margin: 5px;
+            height: 32px;
         }
 
         .el-button {
@@ -194,7 +212,7 @@ export default defineComponent({
 
     .main {
         position: absolute;
-        top: 33px;
+        top: 43px;
         left: 0;
         right: 0;
         bottom: 0;

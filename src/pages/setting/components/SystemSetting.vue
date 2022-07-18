@@ -36,7 +36,7 @@ export default defineComponent({
             npmPath: ''
         });
         documentDir().then(path => {
-            basicSetting.value.path = path + 'cloud-fell-blog';
+            basicSetting.value.path = path + 'yun-luo-blog';
         })
         return {
             folder, basicSetting

@@ -1,11 +1,11 @@
 [package]
-name = "cloud-fell-blog"
+name = "yun-luo-blog"
 version = "0.1.0"
 description = "云落博客"
 authors = ["Esion"]
 license = "Apache-2.0"
-repository = "https://gitea.esion.xyz/Esion/cloud-fell-blog"
-default-run = "cloud-fell-blog"
+repository = "https://gitea.esion.xyz/Esion/yun-luo-blog"
+default-run = "yun-luo-blog"
 edition = "2021"
 rust-version = "1.57"
 

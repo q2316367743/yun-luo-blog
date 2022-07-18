@@ -1,5 +1,5 @@
 export default {
-    BASE: 'cloud-fell-blog',
+    BASE: 'yun-luo-blog',
     POST: 'posts',
     CONFIG: '.config'
 }

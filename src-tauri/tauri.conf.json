@@ -14,7 +14,7 @@
     "allowlist": {
       "all": true,
       "fs": {
-        "scope": ["$DOCUMENT/cloud-fell-blog", "$DOCUMENT/cloud-fell-blog/*"]
+        "scope": ["$DOCUMENT/yun-luo-blog", "$DOCUMENT/yun-luo-blog/*"]
       }
     },
     "bundle": {
