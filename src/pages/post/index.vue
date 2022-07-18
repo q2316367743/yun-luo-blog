@@ -33,7 +33,7 @@
                         <el-checkbox :label="post.path"><br /></el-checkbox>
                     </div>
                     <div class="board">
-                        <div class="title">{{ post.name }}</div>
+                        <div class="title">{{ post.title }}</div>
                         <div class="description">
                             <div class="status" v-if="post.status === 1">
                                 <span class="badge draft"></span>
@@ -51,19 +51,19 @@
                                 <el-icon>
                                     <Calendar />
                                 </el-icon>
-                                <span>{{ formatDate(post.updateTime) }}</span>
+                                <span>{{ formatDate(post.updated) }}</span>
                             </div>
                             <div class="tag">
                                 <el-icon>
                                     <price-tag />
                                 </el-icon>
-                                <span v-for="tag in post.tag" class="tag-item">{{ tag }}</span>
+                                <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
                             </div>
                             <div class="category">
                                 <el-icon>
                                     <collection-tag />
                                 </el-icon>
-                                <span v-for="category in post.category" class="category-item">{{ category }}</span>
+                                <span v-for="category in post.categories" class="category-item">{{ category }}</span>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@ export default defineComponent({
         searchPost() {
             this.showPosts = [];
             this.posts.forEach(post => {
-                if (post.name.indexOf(this.keyword) > -1) {
+                if (post.title.indexOf(this.keyword) > -1) {
                     this.showPosts.push(post);
                 }
             })
@@ -133,15 +133,16 @@ export default defineComponent({
                     readDir(path, { dir: BaseDirectory.Document, recursive: true }).then(files => {
                         files.forEach(file => {
                             if (!file.children || file.children.length === 0) {
+                                // 名字取文件内的
                                 let name = file.name!;
                                 name = name.substring(0, name.lastIndexOf('.'))
                                 let post = {
-                                    name: name,
+                                    title: name,
                                     path: file.path!,
                                     status: PostStatus.RELEASE,
-                                    updateTime: new Date(),
-                                    tag: ['测试', '开发'],
-                                    category: ['产品', '设计']
+                                    updated: new Date(),
+                                    tags: ['测试', '开发'],
+                                    categories: ['产品', '设计']
                                 };
                                 this.posts.push(post);
                                 this.showPosts.push(post);

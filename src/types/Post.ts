@@ -17,12 +17,15 @@ export enum PostStatus {
 
 }
 
+/**
+ * hexo文档: https://hexo.io/zh-cn/docs/front-matter
+ */
 export interface Post {
 
     /**
-     * 文件名
+     * 文章标题
      */
-    name: string;
+    title: string;
 
     /**
      * 文件路径
@@ -35,18 +38,50 @@ export interface Post {
     status: PostStatus;
 
     /**
-     * 最后修改时间
+     * 建立日期 - 文件建立日期
      */
-    updateTime: Date;
+    date: Date;
+
+    /**
+     * 更新日期 - 文件更新日期
+     */
+    updated: Date;
+
+    /**
+     * 开启文章的评论功能
+     */
+    comments: boolean;
 
     /**
      * 标签
      */
-    tag: Array<string>;
+    tags: Array<string>;
 
     /**
      * 分类
      */
-     category: Array<string>;
+    categories: Array<string>;
+
+    /**
+     * 覆盖文章网址
+     */
+    permalink: string;
+
+    /**
+     * Page excerpt in plain text. Use <a href="https://hexo.io/docs/tag-plugins#Post-Excerpt">this plugin</a> to format the text
+     */
+    excerpt: string;
+
+    /**
+     * Disable rendering of Nunjucks tag {{ }}/{% %} and <a href="https://hexo.io/docs/tag-plugins">tag plugins</a> when enabled
+     */
+    disableNunjucks: string;
+
+    /**
+     * Set the language to override <a href="https://hexo.io/docs/internationalization#Path">auto-detection</a>
+     * 
+     * @default Inherited from _config.yml
+     */
+    lang: string;
 
 }
