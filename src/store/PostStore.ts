@@ -33,6 +33,9 @@ export const usePostStore = defineStore('post', {
          */
         list: (state): Array<Post> => {
             return state.posts;
+        },
+        tags: (state): Array<string> => {
+            return state.tagList;
         }
     },
     actions: {
@@ -79,8 +82,8 @@ export const usePostStore = defineStore('post', {
                         this.postPaths.push(file.path);
                         // 插入标签
                         for (let tag of post.tags) {
+                            console.log(tag)
                             if (!ArrayUtil.contains(this.tagList, tag)) {
-                                console.log(this.posts, this.tagList)
                                 this.tagList.push(tag)
                             }
                         }
@@ -91,7 +94,7 @@ export const usePostStore = defineStore('post', {
             // tag去重
             store.value.posts = this.posts;
             store.value.postPaths = this.postPaths;
-            store.value.tags = this.tags;
+            store.value.tagList = this.tagList;
             return new Promise<boolean>((resolve, reject) => {
                 resolve(isUpdate);
             })

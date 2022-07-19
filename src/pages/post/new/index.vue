@@ -8,25 +8,59 @@
                 <el-input v-model="post.title" placeholder="Please input" />
                 <div class="option">
                     <el-button class="save">保存草稿</el-button>
-                    <el-button class="promotion" type="primary">发布</el-button>
+                    <el-button class="promotion" type="primary">{{ flag ? '发布' : '保存' }}</el-button>
                 </div>
             </div>
             <div class="post-new-body">
                 <div id="vditor" class="markdown" />
             </div>
             <div class="post-new-side">
-                <el-button link :icon="infoFilled"></el-button>
+                <el-popover placement="left" :width="150" trigger="click">
+                    <template #reference>
+                        <el-button link :icon="infoFilled"></el-button>
+                    </template>
+                    <div style="width: 100%;text-align: center;">
+                        字数：{{ textLength }}
+                    </div>
+                </el-popover>
                 <el-tooltip class="box-item" effect="dark" content="插入图片" placement="left">
                     <el-button link :icon="pictureFilled" @click="insertImage"></el-button>
                 </el-tooltip>
                 <el-tooltip class="box-item" effect="dark" content="文章设置" placement="left">
-                    <el-button link :icon="tools"></el-button>
+                    <el-button link :icon="tools" @click="openSetting"></el-button>
                 </el-tooltip>
                 <el-tooltip class="box-item" effect="dark" content="预览" placement="left">
-                    <el-button link :icon="starFilled"></el-button>
+                    <el-button link :icon="starFilled" @click="openPreview"></el-button>
                 </el-tooltip>
             </div>
         </div>
+        <el-drawer v-model="settingDialog" direction="rtl">
+            <template #header>
+                <h2>文章设置</h2>
+            </template>
+            <template #default>
+                <el-form v-model="post" label-position="top">
+                    <el-form-item label="文章网址">
+                        <el-input v-model="post.permalink"></el-input>
+                    </el-form-item>
+                    <el-form-item label="标签">
+                        <el-select v-model="post.tags" multiple filterable allow-create default-first-option
+                            :reserve-keyword="false" style="width: 314px">
+                            <el-option v-for="item in tags" :key="item" :label="item" :value="item" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="创建时间">
+                        <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()" />
+                    </el-form-item>
+                </el-form>
+            </template>
+        </el-drawer>
+        <el-drawer v-model="previewDialog" direction="rtl" size="80%">
+            <template #header>
+                <h2>{{ post.title }}</h2>
+            </template>
+            <div class="article" v-html="previewContent"></div>
+        </el-drawer>
     </div>
 </template>
 <script lang="ts">
@@ -35,9 +69,13 @@ import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFil
 import Vditor from 'vditor';
 import 'vditor/dist/index.css';
 import { convertFileSrc } from "@tauri-apps/api/tauri";
+import highlight from 'highlight.js';
 
 import { Post } from "@/types/Post";
 import { renderPost } from "@/utils/PostUtil";
+import { usePostStore } from "@/store/PostStore";
+
+import './actUI.css'
 
 export default defineComponent({
     name: 'new-post',
@@ -49,15 +87,33 @@ export default defineComponent({
         const moreFilled = markRaw(MoreFilled);
         const tools = markRaw(Tools);
         const starFilled = markRaw(StarFilled);
-
         return { check, promotion, infoFilled, pictureFilled, moreFilled, tools, starFilled }
     },
     data: () => ({
         vditor: null as Vditor | null,
         post: {
             title: '新文章',
+            fileName: '',
+            path: '',
+            status: 1,
+            date: '',
+            updated: '',
+            comments: false,
+            tags: [],
+            categories: [],
+            permalink: "",
+            excerpt: "",
+            disableNunjucks: "",
+            lang: "",
             content: ''
-        } as Post
+        } as Post,
+        textLength: 0,
+        tags: usePostStore().tags,
+        settingDialog: false,
+        previewDialog: false,
+        previewContent: '',
+        // true新增，false修改
+        flag: true,
     }),
     created() {
         if (this.$route.query.title) {
@@ -65,10 +121,13 @@ export default defineComponent({
         }
         if (this.$route.query.path) {
             // 渲染
-            renderPost(this.$route.query.path as string, '新文章', true).then(post => {
-                this.post = post!;
-                this.vditor?.setValue(this.post.content!)
-            });
+            renderPost(this.$route.query.path as string,
+                this.$route.query.fileName ? this.$route.query.fileName as string : '新文章',
+                true).then(post => {
+                    this.post = post!;
+                    this.vditor?.setValue(this.post.content!)
+                });
+            this.flag = false;
         }
     },
     mounted() {
@@ -77,6 +136,14 @@ export default defineComponent({
             after: () => {
                 this.vditor?.setValue(this.post.content!)
             },
+            counter: {
+                enable: true,
+                type: 'text',
+                after: (length) => {
+                    this.textLength = length;
+                    console.log(length)
+                }
+            }
         });
     },
     unmounted() {
@@ -88,6 +155,17 @@ export default defineComponent({
         },
         insertImage() {
             console.log(convertFileSrc('D:\\Documents\\yun-luo-blog\\post-images\\黄昏.jpg'))
+        },
+        openSetting() {
+            this.settingDialog = true;
+        },
+        openPreview() {
+            // 渲染
+            this.previewContent = this.vditor!.getHTML();
+            this.previewDialog = true;
+            this.$nextTick(() => {
+                highlight.initHighlighting()
+            })
         }
     }
 });

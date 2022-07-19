@@ -146,7 +146,8 @@ export default defineComponent({
                 path: '/post/new',
                 query: {
                     title: post.title,
-                    path: post.path
+                    path: post.path,
+                    fileName: post.fileName
                 }
             });
         },

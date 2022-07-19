@@ -6,3 +6,4 @@ Gitalk
 Disqus
 vueuse
 vditor
+disableNunjucks

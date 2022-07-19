@@ -14,6 +14,7 @@ export async function renderPost(path: string, name: string, renderContent: bool
     // 初始数据
     let post = {
         title: name,
+        fileName: name,
         path: path,
         status: PostStatus.RELEASE,
         date: date,
@@ -62,7 +63,10 @@ export async function renderPost(path: string, name: string, renderContent: bool
                         post.updated = line.split(':')[1].trim();
                     } else if (line.startsWith('comments')) {
                     } else if (line.startsWith('tags')) {
-                        post.tags = line.split(':')[1].trim().split(',');
+                        post.tags = [];
+                        line.split(':')[1].trim().split(',').forEach(e => {
+                            post.tags.push(e.trim())
+                        })
                     } else if (line.startsWith('categories')) {
                         post.categories = line.split(':')[1].trim().split(',');
                     } else if (line.startsWith('permalink')) {
@@ -74,7 +78,9 @@ export async function renderPost(path: string, name: string, renderContent: bool
                     } else if (line.startsWith('lang')) {
                         post.lang = line.split(':')[1].trim();
                     }
-                } catch { }
+                } catch (e) {
+                    console.error(e)
+                }
                 if (index === 15) {
                     // 最多解析15行
                     lastIndex = index;
@@ -84,7 +90,6 @@ export async function renderPost(path: string, name: string, renderContent: bool
         }
     }
     if (renderContent) {
-        console.log(lastIndex)
         // 渲染内容
         post.content = '';
         lines.slice(lastIndex).flatMap(line => post.content = post.content + line + "\n");

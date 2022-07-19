@@ -28,6 +28,11 @@ export interface Post {
     title: string;
 
     /**
+     * 文件名
+     */
+    fileName: string;
+
+    /**
      * 文件路径
      */
     path: string;
