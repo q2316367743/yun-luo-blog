@@ -5,6 +5,4 @@ Hexo
 Gitalk
 Disqus
 vueuse
-milkdown
-commonmark
-nord
+vditor

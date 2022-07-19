@@ -32,8 +32,8 @@
                     <div class="choose">
                         <el-checkbox :label="post.path"><br /></el-checkbox>
                     </div>
-                    <div class="board">
-                        <div class="title" @click="toPostInfo(post)">{{ post.title }}</div>
+                    <div class="board" @click="toPostInfo(post)">
+                        <div class="title">{{ post.title }}</div>
                         <div class="description">
                             <div class="status" v-if="post.status === 1">
                                 <span class="badge draft"></span>

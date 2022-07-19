@@ -5,54 +5,54 @@
         </div>
         <div class="main">
             <div class="title">
-                文章
+                <el-input v-model="title" placeholder="Please input" />
+                <div class="option">
+                    <el-button class="save">保存草稿</el-button>
+                    <el-button class="promotion" type="primary">发布</el-button>
+                </div>
             </div>
             <div class="body">
-                <vue-editor class="markdown" :editor="editor"></vue-editor>
+                <div id="vditor" class="markdown" />
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Editor, rootCtx, defaultValueCtx } from "@milkdown/core";
-import { nord } from "@milkdown/theme-nord";
-import { VueEditor, useEditor } from "@milkdown/vue";
-import { commonmark } from "@milkdown/preset-commonmark";
-import { emoji } from "@milkdown/plugin-emoji";
+import { defineComponent, markRaw } from "vue";
+import { Check, Promotion } from '@element-plus/icons-vue';
+import Vditor from 'vditor';
+import 'vditor/dist/index.css';
 
 export default defineComponent({
     name: 'new-post',
-    components: {
-        VueEditor,
-    },
-    setup: () => {
-        const editor = useEditor((root) =>
-            Editor.make()
-                .config((ctx) => {
-                    ctx.set(rootCtx, root);
-                    ctx.set(defaultValueCtx, "");
-                })
-                .use(nord)
-                .use(emoji)
-                .use(commonmark)
-        );
-        return {
-            editor,
-        };
+    setup() {
+        const check = markRaw(Check);
+        const promotion = markRaw(Promotion);
+        return { check, promotion }
     },
     data: () => ({
-        title: '新文章'
+        title: '新文章',
+        vditor: null as Vditor | null
     }),
     created() {
         if (this.$route.query.title) {
             this.title = this.$route.query.title as string;
         }
     },
+    mounted() {
+        this.vditor = new Vditor('vditor', {
+            height: 'calc(100% - 50px)',
+            after: () => {
+            },
+        });
+    },
     methods: {
         toRouteLink(link: string) {
             this.$router.push(link);
         }
+    },
+    unmounted() {
+        this.vditor?.setValue("");
     }
 });
 </script>
@@ -83,6 +83,23 @@ export default defineComponent({
 
         .title {
             height: 50px;
+            display: flex;
+            justify-content: space-between;
+
+            .el-input {
+                padding: 9px;
+                width: 400px;
+            }
+
+            .option {
+                .el-button {
+                    height: 32px;
+                }
+
+                .promotion {
+                    margin-right: 20px;
+                }
+            }
         }
 
         .body {
@@ -90,15 +107,6 @@ export default defineComponent({
 
             .markdown {
                 height: calc(100%);
-
-                .milkdown {
-                    height: 100%;
-                    overflow: auto;
-
-                    .editor {
-                        height: 400px;
-                    }
-                }
             }
         }
     }
