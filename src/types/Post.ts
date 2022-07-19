@@ -40,12 +40,12 @@ export interface Post {
     /**
      * 建立日期 - 文件建立日期
      */
-    date: Date;
+    date: string;
 
     /**
      * 更新日期 - 文件更新日期
      */
-    updated: Date;
+    updated: string;
 
     /**
      * 开启文章的评论功能
@@ -83,5 +83,10 @@ export interface Post {
      * @default Inherited from _config.yml
      */
     lang: string;
+
+    /**
+     * 内容
+     */
+    content?: string;
 
 }

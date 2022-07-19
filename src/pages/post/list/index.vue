@@ -21,13 +21,13 @@
                 <div class="option">
                     <el-button v-if="!showSearch" type="primary" link :icon="search" @click="showSearchClick">
                     </el-button>
-                    <el-button type="primary" link :icon="refresh" @click="listPost"></el-button>
+                    <el-button type="primary" link :icon="refresh" @click="refreshPost"></el-button>
                     <el-button type="primary" link :icon="plus" @click="toRouteLink('/post/new')"></el-button>
                 </div>
             </div>
         </header>
         <main class="main">
-            <el-checkbox-group v-model="deletePostPath" v-if="posts.length > 0">
+            <el-checkbox-group v-model="deletePostPath" v-if="showPosts.length > 0">
                 <div v-for="(post, index) in showPosts" :key="index" class="post">
                     <div class="choose">
                         <el-checkbox :label="post.path"><br /></el-checkbox>
@@ -51,15 +51,15 @@
                                 <el-icon>
                                     <Calendar />
                                 </el-icon>
-                                <span>{{ formatDate(post.updated) }}</span>
+                                <span>{{ post.updated }}</span>
                             </div>
-                            <div class="tag">
+                            <div class="tag" v-if="post.tags.length > 0">
                                 <el-icon>
                                     <price-tag />
                                 </el-icon>
                                 <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
                             </div>
-                            <div class="category">
+                            <div class="category" v-if="post.categories.length > 0">
                                 <el-icon>
                                     <collection-tag />
                                 </el-icon>
@@ -74,14 +74,11 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw, ref } from "vue";
+import { defineComponent, markRaw, onMounted } from "vue";
 import { Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete } from '@element-plus/icons-vue';
-import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
-import { resolve, documentDir } from '@tauri-apps/api/path';
+import { usePostStore } from '@/store/PostStore';
 
-import { Post, PostStatus } from '@/types/Post';
-import constants from '@/global/constant';
-import DateUtil from '@/utils/DateUtil';
+import { Post } from '@/types/Post';
 
 export default defineComponent({
     name: 'post',
@@ -90,20 +87,37 @@ export default defineComponent({
         const search = markRaw(Search);
         const plus = markRaw(Plus);
         const refresh = markRaw(Refresh);
-        return { search, plus, refresh }
+        const postStore = usePostStore();
+        let posts = new Array<Post>();
+        postStore.list.forEach(p => posts.push(p));
+        return { search, plus, refresh, posts }
     },
     data: () => ({
         keyword: '',
         showSearch: false,
-        posts: new Array<Post>(),
         showPosts: new Array<Post>(),
         deletePostPath: new Array<string>(),
+        page: {
+            number: 1,
+            size: 10,
+            total: 0
+        }
     }),
     created() {
-        this.listPost();
+        usePostStore().append().then(rsp => {
+            if (rsp) {
+                // 如果存在新增的文章，就刷新
+                this.posts = new Array<Post>();
+                this.showPosts = new Array<Post>();
+                usePostStore().list.forEach(p => {
+                    this.posts.push(p);
+                    this.showPosts.push(p);
+                });
+            }
+        });
+        this.searchPost();
     },
     methods: {
-        formatDate: DateUtil.formatDate,
         searchBlur() {
             if (this.keyword === '') {
                 this.showSearch = false;
@@ -124,34 +138,6 @@ export default defineComponent({
                 }
             })
         },
-        listPost() {
-            // post列表
-            this.posts = new Array<Post>();
-            // 初始化列表
-            documentDir().then(documentPath => {
-                resolve(documentPath, constants.BASE, constants.POST).then(path => {
-                    readDir(path, { dir: BaseDirectory.Document, recursive: true }).then(files => {
-                        files.forEach(file => {
-                            if (!file.children || file.children.length === 0) {
-                                // 名字取文件内的
-                                let name = file.name!;
-                                name = name.substring(0, name.lastIndexOf('.'))
-                                let post = {
-                                    title: name,
-                                    path: file.path!,
-                                    status: PostStatus.RELEASE,
-                                    updated: new Date(),
-                                    tags: ['测试', '开发'],
-                                    categories: ['产品', '设计']
-                                };
-                                this.posts.push(post);
-                                this.showPosts.push(post);
-                            }
-                        })
-                    });
-                })
-            })
-        },
         toRouteLink(link: string) {
             this.$router.push(link);
         },
@@ -163,6 +149,21 @@ export default defineComponent({
                     path: post.path
                 }
             });
+        },
+        refreshPost() {
+            // 强制刷新
+            usePostStore().refresh().then(rsp => {
+                if (rsp) {
+                    // 如果存在新增的文章，就刷新
+                    this.posts = new Array<Post>();
+                    this.showPosts = new Array<Post>();
+                    usePostStore().list.forEach(p => {
+                        this.posts.push(p);
+                        this.showPosts.push(p);
+                    });
+                }
+            });
+            this.searchPost();
         }
     }
 });
@@ -238,6 +239,7 @@ export default defineComponent({
             padding: 10px;
             display: flex;
             font-size: 14px;
+            margin-top: 10px;
 
             &:hover {
                 background-color: #fafafa;
