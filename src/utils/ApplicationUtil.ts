@@ -20,5 +20,8 @@ export function launch() {
         resolve(path, constant.BASE, constant.POST).then(postPath => {
             createDir(postPath).catch(() => { });
         })
+        resolve(path, constant.BASE, constant.POST_IMAGES).then(postImagePath => {
+            createDir(postImagePath).catch(() => { });
+        })
     })
 }
