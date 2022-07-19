@@ -16,7 +16,7 @@
             "fs": {
                 "scope": [
                     "$DOCUMENT/yun-luo-blog",
-                    "$DOCUMENT/yun-luo-blog/*"
+                    "$DOCUMENT/yun-luo-blog/**/*"
                 ]
             },
             "shell": {
@@ -53,6 +53,13 @@
                     }
                 ],
                 "sidecar": false
+            },
+            "protocol": {
+                "all": true,
+                "asset": true,
+                "assetScope": [
+                    "$DOCUMENT/yun-luo-blog/**/*"
+                ]
             }
         },
         "bundle": {
@@ -89,7 +96,7 @@
             }
         },
         "security": {
-            "csp": null
+            "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
         },
         "updater": {
             "active": false

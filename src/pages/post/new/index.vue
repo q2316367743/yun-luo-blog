@@ -17,7 +17,7 @@
             <div class="post-new-side">
                 <el-button link :icon="infoFilled"></el-button>
                 <el-tooltip class="box-item" effect="dark" content="插入图片" placement="left">
-                    <el-button link :icon="pictureFilled"></el-button>
+                    <el-button link :icon="pictureFilled" @click="insertImage"></el-button>
                 </el-tooltip>
                 <el-tooltip class="box-item" effect="dark" content="文章设置" placement="left">
                     <el-button link :icon="tools"></el-button>
@@ -34,6 +34,7 @@ import { defineComponent, markRaw } from "vue";
 import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled } from '@element-plus/icons-vue';
 import Vditor from 'vditor';
 import 'vditor/dist/index.css';
+import { convertFileSrc } from "@tauri-apps/api/tauri";
 
 import { Post } from "@/types/Post";
 import { renderPost } from "@/utils/PostUtil";
@@ -78,13 +79,16 @@ export default defineComponent({
             },
         });
     },
+    unmounted() {
+        this.vditor?.setValue("");
+    },
     methods: {
         toRouteLink(link: string) {
             this.$router.push(link);
+        },
+        insertImage() {
+            console.log(convertFileSrc('D:\\Documents\\yun-luo-blog\\post-images\\黄昏.jpg'))
         }
-    },
-    unmounted() {
-        this.vditor?.setValue("");
     }
 });
 </script>
