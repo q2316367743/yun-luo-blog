@@ -134,7 +134,7 @@ export default defineComponent({
         this.vditor = new Vditor('vditor', {
             height: 'calc(100% - 50px)',
             after: () => {
-                this.vditor?.setValue(this.post.content!)
+                this.vditor?.setValue(this.post.content!);
             },
             counter: {
                 enable: true,
