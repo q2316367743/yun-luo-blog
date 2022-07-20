@@ -1,6 +1,6 @@
 import { readTextFile, writeTextFile, readBinaryFile, writeBinaryFile, BaseDirectory }
     from '@tauri-apps/api/fs';
-    import { documentDir, resolve } from '@tauri-apps/api/path';
+import { documentDir, resolve } from '@tauri-apps/api/path';
 
 import { Post, PostStatus } from '@/types/Post';
 import constant from '@/global/constant';
@@ -103,6 +103,11 @@ export async function parsePost(path: string, name: string, renderContent: boole
 }
 
 export async function savePost(post: Post): Promise<void> {
+    if (!post.path || post.path === '') {
+        // 生成文件
+        post.path = await resolve(await documentDir(), constant.BASE, constant.POST, post.title + ".md");
+        post.fileName = post.title + ".md";
+    }
     // 内容
     let content = "";
     content += "---\n";
@@ -143,8 +148,7 @@ export async function copyImage(imagePath: string): Promise<string> {
     let tempPath = imagePath.replaceAll('\\', '/');
     let items = tempPath.split('/');
     let name = items[items.length - 1];
-    let document = await documentDir();
-    let newPath = await resolve(document, constant.BASE, constant.POST_IMAGES, name);
+    let newPath = await resolve(await documentDir(), constant.BASE, constant.POST_IMAGES, name);
     writeBinaryFile(newPath, byte, {
         dir: BaseDirectory.Document
     })

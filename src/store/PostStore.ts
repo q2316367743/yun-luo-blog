@@ -104,8 +104,42 @@ export const usePostStore = defineStore('post', {
          * @param path 文章目录
          * @param post 新的文章详情
          */
-        update(path: string, post: Post) {
-
+        update(post: Post) {
+            for(let item of this.posts) {
+                if (item.path === post.path) {
+                    console.log('修改')
+                    item.title = post.title;
+                    item.status = post.status;
+                    item.date = post.date;
+                    item.updated = post.updated;
+                    item.comments = post.comments;
+                    item.tags = post.tags;
+                    item.categories = post.categories;
+                    item.permalink = post.permalink;
+                    item.excerpt = post.excerpt;
+                    item.disableNunjucks = post.disableNunjucks;
+                    item.lang = post.lang;
+                    return;
+                }
+            }
+            console.log('新增')
+            // 没找到，就新增
+            let item = {} as Post;
+            item.title = post.title;
+            item.fileName = post.fileName;
+            item.path = post.path;
+            item.status = post.status;
+            item.date = post.date;
+            item.updated = post.updated;
+            item.comments = post.comments;
+            item.tags = post.tags;
+            item.categories = post.categories;
+            item.permalink = post.permalink;
+            item.excerpt = post.excerpt;
+            item.disableNunjucks = post.disableNunjucks;
+            item.lang = post.lang;
+            this.posts.push(item);
+            this.postPaths.push(item.path);
         }
     }
 })

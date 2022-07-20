@@ -54,6 +54,13 @@
                     <el-form-item label="创建时间">
                         <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()" />
                     </el-form-item>
+                    <el-form-item label="状态">
+                        <el-select v-model="post.status">
+                            <el-option :value="1" label="草稿" />
+                            <el-option :value="2" label="发布" />
+                            <el-option :value="3" label="回收站" />
+                        </el-select>
+                    </el-form-item>
                 </el-form>
             </template>
         </el-drawer>
@@ -211,13 +218,23 @@ export default defineComponent({
         save() {
             savePost(this.post).then(() => {
                 ElMessage.success('保存成功');
+                // 更新列表
+                usePostStore().update(this.post);
             }).catch(e => {
                 console.error(e);
                 ElMessage.error('保存失败，' + e);
             });
         },
         publish() {
-            console.log('发布')
+            savePost(this.post).then(() => {
+                ElMessage.success('发布成功');
+                this.flag = false;
+                // 更新列表
+                usePostStore().update(this.post);
+            }).catch(e => {
+                console.error(e);
+                ElMessage.error('发布失败，' + e);
+            });
         }
     }
 });
