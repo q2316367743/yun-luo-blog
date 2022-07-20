@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="post-new-body">
-                <div id="vditor" class="markdown" />
+                <monaco-editor height="height: calc(100%);" v-model="post.content" language="markdown"></monaco-editor>
             </div>
             <div class="post-new-side">
                 <el-popover placement="left" :width="150" trigger="click">
@@ -66,19 +66,24 @@
 <script lang="ts">
 import { defineComponent, markRaw } from "vue";
 import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled } from '@element-plus/icons-vue';
-import Vditor from 'vditor';
-import 'vditor/dist/index.css';
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 import highlight from 'highlight.js';
+import MarkdownIt from 'markdown-it';
 
 import { Post } from "@/types/Post";
 import { renderPost } from "@/utils/PostUtil";
 import { usePostStore } from "@/store/PostStore";
 
+import MonacoEditor from '@/components/MonacoEditor/index.vue'
+
 import './actUI.css'
+
+
+const markdownIt = new MarkdownIt();
 
 export default defineComponent({
     name: 'new-post',
+    components: { MonacoEditor },
     setup() {
         const check = markRaw(Check);
         const promotion = markRaw(Promotion);
@@ -90,7 +95,6 @@ export default defineComponent({
         return { check, promotion, infoFilled, pictureFilled, moreFilled, tools, starFilled }
     },
     data: () => ({
-        vditor: null as Vditor | null,
         post: {
             title: '新文章',
             fileName: '',
@@ -125,29 +129,9 @@ export default defineComponent({
                 this.$route.query.fileName ? this.$route.query.fileName as string : '新文章',
                 true).then(post => {
                     this.post = post!;
-                    this.vditor?.setValue(this.post.content!)
                 });
             this.flag = false;
         }
-    },
-    mounted() {
-        this.vditor = new Vditor('vditor', {
-            height: 'calc(100% - 50px)',
-            after: () => {
-                this.vditor?.setValue(this.post.content!);
-            },
-            counter: {
-                enable: true,
-                type: 'text',
-                after: (length) => {
-                    this.textLength = length;
-                    console.log(length)
-                }
-            }
-        });
-    },
-    unmounted() {
-        this.vditor?.setValue("");
     },
     methods: {
         toRouteLink(link: string) {
@@ -161,7 +145,7 @@ export default defineComponent({
         },
         openPreview() {
             // 渲染
-            this.previewContent = this.vditor!.getHTML();
+            this.previewContent = markdownIt.render(this.post.content);
             this.previewDialog = true;
             this.$nextTick(() => {
                 highlight.initHighlighting()
@@ -248,7 +232,7 @@ export default defineComponent({
 
         .post-new-side {
             position: absolute;
-            right: 4px;
+            right: 6px;
             top: calc((100% - 200px) / 2 + 36px);
             height: 200px;
             width: 30px;

@@ -7,3 +7,11 @@ Disqus
 vueuse
 vditor
 disableNunjucks
+
+# Monaco Editor
+noncontrol
+jsescapes
+codeblockgh
+linecontent
+backticks
+btnfr

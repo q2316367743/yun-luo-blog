@@ -4,7 +4,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import * as monaco from 'monaco-editor';
-import yaml from './language/yaml';
+import yaml from '@/plugin/language/yaml';
+import markdown from '@/plugin/language/markdown';
 
 let instance = {} as monaco.editor.IStandaloneCodeEditor;
 
@@ -34,7 +35,7 @@ export default defineComponent({
         content: '',
         style: {
             width: '100%',
-            height: '367px',
+            height: '100%',
         }
     }),
     watch: {
@@ -51,6 +52,9 @@ export default defineComponent({
         monaco.languages.register({id: 'yaml'});
         monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
         monaco.languages.setLanguageConfiguration('yaml', yaml.config);
+        monaco.languages.register({ id: 'markdown' });
+        monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
+        monaco.languages.setLanguageConfiguration('markdown', markdown.config);
         // 语法提示
     },
     mounted() {
