@@ -43,14 +43,14 @@ export interface Post {
     status: PostStatus;
 
     /**
-     * 建立日期 - 文件建立日期
+     * 建立日期 - 文件建立日期，时间戳
      */
-    date: string;
+    date: Date;
 
     /**
-     * 更新日期 - 文件更新日期
+     * 更新日期 - 文件更新日期，时间戳
      */
-    updated: string;
+    updated: Date;
 
     /**
      * 开启文章的评论功能

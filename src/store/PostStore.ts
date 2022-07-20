@@ -10,7 +10,7 @@ import { useLocalStorage } from '@vueuse/core';
 import { Post } from '@/types/Post';
 import constants from '@/global/constant';
 import ArrayUtil from "@/utils/ArrayUtil";
-import { renderPost } from '@/utils/PostUtil';
+import { parsePost } from '@/utils/PostUtil';
 
 let store = useLocalStorage('postStore', {
     posts: new Array<Post>(),
@@ -73,7 +73,7 @@ export const usePostStore = defineStore('post', {
                     if (!ArrayUtil.contains(this.postPaths, file.path)) {
                         // 如果不存在，则增加
                         // 名字取文件内的
-                        let post = await renderPost(file.path, file.name!);
+                        let post = await parsePost(file.path, file.name!);
                         if (!post) {
                             // 文章不存在，就跳过
                             break;
@@ -82,7 +82,6 @@ export const usePostStore = defineStore('post', {
                         this.postPaths.push(file.path);
                         // 插入标签
                         for (let tag of post.tags) {
-                            console.log(tag)
                             if (!ArrayUtil.contains(this.tagList, tag)) {
                                 this.tagList.push(tag)
                             }

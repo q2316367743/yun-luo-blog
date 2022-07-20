@@ -51,7 +51,7 @@
                                 <el-icon>
                                     <Calendar />
                                 </el-icon>
-                                <span>{{ post.updated }}</span>
+                                <span>{{ format(post.updated) }}</span>
                             </div>
                             <div class="tag" v-if="post.tags.length > 0">
                                 <el-icon>
@@ -79,6 +79,7 @@ import { Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete } from
 import { usePostStore } from '@/store/PostStore';
 
 import { Post } from '@/types/Post';
+import DateUtil from '@/utils/DateUtil';
 
 export default defineComponent({
     name: 'post',
@@ -118,6 +119,7 @@ export default defineComponent({
         this.searchPost();
     },
     methods: {
+        format: DateUtil.formatDateTime,
         searchBlur() {
             if (this.keyword === '') {
                 this.showSearch = false;

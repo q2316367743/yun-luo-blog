@@ -8,7 +8,7 @@
                 <el-input v-model="post.title" placeholder="Please input" />
                 <div class="option">
                     <el-button class="save">保存草稿</el-button>
-                    <el-button class="promotion" type="primary">{{ flag ? '发布' : '保存' }}</el-button>
+                    <el-button class="promotion" type="primary" @click="saveOrPublish">{{ flag ? '发布' : '保存' }}</el-button>
                 </div>
             </div>
             <div class="post-new-body">
@@ -68,18 +68,16 @@ import { defineComponent, markRaw } from "vue";
 import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled } from '@element-plus/icons-vue';
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 import highlight from 'highlight.js';
-import MarkdownIt from 'markdown-it';
+import markdownIt from '@/plugin/markdownIt';
 
 import { Post } from "@/types/Post";
-import { renderPost } from "@/utils/PostUtil";
+import { parsePost, savePost } from "@/utils/PostUtil";
 import { usePostStore } from "@/store/PostStore";
 
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 
 import './actUI.css'
-
-
-const markdownIt = new MarkdownIt();
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
     name: 'new-post',
@@ -100,8 +98,8 @@ export default defineComponent({
             fileName: '',
             path: '',
             status: 1,
-            date: '',
-            updated: '',
+            date: new Date(),
+            updated: new Date(),
             comments: false,
             tags: [],
             categories: [],
@@ -125,7 +123,7 @@ export default defineComponent({
         }
         if (this.$route.query.path) {
             // 渲染
-            renderPost(this.$route.query.path as string,
+            parsePost(this.$route.query.path as string,
                 this.$route.query.fileName ? this.$route.query.fileName as string : '新文章',
                 true).then(post => {
                     this.post = post!;
@@ -145,11 +143,25 @@ export default defineComponent({
         },
         openPreview() {
             // 渲染
-            this.previewContent = markdownIt.render(this.post.content);
+            this.previewContent = markdownIt.render(this.post.content!);
             this.previewDialog = true;
             this.$nextTick(() => {
                 highlight.initHighlighting()
             })
+        },
+        saveOrPublish() {
+            this.flag ? this.publish() : this.save();
+        },
+        save() {
+            savePost(this.post).then(() => {
+                ElMessage.success('保存成功');
+            }).catch(e => {
+                console.error(e);
+                ElMessage.error('保存失败，' + e);
+            });
+        },
+        publish() {
+            console.log('发布')
         }
     }
 });

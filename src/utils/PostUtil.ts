@@ -1,16 +1,15 @@
-import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+import { readTextFile, writeTextFile, BaseDirectory } from '@tauri-apps/api/fs';
 
 import { Post, PostStatus } from '@/types/Post';
-import DateUtil from './DateUtil';
 
 /**
  * 渲染文章
  * @param path 文章路径
  * @return 文章对象
  */
-export async function renderPost(path: string, name: string, renderContent: boolean = false): Promise<Post | void> {
+export async function parsePost(path: string, name: string, renderContent: boolean = false): Promise<Post | void> {
     // 默认当前时间
-    let date = DateUtil.formatDateTime(new Date(), true);
+    let date = new Date();
     // 初始数据
     let post = {
         title: name,
@@ -58,9 +57,9 @@ export async function renderPost(path: string, name: string, renderContent: bool
                     } else if (line.startsWith('status')) {
                         post.status = parseInt(line.split(':')[1].trim());
                     } else if (line.startsWith('date')) {
-                        post.date = line.split(':')[1].trim();
+                        post.date = new Date(parseInt(line.split(':')[1].trim()));
                     } else if (line.startsWith('updated')) {
-                        post.updated = line.split(':')[1].trim();
+                        post.updated = new Date(parseInt(line.split(':')[1].trim()));
                     } else if (line.startsWith('comments')) {
                     } else if (line.startsWith('tags')) {
                         post.tags = [];
@@ -98,4 +97,38 @@ export async function renderPost(path: string, name: string, renderContent: bool
     return new Promise<Post | void>((resolve, reject) => {
         resolve(post);
     });
+}
+
+export async function savePost(post: Post): Promise<void> {
+    // 内容
+    let content = "";
+    content += "---\n";
+    content += `title: ${post.title}\n`;
+    content += `status: ${post.status}\n`;
+    content += `date: ${post.date.getTime()}\n`;
+    content += `updated: ${new Date().getTime()}\n`;
+    content += `comments: ${post.comments}\n`;
+    if (post.tags && post.tags.length>0) {
+        content += `tags: `;
+        for(let tag of post.tags) {
+            content += tag;
+        }
+        content += `\n`;
+    }
+    if (post.categories && post.categories.length>0) {
+        content += `categories: `;
+        for(let category of post.categories) {
+            content += category;
+        }
+        content += `\n`;
+    }
+    content += `permalink: ${post.permalink}\n`;
+    content += `excerpt: ${post.excerpt}\n`;
+    content += `disableNunjucks: ${post.disableNunjucks}\n`;
+    content += `lang: ${post.lang}\n`;
+    content += "---\n"
+    content += post.content;
+    return writeTextFile(post.path, content, {
+        dir: BaseDirectory.Document
+    })
 }

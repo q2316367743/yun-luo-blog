@@ -12,7 +12,7 @@ let lastYear = lastMonthDate.getFullYear();
 let lastMonth = lastMonthDate.getMonth();
 
 /*时间戳改日期--不传第二个参数返回年月日,传第二个参数返回年月日时分秒*/
-function formatDateTime(date: Date, type: boolean) {
+function formatDateTime(date: Date) {
     let y = date.getFullYear();
     let m = date.getMonth() + 1;
     let mS = m < 10 ? ('0' + m) : (m + '');
@@ -24,11 +24,7 @@ function formatDateTime(date: Date, type: boolean) {
     let second = date.getSeconds();
     let minuteS = minute < 10 ? ('0' + minute) : (minute + '');
     let secondS = second < 10 ? ('0' + second) : (second + '');
-    if (type) {
-        return y + '-' + mS + '-' + dS + ' ' + hS + ':' + minuteS + ':' + secondS;//2017-12-12 12:23:34    
-    } else {
-        return y + '-' + mS + '-' + dS; //2017-12-12
-    }
+    return y + '-' + mS + '-' + dS + ' ' + hS + ':' + minuteS + ':' + secondS;//2017-12-12 12:23:34    
 }
 
 
