@@ -80,6 +80,9 @@ export default defineComponent({
         format() {
             instance.getAction('editor.action.formatDocument').run();
         },
+        getInstance(): monaco.editor.IStandaloneCodeEditor {
+            return instance;
+        }
     }
 });
 </script>

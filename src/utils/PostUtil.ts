@@ -1,6 +1,9 @@
-import { readTextFile, writeTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+import { readTextFile, writeTextFile, readBinaryFile, writeBinaryFile, BaseDirectory }
+    from '@tauri-apps/api/fs';
+    import { documentDir, resolve } from '@tauri-apps/api/path';
 
 import { Post, PostStatus } from '@/types/Post';
+import constant from '@/global/constant';
 
 /**
  * 渲染文章
@@ -16,8 +19,8 @@ export async function parsePost(path: string, name: string, renderContent: boole
         fileName: name,
         path: path,
         status: PostStatus.RELEASE,
-        date: date,
-        updated: date,
+        date: date.getTime(),
+        updated: date.getTime(),
         comments: false,
         tags: [],
         categories: [],
@@ -57,9 +60,9 @@ export async function parsePost(path: string, name: string, renderContent: boole
                     } else if (line.startsWith('status')) {
                         post.status = parseInt(line.split(':')[1].trim());
                     } else if (line.startsWith('date')) {
-                        post.date = new Date(parseInt(line.split(':')[1].trim()));
+                        post.date = parseInt(line.split(':')[1].trim());
                     } else if (line.startsWith('updated')) {
-                        post.updated = new Date(parseInt(line.split(':')[1].trim()));
+                        post.updated = parseInt(line.split(':')[1].trim());
                     } else if (line.startsWith('comments')) {
                     } else if (line.startsWith('tags')) {
                         post.tags = [];
@@ -105,19 +108,19 @@ export async function savePost(post: Post): Promise<void> {
     content += "---\n";
     content += `title: ${post.title}\n`;
     content += `status: ${post.status}\n`;
-    content += `date: ${post.date.getTime()}\n`;
+    content += `date: ${post.date}\n`;
     content += `updated: ${new Date().getTime()}\n`;
     content += `comments: ${post.comments}\n`;
-    if (post.tags && post.tags.length>0) {
+    if (post.tags && post.tags.length > 0) {
         content += `tags: `;
-        for(let tag of post.tags) {
+        for (let tag of post.tags) {
             content += tag;
         }
         content += `\n`;
     }
-    if (post.categories && post.categories.length>0) {
+    if (post.categories && post.categories.length > 0) {
         content += `categories: `;
-        for(let category of post.categories) {
+        for (let category of post.categories) {
             content += category;
         }
         content += `\n`;
@@ -130,5 +133,22 @@ export async function savePost(post: Post): Promise<void> {
     content += post.content;
     return writeTextFile(post.path, content, {
         dir: BaseDirectory.Document
+    })
+}
+
+export async function copyImage(imagePath: string): Promise<string> {
+    let byte = await readBinaryFile(imagePath, {
+        dir: BaseDirectory.Document
+    });
+    let tempPath = imagePath.replaceAll('\\', '/');
+    let items = tempPath.split('/');
+    let name = items[items.length - 1];
+    let document = await documentDir();
+    let newPath = await resolve(document, constant.BASE, constant.POST_IMAGES, name);
+    writeBinaryFile(newPath, byte, {
+        dir: BaseDirectory.Document
+    })
+    return new Promise<string>((resolve) => {
+        resolve(name);
     })
 }

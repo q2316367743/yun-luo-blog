@@ -12,7 +12,8 @@ let lastYear = lastMonthDate.getFullYear();
 let lastMonth = lastMonthDate.getMonth();
 
 /*时间戳改日期--不传第二个参数返回年月日,传第二个参数返回年月日时分秒*/
-function formatDateTime(date: Date) {
+function formatDateTime(timestamp: number) {
+    let date = new Date(timestamp);
     let y = date.getFullYear();
     let m = date.getMonth() + 1;
     let mS = m < 10 ? ('0' + m) : (m + '');

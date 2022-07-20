@@ -45,12 +45,12 @@ export interface Post {
     /**
      * 建立日期 - 文件建立日期，时间戳
      */
-    date: Date;
+    date: number;
 
     /**
      * 更新日期 - 文件更新日期，时间戳
      */
-    updated: Date;
+    updated: number;
 
     /**
      * 开启文章的评论功能

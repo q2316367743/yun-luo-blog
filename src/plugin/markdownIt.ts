@@ -1,6 +1,10 @@
 import MarkdownIt from 'markdown-it';
 import Token from "markdown-it/lib/token";
 import Renderer from "markdown-it/lib/renderer";
+import { convertFileSrc } from "@tauri-apps/api/tauri";
+
+// $DOCUMENT\\yun-luo-blog\\post-images\\
+const imagePrefixUrl = "https://asset.localhost/D%3A%5CDocuments%5Cyun-luo-blog%5Cpost-images%5C";
 
 const markdownIt = new MarkdownIt();
 function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options, env: any, self: Renderer): string {
@@ -25,7 +29,7 @@ function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options
     }
     if (src.startsWith('/')) {
         // TODO: 对于相对目录，则需要处理
-        src = "https://asset.localhost/D%3A%5CDocuments%5Cyun-luo-blog%5Cpost-images%5C%E9%BB%84%E6%98%8F.jpg";
+        src = imagePrefixUrl + src.substring(1);
     }
     return `<img src="${src}" alt="${alt}"></img>`
 }

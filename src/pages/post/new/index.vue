@@ -8,11 +8,13 @@
                 <el-input v-model="post.title" placeholder="Please input" />
                 <div class="option">
                     <el-button class="save">保存草稿</el-button>
-                    <el-button class="promotion" type="primary" @click="saveOrPublish">{{ flag ? '发布' : '保存' }}</el-button>
+                    <el-button class="promotion" type="primary" @click="saveOrPublish">{{ flag ? '发布' : '保存' }}
+                    </el-button>
                 </div>
             </div>
             <div class="post-new-body">
-                <monaco-editor height="height: calc(100%);" v-model="post.content" language="markdown"></monaco-editor>
+                <monaco-editor height="height: calc(100%);" v-model="post.content" language="markdown"
+                    ref="monacoEditor"></monaco-editor>
             </div>
             <div class="post-new-side">
                 <el-popover placement="left" :width="150" trigger="click">
@@ -65,19 +67,22 @@
 </template>
 <script lang="ts">
 import { defineComponent, markRaw } from "vue";
-import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled } from '@element-plus/icons-vue';
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled }
+    from '@element-plus/icons-vue';
 import highlight from 'highlight.js';
+import { open } from '@tauri-apps/api/dialog';
+import * as monaco from 'monaco-editor';
+
 import markdownIt from '@/plugin/markdownIt';
 
 import { Post } from "@/types/Post";
-import { parsePost, savePost } from "@/utils/PostUtil";
+import { parsePost, savePost, copyImage } from "@/utils/PostUtil";
 import { usePostStore } from "@/store/PostStore";
 
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 
 import './actUI.css'
-import { ElMessage } from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 export default defineComponent({
     name: 'new-post',
@@ -98,8 +103,8 @@ export default defineComponent({
             fileName: '',
             path: '',
             status: 1,
-            date: new Date(),
-            updated: new Date(),
+            date: new Date().getTime(),
+            updated: new Date().getTime(),
             comments: false,
             tags: [],
             categories: [],
@@ -131,12 +136,63 @@ export default defineComponent({
             this.flag = false;
         }
     },
+    mounted() {
+        document.onkeydown = (e) => {
+            if (e.ctrlKey && e.code == 'KeyS') {
+                this.saveOrPublish();
+            }
+        }
+    },
+    unmounted() {
+        document.onkeydown = null;
+    },
     methods: {
         toRouteLink(link: string) {
             this.$router.push(link);
         },
-        insertImage() {
-            console.log(convertFileSrc('D:\\Documents\\yun-luo-blog\\post-images\\黄昏.jpg'))
+        async insertImage() {
+            const selected = await open({
+                title: '请选择图片',
+                multiple: true,
+                filters: [{
+                    name: 'Image',
+                    extensions: ['jpg', 'jpeg', 'png', 'webp']
+                }, {
+                    name: '全部',
+                    extensions: ['*']
+                }]
+            });
+            if (typeof selected === 'object' && selected) {
+                let path = (selected as string[])[0];
+                // 复制图片
+                const loading = ElLoading.service({
+                    lock: true,
+                    text: '复制文件中',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                });
+                copyImage(path).then((name) => {
+                    // 名字插入
+                    let monacoEditor = this.$refs.monacoEditor as any;
+                    let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;
+                    instance.executeEdits("", [{
+                        range: {
+                            startLineNumber: instance.getPosition()!.lineNumber,
+                            startColumn: instance.getPosition()!.column,
+                            endLineNumber: instance.getPosition()!.lineNumber,
+                            endColumn: instance.getPosition()!.column
+                        },
+                        text: `![](/${name})`,
+                        forceMoveMarkers: true
+                    }]);
+                    loading.close();
+                    ElMessage.success('插入成功');
+
+                }).catch(e => {
+                    console.error(e);
+                    loading.close();
+                    ElMessage.error('插入失败，' + e);
+                });;
+            }
         },
         openSetting() {
             this.settingDialog = true;
