@@ -141,11 +141,6 @@
     padding: 3px 3px 3px 0;
 }
 
-.article pre {
-    background-color: #eeeeee;
-    padding: 15px;
-}
-
 .article code {
     margin: 10px 0;
     font-family: JetBrainsMono, Consolas, Menlo, Courier, monospace;

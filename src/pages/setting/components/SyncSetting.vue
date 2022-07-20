@@ -69,34 +69,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
+import { useSettingStore } from '@/store/SettingStore'
+
 export default defineComponent({
     name: 'sync-setting',
     data: () => ({
-        SyncSetting: {
-            platform: "1",
-            agreement: 'https://',
-            url: '',
-            git: {
-                name: '',
-                branches: '',
-                username: '',
-                email: '',
-                token: '',
-                cname: '',
-            },
-            coding: {
-                tokenUsername: '',
-            },
-            proxy: {
-                type: '1',
-                path: '',
-                port: 0
-            },
-            netlify: {
-                siteId: '',
-                accessToken: ''
-            }
-        }
+        SyncSetting: useSettingStore().syncSetting
     }),
     methods: {
         contains(arr: Array<string>, key: string) {

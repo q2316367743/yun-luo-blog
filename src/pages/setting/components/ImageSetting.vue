@@ -39,27 +39,16 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useLocalStorage } from '@vueuse/core';
+import { useSettingStore } from '@/store/SettingStore'
 
 export default defineComponent({
-    setup() {
-        const imageSetting = useLocalStorage('imageSetting', {
-            type: 1,
-            qiNiu: {
-                accessKey: '',
-                secretKey: '',
-                storageSpace: '',
-                accessUrl: '',
-                storageArea: '',
-                urlSuffix: '',
-                storagePath: ''
-            }
-        });
-        return {
-            imageSetting
-        }
-    },
     name: 'blog-setting',
+    data: () => ({
+        imageSetting: useSettingStore().imageSetting
+    }),
+    created() {
+        console.log(useSettingStore())
+    },
     methods: {
     }
 });

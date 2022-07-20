@@ -2,7 +2,7 @@
     <div id="app">
         <div id="side">
             <div id="logo">云落博客</div>
-            <el-menu default-active="/post/list" @select="menuSelect" router>
+            <el-menu :default-active="defaultActive" @select="menuSelect" router>
                 <el-menu-item index="/post/list">
                     <el-icon>
                         <Document />
@@ -73,10 +73,11 @@ export default defineComponent({
     },
     data: () => {
         return {
-            menuId: '1',
+            defaultActive: ''
         }
     },
     created() {
+        this.defaultActive = this.$route.path;
         launch();
         let isInit = localStorage.getItem('isInit');
         if (!isInit) {

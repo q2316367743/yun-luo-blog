@@ -64,11 +64,14 @@
                 </el-form>
             </template>
         </el-drawer>
-        <el-drawer v-model="previewDialog" direction="rtl" size="80%">
+        <el-drawer v-model="previewDialog" direction="rtl" size="800px">
             <template #header>
                 <h2>{{ post.title }}</h2>
             </template>
-            <div class="article" v-html="previewContent"></div>
+            <el-scrollbar>
+                <div class="article" ref="article" v-html="previewContent"></div>
+            </el-scrollbar>
+            <el-backtop :right="100" :bottom="100" target=".article" />
         </el-drawer>
     </div>
 </template>
@@ -77,6 +80,7 @@ import { defineComponent, markRaw } from "vue";
 import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled }
     from '@element-plus/icons-vue';
 import highlight from 'highlight.js';
+import 'highlight.js/styles/docco.css'
 import { open } from '@tauri-apps/api/dialog';
 import * as monaco from 'monaco-editor';
 
@@ -209,7 +213,10 @@ export default defineComponent({
             this.previewContent = markdownIt.render(this.post.content!);
             this.previewDialog = true;
             this.$nextTick(() => {
-                highlight.initHighlighting()
+                let article = this.$refs.article as HTMLElement;
+                article.querySelectorAll('pre code').forEach((block) => {
+                    highlight.highlightElement(block as HTMLElement);
+                })
             })
         },
         saveOrPublish() {

@@ -27,49 +27,52 @@
             </div>
         </header>
         <main class="main">
-            <el-checkbox-group v-model="deletePostPath" v-if="showPosts.length > 0">
-                <div v-for="(post, index) in showPosts" :key="index" class="post">
-                    <div class="choose">
-                        <el-checkbox :label="post.path"><br /></el-checkbox>
-                    </div>
-                    <div class="board" @click="toPostInfo(post)">
-                        <div class="title">{{ post.title }}</div>
-                        <div class="description">
-                            <div class="status" v-if="post.status === 1">
-                                <span class="badge draft"></span>
-                                <span>草稿</span>
-                            </div>
-                            <div class="status" v-else-if="post.status === 2">
-                                <span class="badge release"></span>
-                                <span>发布</span>
-                            </div>
-                            <div class="status" v-else-if="post.status === 3">
-                                <span class="badge recycle"></span>
-                                <span>回收站</span>
-                            </div>
-                            <div class="update-time">
-                                <el-icon>
-                                    <Calendar />
-                                </el-icon>
-                                <span>{{ format(post.updated) }}</span>
-                            </div>
-                            <div class="tag" v-if="post.tags.length > 0">
-                                <el-icon>
-                                    <price-tag />
-                                </el-icon>
-                                <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
-                            </div>
-                            <div class="category" v-if="post.categories.length > 0">
-                                <el-icon>
-                                    <collection-tag />
-                                </el-icon>
-                                <span v-for="category in post.categories" class="category-item">{{ category }}</span>
+            <el-scrollbar>
+                <el-checkbox-group v-model="deletePostPath" v-if="showPosts.length > 0">
+                    <div v-for="(post, index) in showPosts" :key="index" class="post">
+                        <div class="choose">
+                            <el-checkbox :label="post.path"><br /></el-checkbox>
+                        </div>
+                        <div class="board" @click="toPostInfo(post)">
+                            <div class="title">{{ post.title }}</div>
+                            <div class="description">
+                                <div class="status" v-if="post.status === 1">
+                                    <span class="badge draft"></span>
+                                    <span>草稿</span>
+                                </div>
+                                <div class="status" v-else-if="post.status === 2">
+                                    <span class="badge release"></span>
+                                    <span>发布</span>
+                                </div>
+                                <div class="status" v-else-if="post.status === 3">
+                                    <span class="badge recycle"></span>
+                                    <span>回收站</span>
+                                </div>
+                                <div class="update-time">
+                                    <el-icon>
+                                        <Calendar />
+                                    </el-icon>
+                                    <span>{{ format(post.updated) }}</span>
+                                </div>
+                                <div class="tag" v-if="post.tags.length > 0">
+                                    <el-icon>
+                                        <price-tag />
+                                    </el-icon>
+                                    <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
+                                </div>
+                                <div class="category" v-if="post.categories.length > 0">
+                                    <el-icon>
+                                        <collection-tag />
+                                    </el-icon>
+                                    <span v-for="category in post.categories" class="category-item">{{ category
+                                    }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </el-checkbox-group>
-            <el-empty v-else description="暂无文章" style="margin-top: 110px;" />
+                </el-checkbox-group>
+                <el-empty v-else description="暂无文章" style="margin-top: 110px;" />
+            </el-scrollbar>
         </main>
     </div>
 </template>

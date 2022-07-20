@@ -4,6 +4,7 @@ import { documentDir, resolve } from '@tauri-apps/api/path';
 
 import { Post, PostStatus } from '@/types/Post';
 import constant from '@/global/constant';
+import { useSettingStore } from '@/store/SettingStore'
 
 /**
  * 渲染文章
@@ -141,7 +142,29 @@ export async function savePost(post: Post): Promise<void> {
     })
 }
 
+/**
+ * 拷贝本体图片
+ * 
+ * @param imagePath 本地图片地址
+ * @returns 图片名称
+ */
 export async function copyImage(imagePath: string): Promise<string> {
+    if (useSettingStore().imageSetting.type === 1) {
+        return localImage(imagePath);
+    }else {
+        return new Promise<string>((resolve, reject) => {
+            reject('图片类型错误');
+        });
+    }
+}
+
+/**
+ * 本地图片模式
+ * 
+ * @param imagePath 图片地址
+ * @returns 图片名称
+ */
+export async function localImage(imagePath: string): Promise<string> {
     let byte = await readBinaryFile(imagePath, {
         dir: BaseDirectory.Document
     });
