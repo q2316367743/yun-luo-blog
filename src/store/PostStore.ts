@@ -105,7 +105,7 @@ export const usePostStore = defineStore('post', {
          * @param post 新的文章详情
          */
         update(post: Post) {
-            for(let item of this.posts) {
+            for (let item of this.posts) {
                 if (item.path === post.path) {
                     console.log('修改')
                     item.title = post.title;
@@ -140,6 +140,45 @@ export const usePostStore = defineStore('post', {
             item.lang = post.lang;
             this.posts.push(item);
             this.postPaths.push(item.path);
+        },
+        delete(path: string): Promise<void> {
+            // 删除指定路径
+            let index = this.postPaths.indexOf(path);
+            if (index > -1) {
+                try {
+                    // 尝试删除路径
+                    this.postPaths = this.postPaths.slice(index, 1);
+                } catch (e) {
+                    console.error(e);
+                    return new Promise<void>((resolve, reject) => {
+                        reject('文章路径删除失败，' + e);
+                    });
+                }
+                let postIndex = -1;
+                for (let index = 0; index < this.posts.length; index++) {
+                    let post = this.posts[index]
+                    if (post.path === path) {
+                        postIndex = index;
+                        break;
+                    }
+                }
+                try {
+                    this.posts = this.posts.slice(postIndex, 1);
+                } catch (e) {
+                    console.error(e);
+                    // 此处需要将删除的路径加回去
+                    this.postPaths.push(path);
+                    return new Promise<void>((resolve, reject) => {
+                        reject('文章删除失败，' + e);
+                    });
+                }
+                return new Promise<void>((resolve, reject) => {
+                    resolve()
+                });
+            }
+            return new Promise<void>((resolve, reject) => {
+                reject('文章路径不存在');
+            });
         }
     }
 })

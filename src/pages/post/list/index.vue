@@ -77,7 +77,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw, onMounted } from "vue";
+import { defineComponent, markRaw } from "vue";
 import { Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete } from '@element-plus/icons-vue';
 import { usePostStore } from '@/store/PostStore';
 
