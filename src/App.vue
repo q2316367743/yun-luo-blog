@@ -9,6 +9,12 @@
                     </el-icon>
                     <span>文章</span>
                 </el-menu-item>
+                <el-menu-item index="/tag">
+                    <el-icon>
+                        <price-tag />
+                    </el-icon>
+                    <span>标签</span>
+                </el-menu-item>
                 <el-sub-menu index="/theme">
                     <template #title>
                         <el-icon>
@@ -59,7 +65,10 @@
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
-import { Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell } from '@element-plus/icons-vue';
+import {
+    Document, Sugar, Setting, TrendCharts, MoreFilled,
+    Refresh, DataBoard, Sell, PriceTag
+} from '@element-plus/icons-vue';
 import { useLocalStorage } from '@vueuse/core';
 import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 import { resolve, documentDir } from '@tauri-apps/api/path';
@@ -69,7 +78,7 @@ import constants from '@/global/constant';
 
 export default defineComponent({
     components: {
-        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell
+        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell, PriceTag
     },
     data: () => {
         return {

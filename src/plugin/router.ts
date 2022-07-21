@@ -4,6 +4,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import GuidePage from '@/pages/guide/index.vue';
 import PostListPage from '@/pages/post/list/index.vue';
 import PostNewPage from '@/pages/post/new/index.vue';
+import TagPage from '@/pages/tag/index.vue';
 import ThemeSetting from '@/pages/theme/setting/index.vue';
 import SettingPage from '@/pages/setting/index.vue';
 
@@ -37,6 +38,11 @@ const routes: Array<RouteRecordRaw> = [
                 component: PostNewPage
             },
         ]
+    },
+    {
+        path: '/tag',
+        name: 'tag',
+        component: TagPage
     },
     {
         path: '/theme',
