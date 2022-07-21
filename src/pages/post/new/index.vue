@@ -71,7 +71,6 @@
             <el-scrollbar>
                 <div class="article" ref="article" v-html="previewContent"></div>
             </el-scrollbar>
-            <el-backtop :right="100" :bottom="100" target=".article" />
         </el-drawer>
     </div>
 </template>

@@ -1,10 +1,16 @@
-import { readTextFile, writeTextFile, readBinaryFile, writeBinaryFile, BaseDirectory }
+import {
+    readTextFile, writeTextFile,
+    readBinaryFile, writeBinaryFile,
+    removeFile,
+    BaseDirectory
+}
     from '@tauri-apps/api/fs';
 import { documentDir, resolve } from '@tauri-apps/api/path';
 
 import { Post, PostStatus } from '@/types/Post';
 import constant from '@/global/constant';
 import { useSettingStore } from '@/store/SettingStore'
+import path from 'path';
 
 /**
  * 渲染文章
@@ -142,6 +148,12 @@ export async function savePost(post: Post): Promise<void> {
     })
 }
 
+export async function deleteByPath(path: string): Promise<void> {
+    return removeFile(path, {
+        dir: BaseDirectory.Document
+    })
+}
+
 /**
  * 拷贝本体图片
  * 
@@ -151,7 +163,7 @@ export async function savePost(post: Post): Promise<void> {
 export async function copyImage(imagePath: string): Promise<string> {
     if (useSettingStore().imageSetting.type === 1) {
         return localImage(imagePath);
-    }else {
+    } else {
         return new Promise<string>((resolve, reject) => {
             reject('图片类型错误');
         });

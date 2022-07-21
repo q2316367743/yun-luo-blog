@@ -69,6 +69,9 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="option">
+                            <el-button type="danger" link @click="deleteByPath(post.path)">删除</el-button>
+                        </div>
                     </div>
                 </el-checkbox-group>
                 <el-empty v-else description="暂无文章" style="margin-top: 110px;" />
@@ -83,6 +86,7 @@ import { usePostStore } from '@/store/PostStore';
 
 import { Post } from '@/types/Post';
 import DateUtil from '@/utils/DateUtil';
+import { ElMessage, ElMessageBox } from "element-plus";
 
 export default defineComponent({
     name: 'post',
@@ -170,6 +174,29 @@ export default defineComponent({
                 }
             });
             this.searchPost();
+        },
+        deleteByPath(path: string) {
+            ElMessageBox.confirm(
+                '确定删除此文章，删除后将无法恢复',
+                '警告',
+                {
+                    confirmButtonText: '删除',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            )
+                .then(() => {
+                    ElMessage({
+                        type: 'success',
+                        message: '删除：' + path,
+                    })
+                })
+                .catch(() => {
+                    ElMessage({
+                        type: 'info',
+                        message: '取消删除',
+                    })
+                })
         }
     }
 });
@@ -246,10 +273,15 @@ export default defineComponent({
             display: flex;
             font-size: 14px;
             margin-top: 10px;
+            position: relative;
 
             &:hover {
                 background-color: #fafafa;
                 cursor: pointer;
+
+                .option {
+                    display: block;
+                }
             }
 
             .choose {
@@ -340,6 +372,13 @@ export default defineComponent({
                         }
                     }
                 }
+            }
+
+            .option {
+                position: absolute;
+                right: 42px;
+                top: 32px;
+                display: none;
             }
         }
     }
