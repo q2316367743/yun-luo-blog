@@ -82,11 +82,12 @@
 <script lang="ts">
 import { defineComponent, markRaw } from "vue";
 import { Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete } from '@element-plus/icons-vue';
-import { usePostStore } from '@/store/PostStore';
+import { ElMessage, ElMessageBox } from "element-plus";
 
+import { usePostStore } from '@/store/PostStore';
 import { Post } from '@/types/Post';
 import DateUtil from '@/utils/DateUtil';
-import { ElMessage, ElMessageBox } from "element-plus";
+import { deleteByPath } from '@/utils/PostUtil'
 
 export default defineComponent({
     name: 'post',
@@ -96,8 +97,7 @@ export default defineComponent({
         const plus = markRaw(Plus);
         const refresh = markRaw(Refresh);
         const postStore = usePostStore();
-        let posts = new Array<Post>();
-        postStore.list.forEach(p => posts.push(p));
+        let posts = postStore.posts;
         return { search, plus, refresh, posts }
     },
     data: () => ({
@@ -186,9 +186,23 @@ export default defineComponent({
                 }
             )
                 .then(() => {
-                    ElMessage({
-                        type: 'success',
-                        message: '删除：' + path,
+                    // 先删除路径
+                    usePostStore().deleteByPath(path).then(post => {
+                        // 删除成功，准备删除源文件
+                        deleteByPath(path).then(() => {
+                            ElMessage({
+                                type: 'success',
+                                message: '删除成功',
+                            });
+                            this.searchPost();
+                        }).catch((e) => {
+                            ElMessage({
+                                type: 'error',
+                                message: '删除失败，' + e,
+                            });
+                            // 将删除的文章索引加回去
+                            usePostStore().add(post);
+                        })
                     })
                 })
                 .catch(() => {

@@ -141,42 +141,66 @@ export const usePostStore = defineStore('post', {
             this.posts.push(item);
             this.postPaths.push(item.path);
         },
-        delete(path: string): Promise<void> {
+        add(post: Post) {
+            let item = {} as Post;
+            item.title = post.title;
+            item.fileName = post.fileName;
+            item.path = post.path;
+            item.status = post.status;
+            item.date = post.date;
+            item.updated = post.updated;
+            item.comments = post.comments;
+            item.tags = post.tags;
+            item.categories = post.categories;
+            item.permalink = post.permalink;
+            item.excerpt = post.excerpt;
+            item.disableNunjucks = post.disableNunjucks;
+            item.lang = post.lang;
+            this.posts.push(item);
+            this.postPaths.push(item.path);
+        },
+        deleteByPath(path: string): Promise<Post> {
             // 删除指定路径
             let index = this.postPaths.indexOf(path);
             if (index > -1) {
                 try {
                     // 尝试删除路径
-                    this.postPaths = this.postPaths.slice(index, 1);
+                    this.postPaths.splice(index, 1);
                 } catch (e) {
                     console.error(e);
-                    return new Promise<void>((resolve, reject) => {
+                    return new Promise<Post>((resolve, reject) => {
                         reject('文章路径删除失败，' + e);
                     });
                 }
                 let postIndex = -1;
+                let tempPost = {} as Post;
                 for (let index = 0; index < this.posts.length; index++) {
                     let post = this.posts[index]
                     if (post.path === path) {
                         postIndex = index;
+                        tempPost = post;
                         break;
                     }
                 }
                 try {
-                    this.posts = this.posts.slice(postIndex, 1);
+                    this.posts.splice(postIndex, 1);
                 } catch (e) {
                     console.error(e);
                     // 此处需要将删除的路径加回去
                     this.postPaths.push(path);
-                    return new Promise<void>((resolve, reject) => {
+                    return new Promise<Post>((resolve, reject) => {
                         reject('文章删除失败，' + e);
                     });
                 }
-                return new Promise<void>((resolve, reject) => {
-                    resolve()
+                // 删除完后重新指向
+                store.value.postPaths = this.postPaths;
+                store.value.posts = this.posts;
+                return new Promise<Post>((resolve, reject) => {
+                    // 将删除的文章返回，如果删除失败，再加回来
+                    resolve(tempPost);
                 });
             }
-            return new Promise<void>((resolve, reject) => {
+            return new Promise<Post>((resolve, reject) => {
                 reject('文章路径不存在');
             });
         }
