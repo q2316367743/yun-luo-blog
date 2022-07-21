@@ -46,9 +46,6 @@ export default defineComponent({
     data: () => ({
         imageSetting: useSettingStore().imageSetting
     }),
-    created() {
-        console.log(useSettingStore())
-    },
     methods: {
     }
 });

@@ -97,7 +97,6 @@ export default defineComponent({
                         }
                         // 执行到这里，正面没有这个文件夹，打开初始化进程
                         localStorage.removeItem('isInit');
-                        console.log('跳转')
                         this.$router.push('/guide');
                     });
                 })

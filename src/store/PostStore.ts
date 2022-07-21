@@ -107,7 +107,6 @@ export const usePostStore = defineStore('post', {
         update(post: Post) {
             for (let item of this.posts) {
                 if (item.path === post.path) {
-                    console.log('修改')
                     item.title = post.title;
                     item.status = post.status;
                     item.date = post.date;
@@ -122,7 +121,6 @@ export const usePostStore = defineStore('post', {
                     return;
                 }
             }
-            console.log('新增')
             // 没找到，就新增
             let item = {} as Post;
             item.title = post.title;
