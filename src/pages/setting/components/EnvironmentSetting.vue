@@ -1,7 +1,7 @@
 <template>
     <el-form :model="basicSetting" label-width="120px" style="width: 500px">
         <el-form-item label="站点源文件路径">
-            <el-link href="#" @click="openFolder">{{basicSetting.path}}</el-link>
+            <el-link href="#" @click="openFolder">{{ basicSetting.path }}</el-link>
         </el-form-item>
         <el-form-item label="node文件路径">
             <el-input v-model="basicSetting.nodePath">
@@ -14,6 +14,13 @@
             <el-input v-model="basicSetting.npmPath">
                 <template #append>
                     <el-button :icon="folder" @click="openNpmDialog" />
+                </template>
+            </el-input>
+        </el-form-item>
+        <el-form-item label="git文件路径">
+            <el-input v-model="basicSetting.gitPath">
+                <template #append>
+                    <el-button :icon="folder" @click="openGitDialog" />
                 </template>
             </el-input>
         </el-form-item>
@@ -33,7 +40,8 @@ export default defineComponent({
         const basicSetting = useLocalStorage('environmentSetting', {
             path: '',
             nodePath: '',
-            npmPath: ''
+            npmPath: '',
+            gitPath: ''
         });
         documentDir().then(path => {
             basicSetting.value.path = path + 'yun-luo-blog';
@@ -48,6 +56,7 @@ export default defineComponent({
             const selected = await open({
                 title: '请选择node文件路径',
                 multiple: true,
+                defaultPath: 'C:\\Program Files',
                 filters: [{
                     name: 'Application',
                     extensions: ['exe']
@@ -61,6 +70,7 @@ export default defineComponent({
             const selected = await open({
                 title: '请选择npm文件路径',
                 multiple: true,
+                defaultPath: 'C:\\Program Files',
                 filters: [{
                     name: 'Application',
                     extensions: ['cmd', 'sh']
@@ -68,6 +78,20 @@ export default defineComponent({
             });
             if (typeof selected === 'object' && selected) {
                 this.basicSetting.npmPath = (selected as string[])[0];
+            }
+        },
+        async openGitDialog() {
+            const selected = await open({
+                title: '请选择git文件路径',
+                multiple: true,
+                defaultPath: 'C:\\Program Files',
+                filters: [{
+                    name: 'Application',
+                    extensions: ['exe']
+                }]
+            });
+            if (typeof selected === 'object' && selected) {
+                this.basicSetting.nodePath = (selected as string[])[0];
             }
         },
         openFolder() {

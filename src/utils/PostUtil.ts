@@ -7,17 +7,16 @@ import {
     from '@tauri-apps/api/fs';
 import { documentDir, resolve } from '@tauri-apps/api/path';
 
-import { Post, PostStatus } from '@/types/Post';
+import PostView from '@/views/PostView';
 import constant from '@/global/constant';
 import { useSettingStore } from '@/store/SettingStore'
-import path from 'path';
 
 /**
  * 渲染文章
  * @param path 文章路径
  * @return 文章对象
  */
-export async function parsePost(path: string, name: string, renderContent: boolean = false): Promise<Post | void> {
+export async function parsePost(path: string, name: string, renderContent: boolean = false): Promise<PostView | void> {
     // 默认当前时间
     let date = new Date();
     // 初始数据
@@ -25,7 +24,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
         title: name,
         fileName: name,
         path: path,
-        status: PostStatus.RELEASE,
+        status: 1,
         date: date.getTime(),
         updated: date.getTime(),
         comments: false,
@@ -35,7 +34,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
         excerpt: "",
         disableNunjucks: "",
         lang: ""
-    } as Post;
+    } as PostView;
     const contents = await readTextFile(path, { dir: BaseDirectory.Document });
     let lines = contents.split('\n');
     let start = true;
@@ -88,6 +87,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
                         post.lang = line.split(':')[1].trim();
                     }
                 } catch (e) {
+                    console.error('异常');
                     console.error(e)
                 }
                 if (index === 15) {
@@ -104,17 +104,12 @@ export async function parsePost(path: string, name: string, renderContent: boole
         lines.slice(lastIndex).flatMap(line => post.content = post.content + line + "\n");
     }
     // 读取文章内容
-    return new Promise<Post | void>((resolve, reject) => {
+    return new Promise<PostView | void>((resolve, reject) => {
         resolve(post);
     });
 }
 
-export async function savePost(post: Post): Promise<void> {
-    if (!post.path || post.path === '') {
-        // 生成文件
-        post.path = await resolve(await documentDir(), constant.BASE, constant.POST, post.title + ".md");
-        post.fileName = post.title + ".md";
-    }
+export async function savePost(post: PostView): Promise<void> {
     // 内容
     let content = "";
     content += "---\n";

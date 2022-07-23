@@ -4,8 +4,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import * as monaco from 'monaco-editor';
-import yaml from '@/plugin/language/yaml';
-import markdown from '@/plugin/language/markdown';
+import yaml from '@/plugins/language/yaml';
+import markdown from '@/plugins/language/markdown';
 
 let instance = {} as monaco.editor.IStandaloneCodeEditor;
 

@@ -1,26 +1,12 @@
-export enum PostStatus {
-
-    /**
-     * 草稿
-     */
-    DRAFT = 1,
-
-    /**
-     * 发布
-     */
-    RELEASE = 2,
-
-    /**
-     * 回收站
-     */
-    RECYCLE = 3
-
-}
-
 /**
  * hexo文档: https://hexo.io/zh-cn/docs/front-matter
  */
-export interface Post {
+export default interface Post {
+
+    /**
+     * ID
+     */
+    id: number;
 
     /**
      * 文章标题
@@ -40,7 +26,7 @@ export interface Post {
     /**
      * 文章状态
      */
-    status: PostStatus;
+    status: number;
 
     /**
      * 建立日期 - 文件建立日期，时间戳
@@ -56,16 +42,6 @@ export interface Post {
      * 开启文章的评论功能
      */
     comments: boolean;
-
-    /**
-     * 标签
-     */
-    tags: Array<string>;
-
-    /**
-     * 分类
-     */
-    categories: Array<string>;
 
     /**
      * 覆盖文章网址
@@ -88,10 +64,5 @@ export interface Post {
      * @default Inherited from _config.yml
      */
     lang: string;
-
-    /**
-     * 内容
-     */
-    content?: string;
 
 }

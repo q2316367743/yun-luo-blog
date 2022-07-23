@@ -8,14 +8,21 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { PriceTag } from '@element-plus/icons-vue';
-import { usePostStore } from '@/store/PostStore';
+
+import { tagService } from "@/global/BeanFactory";
+import TagView from '@/views/TagView';
 
 export default defineComponent({
     name: 'tag',
     components: { PriceTag },
     data: () => ({
-        tagList: usePostStore().tagList
+        tagList: new Array<TagView>()
     }),
+    created() {
+        tagService.list().then(tags => {
+            this.tagList = tags;
+        })
+    }
 });
 </script>
 <style scoped lang="less">

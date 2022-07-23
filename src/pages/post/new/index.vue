@@ -82,17 +82,18 @@ import highlight from 'highlight.js';
 import 'highlight.js/styles/docco.css'
 import { open } from '@tauri-apps/api/dialog';
 import * as monaco from 'monaco-editor';
+import { ElLoading, ElMessage } from "element-plus";
 
-import markdownIt from '@/plugin/markdownIt';
+import markdownIt from '@/plugins/markdownIt';
 
-import { Post } from "@/types/Post";
+import PostView from "@/views/PostView";
+import TagView from "@/views/TagView";
 import { parsePost, savePost, copyImage } from "@/utils/PostUtil";
-import { usePostStore } from "@/store/PostStore";
+import { postService, tagService } from '@/global/BeanFactory';
 
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 
 import './actUI.css'
-import { ElLoading, ElMessage } from "element-plus";
 
 export default defineComponent({
     name: 'new-post',
@@ -109,6 +110,7 @@ export default defineComponent({
     },
     data: () => ({
         post: {
+            id: 0,
             title: '新文章',
             fileName: '',
             path: '',
@@ -123,9 +125,9 @@ export default defineComponent({
             disableNunjucks: "",
             lang: "",
             content: ''
-        } as Post,
+        } as PostView,
         textLength: 0,
-        tags: usePostStore().tags,
+        tags: new Array<TagView>,
         settingDialog: false,
         previewDialog: false,
         previewContent: '',
@@ -133,17 +135,22 @@ export default defineComponent({
         flag: true,
     }),
     created() {
-        if (this.$route.query.title) {
-            this.post.title = this.$route.query.title as string;
-        }
-        if (this.$route.query.path) {
-            // 渲染
-            parsePost(this.$route.query.path as string,
-                this.$route.query.fileName ? this.$route.query.fileName as string : '新文章',
-                true).then(post => {
-                    this.post = post!;
-                });
-            this.flag = false;
+        tagService.list().then(tags => {
+            this.tags = tags;
+        })
+        if (this.$route.query.id) {
+            this.post.id = parseInt(this.$route.query.id as string);
+            postService.info(this.post.id).then(post => {
+                if (post) {
+                    // 存在文章，查询文章详情
+                    parsePost(post.path, post.fileName, true).then(post => {
+                        this.post = post!;
+                    });
+                }
+            })
+        } else {
+            ElMessage.error('文章不存在，请刷新后重试');
+            this.$router.push('/post/list');
         }
     },
     mounted() {
@@ -222,21 +229,20 @@ export default defineComponent({
             this.flag ? this.publish() : this.save();
         },
         save() {
-            savePost(this.post).then(() => {
-                ElMessage.success('保存成功');
-                // 更新列表
-                usePostStore().update(this.post);
-            }).catch(e => {
-                console.error(e);
-                ElMessage.error('保存失败，' + e);
-            });
+            postService.update(this.post)
+                .then(() => {
+                    ElMessage.success('保存成功');
+                    // 更新列表
+                }).catch(e => {
+                    console.error(e);
+                    ElMessage.error('保存失败，' + e);
+                });
         },
         publish() {
-            savePost(this.post).then(() => {
+            postService.update(this.post).then(() => {
                 ElMessage.success('发布成功');
                 this.flag = false;
                 // 更新列表
-                usePostStore().update(this.post);
             }).catch(e => {
                 console.error(e);
                 ElMessage.error('发布失败，' + e);

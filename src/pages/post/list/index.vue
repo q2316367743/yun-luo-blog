@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <div class="option">
-                            <el-button type="danger" link @click="deleteByPath(post.path)">删除</el-button>
+                            <el-button type="danger" link @click="deleteByPath(post.id!)">删除</el-button>
                         </div>
                     </div>
                 </el-checkbox-group>
@@ -84,10 +84,9 @@ import { defineComponent, markRaw } from "vue";
 import { Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from "element-plus";
 
-import { usePostStore } from '@/store/PostStore';
-import { Post } from '@/types/Post';
+import PostView from '@/views/PostView';
 import DateUtil from '@/utils/DateUtil';
-import { deleteByPath } from '@/utils/PostUtil'
+import { postService } from '@/global/BeanFactory';
 
 export default defineComponent({
     name: 'post',
@@ -96,14 +95,13 @@ export default defineComponent({
         const search = markRaw(Search);
         const plus = markRaw(Plus);
         const refresh = markRaw(Refresh);
-        const postStore = usePostStore();
-        let posts = postStore.posts;
-        return { search, plus, refresh, posts }
+        return { search, plus, refresh }
     },
     data: () => ({
         keyword: '',
         showSearch: false,
-        showPosts: new Array<Post>(),
+        posts: new Array<PostView>(),
+        showPosts: new Array<PostView>(),
         deletePostPath: new Array<string>(),
         page: {
             number: 1,
@@ -112,18 +110,10 @@ export default defineComponent({
         }
     }),
     created() {
-        usePostStore().append().then(rsp => {
-            if (rsp) {
-                // 如果存在新增的文章，就刷新
-                this.posts = new Array<Post>();
-                this.showPosts = new Array<Post>();
-                usePostStore().list.forEach(p => {
-                    this.posts.push(p);
-                    this.showPosts.push(p);
-                });
-            }
-        });
-        this.searchPost();
+        postService.list().then(posts => {
+            this.posts = posts;
+            this.searchPost();
+        })
     },
     methods: {
         format: DateUtil.formatDateTime,
@@ -150,32 +140,24 @@ export default defineComponent({
         toRouteLink(link: string) {
             this.$router.push(link);
         },
-        toPostInfo(post: Post) {
+        toPostInfo(postView: PostView) {
             this.$router.push({
                 path: '/post/new',
                 query: {
-                    title: post.title,
-                    path: post.path,
-                    fileName: post.fileName
+                    id: postView.id
                 }
             });
         },
         refreshPost() {
             // 强制刷新
-            usePostStore().refresh().then(rsp => {
-                if (rsp) {
-                    // 如果存在新增的文章，就刷新
-                    this.posts = new Array<Post>();
-                    this.showPosts = new Array<Post>();
-                    usePostStore().list.forEach(p => {
-                        this.posts.push(p);
-                        this.showPosts.push(p);
-                    });
-                }
-            });
-            this.searchPost();
+            postService.refresh().then(() => {
+                postService.list().then(posts => {
+                    this.posts = posts;
+                    this.searchPost();
+                })
+            })
         },
-        deleteByPath(path: string) {
+        deleteByPath(id: number) {
             ElMessageBox.confirm(
                 '确定删除此文章，删除后将无法恢复',
                 '警告',
@@ -187,23 +169,19 @@ export default defineComponent({
             )
                 .then(() => {
                     // 先删除路径
-                    usePostStore().deleteByPath(path).then(post => {
+                    postService.deleteById(id).then(post => {
                         // 删除成功，准备删除源文件
-                        deleteByPath(path).then(() => {
-                            ElMessage({
-                                type: 'success',
-                                message: '删除成功',
-                            });
-                            this.searchPost();
-                        }).catch((e) => {
-                            ElMessage({
-                                type: 'error',
-                                message: '删除失败，' + e,
-                            });
-                            // 将删除的文章索引加回去
-                            usePostStore().add(post);
+                        ElMessage({
+                            type: 'success',
+                            message: '删除成功',
+                        });
+                        this.searchPost();
+                    }).catch((e) => {
+                        ElMessage({
+                            type: 'error',
+                            message: '删除失败，' + e,
                         })
-                    })
+                    });
                 })
                 .catch(() => {
                     ElMessage({
