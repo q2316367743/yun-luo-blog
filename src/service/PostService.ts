@@ -33,29 +33,32 @@ export default class TagService {
         this.tagDao = dexieInstance.getTagDao();
     }
 
-    async insert(post: PostView): Promise<void> {
+    async insert(post: PostView, saveContent: boolean = true): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
-        ["Post", "PostTag", "Tag"],
+            ["Post", "PostTag", "Tag"],
             async (trans: Transaction) => {
                 console.log('先新增文章')
                 // 先新增文章
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
-                await this.insertSelf(post, postDao, postTagDao, tagDao);
+                await this.insertSelf(post, postDao, postTagDao, tagDao, saveContent);
             });
     }
 
     private async insertSelf(post: PostView,
         postDao: Dexie.Table<Post, number>,
         postTagDao: Dexie.Table<PostTag, number>,
-        tagDao: Dexie.Table<Tag, number>) {
+        tagDao: Dexie.Table<Tag, number>,
+        saveContent: boolean) {
         // 如果没有路径，先生成目录和文件名
+        console.log('如果没有路径，先生成目录和文件名')
         if (!post.path || post.path === '') {
             post.path = await resolve(await documentDir(), constant.BASE, constant.POST, post.title + ".md");
             post.fileName = post.title + ".md";
             console.log('先生成目录和文件名', post.path, post.fileName);
         }
+        console.log('开始插入')
         // 先插入文章
         let postId = await postDao.put(this.viewToPost(post, false));
         console.log('插入完成', postId);
@@ -82,35 +85,42 @@ export default class TagService {
                 });
             }
         }
-        // 此处保存内容
-        savePost(post);
+        if (saveContent) {
+            // 此处保存内容
+            savePost(post);
+        }
     }
 
-    async update(post: PostView): Promise<void> {
+    async update(post: PostView, saveContent: boolean = true): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
             ["Post", "PostTag", "Tag"],
             async (trans: Transaction) => {
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
-                await this.updateSelf(post, postDao, postTagDao, tagDao);
+                console.log('更新文章')
+                await this.updateSelf(post, postDao, postTagDao, tagDao, saveContent);
             });
     }
 
     private async updateSelf(post: PostView,
         postDao: Dexie.Table<Post, number>,
         postTagDao: Dexie.Table<PostTag, number>,
-        tagDao: Dexie.Table<Tag, number>) {
+        tagDao: Dexie.Table<Tag, number>,
+        saveContent: boolean) {
         // 先查询文章
+        console.log('先查询文章', post.id);
         let oldPost = await postDao.where({ id: post.id }).first();
+        console.log('旧文章', oldPost)
         if (!oldPost) {
             return new Promise<void>((resolve, reject) => {
                 reject('文章不存在，请刷新后重试');
             })
         }
         // 先修改文章
+        console.log('先修改文章')
         let postId = await postDao.update(post.id!,
-            Object.assign(oldPost, post));
+            this.viewToPost(oldPost));
         // 删除旧的分类
         let oldPostTags = await postTagDao.where({ postId: post.id }).toArray();
         for (let oldPostTag of oldPostTags) {
@@ -139,8 +149,10 @@ export default class TagService {
                 });
             }
         }
-        // 此处保存内容
-        savePost(post);
+        if (saveContent) {
+            // 此处保存内容
+            savePost(post);
+        }
     }
 
     async list(): Promise<Array<PostView>> {
@@ -195,10 +207,18 @@ export default class TagService {
         // 获取文件
         let documentPath = await documentDir();
         let path = await resolve(documentPath, constants.BASE, constants.POST);
-        let files = await readDir(path, { dir: BaseDirectory.Document, recursive: false });
+        let files = await readDir(path,
+            {
+                dir: BaseDirectory.Document,
+                // 开启递归遍历
+                recursive: true
+            });
         // 获取全部文章目录
         let posts = await this.postDao.toArray();
-        let postPathMap = ArrayUtil.map(posts, 'path');
+        // 删除全部文章
+        for (let post of posts) {
+            this.postDao.delete(post.id);
+        }
         let index = 0;
         for (let file of files) {
             index += 1;
@@ -212,17 +232,7 @@ export default class TagService {
             let postView = await parsePost(file.path, file.name!, false);
             if (postView) {
                 // 处理逻辑
-                if (postPathMap.has(file.path)) {
-                    let post = postPathMap.get(file.path);
-                    postView.id = post?.id!;
-                    // 存在则修改
-                    console.log("存在则修改")
-                    await this.update(postView);
-                } else {
-                    console.log('开始新增')
-                    // 不存在则新增
-                    await this.insert(postView);
-                }
+                await this.insert(postView, false);
             }
         }
         loading.close();
@@ -259,7 +269,7 @@ export default class TagService {
             }) as Promise<Post>;
     }
 
-    private viewToPost(postView: PostView, isIncludeId: boolean = true): Post {
+    private viewToPost(postView: PostView | Post, isIncludeId: boolean = true): Post {
         let post = {
             title: postView.title,
             fileName: postView.fileName,

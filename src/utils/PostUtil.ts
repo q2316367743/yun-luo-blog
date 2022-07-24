@@ -178,6 +178,8 @@ export async function localImage(imagePath: string): Promise<string> {
     let tempPath = imagePath.replaceAll('\\', '/');
     let items = tempPath.split('/');
     let name = items[items.length - 1];
+    // 名字
+    name = name.replaceAll(' ', '-');
     let newPath = await resolve(await documentDir(), constant.BASE, constant.POST_IMAGES, name);
     writeBinaryFile(newPath, byte, {
         dir: BaseDirectory.Document

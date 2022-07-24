@@ -139,18 +139,25 @@ export default defineComponent({
             this.tags = tags;
         })
         if (this.$route.query.id) {
-            this.post.id = parseInt(this.$route.query.id as string);
-            postService.info(this.post.id).then(post => {
+            let postId = parseInt(this.$route.query.id as string);
+            postService.info(postId).then(post => {
                 if (post) {
+                    console.log(post)
                     // 存在文章，查询文章详情
                     parsePost(post.path, post.fileName, true).then(post => {
                         this.post = post!;
+                        // 重新对post.id赋值
+                        this.post.id = postId;
                     });
+                } else {
+                    ElMessage.error('文章不存在，请刷新后重试');
+                    this.$router.push('/post/list');
                 }
-            })
+            });
+            this.flag = false;
         } else {
-            ElMessage.error('文章不存在，请刷新后重试');
-            this.$router.push('/post/list');
+            this.flag = true;
+            // 新增文章
         }
     },
     mounted() {
@@ -198,7 +205,7 @@ export default defineComponent({
                             endLineNumber: instance.getPosition()!.lineNumber,
                             endColumn: instance.getPosition()!.column
                         },
-                        text: `![](/${name})`,
+                        text: `![在这里插入图片描述](/${name})`,
                         forceMoveMarkers: true
                     }]);
                     loading.close();
@@ -239,7 +246,7 @@ export default defineComponent({
                 });
         },
         publish() {
-            postService.update(this.post).then(() => {
+            postService.insert(this.post).then(() => {
                 ElMessage.success('发布成功');
                 this.flag = false;
                 // 更新列表

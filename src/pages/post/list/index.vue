@@ -175,7 +175,11 @@ export default defineComponent({
                             type: 'success',
                             message: '删除成功',
                         });
-                        this.searchPost();
+
+                        postService.list().then(posts => {
+                            this.posts = posts;
+                            this.searchPost();
+                        })
                     }).catch((e) => {
                         ElMessage({
                             type: 'error',

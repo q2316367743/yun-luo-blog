@@ -29,6 +29,7 @@ export default defineComponent({
 #tag-page {
     display: flex;
     padding: 20px;
+    flex-wrap: wrap;
 
     .tag {
         border: #e8e8e8 solid 1px;
