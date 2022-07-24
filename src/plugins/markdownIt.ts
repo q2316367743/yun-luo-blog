@@ -1,7 +1,6 @@
 import MarkdownIt from 'markdown-it';
 import Token from "markdown-it/lib/token";
 import Renderer from "markdown-it/lib/renderer";
-import { convertFileSrc } from "@tauri-apps/api/tauri";
 
 // $DOCUMENT\\yun-luo-blog\\post-images\\
 const imagePrefixUrl = "https://asset.localhost/D%3A%5CDocuments%5Cyun-luo-blog%5Cpost-images%5C";
