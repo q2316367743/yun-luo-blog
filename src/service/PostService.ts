@@ -35,94 +35,112 @@ export default class TagService {
 
     async insert(post: PostView): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
-            [this.postDao, this.postTagDao, this.tagDao],
+        ["Post", "PostTag", "Tag"],
             async (trans: Transaction) => {
+                console.log('先新增文章')
                 // 先新增文章
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
-                // 先生成目录和文件名
-                post.path = await resolve(await documentDir(), constant.BASE, constant.POST, post.title + ".md");
-                post.fileName = post.title + ".md";
-                // 先插入文章
-                let postId = await postDao.put(this.viewToPost(post, false));
-                console.log('插入完成', postId);
-                // 再插入标签
-                for (let tagName of post.tags) {
-                    let tag = await tagDao.where({ name: tagName }).first();
-                    if (tag) {
-                        // 如果存在标签，则直接插入关系
-                        postTagDao.add({
-                            postId: postId,
-                            tagId: tag.id!
-                        });
-                    } else {
-                        // 不存在标签，则先插入
-                        let tagId = await tagDao.add({
-                            name: tagName,
-                            createTime: new Date()
-                        });
-                        // 之后插入标签
-                        // 如果存在标签，则直接插入关系
-                        postTagDao.add({
-                            postId: postId,
-                            tagId: tagId
-                        });
-                    }
-                }
-                // 此处保存内容
-                savePost(post);
+                await this.insertSelf(post, postDao, postTagDao, tagDao);
             });
+    }
+
+    private async insertSelf(post: PostView,
+        postDao: Dexie.Table<Post, number>,
+        postTagDao: Dexie.Table<PostTag, number>,
+        tagDao: Dexie.Table<Tag, number>) {
+        // 如果没有路径，先生成目录和文件名
+        if (!post.path || post.path === '') {
+            post.path = await resolve(await documentDir(), constant.BASE, constant.POST, post.title + ".md");
+            post.fileName = post.title + ".md";
+            console.log('先生成目录和文件名', post.path, post.fileName);
+        }
+        // 先插入文章
+        let postId = await postDao.put(this.viewToPost(post, false));
+        console.log('插入完成', postId);
+        // 再插入标签
+        for (let tagName of post.tags) {
+            let tag = await tagDao.where({ name: tagName }).first();
+            if (tag) {
+                // 如果存在标签，则直接插入关系
+                postTagDao.add({
+                    postId: postId,
+                    tagId: tag.id!
+                });
+            } else {
+                // 不存在标签，则先插入
+                let tagId = await tagDao.add({
+                    name: tagName,
+                    createTime: new Date()
+                });
+                // 之后插入标签
+                // 如果存在标签，则直接插入关系
+                postTagDao.add({
+                    postId: postId,
+                    tagId: tagId
+                });
+            }
+        }
+        // 此处保存内容
+        savePost(post);
     }
 
     async update(post: PostView): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
-            [this.postDao, this.postTagDao, this.tagDao],
+            ["Post", "PostTag", "Tag"],
             async (trans: Transaction) => {
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
-                // 先查询文章
-                let oldPost = await postDao.where({ id: post.id }).first();
-                if (!oldPost) {
-                    return new Promise<void>((resolve, reject) => {
-                        reject('文章不存在，请刷新后重试');
-                    })
-                }
-                // 先修改文章
-                let postId = await postDao.update(post.id!,
-                    Object.assign(oldPost, post));
-                // 删除旧的分类
-                let oldPostTags = await postTagDao.where({ postId: post.id }).toArray();
-                for (let oldPostTag of oldPostTags) {
-                    await postTagDao.delete(oldPostTag.id!);
-                }
-                // 在插入新的关系
-                for (let tagName of post.tags) {
-                    let tag = await tagDao.where({ name: tagName }).first()
-                    if (tag) {
-                        // 如果存在标签，则直接插入关系
-                        postTagDao.add({
-                            postId: postId,
-                            tagId: tag.id!
-                        });
-                    } else {
-                        // 不存在标签，则先插入
-                        let tagId = await tagDao.add({
-                            name: tagName,
-                            createTime: new Date()
-                        });
-                        // 之后插入标签
-                        // 如果存在标签，则直接插入关系
-                        postTagDao.add({
-                            postId: postId,
-                            tagId: tagId
-                        });
-                    }
-                }
-                // 此处保存内容
-                savePost(post);
+                await this.updateSelf(post, postDao, postTagDao, tagDao);
             });
+    }
+
+    private async updateSelf(post: PostView,
+        postDao: Dexie.Table<Post, number>,
+        postTagDao: Dexie.Table<PostTag, number>,
+        tagDao: Dexie.Table<Tag, number>) {
+        // 先查询文章
+        let oldPost = await postDao.where({ id: post.id }).first();
+        if (!oldPost) {
+            return new Promise<void>((resolve, reject) => {
+                reject('文章不存在，请刷新后重试');
+            })
+        }
+        // 先修改文章
+        let postId = await postDao.update(post.id!,
+            Object.assign(oldPost, post));
+        // 删除旧的分类
+        let oldPostTags = await postTagDao.where({ postId: post.id }).toArray();
+        for (let oldPostTag of oldPostTags) {
+            await postTagDao.delete(oldPostTag.id!);
+        }
+        // 在插入新的关系
+        for (let tagName of post.tags) {
+            let tag = await tagDao.where({ name: tagName }).first()
+            if (tag) {
+                // 如果存在标签，则直接插入关系
+                postTagDao.add({
+                    postId: postId,
+                    tagId: tag.id!
+                });
+            } else {
+                // 不存在标签，则先插入
+                let tagId = await tagDao.add({
+                    name: tagName,
+                    createTime: new Date()
+                });
+                // 之后插入标签
+                // 如果存在标签，则直接插入关系
+                postTagDao.add({
+                    postId: postId,
+                    tagId: tagId
+                });
+            }
+        }
+        // 此处保存内容
+        savePost(post);
     }
 
     async list(): Promise<Array<PostView>> {
@@ -147,16 +165,18 @@ export default class TagService {
                 let view = Object.assign({} as PostView, e);
                 // 处理标签
                 let postTags = postTagMap.get(e.id);
+                let tagList = new Array<string>();
                 if (postTags) {
-                    let tagList = new Array<string>();
                     for (let postTag of postTags) {
                         let tag = tagMap.get(postTag.tagId);
                         if (tag) {
                             tagList.push(tag.name);
                         }
                     }
-                    view.tags = tagList;
                 }
+                view.tags = tagList;
+                // TODO: 分类渲染
+                view.categories = new Array<string>();
                 return view;
             }));
         })
@@ -196,8 +216,10 @@ export default class TagService {
                     let post = postPathMap.get(file.path);
                     postView.id = post?.id!;
                     // 存在则修改
+                    console.log("存在则修改")
                     await this.update(postView);
                 } else {
+                    console.log('开始新增')
                     // 不存在则新增
                     await this.insert(postView);
                 }

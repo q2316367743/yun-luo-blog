@@ -1,7 +1,7 @@
 <template>
     <div id="tag-page">
         <div class="tag" v-for="(tag, index) in tagList" :key="index">
-            <span>{{ tag }}</span>
+            <span>{{ tag.name }}</span>
         </div>
     </div>
 </template>

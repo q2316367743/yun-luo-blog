@@ -23,7 +23,6 @@ export default {
     map<T, K extends keyof T>(arr: T[], attrName: K, merge?: (item1: T, item2: T) => T): Map<any, T> {
         let result = new Map<string, T>();
         for (let item of arr) {
-            console.log(item, attrName, item[attrName])
             // @ts-ignore
             if (result.has(item[attrName])) {
                 if (merge) {
