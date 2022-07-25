@@ -2,7 +2,7 @@
     <div id="app">
         <div id="side">
             <div id="logo">云落博客</div>
-            <el-menu default-active="/post/list" @select="menuSelect" router>
+            <el-menu :default-active="defaultActive" @select="menuSelect" router>
                 <el-menu-item index="/post/list">
                     <el-icon>
                         <Document />
@@ -30,6 +30,12 @@
                         <Sell />
                     </el-icon>
                     <span>插件</span>
+                </el-menu-item>
+                <el-menu-item :index="`/config/${blogSetting.type}`">
+                    <el-icon>
+                        <Sell />
+                    </el-icon>
+                    <span>博客设置</span>
                 </el-menu-item>
                 <el-menu-item index="/setting">
                     <el-icon>
@@ -82,6 +88,10 @@ export default defineComponent({
     },
     data: () => {
         return {
+            blogSetting: {
+                type: 'hexo'
+            },
+            defaultActive: ''
         }
     },
     created() {
@@ -111,10 +121,17 @@ export default defineComponent({
                 })
             })
         }
+        // 处理菜单
+        this.defaultActive = this.$route.path;
+        console.log(this.$route);
+        // 博客配置
+        this.blogSetting = useLocalStorage('blogSetting', {
+            type: 'hexo'
+        }).value;
     },
     methods: {
         menuSelect(id: string) {
-            this.menuId = id;
+            this.defaultActive = id;
         }
     }
 })

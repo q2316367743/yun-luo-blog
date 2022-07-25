@@ -27,7 +27,6 @@ function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options
     if (alt.trim() === '') {
         alt = token.content;
     }
-    console.log(src);
     if (src.startsWith('/')) {
         // TODO: 对于相对目录，则需要处理
         src = imagePrefixUrl + src.substring(1);

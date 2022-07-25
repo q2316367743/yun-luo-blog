@@ -12,7 +12,9 @@
         "custom-dictionary"
     ],
     "words": [
-        "dexie"
+        "dexie",
+        "jsyaml",
+        "uncategorized"
     ],
     "ignoreWords": [],
     "import": []
