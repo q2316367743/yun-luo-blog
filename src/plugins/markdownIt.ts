@@ -8,7 +8,6 @@ const imagePrefixUrl = "https://asset.localhost/D%3A%5CDocuments%5Cyun-luo-blog%
 const markdownIt = new MarkdownIt();
 function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options, env: any, self: Renderer): string {
     let token= tokens[0];
-    console.log(token)
     if (!token) {
         return "";
     }

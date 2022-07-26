@@ -196,7 +196,7 @@
             </el-tab-pane>
         </el-tabs>
         <div style="text-align: right;padding: 20px;">
-            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="save">保存</el-button>
         </div>
     </div>
 </template>
@@ -208,6 +208,7 @@ import Constant from "@/global/Constant";
 
 import languages from './components/languages';
 import timezones from './components/timezones';
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
     data: () => ({
@@ -247,6 +248,14 @@ export default defineComponent({
         },
         timezoneSelect(item: string) {
             this.hexo.timezone = item;
+        },
+        save() {
+            FileUtil.writeFile(Constant.PATH.HEXO_CONFIG,
+                this.hexo.render()).then(() => {
+                    ElMessage.success('保存成功');
+                }).catch((e) => {
+                    ElMessage.error("保存失败，" + e);
+                })
         }
     }
 });

@@ -1,4 +1,4 @@
-import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+import { readTextFile, writeTextFile, BaseDirectory } from '@tauri-apps/api/fs';
 
 export default {
 
@@ -6,6 +6,12 @@ export default {
         return readTextFile(path, {
             dir: BaseDirectory.Document
         })
+    },
+
+    writeFile(path: string, content: string): Promise<void> {
+        return writeTextFile(path, content, {
+            dir: BaseDirectory.Document
+        });
     }
 
 }

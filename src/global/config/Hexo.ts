@@ -315,4 +315,13 @@ export default class Hexo {
         }
     }
 
+    /**
+     * 渲染内容
+     */
+    render(): string {
+        return jsyaml.dump(this, {
+            indent: 2
+        })
+    }
+
 }
