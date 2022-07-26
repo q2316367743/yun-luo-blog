@@ -4,8 +4,6 @@ import { ElLoading } from 'element-plus';
 import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 import { resolve, documentDir } from '@tauri-apps/api/path';
 
-import Constant from '@/global/Constant';
-
 import DexieInstance from '@/plugins/dexie';
 import Constant from '@/global/Constant';
 
