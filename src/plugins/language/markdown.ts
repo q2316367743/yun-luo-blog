@@ -4,7 +4,7 @@ import * as monaco from 'monaco-editor';
 // Language definition for Markdown
 // Quite complex definition mostly due to almost full inclusion
 // of the HTML mode (so we can properly match nested HTML tag definitions)
-const token =  {
+const token = {
 	defaultToken: '',
 	tokenPostfix: '.md',
 
@@ -24,6 +24,9 @@ const token =  {
 
 	tokenizer: {
 		root: [
+
+			// hexo专有语法
+			[/^\s*({%)([ ]{1}\S+[ ]{1}\S+[ ]{1}\S+[ ]{1})(%})\s*$/, ['keyword', 'white', 'keyword']],
 
 			// headers (with #)
 			[/^(\s{0,3})(#+)((?:[^\\#]|@escapes)+)((?:#+)?)/, ['white', 'keyword', 'keyword', 'keyword']],
@@ -159,42 +162,146 @@ const token =  {
 } as monaco.languages.IMonarchLanguage;
 
 const config = {
-    brackets: [["{", "}"], ["[", "]"], ["(", ")"]],
-    autoClosingPairs: [{
-        open: "{",
-        close: "}"
-    }, {
-        open: "[",
-        close: "]"
-    }, {
-        open: "(",
-        close: ")"
-    }, {
-        open: '"',
-        close: '"'
-    }, {
-        open: "'",
-        close: "'"
-    }],
-    surroundingPairs: [{
-        open: "{",
-        close: "}"
-    }, {
-        open: "[",
-        close: "]"
-    }, {
-        open: "(",
-        close: ")"
-    }, {
-        open: '"',
-        close: '"'
-    }, {
-        open: "'",
-        close: "'"
-    }],
-    folding: {
-        offSide: !0
-    }
+	brackets: [["{", "}"], ["[", "]"], ["(", ")"], ["{%", "%}"], ["**", "**"]],
+	autoClosingPairs: [{
+		open: "{",
+		close: "}"
+	}, {
+		open: "[",
+		close: "]"
+	}, {
+		open: "(",
+		close: ")"
+	}, {
+		open: '"',
+		close: '"'
+	}, {
+		open: "'",
+		close: "'"
+	}, {
+		open: "*",
+		close: "*"
+	}, {
+		open: "{%",
+		close: "%}"
+	}, {
+		open: "**",
+		close: "**"
+	}],
+	surroundingPairs: [{
+		open: "{",
+		close: "}"
+	}, {
+		open: "[",
+		close: "]"
+	}, {
+		open: "(",
+		close: ")"
+	}, {
+		open: '"',
+		close: '"'
+	}, {
+		open: "'",
+		close: "'"
+	}, {
+		open: "{%",
+		close: "%}"
+	}, {
+		open: "**",
+		close: "**"
+	}],
+	folding: {
+		offSide: !0
+	}
 } as monaco.languages.LanguageConfiguration;
 
-export default { token, config }
+/**
+ * 语法提示
+ */
+const provider = {
+	provideCompletionItems(model: monaco.editor.ITextModel,
+		position: monaco.Position,
+		context: monaco.languages.CompletionContext,
+		token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
+		return {
+			// markdown语法提示
+			suggestions: [{
+				label: '#',
+				kind: monaco.languages.CompletionItemKind.Function,
+				insertText: `# `,
+				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+				detail: '一级标题',
+				range: {
+					startLineNumber: 1,
+					startColumn: 1,
+					endLineNumber: 1,
+					endColumn: 1
+				}
+			}, {
+				label: '#',
+				kind: monaco.languages.CompletionItemKind.Function,
+				insertText: `## `,
+				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+				detail: '二级标题',
+				range: {
+					startLineNumber: 1,
+					startColumn: 1,
+					endLineNumber: 1,
+					endColumn: 1
+				}
+			}, {
+				label: '#',
+				kind: monaco.languages.CompletionItemKind.Function,
+				insertText: `### `,
+				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+				detail: '三级标题',
+				range: {
+					startLineNumber: 1,
+					startColumn: 1,
+					endLineNumber: 1,
+					endColumn: 1
+				}
+			}, {
+				label: '#',
+				kind: monaco.languages.CompletionItemKind.Function,
+				insertText: `#### `,
+				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+				detail: '四级标题',
+				range: {
+					startLineNumber: 1,
+					startColumn: 1,
+					endLineNumber: 1,
+					endColumn: 1
+				}
+			}, {
+				label: '#',
+				kind: monaco.languages.CompletionItemKind.Function,
+				insertText: `##### `,
+				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+				detail: '五级标题',
+				range: {
+					startLineNumber: 1,
+					startColumn: 1,
+					endLineNumber: 1,
+					endColumn: 1
+				}
+			}, {
+				// 图片自动完成
+				label: 'if/else',//触发提示的文本
+				kind: monaco.languages.CompletionItemKind.Function,
+				insertText: '\n#if()\n\n #else\n\n #end',//补全的文本
+				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+				detail: '流程控制',
+				range: {
+					startLineNumber: 1,
+					startColumn: 1,
+					endLineNumber: 1,
+					endColumn: 1
+				}
+			}]
+		}
+	},
+	triggerCharacters: ['#', '!', '.']
+} as monaco.languages.CompletionItemProvider;
+
+export default { token, config, provider }

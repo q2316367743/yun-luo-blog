@@ -1,0 +1,74 @@
+<template>
+    <div ref="container" :style="style"></div>
+</template>
+<script lang="ts">
+import { defineComponent } from "vue";
+import * as monaco from 'monaco-editor';
+import markdown from '@/plugins/language/markdown';
+
+let instance = {} as monaco.editor.IStandaloneCodeEditor;
+
+export default defineComponent({
+    name: 'markdown-editor',
+    props: {
+        modelValue: String,
+    },
+    data: () => ({
+        content: '',
+        style: {
+            width: '100%',
+            height: '100%',
+        }
+    }),
+    watch: {
+        modelValue(newValue) {
+            if (newValue !== instance.getValue()) {
+                instance.setValue(newValue);
+                instance.trigger(instance.getValue(), 'editor.action.formatDocument', null);
+                this.content = newValue;
+            }
+        },
+    },
+    created() {
+        // 创建时注册语言服务
+        monaco.languages.register({ id: 'markdown' });
+        monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
+        monaco.languages.setLanguageConfiguration('markdown', markdown.config);
+        monaco.languages.registerCompletionItemProvider('markdown', markdown.provider);
+        // 语法提示
+    },
+    mounted() {
+        const container = this.$refs.container as HTMLElement;
+        this.style = {
+            width: "100%",
+            height: "calc(100%);"
+        }
+        instance = monaco.editor.create(container, {
+            value: this.modelValue,
+            language: 'markdown',
+            automaticLayout: true
+        });
+        instance.onDidChangeModelContent((e) => {
+            const value = instance.getValue();
+            if (this.content !== value) {
+                this.$emit('update:modelValue', value);
+            }
+            return true;
+        });
+    },
+    methods: {
+        format() {
+            instance.getAction('editor.action.formatDocument').run();
+        },
+        getInstance(): monaco.editor.IStandaloneCodeEditor {
+            return instance;
+        }
+    }
+});
+</script>
+<style lang="less">
+.es-monaco-editor {
+    width: 100%;
+    height: 100%;
+}
+</style>

@@ -13,8 +13,7 @@
                 </div>
             </div>
             <div class="post-new-body">
-                <monaco-editor height="height: calc(100%);" v-model="post.content" language="markdown"
-                    ref="monacoEditor"></monaco-editor>
+                <markdown-editor v-model="post.content" ref="monacoEditor"></markdown-editor>
             </div>
             <div class="post-new-side">
                 <el-popover placement="left" :width="150" trigger="click">
@@ -91,13 +90,13 @@ import TagView from "@/views/TagView";
 import { parsePost, savePost, copyImage } from "@/utils/PostUtil";
 import { postService, tagService } from '@/global/BeanFactory';
 
-import MonacoEditor from '@/components/MonacoEditor/index.vue'
+import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
 import './actUI.css'
 
 export default defineComponent({
     name: 'new-post',
-    components: { MonacoEditor },
+    components: { MarkdownEditor },
     setup() {
         const check = markRaw(Check);
         const promotion = markRaw(Promotion);
@@ -142,7 +141,6 @@ export default defineComponent({
             let postId = parseInt(this.$route.query.id as string);
             postService.info(postId).then(post => {
                 if (post) {
-                    console.log(post)
                     // 存在文章，查询文章详情
                     parsePost(post.path, post.fileName, true).then(post => {
                         this.post = post!;

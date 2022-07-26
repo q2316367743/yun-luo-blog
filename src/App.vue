@@ -76,7 +76,7 @@ import {
     Refresh, DataBoard, Sell, PriceTag, Menu
 } from '@element-plus/icons-vue';
 import { useLocalStorage } from '@vueuse/core';
-import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
+import { readDir } from '@tauri-apps/api/fs';
 import { resolve, documentDir } from '@tauri-apps/api/path';
 
 import { launch } from '@/utils/ApplicationUtil';
@@ -123,7 +123,6 @@ export default defineComponent({
         }
         // 处理菜单
         this.defaultActive = this.$route.path;
-        console.log(this.$route);
         // 博客配置
         this.blogSetting = useLocalStorage('blogSetting', {
             type: 'hexo'
