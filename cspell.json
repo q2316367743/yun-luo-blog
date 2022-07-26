@@ -14,6 +14,8 @@
     "words": [
         "dexie",
         "jsyaml",
+        "prismjs",
+        "titlecase",
         "uncategorized"
     ],
     "ignoreWords": [],

@@ -143,6 +143,94 @@ export default class Hexo {
      */
     default_layout: string = "post";
 
+    /**
+     * 在中文和英文之间加入空格
+     */
+    auto_spacing: boolean = false;
+
+    /**
+     * 	把标题转换为 title case
+     */
+    titlecase: boolean = false;
+
+    external_link: {
+
+        /**
+         * 在新标签中打开链接
+         */
+        enable: boolean;
+
+        /**
+         * 对整个网站（site）生效或仅对文章（post）生效
+         */
+        field: string;
+
+        /**
+         * 需要排除的域名。主域名和子域名如 www 需分别配置
+         */
+        exclude: Array<string>;
+
+    } = {
+            enable: true,
+            field: 'site',
+            exclude: new Array<string>()
+        };
+
+    /**
+     * 把文件名称转换为 (1) 小写或 (2) 大写
+     */
+    filename_case: number = 0;
+
+    /**
+     * 显示草稿
+     */
+    render_drafts: boolean = false;
+
+    /**
+     * 启动<a href="https://hexo.io/zh-cn/docs/asset-folders">Asset 文件夹</a>
+     */
+    post_asset_folder: boolean = false;
+
+    /**
+     * 把链接改为与根目录的相对位址
+     */
+    relative_link: boolean = false;
+
+    /**
+     * 显示未来的文章
+     */
+    future: boolean = true;
+
+    highlight: {
+        enable: boolean
+        line_number: boolean
+        auto_detect: boolean
+        tab_replace: string
+        wrap: boolean
+        hljs: boolean
+    } = {
+            enable: true,
+            line_number: true,
+            auto_detect: false,
+            tab_replace: '',
+            wrap: true,
+            hljs: false,
+        };
+
+    prismjs: {
+        enable: boolean
+        preprocess: boolean
+        line_number: boolean
+        tab_replace: string
+    } = {
+
+            enable: false,
+            preprocess: true,
+            line_number: true,
+            tab_replace: '',
+        }
+
+
     // 分类 & 标签
 
     /**
@@ -220,7 +308,7 @@ export default class Hexo {
     theme: string = "landscape";
 
     constructor(fileContent: string | void) {
-        if (!fileContent && fileContent !== '') {
+        if (fileContent && fileContent !== '') {
             // 解析文件内容
             let yaml = jsyaml.load(fileContent);
             Object.assign(this, yaml);

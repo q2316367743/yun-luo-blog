@@ -33,7 +33,7 @@
                 </el-menu-item>
                 <el-menu-item :index="`/config/${blogSetting.type}`">
                     <el-icon>
-                        <Sell />
+                        <Menu />
                     </el-icon>
                     <span>博客设置</span>
                 </el-menu-item>
@@ -73,7 +73,7 @@
 import { defineComponent } from 'vue'
 import {
     Document, Sugar, Setting, TrendCharts, MoreFilled,
-    Refresh, DataBoard, Sell, PriceTag
+    Refresh, DataBoard, Sell, PriceTag, Menu
 } from '@element-plus/icons-vue';
 import { useLocalStorage } from '@vueuse/core';
 import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
@@ -84,7 +84,7 @@ import Constant from '@/global/Constant';
 
 export default defineComponent({
     components: {
-        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell, PriceTag
+        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell, PriceTag, Menu
     },
     data: () => {
         return {
