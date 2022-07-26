@@ -99,6 +99,7 @@ export default class TagService {
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
                 console.log('更新文章')
+                console.log(post);
                 await this.updateSelf(post, postDao, postTagDao, tagDao, saveContent);
             });
     }
@@ -118,9 +119,9 @@ export default class TagService {
             })
         }
         // 先修改文章
-        console.log('先修改文章')
+        console.log('先修改文章', post)
         let postId = await postDao.update(post.id!,
-            this.viewToPost(oldPost));
+            this.viewToPost(post));
         // 删除旧的分类
         let oldPostTags = await postTagDao.where({ postId: post.id }).toArray();
         for (let oldPostTag of oldPostTags) {

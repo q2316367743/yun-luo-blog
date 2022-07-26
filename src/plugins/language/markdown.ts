@@ -26,7 +26,7 @@ const token = {
 		root: [
 
 			// hexo专有语法
-			[/^\s*({%)([ ]{1}\S+[ ]{1}\S+[ ]{1}\S+[ ]{1})(%})\s*$/, ['keyword', 'white', 'keyword']],
+			[/^\s*({%)(.*)(%})\s*$/, ['keyword', 'white', 'keyword']],
 
 			// headers (with #)
 			[/^(\s{0,3})(#+)((?:[^\\#]|@escapes)+)((?:#+)?)/, ['white', 'keyword', 'keyword', 'keyword']],
