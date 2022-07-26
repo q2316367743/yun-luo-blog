@@ -9,18 +9,13 @@
     </el-form>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw } from "vue";
-import { useLocalStorage } from '@vueuse/core';
+import { defineComponent } from "vue";
+import { useSettingStore } from '@/store/SettingStore';
 
 export default defineComponent({
-    setup() {
-        const blogSetting = useLocalStorage('blogSetting', {
-            type: 'hexo'
-        });
-        return {
-            blogSetting
-        }
-    },
+    data: () => ({
+        blogSetting: useSettingStore().blogSetting
+    }),
     name: 'blog-setting',
     methods: {
     }

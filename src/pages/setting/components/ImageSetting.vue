@@ -39,7 +39,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useSettingStore } from '@/store/SettingStore'
+import { useSettingStore } from '@/store/SettingStore';
 
 export default defineComponent({
     name: 'blog-setting',

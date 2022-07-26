@@ -8,7 +8,7 @@ import {
 import { documentDir, resolve } from '@tauri-apps/api/path';
 
 import PostView from '@/views/PostView';
-import constant from '@/global/constant';
+import Constant from '@/global/Constant';
 import { useSettingStore } from '@/store/SettingStore'
 
 /**
@@ -180,7 +180,7 @@ export async function localImage(imagePath: string): Promise<string> {
     let name = items[items.length - 1];
     // 名字
     name = name.replaceAll(' ', '-');
-    let newPath = await resolve(await documentDir(), constant.BASE, constant.POST_IMAGES, name);
+    let newPath = await resolve(await documentDir(), Constant.BASE, Constant.POST_IMAGES, name);
     writeBinaryFile(newPath, byte, {
         dir: BaseDirectory.Document
     })

@@ -4,10 +4,10 @@ import { ElLoading } from 'element-plus';
 import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 import { resolve, documentDir } from '@tauri-apps/api/path';
 
-import constant from '@/global/constant';
+import Constant from '@/global/Constant';
 
 import DexieInstance from '@/plugins/dexie';
-import constants from '@/global/constant';
+import Constant from '@/global/Constant';
 
 import ArrayUtil from '@/utils/ArrayUtil';
 import { parsePost, savePost } from '@/utils/PostUtil'
@@ -54,7 +54,7 @@ export default class TagService {
         // 如果没有路径，先生成目录和文件名
         console.log('如果没有路径，先生成目录和文件名')
         if (!post.path || post.path === '') {
-            post.path = await resolve(await documentDir(), constant.BASE, constant.POST, post.title + ".md");
+            post.path = await resolve(await documentDir(), Constant.BASE, Constant.POST, post.title + ".md");
             post.fileName = post.title + ".md";
             console.log('先生成目录和文件名', post.path, post.fileName);
         }
@@ -206,7 +206,7 @@ export default class TagService {
         });
         // 获取文件
         let documentPath = await documentDir();
-        let path = await resolve(documentPath, constants.BASE, constants.POST);
+        let path = await resolve(documentPath, Constant.BASE, Constant.POST);
         let files = await readDir(path,
             {
                 dir: BaseDirectory.Document,

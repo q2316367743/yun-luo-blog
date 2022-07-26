@@ -35,7 +35,7 @@ import { documentDir, resolve } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/tauri';
 
 import DateUtil from '@/utils/DateUtil';
-import constant from '@/global/constant';
+import Constant from '@/global/Constant';
 
 interface Log {
 
@@ -101,7 +101,7 @@ export default defineComponent({
             });
             documentDir().then(path => {
                 // 创建配置文件夹
-                resolve(path, constant.BASE, this.type).then(blogPath => {
+                resolve(path, Constant.BASE, this.type).then(blogPath => {
                     createDir(blogPath).then(() => {
                         this.consoleList.push({
                             time: new Date(),
@@ -128,9 +128,9 @@ export default defineComponent({
 
             documentDir().then(path => {
                 // 创建配置文件夹
-                resolve(path, constant.BASE, this.type).then(blogPath => {
+                resolve(path, Constant.BASE, this.type).then(blogPath => {
                     // 新增文件
-                    resolve(blogPath, constant.PACKAGE_JSON).then(packagePath => {
+                    resolve(blogPath, Constant.PACKAGE_JSON).then(packagePath => {
                         writeTextFile(packagePath, packageJson);
                         invoke('npm_install', { currentDir: blogPath }).then(() => {
                             this.consoleList.push({

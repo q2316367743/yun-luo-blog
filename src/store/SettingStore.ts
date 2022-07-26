@@ -40,12 +40,17 @@ const imageSetting = useLocalStorage('imageSetting', {
     }
 });
 
+const blogSetting = useLocalStorage('blogSetting', {
+    type: 'hexo'
+});
+
 export const useSettingStore = defineStore('setting', {
     state: () => {
         return {
             // 全部的文章
             syncSetting: syncSetting.value,
-            imageSetting: imageSetting.value
+            imageSetting: imageSetting.value,
+            blogSetting: blogSetting.value
         }
     },
     getters: {

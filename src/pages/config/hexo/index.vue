@@ -101,7 +101,7 @@
 import { defineComponent } from "vue";
 import Hexo from "@/global/config/Hexo";
 import FileUtil from "@/utils/FileUtil";
-import constant from "@/global/constant";
+import Constant from "@/global/Constant";
 
 import languages from './components/languages';
 import timezones from './components/timezones';
@@ -112,7 +112,7 @@ export default defineComponent({
         activeName: 'site'
     }),
     created() {
-        FileUtil.readFile(constant.PATH.HEXO_CONFIG).then(content => {
+        FileUtil.readFile(Constant.PATH.HEXO_CONFIG).then(content => {
             this.hexo = new Hexo(content);
         })
     },

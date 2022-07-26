@@ -80,7 +80,7 @@ import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 import { resolve, documentDir } from '@tauri-apps/api/path';
 
 import { launch } from '@/utils/ApplicationUtil';
-import constants from '@/global/constant';
+import Constant from '@/global/Constant';
 
 export default defineComponent({
     components: {
@@ -105,7 +105,7 @@ export default defineComponent({
             let type = blogSetting.value.type;
             // 获取项目目录下全部目录
             documentDir().then(documentPath => {
-                resolve(documentPath, constants.BASE).then(path => {
+                resolve(documentPath, Constant.BASE).then(path => {
                     readDir(path).then(files => {
                         for (let file of files) {
                             // 存在，则为文件夹
