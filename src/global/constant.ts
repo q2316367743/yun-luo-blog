@@ -13,7 +13,7 @@ const CONFIG = '.config';
 const CONFIG_PATH = await resolve(BASE_PATH, CONFIG);
 // 图片
 const POST_IMAGES = 'post-images';
-const POST_IMAGES_PATH = await resolve(POST_IMAGES, CONFIG);
+const POST_IMAGES_PATH = await resolve(BASE_PATH, POST_IMAGES);
 // hexo
 const HEXO = 'hexo';
 const HEXO_PATH = await resolve(BASE_PATH, HEXO);
