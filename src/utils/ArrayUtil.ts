@@ -58,5 +58,6 @@ export default {
             }
         }
         return result;
-    }
+    },
+
 }
