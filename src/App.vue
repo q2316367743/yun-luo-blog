@@ -2,7 +2,7 @@
     <div id="app">
         <div id="side">
             <div id="logo">云落博客</div>
-            <el-menu :default-active="defaultActive" @select="menuSelect" router>
+            <el-menu :default-active="defaultActive" router>
                 <el-menu-item index="/post/list">
                     <el-icon>
                         <Document/>
@@ -46,20 +46,29 @@
             </el-menu>
             <div class="footer">
                 <div>
-                    <el-button type="default">
-                        <el-icon>
-                            <DataBoard/>
-                        </el-icon>
-                        <span>预览</span>
-                    </el-button>
-                </div>
-                <div>
-                    <el-button type="primary">
+                    <el-button type="default" @click="sync">
                         <el-icon>
                             <Refresh/>
                         </el-icon>
                         <span>同步</span>
                     </el-button>
+                </div>
+                <div>
+                    <el-dropdown>
+                        <el-button type="primary">
+                            <span>操作</span>
+                            <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                        </el-button>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item>Action 1</el-dropdown-item>
+                                <el-dropdown-item>Action 2</el-dropdown-item>
+                                <el-dropdown-item>Action 3</el-dropdown-item>
+                                <el-dropdown-item>Action 4</el-dropdown-item>
+                                <el-dropdown-item>Action 5</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </div>
             </div>
         </div>
@@ -81,22 +90,23 @@ import {
     Sell,
     Setting,
     Sugar,
-    TrendCharts
+    TrendCharts,
+    ArrowDown
 } from '@element-plus/icons-vue';
-import {useLocalStorage} from '@vueuse/core';
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
     components: {
-        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell, PriceTag, Menu
+        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell, PriceTag, Menu, ArrowDown
     },
     data: () => {
         return {
             blogSetting: {
                 type: 'hexo'
             },
-            defaultActive: ''
+            defaultActive: '、'
         }
     },
     created() {
@@ -106,16 +116,15 @@ export default defineComponent({
                 // TODO: 如果没有初始化，则无法访问：主题。主题设置。插件、博客设置。
             }
         })
-        // 处理菜单
-        this.defaultActive = this.$route.path;
-        // 博客配置
-        this.blogSetting = useLocalStorage('blogSetting', {
-            type: 'hexo'
-        }).value;
     },
     methods: {
-        menuSelect(id: string) {
-            this.defaultActive = id;
+        sync() {
+            // TODO: 同步：将文章复制到目标文件夹 -> 执行构建命令 -> 推送到远程
+            ElMessage({
+                showClose: true,
+                type: 'success',
+                message: '同步成功'
+            })
         }
     }
 })

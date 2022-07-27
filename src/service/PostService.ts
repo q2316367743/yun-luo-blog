@@ -155,19 +155,16 @@ export default class TagService {
         let postTag = await this.postTagDao.where('postId')
             .anyOf(posts.map(e => e.id))
             .toArray();
-        console.log(postTag)
         let tags = await this.tagDao.where('id')
             .anyOf(postTag.map(e => e.tagId))
             .toArray();
         let postTagMap = ArrayUtil.group(postTag, 'postId');
-        console.log(postTagMap)
         let tagMap = ArrayUtil.map(tags, 'id');
         return new Promise<Array<PostView>>((resolve) => {
             resolve(posts.map(e => {
                 let view = Object.assign({} as PostView, e);
                 // 处理标签
                 let postTags = postTagMap.get(e.id);
-                console.log(postTags)
                 let tagList = new Array<string>();
                 if (postTags) {
                     for (let postTag of postTags) {
