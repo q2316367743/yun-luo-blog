@@ -19,6 +19,8 @@ const HEXO = 'hexo';
 const HEXO_PATH = await resolve(BASE_PATH, HEXO);
 const HEXO_CONFIG = '_config.yml';
 const HEXO_CONFIG_PATH = await resolve(HEXO_PATH, HEXO_CONFIG);
+const HEXO_THEME = 'themes';
+const HEXO_THEME_PATH = await resolve(HEXO_PATH, HEXO_THEME);
 
 export default {
     BASE: BASE,
@@ -26,13 +28,14 @@ export default {
     CONFIG: CONFIG,
     HEXO: HEXO,
     POST_IMAGES: POST_IMAGES,
-    PACKAGE_JSON: 'package.json',
+    HEXO_THEME: HEXO_THEME,
     PATH: {
         BASE: BASE_PATH,
         POST: POST_PATH,
         CONFIG: CONFIG_PATH,
         POST_IMAGES: POST_IMAGES_PATH,
         HEXO: HEXO_PATH,
-        HEXO_CONFIG: HEXO_CONFIG_PATH
+        HEXO_CONFIG: HEXO_CONFIG_PATH,
+        HEXO_THEME: HEXO_THEME_PATH
     }
 }

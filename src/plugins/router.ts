@@ -5,8 +5,7 @@ import GuidePage from '@/pages/guide/index.vue';
 import PostListPage from '@/pages/post/list/index.vue';
 import PostNewPage from '@/pages/post/new/index.vue';
 import TagPage from '@/pages/tag/index.vue';
-import ThemeSettingPage from '@/pages/theme/setting/index.vue';
-import PluginPage from '@/pages/plugin/index.vue';
+import CategoryPage from "@/pages/category/index.vue";
 import HexoConfigPage from '@/pages/config/hexo/index.vue';
 import SettingPage from '@/pages/setting/index.vue';
 
@@ -45,19 +44,9 @@ const routes: Array<RouteRecordRaw> = [
         component: TagPage
     },
     {
-        path: '/theme',
-        name: 'theme',
-        component: ThemeSettingPage,
-        children: [{
-            path: '/theme/setting',
-            name: 'theme-setting',
-            component: ThemeSettingPage
-        }]
-    },
-    {
-        path: '/plugin',
-        name: 'plugin',
-        component: PluginPage
+        path: '/category',
+        name: 'category',
+        component: CategoryPage
     },
     {
         path: '/config/hexo',

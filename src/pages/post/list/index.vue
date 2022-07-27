@@ -111,6 +111,7 @@ export default defineComponent({
     }),
     created() {
         postService.list().then(posts => {
+            console.log(posts)
             this.posts = posts;
             this.searchPost();
         })

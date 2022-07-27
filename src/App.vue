@@ -5,7 +5,7 @@
             <el-menu :default-active="defaultActive" router>
                 <el-menu-item index="/post/list">
                     <el-icon>
-                        <Document/>
+                        <document/>
                     </el-icon>
                     <span>文章</span>
                 </el-menu-item>
@@ -15,21 +15,11 @@
                     </el-icon>
                     <span>标签</span>
                 </el-menu-item>
-                <el-sub-menu index="/theme">
-                    <template #title>
-                        <el-icon>
-                            <Sugar/>
-                        </el-icon>
-                        <span>主题</span>
-                    </template>
-                    <el-menu-item index="/theme/list">列表</el-menu-item>
-                    <el-menu-item index="/theme/setting">设置</el-menu-item>
-                </el-sub-menu>
-                <el-menu-item index="/plugin">
+                <el-menu-item index="/category">
                     <el-icon>
-                        <Sell/>
+                        <collection-tag />
                     </el-icon>
-                    <span>插件</span>
+                    <span>分类</span>
                 </el-menu-item>
                 <el-menu-item :index="`/config/${blogSetting.type}`">
                     <el-icon>
@@ -39,7 +29,7 @@
                 </el-menu-item>
                 <el-menu-item index="/setting">
                     <el-icon>
-                        <Setting/>
+                        <setting/>
                     </el-icon>
                     <span>系统设置</span>
                 </el-menu-item>
@@ -48,7 +38,7 @@
                 <div>
                     <el-button type="default" @click="sync">
                         <el-icon>
-                            <Refresh/>
+                            <refresh/>
                         </el-icon>
                         <span>同步</span>
                     </el-button>
@@ -57,7 +47,9 @@
                     <el-dropdown>
                         <el-button type="primary">
                             <span>操作</span>
-                            <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                            <el-icon class="el-icon--right">
+                                <arrow-down/>
+                            </el-icon>
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
@@ -81,16 +73,12 @@
 <script lang='ts'>
 import {defineComponent} from 'vue'
 import {
-    DataBoard,
+    CollectionTag,
     Document,
     Menu,
-    MoreFilled,
     PriceTag,
     Refresh,
-    Sell,
     Setting,
-    Sugar,
-    TrendCharts,
     ArrowDown
 } from '@element-plus/icons-vue';
 
@@ -99,7 +87,7 @@ import {ElMessage} from "element-plus";
 
 export default defineComponent({
     components: {
-        Document, Sugar, Setting, TrendCharts, MoreFilled, Refresh, DataBoard, Sell, PriceTag, Menu, ArrowDown
+        Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag
     },
     data: () => {
         return {

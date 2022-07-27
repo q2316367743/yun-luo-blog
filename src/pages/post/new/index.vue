@@ -1,11 +1,11 @@
 <template>
     <div id="new-post">
         <div class="header">
-            <el-page-header title="列表" :content="post.title" @back="toRouteLink('/post/list')" />
+            <el-page-header title="列表" :content="post.title" @back="toRouteLink('/post/list')"/>
         </div>
         <div class="post-new-main">
             <div class="post-new-title">
-                <el-input v-model="post.title" placeholder="Please input" />
+                <el-input v-model="post.title" placeholder="Please input"/>
                 <div class="option">
                     <el-button class="save">保存草稿</el-button>
                     <el-button class="promotion" type="primary" @click="saveOrPublish">{{ flag ? '发布' : '保存' }}
@@ -46,18 +46,18 @@
                     </el-form-item>
                     <el-form-item label="标签">
                         <el-select v-model="post.tags" multiple filterable allow-create default-first-option
-                            :reserve-keyword="false" style="width: 314px">
-                            <el-option v-for="item in tags" :key="item.id" :label="item.id" :value="item.name" />
+                                   :reserve-keyword="false" style="width: 314px">
+                            <el-option v-for="item in tags" :key="item.id" :label="item.id" :value="item.name"/>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="创建时间">
-                        <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()" />
+                        <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
                     </el-form-item>
                     <el-form-item label="状态">
                         <el-select v-model="post.status">
-                            <el-option :value="1" label="草稿" />
-                            <el-option :value="2" label="发布" />
-                            <el-option :value="3" label="回收站" />
+                            <el-option :value="1" label="草稿"/>
+                            <el-option :value="2" label="发布"/>
+                            <el-option :value="3" label="回收站"/>
                         </el-select>
                     </el-form-item>
                 </el-form>
@@ -74,21 +74,21 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw } from "vue";
-import { Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled }
+import {defineComponent, markRaw} from "vue";
+import {Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled}
     from '@element-plus/icons-vue';
 import highlight from 'highlight.js';
 import 'highlight.js/styles/docco.css'
-import { open } from '@tauri-apps/api/dialog';
+import {open} from '@tauri-apps/api/dialog';
 import * as monaco from 'monaco-editor';
-import { ElLoading, ElMessage } from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 
 import markdownIt from '@/plugins/markdownIt';
 
 import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
-import { parsePost, savePost, copyImage } from "@/utils/PostUtil";
-import { postService, tagService } from '@/global/BeanFactory';
+import {parsePost, savePost, copyImage} from "@/utils/PostUtil";
+import {postService, tagService} from '@/global/BeanFactory';
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
@@ -96,7 +96,7 @@ import './actUI.css'
 
 export default defineComponent({
     name: 'new-post',
-    components: { MarkdownEditor },
+    components: {MarkdownEditor},
     setup() {
         const check = markRaw(Check);
         const promotion = markRaw(Promotion);
@@ -105,7 +105,7 @@ export default defineComponent({
         const moreFilled = markRaw(MoreFilled);
         const tools = markRaw(Tools);
         const starFilled = markRaw(StarFilled);
-        return { check, promotion, infoFilled, pictureFilled, moreFilled, tools, starFilled }
+        return {check, promotion, infoFilled, pictureFilled, moreFilled, tools, starFilled}
     },
     data: () => ({
         post: {
@@ -126,7 +126,7 @@ export default defineComponent({
             content: ''
         } as PostView,
         textLength: 0,
-        tags: new Array<TagView>,
+        tags: new Array < TagView >,
         settingDialog: false,
         previewDialog: false,
         previewContent: '',
@@ -148,7 +148,11 @@ export default defineComponent({
                         this.post.id = postId;
                     });
                 } else {
-                    ElMessage.error('文章不存在，请刷新后重试');
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '文章不存在，请刷新后重试'
+                    });
                     this.$router.push('/post/list');
                 }
             });
@@ -207,13 +211,22 @@ export default defineComponent({
                         forceMoveMarkers: true
                     }]);
                     loading.close();
-                    ElMessage.success('插入成功');
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: '插入成功'
+                    });
 
                 }).catch(e => {
                     console.error(e);
                     loading.close();
-                    ElMessage.error('插入失败，' + e);
-                });;
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '插入失败，' + e
+                    });
+                });
+                ;
             }
         },
         openSetting() {
@@ -236,21 +249,37 @@ export default defineComponent({
         save() {
             postService.update(this.post)
                 .then(() => {
-                    ElMessage.success('保存成功');
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: '保存成功'
+                    });
                     // 更新列表
                 }).catch(e => {
-                    console.error(e);
-                    ElMessage.error('保存失败，' + e);
+                console.error(e);
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '保存失败，' + e
                 });
+            });
         },
         publish() {
             postService.insert(this.post).then(() => {
-                ElMessage.success('发布成功');
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '发布成功'
+                });
                 this.flag = false;
                 // 更新列表
             }).catch(e => {
                 console.error(e);
-                ElMessage.error('发布失败，' + e);
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '发布失败，' + e
+                });
             });
         }
     }
@@ -312,6 +341,7 @@ export default defineComponent({
                 .vditor-reset {
 
                     /*滚动条样式*/
+
                     &::-webkit-scrollbar {
                         width: 4px;
                     }
@@ -349,7 +379,7 @@ export default defineComponent({
                 }
             }
 
-            .el-button+.el-button {
+            .el-button + .el-button {
                 margin-left: 0;
             }
         }

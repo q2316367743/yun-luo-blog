@@ -1,20 +1,22 @@
 <template>
     <div id="tag-page">
         <div class="tag" v-for="(tag, index) in tagList" :key="index">
-            <span>{{ tag.name }}</span>
+            <el-badge :value="tag.postCount">
+                <span>{{ tag.name }}</span>
+            </el-badge>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import { PriceTag } from '@element-plus/icons-vue';
+import {defineComponent} from "vue";
+import {PriceTag} from '@element-plus/icons-vue';
 
-import { tagService } from "@/global/BeanFactory";
+import {tagService} from "@/global/BeanFactory";
 import TagView from '@/views/TagView';
 
 export default defineComponent({
     name: 'tag',
-    components: { PriceTag },
+    components: {PriceTag},
     data: () => ({
         tagList: new Array<TagView>()
     }),

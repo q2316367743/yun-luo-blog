@@ -15,8 +15,9 @@
                     </el-form-item>
                     <el-form-item label="关键词">
                         <el-select v-model="hexo.keywords" multiple filterable allow-create default-first-option
-                            :reserve-keyword="false" placeholder="网站的关键词。支持多个关键词。" style="width: 300px">
-                            <el-option v-for="item in hexo.keywords" :key="item" :label="item" :value="item" />
+                                   :reserve-keyword="false" placeholder="网站的关键词。支持多个关键词。"
+                                   style="width: 300px">
+                            <el-option v-for="item in hexo.keywords" :key="item" :label="item" :value="item"/>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="您的昵称">
@@ -24,7 +25,7 @@
                     </el-form-item>
                     <el-form-item label="语言">
                         <el-autocomplete v-model="hexo.language" :fetch-suggestions="languageSuggestion" clearable
-                            @select="languageSelect">
+                                         @select="languageSelect">
                             <template v-slot="{ item }">
                                 <span>{{ item }}</span>
                             </template>
@@ -32,7 +33,7 @@
                     </el-form-item>
                     <el-form-item label="时区">
                         <el-autocomplete v-model="hexo.timezone" :fetch-suggestions="timezoneSuggestion" clearable
-                            @select="timezoneSelect">
+                                         @select="timezoneSelect">
                             <template v-slot="{ item }">
                                 <span>{{ item }}</span>
                             </template>
@@ -44,52 +45,52 @@
                 <el-form label-width="120px">
                     <el-form-item label="URL">
                         <!--suppress HttpUrlsUsage -->
-                        <el-input v-model="hexo.url" placeholder="网址, 必须以 http:// 或 https:// 开头" />
+                        <el-input v-model="hexo.url" placeholder="网址, 必须以 http:// 或 https:// 开头"/>
                     </el-form-item>
                     <el-form-item label="根目录">
-                        <el-input v-model="hexo.root" placeholder="网站根目录" />
+                        <el-input v-model="hexo.root" placeholder="网站根目录"/>
                     </el-form-item>
                     <el-form-item label="永久链接">
-                        <el-input v-model="hexo.permalink" placeholder="文章的 永久链接 格式" />
+                        <el-input v-model="hexo.permalink" placeholder="文章的 永久链接 格式"/>
                     </el-form-item>
                     <el-form-item label="永久链接默认值">
-                        <el-input v-model="hexo.permalink_defaults" placeholder="永久链接中各部分的默认值" />
+                        <el-input v-model="hexo.permalink_defaults" placeholder="永久链接中各部分的默认值"/>
                     </el-form-item>
                     <el-form-item label="保留index.html">
                         <el-switch v-model="hexo.pretty_urls.trailing_html" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="保留.html">
                         <el-switch v-model="hexo.pretty_urls.trailing_index" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
             <el-tab-pane label="目录" name="directory">
                 <el-form label-width="160px">
                     <el-form-item label="资源文件夹">
-                        <el-input v-model="hexo.source_dir" />
+                        <el-input v-model="hexo.source_dir"/>
                     </el-form-item>
                     <el-form-item label="公共文件夹">
-                        <el-input v-model="hexo.public_dir" />
+                        <el-input v-model="hexo.public_dir"/>
                     </el-form-item>
                     <el-form-item label="标签文件夹">
-                        <el-input v-model="hexo.tag_dir" />
+                        <el-input v-model="hexo.tag_dir"/>
                     </el-form-item>
                     <el-form-item label="归档文件夹">
-                        <el-input v-model="hexo.archive_dir" />
+                        <el-input v-model="hexo.archive_dir"/>
                     </el-form-item>
                     <el-form-item label="分类文件夹">
-                        <el-input v-model="hexo.category_dir" />
+                        <el-input v-model="hexo.category_dir"/>
                     </el-form-item>
                     <el-form-item label="Include code 文件夹">
-                        <el-input v-model="hexo.code_dir" />
+                        <el-input v-model="hexo.code_dir"/>
                     </el-form-item>
                     <el-form-item label="国际化（i18n）文件夹">
-                        <el-input v-model="hexo.i18n_dir" />
+                        <el-input v-model="hexo.i18n_dir"/>
                     </el-form-item>
                     <el-form-item label="跳过指定文件的渲染">
-                        <el-input v-model="hexo.skip_render" />
+                        <el-input v-model="hexo.skip_render"/>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -103,20 +104,20 @@
                     </el-form-item>
                     <el-form-item label="中英文之间加入空格">
                         <el-switch v-model="hexo.auto_spacing" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="把标题转换为title case">
                         <el-switch v-model="hexo.titlecase" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="新标签中打开链接">
                         <el-switch v-model="hexo.external_link.enable" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="生效范围" v-if="hexo.external_link.enable">
                         <el-select v-model="hexo.external_link.field">
-                            <el-option label="整个网站" value="site" />
-                            <el-option label="文章" value="post" />
+                            <el-option label="整个网站" value="site"/>
+                            <el-option label="文章" value="post"/>
                         </el-select>
                     </el-form-item>
                     <!-- <el-form-item label="排除的域名">
@@ -124,26 +125,26 @@
                 </el-form-item> -->
                     <el-form-item label="文件名称转换">
                         <el-select v-model="hexo.filename_case">
-                            <el-option label="不转换" :value="0" />
-                            <el-option label="小写" :value="1" />
-                            <el-option label="大写" :value="2" />
+                            <el-option label="不转换" :value="0"/>
+                            <el-option label="小写" :value="1"/>
+                            <el-option label="大写" :value="2"/>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="显示草稿">
                         <el-switch v-model="hexo.render_drafts" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="启动 Asset 文件夹">
                         <el-switch v-model="hexo.post_asset_folder" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="相对位址">
                         <el-switch v-model="hexo.relative_link" active-text="true" inactive-text="false"
-                            :active-value="true" :inactive-value="false" />
+                                   :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="显示未来的文章">
                         <el-switch v-model="hexo.future" active-text="true" inactive-text="false" :active-value="true"
-                            :inactive-value="false" />
+                                   :inactive-value="false"/>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -170,9 +171,9 @@
                     </el-form-item>
                     <el-form-item label="默认更新时间">
                         <el-select v-model="hexo.updated_option">
-                            <el-option label="mtime" value="mtime" />
-                            <el-option label="date" value="date" />
-                            <el-option label="empty" value="empty" />
+                            <el-option label="mtime" value="mtime"/>
+                            <el-option label="date" value="date"/>
+                            <el-option label="empty" value="empty"/>
                         </el-select>
                     </el-form-item>
                 </el-form>
@@ -191,7 +192,9 @@
             <el-tab-pane label="拓展" name="extensions">
                 <el-form label-width="120px">
                     <el-form-item label="主题">
-                        <el-input v-model="hexo.theme"></el-input>
+                        <el-select v-model="hexo.theme">
+                            <el-option v-for="theme of themeList" :key="theme" :label="theme" :value="theme"/>
+                        </el-select>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -202,23 +205,31 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import Hexo from "@/global/config/Hexo";
 import FileUtil from "@/utils/FileUtil";
 import Constant from "@/global/Constant";
 
 import languages from './components/languages';
 import timezones from './components/timezones';
-import { ElMessage } from "element-plus";
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
     data: () => ({
         hexo: new Hexo(),
-        activeName: 'site'
+        activeName: 'site',
+        themeList: new Array<string>()
     }),
     created() {
         FileUtil.readFile(Constant.PATH.HEXO_CONFIG).then(content => {
             this.hexo = new Hexo(content);
+        });
+        FileUtil.listDir(Constant.PATH.HEXO_THEME).then(files => {
+            for (let file of files) {
+                if (file.children) {
+                    this.themeList.push(file.name!);
+                }
+            }
         })
     },
     methods: {
@@ -253,18 +264,18 @@ export default defineComponent({
         save() {
             FileUtil.writeFile(Constant.PATH.HEXO_CONFIG,
                 this.hexo.render()).then(() => {
-                    ElMessage({
-                        showClose: true,
-                        message: '保存成功',
-                        type: 'success',
-                    })
-                }).catch((e) => {
-                    ElMessage({
-                        showClose: true,
-                        message: "保存失败，" + e,
-                        type: 'error',
-                    })
+                ElMessage({
+                    showClose: true,
+                    message: '保存成功',
+                    type: 'success',
                 })
+            }).catch((e) => {
+                ElMessage({
+                    showClose: true,
+                    message: "保存失败，" + e,
+                    type: 'error',
+                })
+            })
         }
     }
 });
