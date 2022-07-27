@@ -162,54 +162,9 @@ const token = {
 } as monaco.languages.IMonarchLanguage;
 
 const config = {
-	brackets: [["{", "}"], ["[", "]"], ["(", ")"], ["{%", "%}"], ["**", "**"]],
-	autoClosingPairs: [{
-		open: "{",
-		close: "}"
-	}, {
-		open: "[",
-		close: "]"
-	}, {
-		open: "(",
-		close: ")"
-	}, {
-		open: '"',
-		close: '"'
-	}, {
-		open: "'",
-		close: "'"
-	}, {
-		open: "*",
-		close: "*"
-	}, {
-		open: "{%",
-		close: "%}"
-	}, {
-		open: "**",
-		close: "**"
-	}],
-	surroundingPairs: [{
-		open: "{",
-		close: "}"
-	}, {
-		open: "[",
-		close: "]"
-	}, {
-		open: "(",
-		close: ")"
-	}, {
-		open: '"',
-		close: '"'
-	}, {
-		open: "'",
-		close: "'"
-	}, {
-		open: "{%",
-		close: "%}"
-	}, {
-		open: "**",
-		close: "**"
-	}],
+	brackets: [],
+	autoClosingPairs: [],
+	surroundingPairs: [],
 	folding: {
 		offSide: !0
 	}
@@ -219,89 +174,261 @@ const config = {
  * 语法提示
  */
 const provider = {
-	provideCompletionItems(model: monaco.editor.ITextModel,
+	provideCompletionItems(
+		model: monaco.editor.ITextModel,
 		position: monaco.Position,
 		context: monaco.languages.CompletionContext,
-		token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
+		token: monaco.CancellationToken
+	): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
+		// Markdown基础语法提示
+		let suggestions = [{
+			label: '#',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '# ',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '一级标题',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '##',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '## ',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '二级标题',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '###',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '### ',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '三级标题',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '####',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '#### ',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '四级标题',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '#####',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '##### ',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '五级标题',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '######',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '###### ',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '六级标题',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '*',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '*$1*',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '斜体',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '**',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '**$0**',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '加粗',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '***',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '***$1***',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '斜体加粗',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '~~',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '~~$1~~',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '删除线',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '>',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '> $1',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '引用',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '---',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '---',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '引用',
+			range: {
+				startLineNumber: position.lineNumber + 1,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber + 2,
+				endColumn: -1
+			}
+		}, {
+			label: '!',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '![$1]($2)',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '插入图片',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '[',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '[$1]($2)',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '超链接',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '-',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '- $1',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '列表',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '+',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '+ $1',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '列表',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '*',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '* $1',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '列表',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '`',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '`$1`$2',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '单行代码',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '`',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '```$1\n$2\n```\n$3',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: '代码块',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: -1
+			}
+		}, {
+			label: '{',
+			kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: '{% $1 $2 $3 %}',
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+			detail: 'hexo专有语法',
+			range: {
+				startLineNumber: position.lineNumber,
+				startColumn: position.column - 1,
+				endLineNumber: position.lineNumber,
+				endColumn: position.column + 1
+			}
+		}];
+		// 代码块语法提示
+		// 图片提示
 		return {
-			// markdown语法提示
-			suggestions: [{
-				label: '#',
-				kind: monaco.languages.CompletionItemKind.Function,
-				insertText: `# `,
-				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-				detail: '一级标题',
-				range: {
-					startLineNumber: 1,
-					startColumn: 1,
-					endLineNumber: 1,
-					endColumn: 1
-				}
-			}, {
-				label: '#',
-				kind: monaco.languages.CompletionItemKind.Function,
-				insertText: `## `,
-				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-				detail: '二级标题',
-				range: {
-					startLineNumber: 1,
-					startColumn: 1,
-					endLineNumber: 1,
-					endColumn: 1
-				}
-			}, {
-				label: '#',
-				kind: monaco.languages.CompletionItemKind.Function,
-				insertText: `### `,
-				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-				detail: '三级标题',
-				range: {
-					startLineNumber: 1,
-					startColumn: 1,
-					endLineNumber: 1,
-					endColumn: 1
-				}
-			}, {
-				label: '#',
-				kind: monaco.languages.CompletionItemKind.Function,
-				insertText: `#### `,
-				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-				detail: '四级标题',
-				range: {
-					startLineNumber: 1,
-					startColumn: 1,
-					endLineNumber: 1,
-					endColumn: 1
-				}
-			}, {
-				label: '#',
-				kind: monaco.languages.CompletionItemKind.Function,
-				insertText: `##### `,
-				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-				detail: '五级标题',
-				range: {
-					startLineNumber: 1,
-					startColumn: 1,
-					endLineNumber: 1,
-					endColumn: 1
-				}
-			}, {
-				// 图片自动完成
-				label: 'if/else',//触发提示的文本
-				kind: monaco.languages.CompletionItemKind.Function,
-				insertText: '\n#if()\n\n #else\n\n #end',//补全的文本
-				insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-				detail: '流程控制',
-				range: {
-					startLineNumber: 1,
-					startColumn: 1,
-					endLineNumber: 1,
-					endColumn: 1
-				}
-			}]
+			suggestions: suggestions
 		}
 	},
-	triggerCharacters: ['#', '!', '.']
+	triggerCharacters: ['#', '!', '*', '~', '>', '-', '[', '<', '+', '`', '{']
 } as monaco.languages.CompletionItemProvider;
 
 export default { token, config, provider }
