@@ -3,13 +3,6 @@ import * as monaco from 'monaco-editor';
 import FileUtil from "@/utils/FileUtil";
 import Constant from "@/global/Constant";
 
-const imageNames = new Array<string>();
-FileUtil.listDir(Constant.PATH.POST_IMAGES).then(files => {
-    for (let file of files) {
-        imageNames.push(file.name!);
-    }
-})
-
 // Difficulty: "Ultra-Violence"
 // Language definition for Markdown
 // Quite complex definition mostly due to almost full inclusion
@@ -179,6 +172,14 @@ const config = {
         offSide: !0
     }
 } as monaco.languages.LanguageConfiguration;
+
+// 图片
+const imageNames = new Array<string>();
+FileUtil.listDir(Constant.PATH.POST_IMAGES).then(files => {
+    for (let file of files) {
+        imageNames.push(file.name!);
+    }
+});
 
 /**
  * 语法提示
@@ -431,18 +432,18 @@ const provider = {
                 endColumn: position.column + 1
             }
         }];
-        if (context.triggerCharacter && context.triggerCharacter === '/') {
+        if (context.triggerCharacter) {
             let token = model.getValueInRange({
                 startLineNumber: position.lineNumber,
                 startColumn: 0,
                 endLineNumber: position.lineNumber,
                 endColumn: position.column + 1
             });
-            // 对于![]()的图片提供语法提示功能
             if (/!\[\S*]\(\/\)/.test(token)) {
+                // 对于![]()的图片提供语法提示功能
                 for (let imageName of imageNames) {
                     suggestions.push({
-                        label: '/',
+                        label: `/${imageName}`,
                         kind: monaco.languages.CompletionItemKind.Snippet,
                         insertText: `/${imageName}`,
                         insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
@@ -453,18 +454,18 @@ const provider = {
                             endLineNumber: position.lineNumber,
                             endColumn: position.column
                         }
-                    })
+                    });
                 }
             }
-            console.log();
         }
-        // 代码块语法提示
-        // 图片提示
         return {
             suggestions: suggestions
         }
     },
-    triggerCharacters: ['#', '!', '*', '~', '>', '-', '[', '<', '+', '`', '{', '/']
+    triggerCharacters: ['#', '!', '*', '~', '>', '-', '[', '<', '+', '`', '{', '/',
+        // 26个字母
+        'q', 'a', 'z', 'w', 's', 'x', 'e', 'd', 'c', 'r', 'f', 'v', 't', 'g', 'b', 'y',
+        'h', 'n', 'u', 'j', 'm', 'i', 'k', 'o', 'l', 'p']
 } as monaco.languages.CompletionItemProvider;
 
 export default {token, config, provider}

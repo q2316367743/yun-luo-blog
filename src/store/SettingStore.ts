@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { useLocalStorage } from '@vueuse/core';
+import {defineStore} from "pinia";
+import {useLocalStorage} from '@vueuse/core';
 
 let syncSetting = useLocalStorage('syncSetting', {
     platform: "1",
@@ -58,6 +58,5 @@ export const useSettingStore = defineStore('setting', {
             return state.syncSetting;
         },
     },
-    actions: {
-    }
+    actions: {}
 })

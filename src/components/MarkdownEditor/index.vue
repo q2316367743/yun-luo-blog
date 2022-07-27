@@ -29,14 +29,6 @@ export default defineComponent({
             }
         },
     },
-    created() {
-        // 创建时注册语言服务
-        monaco.languages.register({ id: 'markdown' });
-        monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
-        monaco.languages.setLanguageConfiguration('markdown', markdown.config);
-        monaco.languages.registerCompletionItemProvider('markdown', markdown.provider);
-        // 语法提示
-    },
     mounted() {
         const container = this.$refs.container as HTMLElement;
         this.style = {
