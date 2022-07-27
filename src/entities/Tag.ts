@@ -15,4 +15,9 @@ export default interface Tag {
      */
     createTime: Date;
 
+    /**
+     * 更新时间
+     */
+    updateTime: Date;
+
 }

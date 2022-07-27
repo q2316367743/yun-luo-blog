@@ -54,7 +54,6 @@ export default class TagService {
     }
 
     async update(id: number, name: string): Promise<number> {
-        console.log(id, name)
         let tag = await this.tagDao.where({id: id}).first();
         if (!tag) {
             // 标签不存在
@@ -64,7 +63,8 @@ export default class TagService {
         }
         return this.tagDao.update(id, {
             name: name,
-            createTime: tag.createTime
+            createTime: tag.createTime,
+            updateTime: new Date()
         })
     }
 
