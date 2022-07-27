@@ -1,20 +1,14 @@
-import {
-    readTextFile, writeTextFile,
-    readBinaryFile, writeBinaryFile,
-    removeFile,
-    BaseDirectory
-}
-    from '@tauri-apps/api/fs';
-import { documentDir, resolve } from '@tauri-apps/api/path';
-
 import PostView from '@/views/PostView';
 import Constant from '@/global/Constant';
-import { useSettingStore } from '@/store/SettingStore'
+import FileUtil from "@/utils/FileUtil";
+import {useSettingStore} from '@/store/SettingStore'
 
 /**
- * 渲染文章
- * @param path 文章路径
- * @return 文章对象
+ * 解析文章
+ * @param path 文章地址
+ * @param name 文件名，默认文章名
+ * @param renderContent 是否解析渲染内容，默认不解析
+ * @return 文章详情
  */
 export async function parsePost(path: string, name: string, renderContent: boolean = false): Promise<PostView | void> {
     // 默认当前时间
@@ -35,22 +29,20 @@ export async function parsePost(path: string, name: string, renderContent: boole
         disableNunjucks: "",
         lang: ""
     } as PostView;
-    const contents = await readTextFile(path, { dir: BaseDirectory.Document });
+    const contents = await FileUtil.readFile(path);
     let lines = contents.split('\n');
     let start = true;
     let lastIndex = 0;
     for (let index = 0; index < lines.length; index++) {
         let line = lines[index].trim();
-        if (line === '') {
-            lastIndex = index;
-            continue;
-        } else {
+        if (line !== '') {
             // 有值
             if (start) {
                 // 第一个
                 if (line === '---') {
                     start = false;
                 } else {
+                    // 第一个不是---，则无法解析内容
                     lastIndex = index;
                     break;
                 }
@@ -72,9 +64,17 @@ export async function parsePost(path: string, name: string, renderContent: boole
                     } else if (line.startsWith('comments')) {
                     } else if (line.startsWith('tags')) {
                         post.tags = [];
-                        line.split(':')[1].trim().split(',').forEach(e => {
-                            post.tags.push(e.trim())
-                        })
+                        let content = line.split(':')[1].trim();
+                        try {
+                            // 使用json解析
+                            post.tags = JSON.parse(content);
+                        } catch (e) {
+                            console.error(e);
+                            // JSON解析失败，则使用逗号解析
+                            content.split(',').forEach(e => {
+                                post.tags.push(e.trim())
+                            })
+                        }
                     } else if (line.startsWith('categories')) {
                         post.categories = line.split(':')[1].trim().split(',');
                     } else if (line.startsWith('permalink')) {
@@ -90,12 +90,12 @@ export async function parsePost(path: string, name: string, renderContent: boole
                     console.error('异常');
                     console.error(e)
                 }
-                if (index === 15) {
-                    // 最多解析15行
-                    lastIndex = index;
-                    break;
-                }
             }
+        }
+        if (index === 30) {
+            // 最多解析30行
+            lastIndex = index;
+            break;
         }
     }
     if (renderContent) {
@@ -104,11 +104,15 @@ export async function parsePost(path: string, name: string, renderContent: boole
         lines.slice(lastIndex).flatMap(line => post.content = post.content + line + "\n");
     }
     // 读取文章内容
-    return new Promise<PostView | void>((resolve, reject) => {
+    return new Promise<PostView | void>((resolve) => {
         resolve(post);
     });
 }
 
+/**
+ * 将文章保存
+ * @param post 文章内容
+ */
 export async function savePost(post: PostView): Promise<void> {
     // 内容
     let content = "";
@@ -138,20 +142,16 @@ export async function savePost(post: PostView): Promise<void> {
     content += `lang: ${post.lang}\n`;
     content += "---\n"
     content += post.content;
-    return writeTextFile(post.path, content, {
-        dir: BaseDirectory.Document
-    })
+    return FileUtil.writeFile(post.path, content)
 }
 
 export async function deleteByPath(path: string): Promise<void> {
-    return removeFile(path, {
-        dir: BaseDirectory.Document
-    })
+    return FileUtil.removeFile(path);
 }
 
 /**
  * 拷贝本体图片
- * 
+ *
  * @param imagePath 本地图片地址
  * @returns 图片名称
  */
@@ -167,23 +167,19 @@ export async function copyImage(imagePath: string): Promise<string> {
 
 /**
  * 本地图片模式
- * 
+ *
  * @param imagePath 图片地址
  * @returns 图片名称
  */
 export async function localImage(imagePath: string): Promise<string> {
-    let byte = await readBinaryFile(imagePath, {
-        dir: BaseDirectory.Document
-    });
+    let byte = await FileUtil.readBinaryFile(imagePath);
     let tempPath = imagePath.replaceAll('\\', '/');
     let items = tempPath.split('/');
     let name = items[items.length - 1];
     // 名字
     name = name.replaceAll(' ', '-');
-    let newPath = await resolve(await documentDir(), Constant.BASE, Constant.POST_IMAGES, name);
-    writeBinaryFile(newPath, byte, {
-        dir: BaseDirectory.Document
-    })
+    let newPath = await FileUtil.resolve(Constant.PATH.POST_IMAGES, name);
+    await FileUtil.writeBinaryFile(newPath, byte)
     return new Promise<string>((resolve) => {
         resolve(name);
     })

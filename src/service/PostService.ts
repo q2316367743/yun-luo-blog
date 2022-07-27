@@ -1,15 +1,13 @@
-import { Dexie, Transaction } from 'dexie';
-import { ElLoading } from 'element-plus';
+import {Dexie, Transaction} from 'dexie';
+import {ElLoading} from 'element-plus';
 
-import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
-import { resolve, documentDir } from '@tauri-apps/api/path';
 
 import DexieInstance from '@/plugins/dexie';
 import Constant from '@/global/Constant';
 
 import ArrayUtil from '@/utils/ArrayUtil';
-import { parsePost, savePost } from '@/utils/PostUtil'
-import { deleteByPath } from '@/utils/PostUtil'
+import FileUtil from "@/utils/FileUtil";
+import {deleteByPath, parsePost, savePost} from '@/utils/PostUtil'
 
 import Post from '@/entities/Post';
 import PostTag from '@/entities/PostTag';
@@ -45,14 +43,14 @@ export default class TagService {
     }
 
     private async insertSelf(post: PostView,
-        postDao: Dexie.Table<Post, number>,
-        postTagDao: Dexie.Table<PostTag, number>,
-        tagDao: Dexie.Table<Tag, number>,
-        saveContent: boolean) {
+                             postDao: Dexie.Table<Post, number>,
+                             postTagDao: Dexie.Table<PostTag, number>,
+                             tagDao: Dexie.Table<Tag, number>,
+                             saveContent: boolean) {
         // 如果没有路径，先生成目录和文件名
         console.log('如果没有路径，先生成目录和文件名')
         if (!post.path || post.path === '') {
-            post.path = await resolve(await documentDir(), Constant.BASE, Constant.POST, post.title + ".md");
+            post.path = await FileUtil.resolve(Constant.PATH.POST, post.title + ".md");
             post.fileName = post.title + ".md";
             console.log('先生成目录和文件名', post.path, post.fileName);
         }
@@ -61,31 +59,10 @@ export default class TagService {
         let postId = await postDao.put(this.viewToPost(post, false));
         console.log('插入完成', postId);
         // 再插入标签
-        for (let tagName of post.tags) {
-            let tag = await tagDao.where({ name: tagName }).first();
-            if (tag) {
-                // 如果存在标签，则直接插入关系
-                postTagDao.add({
-                    postId: postId,
-                    tagId: tag.id!
-                });
-            } else {
-                // 不存在标签，则先插入
-                let tagId = await tagDao.add({
-                    name: tagName,
-                    createTime: new Date()
-                });
-                // 之后插入标签
-                // 如果存在标签，则直接插入关系
-                postTagDao.add({
-                    postId: postId,
-                    tagId: tagId
-                });
-            }
-        }
+        await this.insertTag(postId, post.tags, postTagDao, tagDao);
         if (saveContent) {
             // 此处保存内容
-            savePost(post);
+            await savePost(post);
         }
     }
 
@@ -103,13 +80,13 @@ export default class TagService {
     }
 
     private async updateSelf(post: PostView,
-        postDao: Dexie.Table<Post, number>,
-        postTagDao: Dexie.Table<PostTag, number>,
-        tagDao: Dexie.Table<Tag, number>,
-        saveContent: boolean) {
+                             postDao: Dexie.Table<Post, number>,
+                             postTagDao: Dexie.Table<PostTag, number>,
+                             tagDao: Dexie.Table<Tag, number>,
+                             saveContent: boolean) {
         // 先查询文章
         console.log('先查询文章', post.id);
-        let oldPost = await postDao.where({ id: post.id }).first();
+        let oldPost = await postDao.where({id: post.id}).first();
         console.log('旧文章', oldPost)
         if (!oldPost) {
             return new Promise<void>((resolve, reject) => {
@@ -121,13 +98,25 @@ export default class TagService {
         let postId = await postDao.update(post.id!,
             this.viewToPost(post));
         // 删除旧的分类
-        let oldPostTags = await postTagDao.where({ postId: post.id }).toArray();
+        let oldPostTags = await postTagDao.where({postId: post.id}).toArray();
         for (let oldPostTag of oldPostTags) {
             await postTagDao.delete(oldPostTag.id!);
         }
         // 在插入新的关系
-        for (let tagName of post.tags) {
-            let tag = await tagDao.where({ name: tagName }).first()
+        await this.insertTag(postId, post.tags, postTagDao, tagDao);
+        if (saveContent) {
+            // 此处保存内容
+            await savePost(post);
+        }
+    }
+
+    private async insertTag(
+        postId: number,
+        tags: Array<string>,
+        postTagDao: Dexie.Table<PostTag, number>,
+        tagDao: Dexie.Table<Tag, number>) {
+        for (let tagName of tags) {
+            let tag = await tagDao.where({name: tagName}).first()
             if (tag) {
                 // 如果存在标签，则直接插入关系
                 postTagDao.add({
@@ -148,17 +137,13 @@ export default class TagService {
                 });
             }
         }
-        if (saveContent) {
-            // 此处保存内容
-            savePost(post);
-        }
     }
 
     async list(): Promise<Array<PostView>> {
         // 查询文章
         let posts = await this.postDao.toArray();
         if (posts.length === 0) {
-            return new Promise<Array<PostView>>((resolve, reject) => {
+            return new Promise<Array<PostView>>((resolve) => {
                 resolve([]);
             });
         }
@@ -171,7 +156,7 @@ export default class TagService {
             .toArray();
         let postTagMap = ArrayUtil.group(postTag, 'postId');
         let tagMap = ArrayUtil.map(tags, 'id');
-        return new Promise<Array<PostView>>((resolve, reject) => {
+        return new Promise<Array<PostView>>((resolve) => {
             resolve(posts.map(e => {
                 let view = Object.assign({} as PostView, e);
                 // 处理标签
@@ -194,7 +179,7 @@ export default class TagService {
     }
 
     info(id: number): Promise<Post | undefined> {
-        return this.postDao.where({ id: id }).first();
+        return this.postDao.where({id: id}).first();
     }
 
     async refresh(): Promise<void> {
@@ -204,14 +189,7 @@ export default class TagService {
             background: 'rgba(0, 0, 0, 0.7)',
         });
         // 获取文件
-        let documentPath = await documentDir();
-        let path = await resolve(documentPath, Constant.BASE, Constant.POST);
-        let files = await readDir(path,
-            {
-                dir: BaseDirectory.Document,
-                // 开启递归遍历
-                recursive: true
-            });
+        let files = await FileUtil.listDir(Constant.PATH.POST, true);
         // 获取全部文章目录
         let posts = await this.postDao.toArray();
         // 删除全部文章
@@ -235,7 +213,7 @@ export default class TagService {
             }
         }
         loading.close();
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>((resolve) => {
             resolve();
         })
     }
@@ -247,7 +225,7 @@ export default class TagService {
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 // 先查询文章
-                let post = await postDao.where({ id: id }).first();
+                let post = await postDao.where({id: id}).first();
                 if (!post) {
                     return new Promise<void>((resolve, reject) => {
                         reject('文章不存在，请刷新后重试');
@@ -256,13 +234,13 @@ export default class TagService {
                 // 删除文章
                 await postDao.delete(post.id);
                 // 删除标签关联
-                let postTags = await postTagDao.where({ postId: post.id }).toArray();
+                let postTags = await postTagDao.where({postId: post.id}).toArray();
                 for (let postTag of postTags) {
                     await postTagDao.delete(postTag.id!);
                 }
                 // 删除内容
                 await deleteByPath(post.path)
-                return new Promise<Post>((resolve, reject) => {
+                return new Promise<Post>((resolve) => {
                     resolve(post!);
                 });
             }) as Promise<Post>;

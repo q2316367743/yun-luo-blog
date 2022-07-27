@@ -11,7 +11,7 @@
         <div class="main">
             <div class="display">
                 <el-scrollbar height="250px">
-                    <p v-for="(item, index) of consoleList" :key="index">- [{{ formatDateTime(item.time, true) }}] - {{
+                    <p v-for="(item, index) of consoleList" :key="index">- [{{ formatDateTime(item.time) }}] - {{
                             item.remark
                     }}</p>
                 </el-scrollbar>
@@ -30,11 +30,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useLocalStorage } from '@vueuse/core';
-import { createDir, writeTextFile } from '@tauri-apps/api/fs';
 import { documentDir, resolve } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/tauri';
 
 import DateUtil from '@/utils/DateUtil';
+import FileUtil from "@/utils/FileUtil";
 import Constant from '@/global/Constant';
 
 interface Log {
@@ -102,7 +102,7 @@ export default defineComponent({
             documentDir().then(path => {
                 // 创建配置文件夹
                 resolve(path, Constant.BASE, this.type).then(blogPath => {
-                    createDir(blogPath).then(() => {
+                    FileUtil.createDir(blogPath).then(() => {
                         this.consoleList.push({
                             time: new Date(),
                             remark: '文件夹【hexo】创建成功'
@@ -131,7 +131,7 @@ export default defineComponent({
                 resolve(path, Constant.BASE, this.type).then(blogPath => {
                     // 新增文件
                     resolve(blogPath, Constant.PACKAGE_JSON).then(packagePath => {
-                        writeTextFile(packagePath, packageJson);
+                        FileUtil.writeFile(packagePath, packageJson);
                         invoke('npm_install', { currentDir: blogPath }).then(() => {
                             this.consoleList.push({
                                 time: new Date(),

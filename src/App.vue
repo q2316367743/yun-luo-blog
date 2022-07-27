@@ -5,20 +5,20 @@
             <el-menu :default-active="defaultActive" @select="menuSelect" router>
                 <el-menu-item index="/post/list">
                     <el-icon>
-                        <Document />
+                        <Document/>
                     </el-icon>
                     <span>文章</span>
                 </el-menu-item>
                 <el-menu-item index="/tag">
                     <el-icon>
-                        <price-tag />
+                        <price-tag/>
                     </el-icon>
                     <span>标签</span>
                 </el-menu-item>
                 <el-sub-menu index="/theme">
                     <template #title>
                         <el-icon>
-                            <Sugar />
+                            <Sugar/>
                         </el-icon>
                         <span>主题</span>
                     </template>
@@ -27,19 +27,19 @@
                 </el-sub-menu>
                 <el-menu-item index="/plugin">
                     <el-icon>
-                        <Sell />
+                        <Sell/>
                     </el-icon>
                     <span>插件</span>
                 </el-menu-item>
                 <el-menu-item :index="`/config/${blogSetting.type}`">
                     <el-icon>
-                        <Menu />
+                        <Menu/>
                     </el-icon>
                     <span>博客设置</span>
                 </el-menu-item>
                 <el-menu-item index="/setting">
                     <el-icon>
-                        <Setting />
+                        <Setting/>
                     </el-icon>
                     <span>系统设置</span>
                 </el-menu-item>
@@ -48,7 +48,7 @@
                 <div>
                     <el-button type="default">
                         <el-icon>
-                            <DataBoard />
+                            <DataBoard/>
                         </el-icon>
                         <span>预览</span>
                     </el-button>
@@ -56,7 +56,7 @@
                 <div>
                     <el-button type="primary">
                         <el-icon>
-                            <Refresh />
+                            <Refresh/>
                         </el-icon>
                         <span>同步</span>
                     </el-button>
@@ -70,16 +70,24 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent } from 'vue'
+import {defineComponent} from 'vue'
 import {
-    Document, Sugar, Setting, TrendCharts, MoreFilled,
-    Refresh, DataBoard, Sell, PriceTag, Menu
+    DataBoard,
+    Document,
+    Menu,
+    MoreFilled,
+    PriceTag,
+    Refresh,
+    Sell,
+    Setting,
+    Sugar,
+    TrendCharts
 } from '@element-plus/icons-vue';
-import { useLocalStorage } from '@vueuse/core';
-import { readDir } from '@tauri-apps/api/fs';
-import { resolve, documentDir } from '@tauri-apps/api/path';
+import {useLocalStorage} from '@vueuse/core';
+import {documentDir, resolve} from '@tauri-apps/api/path';
 
-import { launch } from '@/utils/ApplicationUtil';
+import {launch} from '@/utils/ApplicationUtil';
+import FileUtil from "@/utils/FileUtil";
 import Constant from '@/global/Constant';
 
 export default defineComponent({
@@ -106,7 +114,7 @@ export default defineComponent({
             // 获取项目目录下全部目录
             documentDir().then(documentPath => {
                 resolve(documentPath, Constant.BASE).then(path => {
-                    readDir(path).then(files => {
+                    FileUtil.listDir(path).then(files => {
                         for (let file of files) {
                             // 存在，则为文件夹
                             if (file.children && file.name === type) {
