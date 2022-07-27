@@ -54,7 +54,7 @@ export default {
                 result.get(item[attrName])?.push(item);
             } else {
                 // @ts-ignore
-                result.set(item[attrName], []);
+                result.set(item[attrName], [item]);
             }
         }
         return result;

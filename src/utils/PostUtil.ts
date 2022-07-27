@@ -124,16 +124,12 @@ export async function savePost(post: PostView): Promise<void> {
     content += `comments: ${post.comments}\n`;
     if (post.tags && post.tags.length > 0) {
         content += `tags: `;
-        for (let tag of post.tags) {
-            content += tag;
-        }
+        content += post.tags.join(',');
         content += `\n`;
     }
     if (post.categories && post.categories.length > 0) {
         content += `categories: `;
-        for (let category of post.categories) {
-            content += category;
-        }
+        content += post.categories.join(',');
         content += `\n`;
     }
     content += `permalink: ${post.permalink}\n`;
@@ -142,6 +138,7 @@ export async function savePost(post: PostView): Promise<void> {
     content += `lang: ${post.lang}\n`;
     content += "---\n"
     content += post.content;
+    console.log('处理完成，开始保存')
     return FileUtil.writeFile(post.path, content)
 }
 

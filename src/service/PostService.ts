@@ -62,7 +62,7 @@ export default class TagService {
         await this.insertTag(postId, post.tags, postTagDao, tagDao);
         if (saveContent) {
             // 此处保存内容
-            await savePost(post);
+            savePost(post).then();
         }
     }
 
@@ -79,11 +79,12 @@ export default class TagService {
             });
     }
 
-    private async updateSelf(post: PostView,
-                             postDao: Dexie.Table<Post, number>,
-                             postTagDao: Dexie.Table<PostTag, number>,
-                             tagDao: Dexie.Table<Tag, number>,
-                             saveContent: boolean) {
+    private async updateSelf(
+        post: PostView,
+        postDao: Dexie.Table<Post, number>,
+        postTagDao: Dexie.Table<PostTag, number>,
+        tagDao: Dexie.Table<Tag, number>,
+        saveContent: boolean): Promise<void> {
         // 先查询文章
         console.log('先查询文章', post.id);
         let oldPost = await postDao.where({id: post.id}).first();
@@ -98,15 +99,18 @@ export default class TagService {
         let postId = await postDao.update(post.id!,
             this.viewToPost(post));
         // 删除旧的分类
+        console.log('删除旧的分类')
         let oldPostTags = await postTagDao.where({postId: post.id}).toArray();
         for (let oldPostTag of oldPostTags) {
             await postTagDao.delete(oldPostTag.id!);
         }
         // 在插入新的关系
+        console.log('在插入新的关系')
         await this.insertTag(postId, post.tags, postTagDao, tagDao);
         if (saveContent) {
             // 此处保存内容
-            await savePost(post);
+            console.log('此处保存内容')
+            savePost(post).then();
         }
     }
 
@@ -151,16 +155,19 @@ export default class TagService {
         let postTag = await this.postTagDao.where('postId')
             .anyOf(posts.map(e => e.id))
             .toArray();
+        console.log(postTag)
         let tags = await this.tagDao.where('id')
             .anyOf(postTag.map(e => e.tagId))
             .toArray();
         let postTagMap = ArrayUtil.group(postTag, 'postId');
+        console.log(postTagMap)
         let tagMap = ArrayUtil.map(tags, 'id');
         return new Promise<Array<PostView>>((resolve) => {
             resolve(posts.map(e => {
                 let view = Object.assign({} as PostView, e);
                 // 处理标签
                 let postTags = postTagMap.get(e.id);
+                console.log(postTags)
                 let tagList = new Array<string>();
                 if (postTags) {
                     for (let postTag of postTags) {
@@ -195,6 +202,11 @@ export default class TagService {
         // 删除全部文章
         for (let post of posts) {
             this.postDao.delete(post.id);
+        }
+        // 删除全部标签关系
+        let postTags = await this.postTagDao.where("postId").anyOf(posts.map(e => e.id)).toArray();
+        for (let postTag of postTags) {
+            this.postTagDao.delete(postTag.id!);
         }
         let index = 0;
         for (let file of files) {

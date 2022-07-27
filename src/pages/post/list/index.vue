@@ -52,7 +52,7 @@
                                     <el-icon>
                                         <Calendar />
                                     </el-icon>
-                                    <span>{{ format(post.updated) }}</span>
+                                    <span>{{ format(new Date(post.updated)) }}</span>
                                 </div>
                                 <div class="tag" v-if="post.tags.length > 0">
                                     <el-icon>
@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <div class="option">
-                            <el-button type="danger" link @click="deleteByPath(post.id!)">删除</el-button>
+                            <el-button type="danger" link @click="deleteByPath(post.id)">删除</el-button>
                         </div>
                     </div>
                 </el-checkbox-group>
@@ -169,7 +169,7 @@ export default defineComponent({
             )
                 .then(() => {
                     // 先删除路径
-                    postService.deleteById(id).then(post => {
+                    postService.deleteById(id).then(() => {
                         // 删除成功，准备删除源文件
                         ElMessage({
                             type: 'success',
@@ -217,8 +217,7 @@ export default defineComponent({
         border-bottom: #eeeeee solid 1px;
 
         .left {
-            padding: 5px;
-            padding-left: 26px;
+            padding: 5px 5px 5px 26px;
             font-size: 0.9em;
 
             .left-delete {

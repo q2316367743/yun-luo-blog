@@ -84,11 +84,8 @@ import {
     TrendCharts
 } from '@element-plus/icons-vue';
 import {useLocalStorage} from '@vueuse/core';
-import {documentDir, resolve} from '@tauri-apps/api/path';
 
-import {launch} from '@/utils/ApplicationUtil';
-import FileUtil from "@/utils/FileUtil";
-import Constant from '@/global/Constant';
+import ApplicationUtil from '@/utils/ApplicationUtil';
 
 export default defineComponent({
     components: {
@@ -103,32 +100,12 @@ export default defineComponent({
         }
     },
     created() {
-        launch();
-        let isInit = localStorage.getItem('isInit');
-        if (!isInit) {
-            // 如果不存在相关字段，则进行校验
-            const blogSetting = useLocalStorage('blogSetting', {
-                type: 'hexo'
-            });
-            let type = blogSetting.value.type;
-            // 获取项目目录下全部目录
-            documentDir().then(documentPath => {
-                resolve(documentPath, Constant.BASE).then(path => {
-                    FileUtil.listDir(path).then(files => {
-                        for (let file of files) {
-                            // 存在，则为文件夹
-                            if (file.children && file.name === type) {
-                                // 终止处理
-                                return;
-                            }
-                        }
-                        // 执行到这里，正面没有这个文件夹，打开初始化进程
-                        localStorage.removeItem('isInit');
-                        this.$router.push('/guide');
-                    });
-                })
-            })
-        }
+        ApplicationUtil.launch();
+        ApplicationUtil.isInit("").then((isInit) => {
+            if (!isInit) {
+                // TODO: 如果没有初始化，则无法访问：主题。主题设置。插件、博客设置。
+            }
+        })
         // 处理菜单
         this.defaultActive = this.$route.path;
         // 博客配置
