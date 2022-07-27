@@ -147,4 +147,4 @@ const config = {
     }
 } as monaco.languages.LanguageConfiguration;
 
-export default { token, config }
+export default {token, config}

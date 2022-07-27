@@ -347,7 +347,7 @@ const provider = {
 				startLineNumber: position.lineNumber,
 				startColumn: position.column - 1,
 				endLineNumber: position.lineNumber,
-				endColumn: -1
+				endColumn: position.column + 1
 			}
 		}, {
 			label: '-',
@@ -422,13 +422,39 @@ const provider = {
 				endColumn: position.column + 1
 			}
 		}];
+		if (context.triggerCharacter && context.triggerCharacter === '/') {
+			let token = model.getValueInRange({
+				startLineNumber: position.lineNumber,
+				startColumn: 0,
+				endLineNumber: position.lineNumber,
+				endColumn: position.column + 1
+			});
+			console.log(token, /!\[\S*]\(\/\)/.test(token))
+			if (/!\[\S*]\(\/\)/.test(token)) {
+				//此处是超链接
+				suggestions.push({
+					label: '/',
+					kind: monaco.languages.CompletionItemKind.Snippet,
+					insertText: '/test.png',
+					insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+					detail: 'test.png',
+					range: {
+						startLineNumber: position.lineNumber,
+						startColumn: position.column - 1,
+						endLineNumber: position.lineNumber,
+						endColumn: position.column
+					}
+				})
+			}
+			console.log();
+		}
 		// 代码块语法提示
 		// 图片提示
 		return {
 			suggestions: suggestions
 		}
 	},
-	triggerCharacters: ['#', '!', '*', '~', '>', '-', '[', '<', '+', '`', '{']
+	triggerCharacters: ['#', '!', '*', '~', '>', '-', '[', '<', '+', '`', '{', '/']
 } as monaco.languages.CompletionItemProvider;
 
 export default { token, config, provider }

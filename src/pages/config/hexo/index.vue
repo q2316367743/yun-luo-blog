@@ -43,6 +43,7 @@
             <el-tab-pane label="网址" name="url">
                 <el-form label-width="120px">
                     <el-form-item label="URL">
+                        <!--suppress HttpUrlsUsage -->
                         <el-input v-model="hexo.url" placeholder="网址, 必须以 http:// 或 https:// 开头" />
                     </el-form-item>
                     <el-form-item label="根目录">
@@ -252,9 +253,17 @@ export default defineComponent({
         save() {
             FileUtil.writeFile(Constant.PATH.HEXO_CONFIG,
                 this.hexo.render()).then(() => {
-                    ElMessage.success('保存成功');
+                    ElMessage({
+                        showClose: true,
+                        message: '保存成功',
+                        type: 'success',
+                    })
                 }).catch((e) => {
-                    ElMessage.error("保存失败，" + e);
+                    ElMessage({
+                        showClose: true,
+                        message: "保存失败，" + e,
+                        type: 'error',
+                    })
                 })
         }
     }
