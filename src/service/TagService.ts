@@ -1,4 +1,4 @@
-import { Dexie, Transaction } from 'dexie';
+import {Dexie, Transaction} from 'dexie';
 import DexieInstance from '@/plugins/dexie';
 
 import Tag from '@/entities/Tag';
@@ -24,7 +24,7 @@ export default class TagService {
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 // 查询这个标签
-                let tag = await tagDao.where({ name: tagName }).first();
+                let tag = await tagDao.where({name: tagName}).first();
                 if (tag) {
                     // 存在这个标签，插入一个记录
                     if (fromPostId) {
@@ -53,6 +53,21 @@ export default class TagService {
             });
     }
 
+    async update(id: number, name: string): Promise<number> {
+        console.log(id, name)
+        let tag = await this.tagDao.where({id: id}).first();
+        if (!tag) {
+            // 标签不存在
+            return new Promise<number>((resolve, reject) => {
+                reject('标签不存在');
+            })
+        }
+        return this.tagDao.update(id, {
+            name: name,
+            createTime: tag.createTime
+        })
+    }
+
     list(): Promise<TagView[]> {
         return this.dexieInstance.transaction(
             'readwrite',
@@ -62,8 +77,9 @@ export default class TagService {
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
                 let tagViews = new Array<TagView>();
                 let tags = await tagDao.toArray();
-                for(let tag of tags) {
+                for (let tag of tags) {
                     let tagView = {
+                        id: tag.id,
                         name: tag.name,
                         createTime: tag.createTime,
                         postCount: await postTagDao.where({tagId: tag.id}).count()

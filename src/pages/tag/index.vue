@@ -1,49 +1,123 @@
 <template>
     <div id="tag-page">
-        <div class="tag" v-for="(tag, index) in tagList" :key="index">
-            <el-badge :value="tag.postCount">
-                <span>{{ tag.name }}</span>
-            </el-badge>
+        <el-scrollbar>
+            <div class="content">
+                <div class="tag" v-for="(tag, index) in tagList" :key="index" @click="tagUpdate(tag)">
+                    <el-badge :value="tag.postCount">
+                        <span>{{ tag.name }}</span>
+                    </el-badge>
+                </div>
+            </div>
+        </el-scrollbar>
+        <div class="tag-add">
+            <el-button type="primary" circle :icon="plus" @click="tagAdd"></el-button>
         </div>
     </div>
 </template>
 <script lang="ts">
-import {defineComponent} from "vue";
-import {PriceTag} from '@element-plus/icons-vue';
+import {defineComponent, markRaw} from "vue";
+import {PriceTag, Plus} from '@element-plus/icons-vue';
 
 import {tagService} from "@/global/BeanFactory";
 import TagView from '@/views/TagView';
+import {ElMessage, ElMessageBox} from "element-plus";
 
 export default defineComponent({
     name: 'tag',
     components: {PriceTag},
+    setup() {
+        const plus = markRaw(Plus);
+        return {plus}
+    },
     data: () => ({
         tagList: new Array<TagView>()
     }),
     created() {
-        tagService.list().then(tags => {
-            this.tagList = tags;
-        })
+        this.tagListAll();
+    },
+    methods: {
+        tagListAll() {
+            tagService.list().then((tags) => {
+                this.tagList = tags;
+            });
+        },
+        tagAdd() {
+            ElMessageBox.prompt('请输入标签名称', '新增标签', {
+                confirmButtonText: '新增',
+                cancelButtonText: '取消',
+            }).then(({value}) => {
+                tagService.insert(value).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: `新增成功`,
+                    });
+                    this.tagListAll();
+                });
+            }).catch(() => {
+            });
+        },
+        tagUpdate(tag: TagView) {
+            if (tag.postCount !== 0) {
+                // 文章数量不为0，不允许修改
+                return;
+            }
+            ElMessageBox.prompt('请输入标签名称', '修改标签', {
+                confirmButtonText: '修改',
+                cancelButtonText: '取消',
+                inputValue: tag.name
+            }).then(({value}) => {
+                tagService.update(tag.id, value).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: `更新成功`,
+                    });
+                    this.tagListAll();
+                }).catch((e) => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: `更新失败，` + e,
+                    });
+                });
+            });
+        }
     }
 });
 </script>
 <style scoped lang="less">
 #tag-page {
-    display: flex;
     padding: 20px;
-    flex-wrap: wrap;
 
-    .tag {
-        border: #e8e8e8 solid 1px;
-        margin: 4px 6px;
-        padding: 8px;
-        border-radius: 15px;
-        font-size: 0.8em;
-        cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-        &:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
+    .content {
+        display: flex;
+        flex-wrap: wrap;
+
+        .tag {
+            border: #e8e8e8 solid 1px;
+            margin: 4px 6px;
+            padding: 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            cursor: pointer;
+
+            &:hover {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
+            }
         }
+    }
+
+    .tag-add {
+        position: absolute;
+        right: 40px;
+        bottom: 40px;
     }
 }
 </style>
