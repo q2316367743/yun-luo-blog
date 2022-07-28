@@ -19,11 +19,6 @@ export default interface Category {
     parentId: number;
 
     /**
-     * 文章ID
-     */
-    postId: number;
-
-    /**
      * 创建时间
      */
     createTime: Date;

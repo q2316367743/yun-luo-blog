@@ -20,7 +20,7 @@ export default class DexieInstance extends Dexie {
             Post: '++id, title, fileName, &path, status, date, updated, comments, permalink, excerpt, disableNunjucks, lang',
             PostTag: '++id, postId, tagId',
             Tag: '++id, &name, createTime, updateTime',
-            Category: '++id, &name, parentId, postId, createTime, updateTime'
+            Category: '++id, name, parentId, postId, createTime, updateTime'
 
         }).upgrade(trans => {
             console.log(trans)

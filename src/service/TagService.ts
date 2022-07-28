@@ -33,6 +33,11 @@ export default class TagService {
                             postId: fromPostId,
                             tagId: tag.id
                         } as PostTag);
+                    }else {
+                        // 标签存在，还不是插入关系，则是错误
+                        return new Promise<void>((resolve, reject) => {
+                            reject('分类已存在，无法插入');
+                        })
                     }
                 } else {
                     // 没有标签，先新增标签

@@ -11,11 +11,6 @@ export default interface CategoryView {
     name: string;
 
     /**
-     * 文章ID
-     */
-    postId: number;
-
-    /**
      * 创建时间
      */
     createTime: Date;
