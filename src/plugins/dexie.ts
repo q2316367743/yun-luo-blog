@@ -1,9 +1,8 @@
 import Dexie from 'dexie';
 
 import Post from '@/entities/Post';
-
-;
 import PostTag from '@/entities/PostTag';
+import PostCategory from "@/entities/PostCategory";
 import Tag from '@/entities/Tag';
 import Category from "@/entities/Category";
 
@@ -11,6 +10,7 @@ export default class DexieInstance extends Dexie {
 
     private readonly postDao: Dexie.Table<Post, number>;
     private readonly postTagDao: Dexie.Table<PostTag, number>;
+    private readonly postCategoryDao: Dexie.Table<PostCategory, number>;
     private readonly tagDao: Dexie.Table<Tag, number>;
     private readonly categoryDao: Dexie.Table<Category, number>;
 
@@ -19,6 +19,7 @@ export default class DexieInstance extends Dexie {
         this.version(1).stores({
             Post: '++id, title, fileName, &path, status, date, updated, comments, permalink, excerpt, disableNunjucks, lang',
             PostTag: '++id, postId, tagId',
+            PostCategory: '++id, &postId, &categoryId, createTime',
             Tag: '++id, &name, createTime, updateTime',
             Category: '++id, name, parentId, postId, createTime, updateTime'
 
@@ -27,6 +28,7 @@ export default class DexieInstance extends Dexie {
         })
         this.tagDao = this.table('Tag');
         this.postTagDao = this.table('PostTag');
+        this.postCategoryDao = this.table('PostCategory');
         this.postDao = this.table('Post');
         this.categoryDao = this.table('Category');
     }
@@ -37,6 +39,10 @@ export default class DexieInstance extends Dexie {
 
     public getPostTagDao(): Dexie.Table<PostTag, number> {
         return this.postTagDao;
+    }
+
+    public getPostCategoryDao(): Dexie.Table<PostCategory, number> {
+        return this.postCategoryDao;
     }
 
     public getTagDao(): Dexie.Table<Tag, number> {

@@ -6,7 +6,7 @@ export default interface Category {
     /**
      * ID
      */
-    id: number;
+    id?: number;
 
     /**
      * 分类名称
