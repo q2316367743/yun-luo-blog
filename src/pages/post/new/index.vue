@@ -58,13 +58,13 @@
                     </el-form-item>
                     <el-form-item label="标签">
                         <el-select v-model="post.tags" multiple filterable allow-create default-first-option
-                                   :reserve-keyword="false" style="width: 314px">
+                                   :reserve-keyword="false" style="width: 314px" placeholder="请选择标签">
                             <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="分类">
                         <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
-                                     clearable/>
+                                     clearable placeholder="请选择分类"/>
                     </el-form-item>
                     <!-- 其他属性 -->
                     <el-form-item label="额外属性">
