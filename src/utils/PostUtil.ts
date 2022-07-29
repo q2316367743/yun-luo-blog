@@ -2,6 +2,7 @@ import PostView from '@/views/PostView';
 import Constant from '@/global/Constant';
 import FileUtil from "@/utils/FileUtil";
 import {useSettingStore} from '@/store/SettingStore'
+import Entry from "@/global/Entry";
 
 /**
  * 解析文章
@@ -27,7 +28,8 @@ export async function parsePost(path: string, name: string, renderContent: boole
         permalink: "",
         excerpt: "",
         disableNunjucks: "",
-        lang: ""
+        lang: "",
+        extra: new Array<Entry>()
     } as PostView;
     const contents = await FileUtil.readFile(path);
     let lines = contents.split('\n');
@@ -76,7 +78,18 @@ export async function parsePost(path: string, name: string, renderContent: boole
                             })
                         }
                     } else if (line.startsWith('categories')) {
-                        post.categories = line.split(':')[1].trim().split(',');
+                        post.categories = [];
+                        let content = line.split(':')[1].trim();
+                        try {
+                            // 使用json解析
+                            post.categories = JSON.parse(content);
+                        } catch (e) {
+                            console.error(e);
+                            // JSON解析失败，则使用逗号解析
+                            content.split(',').forEach(e => {
+                                post.categories.push(e.trim())
+                            })
+                        }
                     } else if (line.startsWith('permalink')) {
                         post.permalink = line.split(':')[1].trim();
                     } else if (line.startsWith('excerpt')) {
@@ -85,6 +98,16 @@ export async function parsePost(path: string, name: string, renderContent: boole
                         post.disableNunjucks = line.split(':')[1].trim();
                     } else if (line.startsWith('lang')) {
                         post.lang = line.split(':')[1].trim();
+                    } else {
+                        // 其他的，加入拓展
+                        try {
+                            let items = line.split(':');
+                            let key = items[0].trim();
+                            let value = items[1].trim();
+                            post.extra.push({key, value});
+                        } catch (e) {
+                            console.log('解析拓展属性报错', e);
+                        }
                     }
                 } catch (e) {
                     console.error('异常');
@@ -136,6 +159,11 @@ export async function savePost(post: PostView): Promise<void> {
     content += `excerpt: ${post.excerpt}\n`;
     content += `disableNunjucks: ${post.disableNunjucks}\n`;
     content += `lang: ${post.lang}\n`;
+    if (post.extra && post.extra.length > 0) {
+        for (let entry of post.extra) {
+            content += `${entry.key}: ${entry.value}\n`;
+        }
+    }
     content += "---\n"
     content += post.content;
     console.log('处理完成，开始保存')

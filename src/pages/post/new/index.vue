@@ -3,6 +3,7 @@
         <div class="header">
             <el-page-header title="列表" :content="post.title" @back="toRouteLink('/post/list')"/>
         </div>
+        <!-- 页面内容 -->
         <div class="post-new-main">
             <div class="post-new-title">
                 <el-input v-model="post.title" placeholder="Please input"/>
@@ -35,7 +36,8 @@
                 </el-tooltip>
             </div>
         </div>
-        <el-drawer v-model="settingDialog" direction="rtl">
+        <!-- 文章设置 -->
+        <el-drawer v-model="settingDialog" direction="rtl" size="400px">
             <template #header>
                 <h2>文章设置</h2>
             </template>
@@ -60,9 +62,22 @@
                             <el-option :value="3" label="回收站"/>
                         </el-select>
                     </el-form-item>
+                    <!-- 其他属性 -->
+                    <el-form-item label="额外属性">
+                        <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
+                            <el-input v-model="item.key" style="width: 170px;">
+                                <template #prepend>K</template>
+                            </el-input>
+                            <div style="line-height: 32px;">=></div>
+                            <el-input v-model="item.value" style="width: 170px;">
+                                <template #prepend>V</template>
+                            </el-input>
+                        </div>
+                    </el-form-item>
                 </el-form>
             </template>
         </el-drawer>
+        <!-- 文章预览 -->
         <el-drawer v-model="previewDialog" direction="rtl" size="800px">
             <template #header>
                 <h2>{{ post.title }}</h2>
@@ -75,8 +90,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Check, Promotion, InfoFilled, PictureFilled, MoreFilled, Tools, StarFilled}
-    from '@element-plus/icons-vue';
+import {Check, InfoFilled, MoreFilled, PictureFilled, Promotion, StarFilled, Tools} from '@element-plus/icons-vue';
 import highlight from 'highlight.js';
 import 'highlight.js/styles/docco.css'
 import {open} from '@tauri-apps/api/dialog';
@@ -87,12 +101,13 @@ import markdownIt from '@/plugins/markdownIt';
 
 import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
-import {parsePost, savePost, copyImage} from "@/utils/PostUtil";
+import {copyImage, parsePost} from "@/utils/PostUtil";
 import {postService, tagService} from '@/global/BeanFactory';
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
 import './actUI.css'
+import Entry from "@/global/Entry";
 
 export default defineComponent({
     name: 'new-post',
@@ -123,10 +138,11 @@ export default defineComponent({
             excerpt: "",
             disableNunjucks: "",
             lang: "",
+            extra: new Array<Entry>(),
             content: ''
         } as PostView,
         textLength: 0,
-        tags: new Array < TagView >,
+        tags: new Array<TagView>(),
         settingDialog: false,
         previewDialog: false,
         previewContent: '',
@@ -144,6 +160,7 @@ export default defineComponent({
                     // 存在文章，查询文章详情
                     parsePost(post.path, post.fileName, true).then(post => {
                         this.post = post!;
+                        console.log(post)
                         // 重新对post.id赋值
                         this.post.id = postId;
                     });
@@ -226,7 +243,6 @@ export default defineComponent({
                         message: '插入失败，' + e
                     });
                 });
-                ;
             }
         },
         openSetting() {

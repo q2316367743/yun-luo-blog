@@ -1,6 +1,6 @@
 import jsyaml from 'js-yaml';
 import FileUtil from "@/utils/FileUtil";
-import Constant from "@/global/constant";
+import Constant from "@/global/Constant";
 
 // # Hexo Configuration
 // ## Docs: https://hexo.io/docs/configuration.html

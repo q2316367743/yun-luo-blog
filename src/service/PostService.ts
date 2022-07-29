@@ -69,10 +69,13 @@ export default class TagService {
         let postId = await postDao.put(this.viewToPost(post, false));
         console.log('插入完成', postId);
         // 再插入标签
+        console.log('再插入标签')
         await this.insertTag(postId, post.tags, postTagDao, tagDao);
         // 再插入分类
+        console.log('再插入分类')
         await this.insertCategory(postId, post.categories, postCategoryDao, categoryDao);
         if (saveContent) {
+            console.log('此处保存内容')
             // 此处保存内容
             savePost(post).then();
         }
@@ -168,17 +171,31 @@ export default class TagService {
         postCategoryDao: Dexie.Table<PostCategory, number>,
         categoryDao: Dexie.Table<Category, number>): Promise<void> {
         // 先删除旧的分类
-        let oldPostCategory = await postCategoryDao.where({postId: postId}).first();
+        console.log('先删除旧的分类');
+        console.log(postCategoryDao)
+        let oldPostCategory;
+        try {
+            oldPostCategory = await postCategoryDao.where({postId: postId}).first();
+        } catch (e) {
+            console.log('查询旧分类错误', e);
+        }
         if (oldPostCategory) {
             // 如果存在旧的分类关系，则删除旧的
+            console.log(oldPostCategory)
+            console.log('如果存在旧的分类关系，则删除旧的', oldPostCategory, oldPostCategory.id)
             await postCategoryDao.delete(oldPostCategory.id!);
         }
         // 先查询分类，分类按顺序排序，且只插入最后一个分类
+        console.log("先查询分类，分类按顺序排序，且只插入最后一个分类")
         let parentId = 0;
         for (let categoryName of categories) {
             // 先查询这个分类是否存在
-            let category = await categoryDao.where({name: categoryName, parentId: parentId}).first();
+            console.log('先查询这个分类是否存在', categoryName, parentId)
+            let category = await categoryDao.where(['name', 'parentId'])
+                .equals([categoryName, parentId])
+                .first();
             if (category) {
+                console.log('存在分类，则跳过', category.id!)
                 // 存在分类，则跳过
                 parentId = category.id!;
             } else {
@@ -189,6 +206,7 @@ export default class TagService {
                     parentId: parentId,
                     updateTime: new Date(),
                 });
+                console.log('不存在则新增', parentId)
             }
         }
         // 将最后一个分类与文章绑定

@@ -1,21 +1,4 @@
-enum PostStatus {
-
-    /**
-     * 草稿
-     */
-    DRAFT = 1,
-
-    /**
-     * 发布
-     */
-    RELEASE = 2,
-
-    /**
-     * 回收站
-     */
-    RECYCLE = 3
-
-}
+import Entry from "@/global/Entry";
 
 /**
  * hexo文档: https://hexo.io/zh-cn/docs/front-matter
@@ -42,7 +25,7 @@ export default interface PostView {
     /**
      * 文章状态
      */
-    status: PostStatus;
+    status: number;
 
     /**
      * 建立日期 - 文件建立日期，时间戳
@@ -90,6 +73,11 @@ export default interface PostView {
      * @default Inherited from _config.yml
      */
     lang: string;
+
+    /**
+     * 额外的
+     */
+    extra: Array<Entry>;
 
     /**
      * 内容

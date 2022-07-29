@@ -19,9 +19,9 @@ export default class DexieInstance extends Dexie {
         this.version(1).stores({
             Post: '++id, title, fileName, &path, status, date, updated, comments, permalink, excerpt, disableNunjucks, lang',
             PostTag: '++id, postId, tagId',
-            PostCategory: '++id, &postId, &categoryId, createTime',
+            PostCategory: '++id, &postId, &categoryId, [postId+categoryId]',
             Tag: '++id, &name, createTime, updateTime',
-            Category: '++id, name, parentId, postId, createTime, updateTime'
+            Category: '++id, name, parentId, [name+parentId]'
 
         }).upgrade(trans => {
             console.log(trans)

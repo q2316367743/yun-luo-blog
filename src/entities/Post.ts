@@ -65,4 +65,9 @@ export default interface Post {
      */
     lang: string;
 
+    /**
+     * 额外的
+     */
+    extra: Map<string, string>;
+
 }
