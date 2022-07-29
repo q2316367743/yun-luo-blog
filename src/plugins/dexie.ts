@@ -17,10 +17,10 @@ export default class DexieInstance extends Dexie {
     constructor() {
         super('yun-luo-blog');
         this.version(1).stores({
-            Post: '++id, title, fileName, &path, status, date, updated, comments, permalink, excerpt, disableNunjucks, lang',
+            Post: '++id',
             PostTag: '++id, postId, tagId',
-            PostCategory: '++id, &postId, &categoryId, [postId+categoryId]',
-            Tag: '++id, &name, createTime, updateTime',
+            PostCategory: '++id, postId, categoryId, [postId+categoryId]',
+            Tag: '++id, &name',
             Category: '++id, name, parentId, [name+parentId]'
 
         }).upgrade(trans => {

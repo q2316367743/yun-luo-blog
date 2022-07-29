@@ -16,6 +16,7 @@ import Tag from '@/entities/Tag';
 import PostView from '@/views/PostView';
 import PostCategory from "@/entities/PostCategory";
 import Category from "@/entities/Category";
+import {window} from "@tauri-apps/api";
 
 export default class TagService {
 
@@ -37,7 +38,7 @@ export default class TagService {
 
     async insert(post: PostView, saveContent: boolean = true): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
-            ["Post", "PostTag", "Tag"],
+            ["Post", "PostTag", "PostCategory", "Tag", "Category"],
             async (trans: Transaction) => {
                 console.log('先新增文章')
                 // 先新增文章
@@ -83,7 +84,7 @@ export default class TagService {
 
     async update(post: PostView, saveContent: boolean = true): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
-            ["Post", "PostTag", "Tag"],
+            ["Post", "PostTag", "PostCategory", "Tag", "Category"],
             async (trans: Transaction) => {
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
@@ -170,18 +171,11 @@ export default class TagService {
         categories: Array<string>,
         postCategoryDao: Dexie.Table<PostCategory, number>,
         categoryDao: Dexie.Table<Category, number>): Promise<void> {
-        // 先删除旧的分类
-        console.log('先删除旧的分类');
-        console.log(postCategoryDao)
-        let oldPostCategory;
-        try {
-            oldPostCategory = await postCategoryDao.where({postId: postId}).first();
-        } catch (e) {
-            console.log('查询旧分类错误', e);
-        }
+        // 先删除旧的分类关系
+        console.log('先删除旧的分类关系');
+        let oldPostCategory = await this.postCategoryDao.where('postId').equals(postId).first();
         if (oldPostCategory) {
             // 如果存在旧的分类关系，则删除旧的
-            console.log(oldPostCategory)
             console.log('如果存在旧的分类关系，则删除旧的', oldPostCategory, oldPostCategory.id)
             await postCategoryDao.delete(oldPostCategory.id!);
         }
@@ -232,6 +226,11 @@ export default class TagService {
         let tags = await this.tagDao.where('id')
             .anyOf(postTag.map(e => e.tagId))
             .toArray();
+        // 查询全部的分类
+        let postCategories = await this.postCategoryDao.toArray();
+        let postCategoryMap = ArrayUtil.map(postCategories, 'postId');
+        let categories = await this.categoryDao.toArray();
+        let categoryMap = ArrayUtil.map(categories, 'id');
         let postTagMap = ArrayUtil.group(postTag, 'postId');
         let tagMap = ArrayUtil.map(tags, 'id');
         return new Promise<Array<PostView>>((resolve) => {
@@ -251,9 +250,31 @@ export default class TagService {
                 view.tags = tagList;
                 // TODO: 分类渲染
                 view.categories = new Array<string>();
+                // 查询分类
+                let postCategory = postCategoryMap.get(e.id);
+                if (postCategory) {
+                    // 存在分类
+                    this.renderCategoryName(categoryMap, view.categories, postCategory.categoryId);
+                    view.categories = view.categories.reverse();
+                }
                 return view;
             }));
         })
+    }
+
+    private renderCategoryName(
+        categoryMap: Map<number, Category>,
+        categories: Array<string>,
+        id: number): void {
+        let category = categoryMap.get(id);
+        if (category) {
+            categories.push(category.name);
+            if (category.parentId === 0) {
+                return;
+            }else {
+                this.renderCategoryName(categoryMap, categories, category.parentId);
+            }
+        }
     }
 
     info(id: number): Promise<Post | undefined> {

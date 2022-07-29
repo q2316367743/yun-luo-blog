@@ -49,7 +49,7 @@
                     <el-form-item label="标签">
                         <el-select v-model="post.tags" multiple filterable allow-create default-first-option
                                    :reserve-keyword="false" style="width: 314px">
-                            <el-option v-for="item in tags" :key="item.id" :label="item.id" :value="item.name"/>
+                            <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="创建时间">
