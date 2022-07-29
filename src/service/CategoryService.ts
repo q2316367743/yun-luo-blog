@@ -12,7 +12,7 @@ function tree(list: Array<Category>): Array<CategoryView> {
     for (let category of list) {
         if (category.parentId === 0) {
             views.push(getChildren({
-                id: category.id,
+                id: category.id!,
                 name: category.name,
                 createTime: category.createTime,
                 updateTime: category.updateTime,
@@ -27,7 +27,7 @@ function getChildren(categoryView: CategoryView, list: Array<Category>): Categor
     for (let category of list) {
         if (category.parentId === categoryView.id) {
             categoryView.children.push(getChildren({
-                id: category.id,
+                id: category.id!,
                 name: category.name,
                 createTime: category.createTime,
                 updateTime: category.updateTime,
