@@ -46,12 +46,6 @@
                     <el-form-item label="文章网址">
                         <el-input v-model="post.permalink"></el-input>
                     </el-form-item>
-                    <el-form-item label="标签">
-                        <el-select v-model="post.tags" multiple filterable allow-create default-first-option
-                                   :reserve-keyword="false" style="width: 314px">
-                            <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
-                        </el-select>
-                    </el-form-item>
                     <el-form-item label="创建时间">
                         <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
                     </el-form-item>
@@ -61,6 +55,16 @@
                             <el-option :value="2" label="发布"/>
                             <el-option :value="3" label="回收站"/>
                         </el-select>
+                    </el-form-item>
+                    <el-form-item label="标签">
+                        <el-select v-model="post.tags" multiple filterable allow-create default-first-option
+                                   :reserve-keyword="false" style="width: 314px">
+                            <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="分类">
+                        <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
+                                     clearable/>
                     </el-form-item>
                     <!-- 其他属性 -->
                     <el-form-item label="额外属性">
@@ -102,12 +106,13 @@ import markdownIt from '@/plugins/markdownIt';
 import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
 import {copyImage, parsePost} from "@/utils/PostUtil";
-import {postService, tagService} from '@/global/BeanFactory';
+import {postService, tagService, categoryService} from '@/global/BeanFactory';
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
 import './actUI.css'
 import Entry from "@/global/Entry";
+import CategoryView from "@/views/CategoryView";
 
 export default defineComponent({
     name: 'new-post',
@@ -141,6 +146,11 @@ export default defineComponent({
             extra: new Array<Entry>(),
             content: ''
         } as PostView,
+        categoryProps: {
+            checkStrictly: true,
+            value: 'name',
+            label: 'name'
+        },
         textLength: 0,
         tags: new Array<TagView>(),
         settingDialog: false,
@@ -148,10 +158,15 @@ export default defineComponent({
         previewContent: '',
         // true新增，false修改
         flag: true,
+        categoryTree: new Array<CategoryView>()
     }),
     created() {
         tagService.list().then(tags => {
             this.tags = tags;
+        })
+        categoryService.list().then((categoryTree: Array<CategoryView>) => {
+            this.categoryTree = categoryTree;
+            console.log(categoryTree)
         })
         if (this.$route.query.id) {
             let postId = parseInt(this.$route.query.id as string);
