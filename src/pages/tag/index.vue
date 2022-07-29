@@ -2,11 +2,27 @@
     <div id="tag-page">
         <el-scrollbar>
             <div class="content">
-                <div class="tag" v-for="(tag, index) in tagList" :key="index" @click="tagUpdate(tag)">
-                    <el-badge :value="tag.postCount">
-                        <span>{{ tag.name }}</span>
-                    </el-badge>
-                </div>
+                <el-popover
+                    v-for="(tag, index) in tagList" :key="index"
+                    ref="popover"
+                    :width="200"
+                    trigger="contextmenu"
+                >
+                    <template #reference>
+                        <div class="tag">
+                            <el-badge :value="tag.postCount">
+                                <span>{{ tag.name }}</span>
+                            </el-badge>
+                        </div>
+                    </template>
+                    <div>
+                        <el-button type="primary" text @click="tagUpdate(tag)" :disabled="tag.postCount !== 0">修改
+                        </el-button>
+                    </div>
+                    <div>
+                        <el-button type="danger" text>删除</el-button>
+                    </div>
+                </el-popover>
             </div>
         </el-scrollbar>
         <div class="tag-add">
