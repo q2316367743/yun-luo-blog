@@ -5,7 +5,7 @@
                 <el-popover
                     v-for="(tag, index) in tagList" :key="index"
                     ref="popover"
-                    :width="200"
+                    :width="150"
                     trigger="contextmenu"
                 >
                     <template #reference>
@@ -15,11 +15,11 @@
                             </el-badge>
                         </div>
                     </template>
-                    <div>
+                    <div style="text-align: center;">
                         <el-button type="primary" text @click="tagUpdate(tag)" :disabled="tag.postCount !== 0">修改
                         </el-button>
                     </div>
-                    <div>
+                    <div style="text-align: center;">
                         <el-button type="danger" text>删除</el-button>
                     </div>
                 </el-popover>

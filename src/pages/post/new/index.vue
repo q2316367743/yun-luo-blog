@@ -8,7 +8,6 @@
             <div class="post-new-title">
                 <el-input v-model="post.title" placeholder="Please input"/>
                 <div class="option">
-                    <el-button class="save">保存草稿</el-button>
                     <el-button class="promotion" type="primary" @click="saveOrPublish">{{ flag ? '发布' : '保存' }}
                     </el-button>
                 </div>

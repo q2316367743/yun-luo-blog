@@ -25,4 +25,9 @@ export default interface CategoryView {
      */
     children: Array<CategoryView>;
 
+    /**
+     * 文章数量
+     */
+    postCount: number;
+
 }

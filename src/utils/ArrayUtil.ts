@@ -48,16 +48,32 @@ export default {
     group<T, K extends keyof T>(arr: T[], attrName: K): Map<any, T[]> {
         let result = new Map<any, T[]>();
         for (let item of arr) {
-            // @ts-ignore
             if (result.has(item[attrName])) {
-                // @ts-ignore
                 result.get(item[attrName])?.push(item);
             } else {
-                // @ts-ignore
                 result.set(item[attrName], [item]);
             }
         }
         return result;
     },
+
+    /**
+     * 根据指定的属性名进行统计数量
+     *
+     * @param arr 数据
+     * @param attrName 属性名
+     * @return 属性 -> 数量
+     */
+    count<T, K extends keyof T>(arr: T[], attrName: K): Map<any, number> {
+        let result = new Map<any, number>();
+        for (let item of arr) {
+            if (result.has(item[attrName])) {
+                result.set(item[attrName], result.get(item[attrName])! + 1);
+            } else {
+                result.set(item[attrName], 1);
+            }
+        }
+        return result;
+    }
 
 }

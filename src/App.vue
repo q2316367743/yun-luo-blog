@@ -53,11 +53,9 @@
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item>Action 1</el-dropdown-item>
-                                <el-dropdown-item>Action 2</el-dropdown-item>
-                                <el-dropdown-item>Action 3</el-dropdown-item>
-                                <el-dropdown-item>Action 4</el-dropdown-item>
-                                <el-dropdown-item>Action 5</el-dropdown-item>
+                                <el-dropdown-item>打包</el-dropdown-item>
+                                <el-dropdown-item>运行</el-dropdown-item>
+                                <el-dropdown-item>编译</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -94,7 +92,7 @@ export default defineComponent({
             blogSetting: {
                 type: 'hexo'
             },
-            defaultActive: '、'
+            defaultActive: '/post/list'
         }
     },
     created() {
@@ -103,7 +101,7 @@ export default defineComponent({
             if (!isInit) {
                 // TODO: 如果没有初始化，则无法访问：主题。主题设置。插件、博客设置。
             }
-        })
+        });
     },
     methods: {
         sync() {

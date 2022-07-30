@@ -114,13 +114,18 @@ export default class TagService {
         }
         // 先修改文章
         console.log('先修改文章', post)
-        let postId = await postDao.update(post.id!,
-            this.viewToPost(post));
-        // 删除旧的分类
-        console.log('删除旧的分类')
+        let postId = post.id!;
+        await postDao.update(post.id!, this.viewToPost(post));
+        // 删除旧的标签
+        console.log('删除旧的标签')
         let oldPostTags = await postTagDao.where({postId: post.id}).toArray();
         for (let oldPostTag of oldPostTags) {
             await postTagDao.delete(oldPostTag.id!);
+        }
+        // 删除旧的分类
+        let postCategories = await postCategoryDao.where({postId: post.id}).toArray();
+        for (let postCategory of postCategories) {
+            await postCategoryDao.delete(postCategory.id!);
         }
         // 在插入新的关系
         console.log('在插入新的关系')
@@ -271,7 +276,7 @@ export default class TagService {
             categories.push(category.name);
             if (category.parentId === 0) {
                 return;
-            }else {
+            } else {
                 this.renderCategoryName(categoryMap, categories, category.parentId);
             }
         }
@@ -296,9 +301,14 @@ export default class TagService {
             this.postDao.delete(post.id);
         }
         // 删除全部标签关系
-        let postTags = await this.postTagDao.where("postId").anyOf(posts.map(e => e.id)).toArray();
+        let postTags = await this.postTagDao.toArray();
         for (let postTag of postTags) {
             this.postTagDao.delete(postTag.id!);
+        }
+        // 删除旧的分类关系
+        let postCategories = await this.postCategoryDao.toArray();
+        for (let postCategory of postCategories) {
+            this.postCategoryDao.delete(postCategory.id!);
         }
         let index = 0;
         for (let file of files) {
