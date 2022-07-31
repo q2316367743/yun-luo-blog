@@ -16,7 +16,6 @@ import Tag from '@/entities/Tag';
 import PostView from '@/views/PostView';
 import PostCategory from "@/entities/PostCategory";
 import Category from "@/entities/Category";
-import {window} from "@tauri-apps/api";
 
 export default class TagService {
 
@@ -61,7 +60,8 @@ export default class TagService {
         // 如果没有路径，先生成目录和文件名
         console.log('如果没有路径，先生成目录和文件名')
         if (!post.path || post.path === '') {
-            post.path = await FileUtil.resolve(Constant.PATH.POST, post.title + ".md");
+            let postPath = await Constant.PATH.POST();
+            post.path = await FileUtil.resolve(postPath, post.title + ".md");
             post.fileName = post.title + ".md";
             console.log('先生成目录和文件名', post.path, post.fileName);
         }
@@ -293,7 +293,8 @@ export default class TagService {
             background: 'rgba(0, 0, 0, 0.7)',
         });
         // 获取文件
-        let files = await FileUtil.listDir(Constant.PATH.POST, true);
+        let postPath = await Constant.PATH.POST()
+        let files = await FileUtil.listDir(postPath, true);
         // 获取全部文章目录
         let posts = await this.postDao.toArray();
         // 删除全部文章

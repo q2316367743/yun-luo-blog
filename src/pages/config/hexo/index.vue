@@ -221,16 +221,20 @@ export default defineComponent({
         themeList: new Array<string>()
     }),
     created() {
-        FileUtil.readFile(Constant.PATH.HEXO_CONFIG).then(content => {
-            this.hexo = new Hexo(content);
+        Constant.PATH.HEXO_CONFIG().then(path => {
+            FileUtil.readFile(path).then(content => {
+                this.hexo = new Hexo(content);
+            });
         });
-        FileUtil.listDir(Constant.PATH.HEXO_THEME).then(files => {
-            for (let file of files) {
-                if (file.children) {
-                    this.themeList.push(file.name!);
+        Constant.PATH.HEXO_THEME().then(path => {
+            FileUtil.listDir(path).then(files => {
+                for (let file of files) {
+                    if (file.children) {
+                        this.themeList.push(file.name!);
+                    }
                 }
-            }
-        })
+            });
+        });
     },
     methods: {
         languageSuggestion(keyword: string, cb: any) {
@@ -262,18 +266,19 @@ export default defineComponent({
             this.hexo.timezone = item;
         },
         save() {
-            FileUtil.writeFile(Constant.PATH.HEXO_CONFIG,
-                this.hexo.render()).then(() => {
-                ElMessage({
-                    showClose: true,
-                    message: '保存成功',
-                    type: 'success',
-                })
-            }).catch((e) => {
-                ElMessage({
-                    showClose: true,
-                    message: "保存失败，" + e,
-                    type: 'error',
+            Constant.PATH.HEXO_CONFIG().then(path => {
+                FileUtil.writeFile(path, this.hexo.render()).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        message: '保存成功',
+                        type: 'success',
+                    })
+                }).catch((e) => {
+                    ElMessage({
+                        showClose: true,
+                        message: "保存失败，" + e,
+                        type: 'error',
+                    })
                 })
             })
         }

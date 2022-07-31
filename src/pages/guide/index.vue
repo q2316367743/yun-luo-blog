@@ -125,28 +125,6 @@ export default defineComponent({
                 time: new Date(),
                 remark: '开始初始化博客'
             });
-
-            documentDir().then(path => {
-                // 创建配置文件夹
-                resolve(path, Constant.BASE, this.type).then(blogPath => {
-                    // 新增文件
-                    resolve(blogPath, Constant.PACKAGE_JSON).then(packagePath => {
-                        FileUtil.writeFile(packagePath, packageJson);
-                        invoke('npm_install', { currentDir: blogPath }).then(() => {
-                            this.consoleList.push({
-                                time: new Date(),
-                                remark: '初始化npm - 成功'
-                            });
-                        }).catch((e) => {
-                            this.consoleList.push({
-                                time: new Date(),
-                                remark: '初始化npm - 失败，' + e
-                            });
-                        })
-                        this.complete = true;
-                    })
-                });
-            })
         },
         installDependencies() {
             this.complete = true;

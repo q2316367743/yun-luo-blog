@@ -1,26 +1,19 @@
 import {documentDir, resolve} from "@tauri-apps/api/path";
 
-let document = await documentDir();
+let document = "";
 
 // 基础
 const BASE = 'yun-luo-blog';
-const BASE_PATH = await resolve(document, BASE);
 // 文章
 const POST = 'posts';
-const POST_PATH = await resolve(BASE_PATH, POST);
 // 配置
 const CONFIG = '.config';
-const CONFIG_PATH = await resolve(BASE_PATH, CONFIG);
 // 图片
 const POST_IMAGES = 'post-images';
-const POST_IMAGES_PATH = await resolve(BASE_PATH, POST_IMAGES);
 // hexo
 const HEXO = 'hexo';
-const HEXO_PATH = await resolve(BASE_PATH, HEXO);
 const HEXO_CONFIG = '_config.yml';
-const HEXO_CONFIG_PATH = await resolve(HEXO_PATH, HEXO_CONFIG);
 const HEXO_THEME = 'themes';
-const HEXO_THEME_PATH = await resolve(HEXO_PATH, HEXO_THEME);
 
 export default {
     BASE: BASE,
@@ -30,12 +23,33 @@ export default {
     POST_IMAGES: POST_IMAGES,
     HEXO_THEME: HEXO_THEME,
     PATH: {
-        BASE: BASE_PATH,
-        POST: POST_PATH,
-        CONFIG: CONFIG_PATH,
-        POST_IMAGES: POST_IMAGES_PATH,
-        HEXO: HEXO_PATH,
-        HEXO_CONFIG: HEXO_CONFIG_PATH,
-        HEXO_THEME: HEXO_THEME_PATH
-    }
+        BASE: async (): Promise<string> => {
+            let document = await documentDir();
+            return resolve(document, BASE);
+        },
+        POST: async (): Promise<string> => {
+            let document = await documentDir();
+            return resolve(document, BASE, POST);
+        },
+        CONFIG: async (): Promise<string> => {
+            let document = await documentDir();
+            return resolve(document, BASE, CONFIG);
+        },
+        POST_IMAGES: async (): Promise<string> => {
+            let document = await documentDir();
+            return resolve(document, BASE, POST_IMAGES);
+        },
+        HEXO: async (): Promise<string> => {
+            let document = await documentDir();
+            return resolve(document, BASE, HEXO);
+        },
+        HEXO_CONFIG: async (): Promise<string> => {
+            let document = await documentDir();
+            return resolve(document, BASE, HEXO, HEXO_CONFIG);
+        },
+        HEXO_THEME: async (): Promise<string> => {
+            let document = await documentDir();
+            return resolve(document, BASE, HEXO, HEXO_THEME);
+        }
+    },
 }

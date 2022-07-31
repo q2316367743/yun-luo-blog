@@ -17,7 +17,7 @@ export default defineComponent({
         content: '',
         style: {
             width: '100%',
-            height: '100%',
+            height: 'calc(100% - 50px)',
         }
     }),
     watch: {
@@ -31,10 +31,6 @@ export default defineComponent({
     },
     mounted() {
         const container = this.$refs.container as HTMLElement;
-        this.style = {
-            width: "100%",
-            height: "calc(100%);"
-        }
         instance = monaco.editor.create(container, {
             value: this.modelValue,
             language: 'markdown',

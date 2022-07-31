@@ -95,7 +95,8 @@ export default defineComponent({
             }
         },
         openFolder() {
-            openWindow(this.basicSetting.path)
+            openWindow(this.basicSetting.path);
+            this.$router.push('/setting')
         }
     }
 });

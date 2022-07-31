@@ -175,10 +175,12 @@ const config = {
 
 // 图片
 const imageNames = new Array<string>();
-FileUtil.listDir(Constant.PATH.POST_IMAGES).then(files => {
-    for (let file of files) {
-        imageNames.push(file.name!);
-    }
+Constant.PATH.POST_IMAGES().then(path => {
+    FileUtil.listDir(path).then(files => {
+        for (let file of files) {
+            imageNames.push(file.name!);
+        }
+    });
 });
 
 /**

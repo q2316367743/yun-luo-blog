@@ -161,7 +161,11 @@ export async function savePost(post: PostView): Promise<void> {
     content += `lang: ${post.lang}\n`;
     if (post.extra && post.extra.length > 0) {
         for (let entry of post.extra) {
-            content += `${entry.key}: ${entry.value}\n`;
+            // 键存在
+            if (entry.key && entry.key !== '') {
+
+                content += `${entry.key}: ${entry.value}\n`;
+            }
         }
     }
     content += "---\n"
@@ -203,7 +207,8 @@ export async function localImage(imagePath: string): Promise<string> {
     let name = items[items.length - 1];
     // 名字
     name = name.replaceAll(' ', '-');
-    let newPath = await FileUtil.resolve(Constant.PATH.POST_IMAGES, name);
+    let postImage = await Constant.PATH.POST_IMAGES();
+    let newPath = await FileUtil.resolve(postImage, name);
     await FileUtil.writeBinaryFile(newPath, byte)
     return new Promise<string>((resolve) => {
         resolve(name);

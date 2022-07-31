@@ -36,50 +36,60 @@
             </div>
         </div>
         <!-- 文章设置 -->
-        <el-drawer v-model="settingDialog" direction="rtl" size="400px">
+        <el-dialog v-model="settingDialog" top="5vh" draggable :close-on-click-modal="false">
             <template #header>
                 <h2>文章设置</h2>
             </template>
-            <template #default>
-                <el-form v-model="post" label-position="top">
-                    <el-form-item label="文章网址">
-                        <el-input v-model="post.permalink"></el-input>
-                    </el-form-item>
-                    <el-form-item label="创建时间">
-                        <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
-                    </el-form-item>
-                    <el-form-item label="状态">
-                        <el-select v-model="post.status">
-                            <el-option :value="1" label="草稿"/>
-                            <el-option :value="2" label="发布"/>
-                            <el-option :value="3" label="回收站"/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="标签">
-                        <el-select v-model="post.tags" multiple filterable allow-create default-first-option
-                                   :reserve-keyword="false" style="width: 314px" placeholder="请选择标签">
-                            <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="分类">
-                        <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
-                                     clearable placeholder="请选择分类"/>
-                    </el-form-item>
+            <el-tabs v-model="activeName">
+                <el-tab-pane label="常规" name="basic">
+                    <el-form v-model="post" label-position="top">
+                        <el-form-item label="文章网址">
+                            <el-input v-model="post.permalink"></el-input>
+                        </el-form-item>
+                        <el-form-item label="标签">
+                            <el-select v-model="post.tags" multiple filterable allow-create default-first-option
+                                       :reserve-keyword="false" style="width: 314px" placeholder="请选择标签">
+                                <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="分类">
+                            <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
+                                         clearable placeholder="请选择分类"/>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="高级" name="senior">
+                    <el-form v-model="post" label-position="top">
+                        <el-form-item label="创建时间">
+                            <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
+                        </el-form-item>
+                        <el-form-item label="状态">
+                            <el-select v-model="post.status">
+                                <el-option :value="1" label="草稿"/>
+                                <el-option :value="2" label="发布"/>
+                                <el-option :value="3" label="回收站"/>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="SEO" name="seo">Role</el-tab-pane>
+                <el-tab-pane label="额外属性" name="extra">
                     <!-- 其他属性 -->
-                    <el-form-item label="额外属性">
-                        <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
-                            <el-input v-model="item.key" style="width: 170px;">
-                                <template #prepend>K</template>
-                            </el-input>
-                            <div style="line-height: 32px;">=></div>
-                            <el-input v-model="item.value" style="width: 170px;">
-                                <template #prepend>V</template>
-                            </el-input>
-                        </div>
-                    </el-form-item>
-                </el-form>
-            </template>
-        </el-drawer>
+                    <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
+                        <el-input v-model="item.key" style="width: 50%;margin: 5px;">
+                            <template #prepend>K</template>
+                        </el-input>
+                        <el-input v-model="item.value" style="width: 50%;margin: 5px;">
+                            <template #prepend>V</template>
+                            <template #append>
+                                <el-button :icon="close" @click="extraRemove(item.id)"></el-button>
+                            </template>
+                        </el-input>
+                    </div>
+                    <el-button type="primary" @click="extraAdd">新增</el-button>
+                </el-tab-pane>
+            </el-tabs>
+        </el-dialog>
         <!-- 文章预览 -->
         <el-drawer v-model="previewDialog" direction="rtl" size="800px">
             <template #header>
@@ -93,7 +103,10 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Check, InfoFilled, MoreFilled, PictureFilled, Promotion, StarFilled, Tools} from '@element-plus/icons-vue';
+import {
+    Check, InfoFilled, MoreFilled, PictureFilled,
+    Promotion, StarFilled, Tools, Close
+} from '@element-plus/icons-vue';
 import highlight from 'highlight.js';
 import 'highlight.js/styles/docco.css'
 import {open} from '@tauri-apps/api/dialog';
@@ -124,9 +137,11 @@ export default defineComponent({
         const moreFilled = markRaw(MoreFilled);
         const tools = markRaw(Tools);
         const starFilled = markRaw(StarFilled);
-        return {check, promotion, infoFilled, pictureFilled, moreFilled, tools, starFilled}
+        const close = markRaw(Close);
+        return {check, promotion, infoFilled, pictureFilled, moreFilled, tools, starFilled, close}
     },
     data: () => ({
+        activeName: 'basic',
         post: {
             id: 0,
             title: '新文章',
@@ -195,8 +210,23 @@ export default defineComponent({
     },
     mounted() {
         document.onkeydown = (e) => {
-            if (e.ctrlKey && e.code == 'KeyS') {
-                this.saveOrPublish();
+            // 名字插入
+            let monacoEditor = this.$refs.monacoEditor as any;
+            let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;
+            // 各种快捷键
+            if (e.ctrlKey) {
+                if (e.code == 'KeyS') {
+                    this.saveOrPublish();
+                } else if (e.code === 'KeyB') {
+                    // 加粗
+                } else if (e.code === 'KeyI') {
+                    // 斜体
+                } else if (e.code === 'KeyD') {
+                    // 删除这一行
+                } else if (e.code === 'KeyE') {
+                    // 打开预览
+                    this.openPreview();
+                }
             }
         }
     },
@@ -311,6 +341,16 @@ export default defineComponent({
                     message: '发布失败，' + e
                 });
             });
+        },
+        extraAdd() {
+            this.post.extra.push({
+                id: new Date().getTime(),
+                key: "",
+                value: ""
+            })
+        },
+        extraRemove(id: number) {
+            this.post.extra = this.post.extra.filter(e => e.id !== id);
         }
     }
 });

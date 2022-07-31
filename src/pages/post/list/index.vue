@@ -158,7 +158,7 @@ export default defineComponent({
                 })
             })
         },
-        deleteByPath(id: number) {
+        deleteByPath(id?: number) {
             ElMessageBox.confirm(
                 '确定删除此文章，删除后将无法恢复',
                 '警告',
@@ -170,7 +170,7 @@ export default defineComponent({
             )
                 .then(() => {
                     // 先删除路径
-                    postService.deleteById(id).then(() => {
+                    postService.deleteById(id!).then(() => {
                         // 删除成功，准备删除源文件
                         ElMessage({
                             type: 'success',

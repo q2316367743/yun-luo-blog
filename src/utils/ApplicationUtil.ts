@@ -13,17 +13,25 @@ export default {
     launch() {
         // 获取文档目录
         // 创建基础文件夹
-        FileUtil.createDir(Constant.BASE).catch(() => {
-        });
+        Constant.PATH.BASE().then(path => {
+            FileUtil.createDir(path).catch(() => {
+            });
+        })
         // 创建配置文件夹
-        FileUtil.createDir(Constant.PATH.CONFIG).catch(() => {
-        });
+        Constant.PATH.CONFIG().then(path => {
+            FileUtil.createDir(path).catch(() => {
+            });
+        })
         // 文章目录
-        FileUtil.createDir(Constant.PATH.POST).catch(() => {
-        });
+        Constant.PATH.POST().then(path => {
+            FileUtil.createDir(path).catch(() => {
+            });
+        })
         // 图片目录
-        FileUtil.createDir(Constant.PATH.POST_IMAGES).catch(() => {
-        });
+        Constant.PATH.POST_IMAGES().then(path => {
+            FileUtil.createDir(path).catch(() => {
+            });
+        })
     },
 
     /**
