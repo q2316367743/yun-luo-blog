@@ -37,6 +37,10 @@ const imageSetting = useLocalStorage('imageSetting', {
         storageArea: '',
         urlSuffix: '',
         storagePath: ''
+    },
+    picGo: {
+        address: '127.0.0.1',
+        port: 36677
     }
 });
 

@@ -1,6 +1,7 @@
 import PostView from '@/views/PostView';
 import Constant from '@/global/Constant';
 import FileUtil from "@/utils/FileUtil";
+import HttpUtil from "@/utils/HttpUtil";
 import {useSettingStore} from '@/store/SettingStore'
 import Entry from "@/global/Entry";
 
@@ -104,7 +105,10 @@ export async function parsePost(path: string, name: string, renderContent: boole
                             let items = line.split(':');
                             let key = items[0].trim();
                             let value = items[1].trim();
-                            post.extra.push({key, value});
+                            post.extra.push({
+                                id: new Date().getTime(),
+                                key,
+                                value});
                         } catch (e) {
                             console.log('解析拓展属性报错', e);
                         }
@@ -182,35 +186,89 @@ export async function deleteByPath(path: string): Promise<void> {
  * 拷贝本体图片
  *
  * @param imagePath 本地图片地址
- * @returns 图片名称
+ * @returns 新的地址
  */
 export async function copyImage(imagePath: string): Promise<string> {
-    if (useSettingStore().imageSetting.type === 1) {
-        return localImage(imagePath);
+    // 获取类型
+    let type = useSettingStore().imageSetting.type;
+    // 解析文件名
+    let tempPath = imagePath.replaceAll('\\', '/');
+    let items = tempPath.split('/');
+    let name = items[items.length - 1];
+    name = name.replaceAll(' ', '-');
+    let newPath = "";
+    // 处理
+    if (type === 1) {
+        let localPath = await localImage(imagePath, name);
+        newPath = `/${localPath}`
+    }else if (type === 3) {
+        // PicGo
+        let remotePath = await picGoImage(imagePath);
+        if (!remotePath || !remotePath.success) {
+            console.log(remotePath)
+            return new Promise<string>((resolve, reject) => {
+                reject('文件上传错误')
+            })
+        }
+        newPath = remotePath.list[0]
     } else {
         return new Promise<string>((resolve, reject) => {
             reject('图片类型错误');
         });
     }
+    return new Promise<string>((resolve) => {
+        resolve(newPath);
+    })
 }
 
 /**
  * 本地图片模式
  *
  * @param imagePath 图片地址
- * @returns 图片名称
+ * @param name 图片名称
+ * @returns 新的文件地址
  */
-export async function localImage(imagePath: string): Promise<string> {
+async function localImage(imagePath: string, name: string): Promise<string> {
     let byte = await FileUtil.readBinaryFile(imagePath);
-    let tempPath = imagePath.replaceAll('\\', '/');
-    let items = tempPath.split('/');
-    let name = items[items.length - 1];
-    // 名字
-    name = name.replaceAll(' ', '-');
     let postImage = await Constant.PATH.POST_IMAGES();
     let newPath = await FileUtil.resolve(postImage, name);
     await FileUtil.writeBinaryFile(newPath, byte)
     return new Promise<string>((resolve) => {
         resolve(name);
     })
+}
+
+/**
+ * PicGo响应体
+ */
+interface PicGoResult {
+
+    /**
+     * 是否成功
+     */
+    success: boolean;
+
+    /**
+     * 新的文件地址
+     */
+    list: Array<string>;
+
+}
+
+/**
+ * 使用PicGo上传图片
+ *
+ * @param imagePath 图片地址
+ * @returns 上传后的文件地址
+ */
+async function picGoImage(imagePath: string): Promise<PicGoResult> {
+    let imageSetting = useSettingStore().imageSetting;
+    let axiosPromise = await HttpUtil.native({
+        method: 'POST',
+        url: `http://${imageSetting.picGo.address}:${imageSetting.picGo.port}/upload`,
+        data: {
+            list: [imagePath]
+        }
+    });
+    return axiosPromise.data;
 }

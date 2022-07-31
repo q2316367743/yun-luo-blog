@@ -257,7 +257,7 @@ export default defineComponent({
                     text: '复制文件中',
                     background: 'rgba(0, 0, 0, 0.7)',
                 });
-                copyImage(path).then((name) => {
+                copyImage(path).then((newPath) => {
                     // 名字插入
                     let monacoEditor = this.$refs.monacoEditor as any;
                     let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;
@@ -268,7 +268,7 @@ export default defineComponent({
                             endLineNumber: instance.getPosition()!.lineNumber,
                             endColumn: instance.getPosition()!.column
                         },
-                        text: `![在这里插入图片描述](/${name})`,
+                        text: `![在这里插入图片描述](${newPath})`,
                         forceMoveMarkers: true
                     }]);
                     loading.close();

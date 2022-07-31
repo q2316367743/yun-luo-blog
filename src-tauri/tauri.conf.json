@@ -60,6 +60,12 @@
                 "assetScope": [
                     "$DOCUMENT/yun-luo-blog/**/*"
                 ]
+            },
+            "http": {
+                "all": true,
+                "scope": [
+                    "http://*/*"
+                ]
             }
         },
         "bundle": {
