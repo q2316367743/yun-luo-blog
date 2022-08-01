@@ -4,38 +4,19 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import * as monaco from 'monaco-editor';
-import yaml from '@/plugins/language/yaml';
-import markdown from '@/plugins/language/markdown';
 
 let instance = {} as monaco.editor.IStandaloneCodeEditor;
 
 export default defineComponent({
-    name: 'monaco-editor',
+    name: 'yaml-editor',
     props: {
         modelValue: String,
-        placeholder: {
-            type: String,
-            default: ''
-        },
-        width: {
-            type: String,
-            default: '100%'
-        },
-        height: {
-            type: String,
-            default: '200px'
-        },
-        language: {
-            type: String,
-            default: 'json',
-            required: false
-        }
     },
     data: () => ({
         content: '',
         style: {
             width: '100%',
-            height: '100%',
+            height: 'calc(100%)',
         }
     }),
     watch: {
@@ -47,28 +28,14 @@ export default defineComponent({
             }
         },
     },
-    created() {
-        // 创建时注册语言服务
-        monaco.languages.register({id: 'yaml'});
-        monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
-        monaco.languages.setLanguageConfiguration('yaml', yaml.config);
-        monaco.languages.register({ id: 'markdown' });
-        monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
-        monaco.languages.setLanguageConfiguration('markdown', markdown.config);
-        // 语法提示
-    },
     mounted() {
         const container = this.$refs.container as HTMLElement;
-        this.style = {
-            width: this.width,
-            height: this.height
-        }
         instance = monaco.editor.create(container, {
             value: this.modelValue,
-            language: this.language,
+            language: 'hexo',
             automaticLayout: true
         });
-        instance.onDidChangeModelContent((e) => {
+        instance.onDidChangeModelContent(() => {
             const value = instance.getValue();
             if (this.content !== value) {
                 this.$emit('update:modelValue', value);

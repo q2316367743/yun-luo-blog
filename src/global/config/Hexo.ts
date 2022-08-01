@@ -1,11 +1,14 @@
 import jsyaml from 'js-yaml';
-import FileUtil from "@/utils/FileUtil";
-import Constant from "@/global/Constant";
 
 // # Hexo Configuration
 // ## Docs: https://hexo.io/docs/configuration.html
 // ## Source: https://github.com/hexojs/hexo/
 export default class Hexo {
+
+    /**
+     * 实际内容
+     */
+    content: string = "";
 
     // 网站
 
@@ -61,7 +64,7 @@ export default class Hexo {
     root: string = "";
 
     /**
-     * 	文章的<a href="https://hexo.io/zh-cn/docs/permalinks">永久链接</a>格式
+     *    文章的<a href="https://hexo.io/zh-cn/docs/permalinks">永久链接</a>格式
      */
     permalink: string = ":year/:month/:day/:title/";
 
@@ -71,7 +74,7 @@ export default class Hexo {
     permalink_defaults: string = "";
 
     /**
-     * 	改写<a href="https://hexo.io/zh-cn/docs/variables">permalink</a>的值来美化 URL
+     *    改写<a href="https://hexo.io/zh-cn/docs/variables">permalink</a>的值来美化 URL
      */
     pretty_urls: {
 
@@ -85,10 +88,10 @@ export default class Hexo {
          */
         trailing_html: boolean
     } = {
-            trailing_index: true,
+        trailing_index: true,
 
-            trailing_html: true
-        };
+        trailing_html: true
+    };
 
     // 目录
 
@@ -151,7 +154,7 @@ export default class Hexo {
     auto_spacing: boolean = false;
 
     /**
-     * 	把标题转换为 title case
+     *    把标题转换为 title case
      */
     titlecase: boolean = false;
 
@@ -173,10 +176,10 @@ export default class Hexo {
         exclude: Array<string>;
 
     } = {
-            enable: true,
-            field: 'site',
-            exclude: new Array<string>()
-        };
+        enable: true,
+        field: 'site',
+        exclude: new Array<string>()
+    };
 
     /**
      * 把文件名称转换为 (1) 小写或 (2) 大写
@@ -211,13 +214,13 @@ export default class Hexo {
         wrap: boolean
         hljs: boolean
     } = {
-            enable: true,
-            line_number: true,
-            auto_detect: false,
-            tab_replace: '',
-            wrap: true,
-            hljs: false,
-        };
+        enable: true,
+        line_number: true,
+        auto_detect: false,
+        tab_replace: '',
+        wrap: true,
+        hljs: false,
+    };
 
     prismjs: {
         enable: boolean
@@ -226,11 +229,11 @@ export default class Hexo {
         tab_replace: string
     } = {
 
-            enable: false,
-            preprocess: true,
-            line_number: true,
-            tab_replace: '',
-        }
+        enable: false,
+        preprocess: true,
+        line_number: true,
+        tab_replace: '',
+    }
 
 
     // 分类 & 标签
@@ -241,7 +244,7 @@ export default class Hexo {
     default_category: string = "uncategorized";
 
     /**
-     * 分类别名	
+     * 分类别名
      */
     category_map: string = "";
 
@@ -263,8 +266,8 @@ export default class Hexo {
     time_format: string = "HH:mm:ss";
 
     /**
-     * 	当 Front Matter 中没有指定 
-     * <a href="https://hexo.io/zh-cn/docs/variables#%E9%A1%B5%E9%9D%A2%E5%8F%98%E9%87%8F">updated</a> 时 
+     *    当 Front Matter 中没有指定
+     * <a href="https://hexo.io/zh-cn/docs/variables#%E9%A1%B5%E9%9D%A2%E5%8F%98%E9%87%8F">updated</a> 时
      * updated 的取值
      */
     updated_option: string = "mtime";
@@ -318,12 +321,28 @@ export default class Hexo {
     }
 
     /**
+     * 解析文件内容
+     *
+     * @param fileContent 文件内容
+     */
+    parse(fileContent: string) {
+        let yaml = jsyaml.load(fileContent);
+        Object.assign(this, yaml);
+        this.content = fileContent;
+    }
+
+    /**
      * 渲染内容
      */
     render(): string {
-        return jsyaml.dump(this, {
+        let target = Object.assign({}, this, jsyaml.load(this.content));
+        // @ts-ignore
+        delete target.content;
+        console.log(target)
+        this.content = jsyaml.dump(target, {
             indent: 2
-        })
+        });
+        return this.content;
     }
 
 }

@@ -253,7 +253,6 @@ export default class TagService {
                     }
                 }
                 view.tags = tagList;
-                // TODO: 分类渲染
                 view.categories = new Array<string>();
                 // 查询分类
                 let postCategory = postCategoryMap.get(e.id);

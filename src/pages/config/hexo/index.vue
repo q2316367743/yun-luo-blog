@@ -1,7 +1,7 @@
 <template>
     <!-- 面板 -->
     <div id="config-hexo">
-        <el-tabs v-model="activeName">
+        <el-tabs v-model="activeName" @tab-click="tabClick">
             <el-tab-pane label="网站" name="site">
                 <el-form label-width="80px">
                     <el-form-item label="标题">
@@ -198,7 +198,12 @@
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
+            <el-tab-pane label="源码" name="code">
+            </el-tab-pane>
         </el-tabs>
+        <div id="code" v-if="activeName === 'code'" style="height: calc(100% - 110px);">
+            <hexo-config-editor v-model="hexo.content"></hexo-config-editor>
+        </div>
         <div style="text-align: right;padding: 20px;">
             <el-button type="primary" @click="save">保存</el-button>
         </div>
@@ -206,15 +211,18 @@
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
+import {ElMessage, TabsPaneContext} from "element-plus";
+
 import Hexo from "@/global/config/Hexo";
 import FileUtil from "@/utils/FileUtil";
 import Constant from "@/global/Constant";
+import HexoConfigEditor from "@/components/HexoConfigEditor/index.vue";
 
 import languages from './components/languages';
 import timezones from './components/timezones';
-import {ElMessage} from "element-plus";
 
 export default defineComponent({
+    components: {HexoConfigEditor},
     data: () => ({
         hexo: new Hexo(),
         activeName: 'site',
@@ -223,7 +231,7 @@ export default defineComponent({
     created() {
         Constant.PATH.HEXO_CONFIG().then(path => {
             FileUtil.readFile(path).then(content => {
-                this.hexo = new Hexo(content);
+                this.hexo.parse(content);
             });
         });
         Constant.PATH.HEXO_THEME().then(path => {
@@ -235,6 +243,19 @@ export default defineComponent({
                 }
             });
         });
+    },
+    mounted() {
+        document.onkeydown = (e) => {
+            // 各种快捷键
+            if (e.ctrlKey) {
+                if (e.code == 'KeyS') {
+                    this.save();
+                }
+            }
+        }
+    },
+    unmounted() {
+        document.onkeydown = null;
     },
     methods: {
         languageSuggestion(keyword: string, cb: any) {
@@ -281,6 +302,11 @@ export default defineComponent({
                     })
                 })
             })
+        },
+        tabClick(tab: TabsPaneContext) {
+            if (tab.props.name === 'code') {
+                this.hexo.render();
+            }
         }
     }
 });
