@@ -1,10 +1,12 @@
 import {
     BaseDirectory,
+    copyFile,
     createDir,
     FileEntry,
     readBinaryFile,
     readDir,
     readTextFile,
+    removeDir,
     removeFile,
     writeBinaryFile,
     writeTextFile
@@ -67,6 +69,39 @@ export default {
      */
     resolve(...paths: string[]): Promise<string> {
         return resolve(...paths);
+    },
+
+    /**
+     * 将一个文件夹中的文件拷贝到另一个文件夹中
+     *
+     * @param target 目标文件夹
+     * @param sources 源文件夹
+     */
+    async copyFile(target: string, ...sources: string[]): Promise<void> {
+        // 删除目标文件夹
+        await removeDir(target, {
+            dir: BaseDirectory.Document,
+            recursive: true
+        })
+        // 新建目标文件夹
+        await createDir(target, {
+            dir: BaseDirectory.Document
+        });
+        for (let source of sources) {
+            // 获取源文件夹内容
+            let files = await readDir(source, {
+                dir: BaseDirectory.Document
+            });
+            // 拷贝源文件夹内容到目标文件夹
+            for (let file of files) {
+                await copyFile(file.path, await resolve(target, file.name ? file.name : (new Date().getTime() + "")), {
+                    dir: BaseDirectory.Document
+                });
+            }
+        }
+        return new Promise<void>((resolve) => {
+            resolve();
+        })
     }
 
 }

@@ -19,6 +19,11 @@ export default class TagService {
     }
 
     async insert(tagName: string, fromPostId: number | void): Promise<void> {
+        if (tagName === "") {
+            return new Promise<void>((resolve, reject) => {
+                reject('标签名称不能为空');
+            })
+        }
         return this.dexieInstance.transaction('readwrite',
             [this.tagDao, this.postTagDao], async (trans: Transaction) => {
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
@@ -59,6 +64,11 @@ export default class TagService {
     }
 
     async update(id: number, name: string): Promise<number> {
+        if (name === "") {
+            return new Promise<number>((resolve, reject) => {
+                reject('标签名称不能为空');
+            })
+        }
         let tag = await this.tagDao.where({id: id}).first();
         if (!tag) {
             // 标签不存在

@@ -146,6 +146,10 @@ export default class TagService {
         postTagDao: Dexie.Table<PostTag, number>,
         tagDao: Dexie.Table<Tag, number>) {
         for (let tagName of tags) {
+            if (tagName === "") {
+                // 标签为空，跳过
+                continue;
+            }
             let tag = await tagDao.where({name: tagName}).first()
             if (tag) {
                 // 如果存在标签，则直接插入关系
@@ -188,6 +192,10 @@ export default class TagService {
         console.log("先查询分类，分类按顺序排序，且只插入最后一个分类")
         let parentId = 0;
         for (let categoryName of categories) {
+            if (categoryName === "") {
+                // 分类为空，跳过
+                continue;
+            }
             // 先查询这个分类是否存在
             console.log('先查询这个分类是否存在', categoryName, parentId)
             let category = await categoryDao.where(['name', 'parentId'])

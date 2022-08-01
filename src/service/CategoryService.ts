@@ -73,6 +73,11 @@ export default class CategoryService {
         name: string,
         parentId: number
     }): Promise<number> {
+        if (category.name === "") {
+            return new Promise<number>((resolve, reject) => {
+                reject('分类名称不能为空');
+            })
+        }
         // 先查询这个父ID是否存在
         let categoryTemp = await this.categoryDao.where({parentId: category.parentId, name: category.name})
             .first();
@@ -93,6 +98,11 @@ export default class CategoryService {
     }
 
     async update(category: Category): Promise<number> {
+        if (category.name === "") {
+            return new Promise<number>((resolve, reject) => {
+                reject('分类名称不能为空');
+            })
+        }
         let categoryTemp = await this.categoryDao.where({id: category.id})
             .first();
         if (categoryTemp) {

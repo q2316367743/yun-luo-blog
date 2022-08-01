@@ -180,7 +180,6 @@ export default defineComponent({
         })
         categoryService.list().then((categoryTree: Array<CategoryView>) => {
             this.categoryTree = categoryTree;
-            console.log(categoryTree)
         })
         if (this.$route.query.id) {
             let postId = parseInt(this.$route.query.id as string);
@@ -189,7 +188,6 @@ export default defineComponent({
                     // 存在文章，查询文章详情
                     parsePost(post.path, post.fileName, true).then(post => {
                         this.post = post!;
-                        console.log(post)
                         // 重新对post.id赋值
                         this.post.id = postId;
                     });
@@ -254,7 +252,7 @@ export default defineComponent({
                 // 复制图片
                 const loading = ElLoading.service({
                     lock: true,
-                    text: '复制文件中',
+                    text: '上传文件中',
                     background: 'rgba(0, 0, 0, 0.7)',
                 });
                 copyImage(path).then((newPath) => {
