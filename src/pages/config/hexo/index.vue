@@ -200,12 +200,18 @@
             </el-tab-pane>
             <el-tab-pane label="源码" name="code">
             </el-tab-pane>
+            <el-tab-pane label="主题配置" name="theme">
+            </el-tab-pane>
         </el-tabs>
         <div id="code" v-if="activeName === 'code'" style="height: calc(100% - 110px);">
             <hexo-config-editor v-model="hexo.content"></hexo-config-editor>
         </div>
+        <div id="theme" v-if="activeName === 'theme'" style="height: calc(100% - 110px);">
+            <theme-config-editor v-model="theme"></theme-config-editor>
+        </div>
         <div style="text-align: right;padding: 20px;">
-            <el-button type="primary" @click="save">保存</el-button>
+            <el-button type="primary" @click="save" v-if="activeName !== 'theme'">保存</el-button>
+            <el-button type="primary" @click="saveTheme" v-else>保存</el-button>
         </div>
     </div>
 </template>
@@ -217,14 +223,16 @@ import Hexo from "@/global/config/Hexo";
 import FileUtil from "@/utils/FileUtil";
 import Constant from "@/global/Constant";
 import HexoConfigEditor from "@/components/HexoConfigEditor/index.vue";
+import ThemeConfigEditor from "@/components/ThemeConfigEditor/index.vue";
 
 import languages from './components/languages';
 import timezones from './components/timezones';
 
 export default defineComponent({
-    components: {HexoConfigEditor},
+    components: {HexoConfigEditor, ThemeConfigEditor},
     data: () => ({
         hexo: new Hexo(),
+        theme: "",
         activeName: 'site',
         themeList: new Array<string>()
     }),
@@ -232,6 +240,17 @@ export default defineComponent({
         Constant.PATH.HEXO_CONFIG().then(path => {
             FileUtil.readFile(path).then(content => {
                 this.hexo.parse(content);
+                // 解析后尝试解析
+                Constant.PATH.HEXO().then(hexoPath => {
+                    // 读取文件内容
+                    FileUtil.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
+                        FileUtil.readFile(themePath).then(themeContent => {
+                            this.theme = themeContent;
+                        }).catch((e) => {
+                            console.error('不存在目录', e);
+                        })
+                    })
+                })
             });
         });
         Constant.PATH.HEXO_THEME().then(path => {
@@ -249,7 +268,11 @@ export default defineComponent({
             // 各种快捷键
             if (e.ctrlKey) {
                 if (e.code == 'KeyS') {
-                    this.save();
+                    if (this.activeName === 'theme') {
+                        this.saveTheme();
+                    }else {
+                        this.save();
+                    }
                 }
             }
         }
@@ -300,13 +323,32 @@ export default defineComponent({
                         message: "保存失败，" + e,
                         type: 'error',
                     })
-                })
+                });
             })
         },
         tabClick(tab: TabsPaneContext) {
             if (tab.props.name === 'code') {
                 this.hexo.render();
             }
+        },
+        saveTheme() {
+            Constant.PATH.HEXO().then(hexoPath => {
+                FileUtil.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
+                    FileUtil.writeFile(themePath, this.theme).then(() => {
+                        ElMessage({
+                            showClose: true,
+                            message: '保存成功',
+                            type: 'success',
+                        })
+                    }).catch((e) => {
+                        ElMessage({
+                            showClose: true,
+                            message: "保存失败，" + e,
+                            type: 'error',
+                        })
+                    });
+                })
+            })
         }
     }
 });

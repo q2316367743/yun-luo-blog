@@ -114,7 +114,7 @@
                 "resizable": true,
                 "title": "云落博客",
                 "width": 1180,
-                "minWidth": 980,
+                "minWidth": 1020,
                 "minHeight": 560
             }
         ]
