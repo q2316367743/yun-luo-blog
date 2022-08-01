@@ -335,10 +335,9 @@ export default class Hexo {
      * 渲染内容
      */
     render(): string {
-        let target = Object.assign({}, this, jsyaml.load(this.content));
+        let target = Object.assign({}, jsyaml.load(this.content), this);
         // @ts-ignore
         delete target.content;
-        console.log(target)
         this.content = jsyaml.dump(target, {
             indent: 2
         });
