@@ -3,7 +3,10 @@
         <el-tree :data="categoryTree" :props="categoryProps">
             <template #default="{ node, data }">
                 <div style="display: flex;justify-content: space-between;width: 100%;">
-                    <div>{{ node.label }}</div>
+                    <div>
+                        <span>{{ node.label }}</span>
+                        <span v-if="data.postCount > 0">({{ data.postCount }})</span>
+                    </div>
                     <div>
                         <el-button type="primary" link @click.stop="categoryAdd(data.id)">新增子分类</el-button>
                         <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0"
