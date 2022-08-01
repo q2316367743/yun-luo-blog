@@ -2,20 +2,20 @@
     <div id="post">
         <header class="header">
             <div class="left">
-                <div class="left-delete" v-if="deletePostPath.length > 0">
+                <div class="left-delete" v-if="deletePostIds.length > 0" @click="deleteByIds">
                     <div style="margin-top: 1px;">
                         <el-icon>
-                            <Delete />
+                            <Delete/>
                         </el-icon>
                     </div>
-                    <div style="margin-left: 6px;">选中 {{ deletePostPath.length }}</div>
+                    <div style="margin-left: 6px;">选中 {{ deletePostIds.length }}</div>
                 </div>
             </div>
             <div class="right">
                 <el-input v-model="keyword" placeholder="搜索文章" class="input-with-select" v-if="showSearch"
-                    @blur="searchBlur" ref="searchInput" @input="searchPost">
+                          @blur="searchBlur" ref="searchInput" @input="searchPost">
                     <template #append>
-                        <el-button :icon="search" @click="searchPost" />
+                        <el-button :icon="search" @click="searchPost"/>
                     </template>
                 </el-input>
                 <div class="option">
@@ -28,10 +28,10 @@
         </header>
         <main class="main">
             <el-scrollbar>
-                <el-checkbox-group v-model="deletePostPath" v-if="showPosts.length > 0">
+                <el-checkbox-group v-model="deletePostIds" v-if="showPosts.length > 0">
                     <div v-for="(post, index) in showPosts" :key="index" class="post">
                         <div class="choose">
-                            <el-checkbox :label="post.path"><br /></el-checkbox>
+                            <el-checkbox :label="post.id"><br/></el-checkbox>
                         </div>
                         <div class="board" @click="toPostInfo(post)">
                             <div class="title">{{ post.title }}</div>
@@ -50,59 +50,60 @@
                                 </div>
                                 <div class="update-time">
                                     <el-icon>
-                                        <Calendar />
+                                        <Calendar/>
                                     </el-icon>
                                     <span>{{ format(new Date(post.updated)) }}</span>
                                 </div>
                                 <div class="tag" v-if="post.tags.length > 0">
                                     <el-icon>
-                                        <price-tag />
+                                        <price-tag/>
                                     </el-icon>
                                     <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
                                 </div>
                                 <div class="category" v-if="post.categories.length > 0">
                                     <el-icon>
-                                        <collection-tag />
+                                        <collection-tag/>
                                     </el-icon>
-                                    <span v-for="category in post.categories" class="category-item">{{ category
-                                    }}</span>
+                                    <span v-for="category in post.categories" class="category-item">{{
+                                            category
+                                        }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="option">
-                            <el-button type="danger" link @click="deleteByPath(post.id)">删除</el-button>
+                            <el-button type="danger" link @click="deleteById(post.id)">删除</el-button>
                         </div>
                     </div>
                 </el-checkbox-group>
-                <el-empty v-else description="暂无文章" style="margin-top: 110px;" />
+                <el-empty v-else description="暂无文章" style="margin-top: 110px;"/>
             </el-scrollbar>
         </main>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw } from "vue";
-import { Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox } from "element-plus";
+import {defineComponent, markRaw} from "vue";
+import {Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete} from '@element-plus/icons-vue';
+import {ElMessage, ElMessageBox} from "element-plus";
 
 import PostView from '@/views/PostView';
 import DateUtil from '@/utils/DateUtil';
-import { postService } from '@/global/BeanFactory';
+import {postService} from '@/global/BeanFactory';
 
 export default defineComponent({
     name: 'post',
-    components: { Calendar, PriceTag, CollectionTag, Delete },
+    components: {Calendar, PriceTag, CollectionTag, Delete},
     setup() {
         const search = markRaw(Search);
         const plus = markRaw(Plus);
         const refresh = markRaw(Refresh);
-        return { search, plus, refresh }
+        return {search, plus, refresh}
     },
     data: () => ({
         keyword: '',
         showSearch: false,
         posts: new Array<PostView>(),
         showPosts: new Array<PostView>(),
-        deletePostPath: new Array<string>(),
+        deletePostIds: new Array<number>(),
         page: {
             number: 1,
             size: 10,
@@ -157,7 +158,7 @@ export default defineComponent({
                 })
             })
         },
-        deleteByPath(id?: number) {
+        deleteById(id?: number) {
             ElMessageBox.confirm(
                 '确定删除此文章，删除后将无法恢复',
                 '警告',
@@ -166,33 +167,67 @@ export default defineComponent({
                     cancelButtonText: '取消',
                     type: 'warning',
                 }
-            )
-                .then(() => {
-                    // 先删除路径
-                    postService.deleteById(id!).then(() => {
-                        // 删除成功，准备删除源文件
-                        ElMessage({
-                            type: 'success',
-                            message: '删除成功',
-                        });
-
-                        postService.list().then(posts => {
-                            this.posts = posts;
-                            this.searchPost();
-                        })
-                    }).catch((e) => {
-                        ElMessage({
-                            type: 'error',
-                            message: '删除失败，' + e,
-                        })
-                    });
-                })
-                .catch(() => {
+            ).then(() => {
+                // 先删除路径
+                postService.deleteById([id!]).then(() => {
+                    // 删除成功，准备删除源文件
                     ElMessage({
-                        type: 'info',
-                        message: '取消删除',
+                        type: 'success',
+                        message: '删除成功',
+                    });
+
+                    postService.list().then(posts => {
+                        this.posts = posts;
+                        this.searchPost();
                     })
+                }).catch((e) => {
+                    ElMessage({
+                        type: 'error',
+                        message: '删除失败，' + e,
+                    })
+                });
+            }).catch(() => {
+                ElMessage({
+                    type: 'info',
+                    message: '取消删除',
                 })
+            })
+        },
+        deleteByIds() {
+            ElMessageBox.confirm(
+                '确定删除这些文章，删除后将无法恢复',
+                '警告',
+                {
+                    confirmButtonText: '删除',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            ).then(() => {
+                // 先删除路径
+                postService.deleteById(this.deletePostIds).then(() => {
+                    this.deletePostIds = [];
+                    // 删除成功，准备删除源文件
+                    ElMessage({
+                        type: 'success',
+                        message: '删除成功',
+                    });
+                    postService.list().then(posts => {
+                        this.posts = posts;
+                        this.searchPost();
+                    })
+                }).catch((e) => {
+                    this.deletePostIds = [];
+                    ElMessage({
+                        type: 'error',
+                        message: '删除失败，' + e,
+                    })
+                });
+            }).catch(() => {
+                ElMessage({
+                    type: 'info',
+                    message: '取消删除',
+                })
+            })
         }
     }
 });

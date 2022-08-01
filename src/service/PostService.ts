@@ -340,32 +340,34 @@ export default class TagService {
         })
     }
 
-    deleteById(id: number): Promise<Post> {
+    deleteById(ids: Array<number>): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
             [this.postDao, this.postTagDao, this.tagDao],
             async (trans: Transaction) => {
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
-                // 先查询文章
-                let post = await postDao.where({id: id}).first();
-                if (!post) {
-                    return new Promise<void>((resolve, reject) => {
-                        reject('文章不存在，请刷新后重试');
-                    });
+                for (let id of ids) {
+                    // 先查询文章
+                    let post = await postDao.where({id: id}).first();
+                    if (!post) {
+                        return new Promise<void>((resolve, reject) => {
+                            reject('文章不存在，请刷新后重试');
+                        });
+                    }
+                    // 删除文章
+                    await postDao.delete(post.id);
+                    // 删除标签关联
+                    let postTags = await postTagDao.where({postId: post.id}).toArray();
+                    for (let postTag of postTags) {
+                        await postTagDao.delete(postTag.id!);
+                    }
+                    // 删除内容
+                    await deleteByPath(post.path)
                 }
-                // 删除文章
-                await postDao.delete(post.id);
-                // 删除标签关联
-                let postTags = await postTagDao.where({postId: post.id}).toArray();
-                for (let postTag of postTags) {
-                    await postTagDao.delete(postTag.id!);
-                }
-                // 删除内容
-                await deleteByPath(post.path)
-                return new Promise<Post>((resolve) => {
-                    resolve(post!);
+                return new Promise<void>((resolve) => {
+                    resolve();
                 });
-            }) as Promise<Post>;
+            }) as Promise<void>;
     }
 
     private viewToPost(postView: PostView | Post, isIncludeId: boolean = true): Post {
