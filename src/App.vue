@@ -44,7 +44,7 @@
                     </el-button>
                 </div>
                 <div>
-                    <el-dropdown>
+                    <el-dropdown @command="commandClick">
                         <el-button type="primary">
                             <span>操作</span>
                             <el-icon class="el-icon--right">
@@ -53,10 +53,10 @@
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item>初始化</el-dropdown-item>
-                                <el-dropdown-item>打包</el-dropdown-item>
-                                <el-dropdown-item>运行</el-dropdown-item>
-                                <el-dropdown-item>编译</el-dropdown-item>
+                                <el-dropdown-item command="init">初始化</el-dropdown-item>
+                                <el-dropdown-item command="run">运行</el-dropdown-item>
+                                <el-dropdown-item command="deploy">编译</el-dropdown-item>
+                                <el-dropdown-item command="clean">清理</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -76,6 +76,7 @@ import {ElMessage} from "element-plus";
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
+import HexoUtil from "@/utils/HexoUtil";
 
 export default defineComponent({
     components: {
@@ -104,6 +105,25 @@ export default defineComponent({
                     message: '同步成功'
                 });
             })
+        },
+        commandClick(command: string) {
+            switch (command) {
+                case "init":
+                    HexoUtil.init().then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: '初始化完成'
+                        });
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '初始化失败，' + e
+                        });
+                    });
+                    break;
+            }
         }
     }
 })

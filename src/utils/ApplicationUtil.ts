@@ -1,7 +1,7 @@
 import Constant from '@/global/Constant';
 import FileUtil from "@/utils/FileUtil";
 import Hexo from "@/global/config/Hexo";
-import {ElLoading} from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import {postService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import {FileEntry} from "@tauri-apps/api/fs";
@@ -41,7 +41,7 @@ export default {
             Constant.PATH.HEXO().then(path => {
                 FileUtil.createDir(path).catch(() => {
                 });
-            })
+            });
         })
     },
 
@@ -70,9 +70,23 @@ export default {
         // 获取配置
         let hexoPath = await Constant.PATH.HEXO();
         let hexoConfig = await Constant.PATH.HEXO_CONFIG();
-        let hexo = new Hexo(await FileUtil.readFile(hexoConfig));
+        let hexoConfigContent = "";
+        try {
+            hexoConfigContent=  await FileUtil.readFile(hexoConfig)
+        }catch (e) {
+            ElMessage({
+                showClose: true,
+                type: 'error',
+                message: '无法读取配置文件，使用默认'
+            });
+            console.error(e);
+        }
+        let hexo = new Hexo(hexoConfigContent);
         let postImage = await Constant.PATH.POST_IMAGES();
-        let _posts = await FileUtil.resolve(hexoPath, hexo.source_dir, "_posts");
+        let source_dir = await FileUtil.resolve(hexoPath, hexo.source_dir);
+        let _posts = await FileUtil.resolve(source_dir, "_posts");
+        // _posts文件夹可能不存在
+        await FileUtil.createDir(_posts);
         // 复制图片到目标文件夹
         await FileUtil.copyDir(_posts, postImage);
         // 复制发布的文章
@@ -86,6 +100,7 @@ export default {
             } as FileEntry
         }));
         loading.setText("执行构建命令");
+        // TODO: hexo命令
         await invoke('command_run', {
             command: "D:\\Program Files\\nodejs\\node_global\\hexo.cmd",
             arg: "d",

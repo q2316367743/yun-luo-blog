@@ -59,7 +59,10 @@ export default {
     },
 
     createDir(dir: string): Promise<void> {
-        return createDir(dir);
+        return createDir(dir, {
+            recursive: true,
+            dir: BaseDirectory.Document
+        });
     },
 
     /**

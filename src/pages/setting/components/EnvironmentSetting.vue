@@ -33,18 +33,14 @@ import { Folder } from "@element-plus/icons-vue";
 import { documentDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
 import { open as openWindow } from '@tauri-apps/api/shell';
+import {useSettingStore} from "@/store/SettingStore";
 
 export default defineComponent({
     setup() {
         const folder = markRaw(Folder);
-        const basicSetting = useLocalStorage('environmentSetting', {
-            path: '',
-            nodePath: '',
-            npmPath: '',
-            gitPath: ''
-        });
+        const basicSetting = useSettingStore().environmentSetting;
         documentDir().then(path => {
-            basicSetting.value.path = path + 'yun-luo-blog';
+            basicSetting.path = path + 'yun-luo-blog';
         })
         return {
             folder, basicSetting
