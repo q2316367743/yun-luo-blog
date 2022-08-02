@@ -70,12 +70,14 @@ export async function parsePost(path: string, name: string, renderContent: boole
                         let content = line.split(':')[1].trim();
                         try {
                             // 使用json解析
-                            post.tags = JSON.parse(content);
+                            post.tags = (JSON.parse(content) as Array<string>).filter(e => e !== '');
                         } catch (e) {
                             console.error(e);
                             // JSON解析失败，则使用逗号解析
                             content.split(',').forEach(e => {
-                                post.tags.push(e.trim())
+                                if (e.trim() !== "") {
+                                    post.tags.push(e.trim());
+                                }
                             })
                         }
                     } else if (line.startsWith('categories')) {
@@ -83,12 +85,14 @@ export async function parsePost(path: string, name: string, renderContent: boole
                         let content = line.split(':')[1].trim();
                         try {
                             // 使用json解析
-                            post.categories = JSON.parse(content);
+                            post.categories = (JSON.parse(content) as Array<string>).filter(e => e !== '');
                         } catch (e) {
                             console.error(e);
                             // JSON解析失败，则使用逗号解析
                             content.split(',').forEach(e => {
-                                post.categories.push(e.trim())
+                                if (e.trim() !== "") {
+                                    post.categories.push(e.trim());
+                                }
                             })
                         }
                     } else if (line.startsWith('permalink')) {
@@ -144,25 +148,41 @@ export async function savePost(post: PostView): Promise<void> {
     // 内容
     let content = "";
     content += "---\n";
-    content += `title: ${post.title}\n`;
-    content += `status: ${post.status}\n`;
-    content += `date: ${post.date}\n`;
+    if (post.title && post.title.trim() !== "") {
+        content += `title: ${post.title.trim()}\n`;
+    }
+    if (post.status) {
+        content += `status: ${post.status}\n`;
+    }
+    if (post.date) {
+        content += `date: ${post.date}\n`;
+    }
     content += `updated: ${new Date().getTime()}\n`;
-    content += `comments: ${post.comments}\n`;
+    if (post.comments !== null && post.comments !== undefined) {
+        content += `comments: ${post.comments}\n`;
+    }
     if (post.tags && post.tags.length > 0) {
         content += `tags: `;
-        content += post.tags.join(',');
+        content += post.tags.map(e => e.trim()).filter(e => e !== "").join(',');
         content += `\n`;
     }
     if (post.categories && post.categories.length > 0) {
         content += `categories: `;
-        content += post.categories.join(',');
+        content += post.categories.map(e => e.trim()).filter(e => e !== "").join(',');
         content += `\n`;
     }
-    content += `permalink: ${post.permalink}\n`;
-    content += `excerpt: ${post.excerpt}\n`;
-    content += `disableNunjucks: ${post.disableNunjucks}\n`;
-    content += `lang: ${post.lang}\n`;
+    if (post.permalink && post.permalink.trim() !== "") {
+        content += `permalink: ${post.permalink.trim()}\n`;
+    }
+    if (post.excerpt && post.excerpt.trim() !== "") {
+        content += `excerpt: ${post.excerpt.trim()}\n`;
+    }
+    if (post.disableNunjucks && post.disableNunjucks.trim() !== "") {
+        content += `disableNunjucks: ${post.disableNunjucks.trim()}\n`;
+    }
+    if (post.lang && post.lang.trim() !== "") {
+        content += `lang: ${post.lang.trim()}\n`;
+    }
     if (post.extra && post.extra.length > 0) {
         for (let entry of post.extra) {
             // 键存在
