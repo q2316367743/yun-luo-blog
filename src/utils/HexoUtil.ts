@@ -31,6 +31,37 @@ export default {
         return new Promise<void>((resolve) => {
             resolve();
         });
+    },
+
+    /**
+     * 清理缓存
+     */
+    async clean(): Promise<void> {
+        let hexoPath = await Constant.PATH.HEXO();
+        await invoke('command_run', {
+            command: "D:\\Program Files\\nodejs\\node_global\\hexo.cmd",
+            arg: "clean",
+            currentDir: hexoPath
+        });
+        return new Promise<void>((resolve) => {
+            resolve();
+        });
+    },
+
+    /**
+     * 项目部署
+     */
+    async deploy(): Promise<void> {
+        let hexoPath = await Constant.PATH.HEXO();
+        await invoke('command_run', {
+            command: "D:\\Program Files\\nodejs\\node_global\\hexo.cmd",
+            arg: "d",
+            currentDir: hexoPath
+        });
+        return new Promise<void>((resolve) => {
+            resolve();
+        });
     }
+
 
 }

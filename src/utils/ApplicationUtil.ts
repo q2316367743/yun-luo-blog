@@ -6,6 +6,7 @@ import {postService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import {FileEntry} from "@tauri-apps/api/fs";
 import {invoke} from "@tauri-apps/api/tauri";
+import HexoUtil from "@/utils/HexoUtil";
 
 /**
  * 启动应用
@@ -99,13 +100,10 @@ export default {
                 path: e.path
             } as FileEntry
         }));
+        loading.setText("执行缓存清理");
+        await HexoUtil.clean();
         loading.setText("执行构建命令");
-        // TODO: hexo命令
-        await invoke('command_run', {
-            command: "D:\\Program Files\\nodejs\\node_global\\hexo.cmd",
-            arg: "d",
-            currentDir: hexoPath
-        })
+        await HexoUtil.deploy();
         loading.setText("推送到远程");
         return new Promise<void>((resolve) => {
             loading.close();
