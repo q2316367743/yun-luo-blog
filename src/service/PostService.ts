@@ -16,6 +16,7 @@ import Tag from '@/entities/Tag';
 import PostView from '@/views/PostView';
 import PostCategory from "@/entities/PostCategory";
 import Category from "@/entities/Category";
+import PostCondition from "@/condition/PostCondition";
 
 export default class TagService {
 
@@ -224,9 +225,29 @@ export default class TagService {
         })
     }
 
-    async list(): Promise<Array<PostView>> {
+    async list(condition?: PostCondition): Promise<Array<PostView>> {
+        let where;
+        let posts = new Array<Post>();
+        if (condition) {
+            if (condition.name) {
+                where = this.postDao.where('name').equals(condition.name);
+            }
+            if (condition.status) {
+                if (where) {
+                    where = where.and(e => e.status == condition.status);
+                }else {
+                    where = this.postDao.where('status').equals(condition.status);
+                }
+            }
+        }
         // 查询文章
-        let posts = await this.postDao.toArray();
+        if (where) {
+            // 具有条件
+            posts = await where.toArray();
+        }else {
+            // 没有条件
+            posts = await this.postDao.toArray();
+        }
         if (posts.length === 0) {
             return new Promise<Array<PostView>>((resolve) => {
                 resolve([]);

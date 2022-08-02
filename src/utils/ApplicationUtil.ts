@@ -2,6 +2,9 @@ import Constant from '@/global/Constant';
 import FileUtil from "@/utils/FileUtil";
 import Hexo from "@/global/config/Hexo";
 import {ElLoading} from "element-plus";
+import {postService} from "@/global/BeanFactory";
+import PostStatusEnum from "@/enumeration/PostStatusEnum";
+import {FileEntry} from "@tauri-apps/api/fs";
 
 /**
  * 启动应用
@@ -62,11 +65,20 @@ export default {
         let hexoPath = await Constant.PATH.HEXO();
         let hexoConfig = await Constant.PATH.HEXO_CONFIG();
         let hexo = new Hexo(await FileUtil.readFile(hexoConfig));
-        let post = await Constant.PATH.POST();
         let postImage = await Constant.PATH.POST_IMAGES();
         let _posts = await FileUtil.resolve(hexoPath, hexo.source_dir, "_posts");
-        // 复制文章，图片到目标文件夹
-        await FileUtil.copyFile(_posts, post, postImage);
+        // 复制图片到目标文件夹
+        await FileUtil.copyDir(_posts, postImage);
+        // 复制发布的文章
+        let posts = await postService.list({
+            status: PostStatusEnum.RELEASE
+        });
+        await FileUtil.copyFileToDir(_posts, false, posts.map(e => {
+            return {
+                name: e.fileName,
+                path: e.path
+            } as FileEntry
+        }));
         loading.setText("执行构建命令");
         loading.setText("推送到远程");
         return new Promise<void>((resolve) => {

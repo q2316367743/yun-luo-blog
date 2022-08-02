@@ -17,7 +17,7 @@ export default class DexieInstance extends Dexie {
     constructor() {
         super('yun-luo-blog');
         this.version(1).stores({
-            Post: '++id',
+            Post: '++id, title, status',
             PostTag: '++id, postId, tagId',
             PostCategory: '++id, postId, categoryId, [postId+categoryId]',
             Tag: '++id, &name',

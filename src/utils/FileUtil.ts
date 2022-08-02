@@ -77,12 +77,12 @@ export default {
      * @param target 目标文件夹
      * @param sources 源文件夹
      */
-    async copyFile(target: string, ...sources: string[]): Promise<void> {
+    async copyDir(target: string, ...sources: string[]): Promise<void> {
         // 删除目标文件夹
         await removeDir(target, {
             dir: BaseDirectory.Document,
             recursive: true
-        })
+        });
         // 新建目标文件夹
         await createDir(target, {
             dir: BaseDirectory.Document
@@ -102,6 +102,35 @@ export default {
         return new Promise<void>((resolve) => {
             resolve();
         })
+    },
+
+    /**
+     * 将文件复制到指定目录
+     *
+     * @param dir 目标文件夹
+     * @param recursive 是否删除目标文件夹，默认删除
+     * @param files 源文件
+     */
+    async copyFileToDir(dir: string, recursive: boolean | void, files: FileEntry[]): Promise<void> {
+        if (recursive) {
+            // 删除目标文件夹
+            await removeDir(dir, {
+                dir: BaseDirectory.Document,
+                recursive: true
+            });
+            // 新建目标文件夹
+            await createDir(dir, {
+                dir: BaseDirectory.Document
+            });
+        }
+        for (let file of files) {
+            await copyFile(file.path, await resolve(dir, file.name ? file.name : (new Date().getTime() + "")), {
+                dir: BaseDirectory.Document
+            });
+        }
+        return new Promise<void>((resolve) => {
+            resolve();
+        });
     }
 
 }
