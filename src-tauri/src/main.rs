@@ -10,7 +10,7 @@ use std::process::Command;
  */
 #[tauri::command]
 fn command_run(command: &str, arg: &str, current_dir: &str) {
-    print!("在【{}】目录下执行【{}】【{}】", current_dir, command, arg);
+    println!("在【{}】目录下执行【{}】【{}】", current_dir, command, arg);
     Command::new(command)
         .current_dir(current_dir)
         .arg(arg)
