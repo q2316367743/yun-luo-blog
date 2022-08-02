@@ -17,7 +17,7 @@
                 </el-menu-item>
                 <el-menu-item index="/category">
                     <el-icon>
-                        <collection-tag />
+                        <collection-tag/>
                     </el-icon>
                     <span>分类</span>
                 </el-menu-item>
@@ -70,21 +70,11 @@
 
 <script lang='ts'>
 import {defineComponent} from 'vue'
-import {
-    CollectionTag,
-    Document,
-    Menu,
-    PriceTag,
-    Refresh,
-    Setting,
-    ArrowDown
-} from '@element-plus/icons-vue';
+import {ArrowDown, CollectionTag, Document, Menu, PriceTag, Refresh, Setting} from '@element-plus/icons-vue';
+import {ElMessage} from "element-plus";
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
-import {ElMessage} from "element-plus";
-import FileUtil from "@/utils/FileUtil";
-import Constant from "@/global/Constant";
-import Hexo from "@/global/config/Hexo";
+import {useSettingStore} from "@/store/SettingStore";
 
 export default defineComponent({
     components: {
@@ -92,9 +82,7 @@ export default defineComponent({
     },
     data: () => {
         return {
-            blogSetting: {
-                type: 'hexo'
-            },
+            blogSetting: useSettingStore().blogSetting,
             defaultActive: '/post/list'
         }
     },
@@ -107,21 +95,13 @@ export default defineComponent({
         });
     },
     methods: {
-        async sync() {
-            // TODO: 同步：将文章复制到目标文件夹 -> 执行构建命令 -> 推送到远程
-            // 获取配置
-            let hexoPath = await Constant.PATH.HEXO();
-            let hexoConfig = await Constant.PATH.HEXO_CONFIG();
-            let hexo = new Hexo(await FileUtil.readFile(hexoConfig));
-            let post = await Constant.PATH.POST();
-            let postImage = await Constant.PATH.POST_IMAGES();
-            let _posts = await FileUtil.resolve(hexoPath, hexo.source_dir, "_posts");
-            // 复制文章，图片到目标文件夹
-            await FileUtil.copyFile(_posts, post, postImage);
-            ElMessage({
-                showClose: true,
-                type: 'success',
-                message: '同步成功'
+        sync() {
+            ApplicationUtil.sync().then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '同步成功'
+                });
             })
         }
     }
