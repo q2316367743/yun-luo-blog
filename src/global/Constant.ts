@@ -19,7 +19,12 @@ export default {
     BASE: BASE,
     POST: POST,
     CONFIG: CONFIG,
-    HEXO: HEXO,
+    HEXO: {
+        NAME: HEXO,
+        INIT: "init",
+        CLEAN: "clean",
+        DEPLOY: "deploy"
+    },
     POST_IMAGES: POST_IMAGES,
     HEXO_THEME: HEXO_THEME,
     PATH: {

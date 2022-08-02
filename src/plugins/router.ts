@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 
 
 import GuidePage from '@/pages/guide/index.vue';
@@ -7,7 +7,6 @@ import PostNewPage from '@/pages/post/new/index.vue';
 import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
 import HexoConfigPage from '@/pages/config/hexo/index.vue';
-import SettingPage from '@/pages/setting/index.vue';
 
 /**
  * 定义路由模块
@@ -52,11 +51,6 @@ const routes: Array<RouteRecordRaw> = [
         path: '/config/hexo',
         name: 'config-hexo',
         component: HexoConfigPage
-    },
-    {
-        path: '/setting',
-        name: 'setting',
-        component: SettingPage
     }
 ]
 

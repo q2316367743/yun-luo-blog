@@ -35,7 +35,7 @@ export default defineComponent({
 <style scoped lang="less">
 #setting {
     position: absolute;
-    top: 10px;
+    top: 40px;
     left: 10px;
     right: 10px;
     bottom: 10px;

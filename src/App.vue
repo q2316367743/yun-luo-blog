@@ -27,12 +27,6 @@
                     </el-icon>
                     <span>博客设置</span>
                 </el-menu-item>
-                <el-menu-item index="/setting">
-                    <el-icon>
-                        <setting/>
-                    </el-icon>
-                    <span>系统设置</span>
-                </el-menu-item>
             </el-menu>
             <div class="footer">
                 <div>
@@ -62,30 +56,80 @@
                     </el-dropdown>
                 </div>
             </div>
+            <div class="bottom">
+                <div>
+                    <el-tooltip
+                        class="box-item"
+                        effect="light"
+                        content="设置"
+                        placement="top"
+                    >
+                        <el-button type="primary" link :icon="setting" @click="openSetting"></el-button>
+                    </el-tooltip>
+                </div>
+                <div>
+                    <el-tooltip
+                        class="box-item"
+                        effect="light"
+                        content="Start一下，支持作者！"
+                        placement="top"
+                    >
+                        <el-button type="primary" link :icon="suitcase" @click="openGit"></el-button>
+                    </el-tooltip>
+                </div>
+                <div>
+                    <el-tooltip
+                        class="box-item"
+                        effect="light"
+                        content="打开项目文件夹"
+                        placement="top"
+                    >
+                        <el-button type="primary" link :icon="folder" @click="openFolder"></el-button>
+                    </el-tooltip>
+                </div>
+            </div>
         </div>
         <div id="body">
             <router-view></router-view>
         </div>
+        <el-dialog v-model="settingDialog" fullscreen destroy-on-close append-to-body>
+            <setting-page></setting-page>
+        </el-dialog>
     </div>
 </template>
 
 <script lang='ts'>
-import {defineComponent} from 'vue'
-import {ArrowDown, CollectionTag, Document, Menu, PriceTag, Refresh, Setting} from '@element-plus/icons-vue';
-import {ElMessage} from "element-plus";
+import {defineComponent, markRaw} from 'vue'
+import {
+    ArrowDown, CollectionTag, Document, Menu,
+    PriceTag, Refresh, Setting, Folder, Suitcase
+} from '@element-plus/icons-vue';
+import {ElLoading, ElMessage} from "element-plus";
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
 import HexoUtil from "@/utils/HexoUtil";
+import {open, open as openWindow} from "@tauri-apps/api/shell";
+import Constant from "@/global/Constant";
+import SettingPage from '@/pages/setting/index.vue';
 
 export default defineComponent({
     components: {
-        Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag
+        Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag, SettingPage
+    },
+    setup() {
+        const setting = markRaw(Setting);
+        const folder = markRaw(Folder);
+        const suitcase = markRaw(Suitcase);
+        return {
+            setting, folder, suitcase
+        }
     },
     data: () => {
         return {
             blogSetting: useSettingStore().blogSetting,
-            defaultActive: '/post/list'
+            defaultActive: '/post/list',
+            settingDialog: false
         }
     },
     created() {
@@ -106,6 +150,17 @@ export default defineComponent({
                 });
             })
         },
+        openSetting() {
+            this.settingDialog = true;
+        },
+        openGit() {
+            open("https://gitee.com/qiaoshengda/yun-luo-blog")
+        },
+        openFolder() {
+            Constant.PATH.BASE().then(path => {
+                openWindow(path);
+            })
+        },
         commandClick(command: string) {
             switch (command) {
                 case "init":
@@ -120,6 +175,50 @@ export default defineComponent({
                             showClose: true,
                             type: 'error',
                             message: '初始化失败，' + e
+                        });
+                    });
+                    break;
+                case "deploy":
+                    const deployLoading = ElLoading.service({
+                        lock: true,
+                        text: '开始编译',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                    });
+                    HexoUtil.deploy().then(() => {
+                        deployLoading.close();
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: '编译完成'
+                        });
+                    }).catch(e => {
+                        deployLoading.close();
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '编译失败，' + e
+                        });
+                    });
+                    break;
+                case "clean":
+                    const cleanLoading = ElLoading.service({
+                        lock: true,
+                        text: '开始清理',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                    });
+                    HexoUtil.clean().then(() => {
+                        cleanLoading.close();
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: '清理完成'
+                        });
+                    }).catch(e => {
+                        cleanLoading.close();
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '清理失败，' + e
                         });
                     });
                     break;
@@ -156,7 +255,7 @@ export default defineComponent({
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 0;
+        bottom: 10px;
         padding: 10px;
 
         div {
@@ -166,6 +265,17 @@ export default defineComponent({
                 margin: 0 auto;
             }
         }
+    }
+
+    .bottom {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 5px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
     }
 }
 

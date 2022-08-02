@@ -1,24 +1,28 @@
 <template>
     <el-form :model="basicSetting" label-width="120px" style="width: 500px">
-        <el-form-item label="站点源文件路径">
-            <el-link href="#" @click="openFolder">{{ basicSetting.path }}</el-link>
-        </el-form-item>
         <el-form-item label="node文件路径">
-            <el-input v-model="basicSetting.nodePath">
+            <el-input v-model="environmentSetting.nodePath">
                 <template #append>
                     <el-button :icon="folder" @click="openNodeDialog" />
                 </template>
             </el-input>
         </el-form-item>
         <el-form-item label="npm文件路径">
-            <el-input v-model="basicSetting.npmPath">
+            <el-input v-model="environmentSetting.npmPath">
                 <template #append>
                     <el-button :icon="folder" @click="openNpmDialog" />
                 </template>
             </el-input>
         </el-form-item>
+        <el-form-item label="hexo文件路径">
+            <el-input v-model="environmentSetting.hexoPath">
+                <template #append>
+                    <el-button :icon="folder" @click="openHexoDialog" />
+                </template>
+            </el-input>
+        </el-form-item>
         <el-form-item label="git文件路径">
-            <el-input v-model="basicSetting.gitPath">
+            <el-input v-model="environmentSetting.gitPath">
                 <template #append>
                     <el-button :icon="folder" @click="openGitDialog" />
                 </template>
@@ -38,15 +42,14 @@ import {useSettingStore} from "@/store/SettingStore";
 export default defineComponent({
     setup() {
         const folder = markRaw(Folder);
-        const basicSetting = useSettingStore().environmentSetting;
-        documentDir().then(path => {
-            basicSetting.path = path + 'yun-luo-blog';
-        })
         return {
-            folder, basicSetting
+            folder
         }
     },
     name: 'environment-setting',
+    data: () => ({
+        environmentSetting: useSettingStore().environmentSetting
+    }),
     methods: {
         async openNodeDialog() {
             const selected = await open({
@@ -59,21 +62,35 @@ export default defineComponent({
                 }]
             });
             if (typeof selected === 'object' && selected) {
-                this.basicSetting.nodePath = (selected as string[])[0];
+                this.environmentSetting.nodePath = (selected as string[])[0];
             }
         },
         async openNpmDialog() {
             const selected = await open({
                 title: '请选择npm文件路径',
                 multiple: true,
-                defaultPath: 'C:\\Program Files',
+                defaultPath: this.environmentSetting.nodePath === '' ? 'C:\\Program Files' :  this.environmentSetting.nodePath,
                 filters: [{
                     name: 'Application',
                     extensions: ['cmd', 'sh']
                 }]
             });
             if (typeof selected === 'object' && selected) {
-                this.basicSetting.npmPath = (selected as string[])[0];
+                this.environmentSetting.npmPath = (selected as string[])[0];
+            }
+        },
+        async openHexoDialog() {
+            const selected = await open({
+                title: '请选择hexo文件路径',
+                multiple: true,
+                defaultPath: this.environmentSetting.nodePath === '' ? 'C:\\Program Files' :  this.environmentSetting.nodePath,
+                filters: [{
+                    name: 'Application',
+                    extensions: ['cmd', 'sh']
+                }]
+            });
+            if (typeof selected === 'object' && selected) {
+                this.environmentSetting.hexoPath = (selected as string[])[0];
             }
         },
         async openGitDialog() {
@@ -87,7 +104,7 @@ export default defineComponent({
                 }]
             });
             if (typeof selected === 'object' && selected) {
-                this.basicSetting.nodePath = (selected as string[])[0];
+                this.basicSetting.gitPath = (selected as string[])[0];
             }
         },
         openFolder() {

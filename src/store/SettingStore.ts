@@ -53,6 +53,7 @@ const environmentSetting = useLocalStorage('environmentSetting', {
     path: '',
     nodePath: '',
     npmPath: '',
+    hexoPath: '',
     gitPath: ''
 });
 

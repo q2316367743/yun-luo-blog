@@ -65,6 +65,13 @@ export default {
         });
     },
 
+    removeDir(path: string): Promise<void> {
+        return removeDir(path, {
+            dir: BaseDirectory.Document,
+            recursive: true
+        });
+    },
+
     /**
      * 解析目录
      *
