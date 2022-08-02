@@ -22,21 +22,26 @@ export default {
         Constant.PATH.BASE().then(path => {
             FileUtil.createDir(path).catch(() => {
             });
-        })
-        // 创建配置文件夹
-        Constant.PATH.CONFIG().then(path => {
-            FileUtil.createDir(path).catch(() => {
-            });
-        })
-        // 文章目录
-        Constant.PATH.POST().then(path => {
-            FileUtil.createDir(path).catch(() => {
-            });
-        })
-        // 图片目录
-        Constant.PATH.POST_IMAGES().then(path => {
-            FileUtil.createDir(path).catch(() => {
-            });
+            // 创建配置文件夹
+            Constant.PATH.CONFIG().then(path => {
+                FileUtil.createDir(path).catch(() => {
+                });
+            })
+            // 文章目录
+            Constant.PATH.POST().then(path => {
+                FileUtil.createDir(path).catch(() => {
+                });
+            })
+            // 图片目录
+            Constant.PATH.POST_IMAGES().then(path => {
+                FileUtil.createDir(path).catch(() => {
+                });
+            })
+            // Hexo目录
+            Constant.PATH.HEXO().then(path => {
+                FileUtil.createDir(path).catch(() => {
+                });
+            })
         })
     },
 
@@ -81,7 +86,9 @@ export default {
             } as FileEntry
         }));
         loading.setText("执行构建命令");
-        await invoke('sync_after', {
+        await invoke('command_run', {
+            command: "D:\\Program Files\\nodejs\\node_global\\hexo.cmd",
+            arg: "d",
             currentDir: hexoPath
         })
         loading.setText("推送到远程");

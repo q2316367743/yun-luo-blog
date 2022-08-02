@@ -53,6 +53,7 @@
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
+                                <el-dropdown-item>初始化</el-dropdown-item>
                                 <el-dropdown-item>打包</el-dropdown-item>
                                 <el-dropdown-item>运行</el-dropdown-item>
                                 <el-dropdown-item>编译</el-dropdown-item>
