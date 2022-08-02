@@ -5,6 +5,7 @@ import {ElLoading} from "element-plus";
 import {postService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import {FileEntry} from "@tauri-apps/api/fs";
+import {invoke} from "@tauri-apps/api/tauri";
 
 /**
  * 启动应用
@@ -80,6 +81,9 @@ export default {
             } as FileEntry
         }));
         loading.setText("执行构建命令");
+        await invoke('sync_after', {
+            currentDir: hexoPath
+        })
         loading.setText("推送到远程");
         return new Promise<void>((resolve) => {
             loading.close();
