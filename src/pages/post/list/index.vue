@@ -226,6 +226,10 @@ export default defineComponent({
 
             .option {
                 padding: 11px;
+
+                .el-button {
+                    padding-right: 10px;
+                }
             }
         }
 
@@ -233,10 +237,6 @@ export default defineComponent({
             width: 200px;
             margin: 5px;
             height: 32px;
-        }
-
-        .el-button {
-            padding-right: 10px;
         }
     }
 

@@ -2,27 +2,14 @@
     <div id="tag-page">
         <el-scrollbar>
             <div class="content">
-                <el-popover
-                    v-for="(tag, index) in tagList" :key="index"
-                    ref="popover"
-                    :width="150"
-                    trigger="contextmenu"
-                >
-                    <template #reference>
-                        <div class="tag">
-                            <el-badge :value="tag.postCount">
-                                <span>{{ tag.name }}</span>
-                            </el-badge>
-                        </div>
-                    </template>
-                    <div style="text-align: center;">
-                        <el-button type="primary" text @click="tagUpdate(tag)" :disabled="tag.postCount !== 0">修改
-                        </el-button>
+                <div class="tag" v-for="(tag, index) in tagList" :key="index">
+                    <div class="content">{{ tag.name }}</div>
+                    <div class="count" v-if="tag.postCount > 0">{{ tag.postCount }}</div>
+                    <div class="option" v-else>
+                        <el-button type="primary" link :icon="edit" @click="tagUpdate(tag)"></el-button>
+                        <el-button type="danger" link :icon="deleted" @click="tagDelete(tag)"></el-button>
                     </div>
-                    <div style="text-align: center;">
-                        <el-button type="danger" text>删除</el-button>
-                    </div>
-                </el-popover>
+                </div>
             </div>
         </el-scrollbar>
         <div class="tag-add">
@@ -32,7 +19,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {PriceTag, Plus} from '@element-plus/icons-vue';
+import {Delete, Edit, Plus, PriceTag} from '@element-plus/icons-vue';
 
 import {tagService} from "@/global/BeanFactory";
 import TagView from '@/views/TagView';
@@ -43,7 +30,9 @@ export default defineComponent({
     components: {PriceTag},
     setup() {
         const plus = markRaw(Plus);
-        return {plus}
+        const edit = markRaw(Edit);
+        const deleted = markRaw(Delete);
+        return {plus, edit, deleted}
     },
     data: () => ({
         tagList: new Array<TagView>()
@@ -98,6 +87,38 @@ export default defineComponent({
                     });
                 });
             });
+        },
+        tagDelete(tag: TagView) {
+            if (tag.postCount !== 0) {
+                // 文章数量不为0，不允许修改
+                return;
+            }
+            ElMessageBox.confirm(
+                `此操作将永久删除标签【${tag.name}】. 是否继续?`,
+                '警告',
+                {
+                    confirmButtonText: '删除',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            ).then(() => {
+                tagService.removeById(tag.id!).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: '删除成功',
+                    });
+                    this.tagListAll();
+                }).catch(e => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: e,
+                    });
+                })
+            }).catch(() => {
+                console.error("取消删除")
+            })
         }
     }
 });
@@ -117,16 +138,33 @@ export default defineComponent({
         flex-wrap: wrap;
 
         .tag {
-            border: #e8e8e8 solid 1px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            display: flex;
             margin: 4px 6px;
-            padding: 8px;
-            border-radius: 15px;
-            font-size: 0.8em;
             cursor: pointer;
+
+            .content {
+                padding: 2px 8px;
+            }
+
+            .count {
+                padding: 2px 10px;
+                background-color: #f5f7fa;
+            }
+
+            .option {
+                padding: 0 10px;
+                background-color: #f5f7fa;
+            }
 
             &:hover {
                 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
+
             }
+
+            // 边框 4px #dcdfe6
+            //    #f5f7fa
         }
     }
 

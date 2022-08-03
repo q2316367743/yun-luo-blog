@@ -107,4 +107,22 @@ export default class TagService {
             })
     }
 
+    /**
+     * 根据ID删除标签
+     *
+     * @param id 标签ID
+     */
+    async removeById(id: number): Promise<void> {
+        let tagPostCount = await this.postTagDao.where("tagId").equals(id).count();
+        if (tagPostCount > 0) {
+            return new Promise<void>((resolve, reject) => {
+                reject('此标签已被文章关联，请先删除文章后再删除标签');
+            })
+        }
+        await this.tagDao.delete(id);
+        return new Promise<void>(resolve => {
+            resolve();
+        })
+    }
+
 }
