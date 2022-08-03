@@ -14,11 +14,28 @@
                         <el-input v-model="hexo.description"></el-input>
                     </el-form-item>
                     <el-form-item label="关键词">
-                        <el-select v-model="hexo.keywords" multiple filterable allow-create default-first-option
-                                   :reserve-keyword="false" placeholder="网站的关键词。支持多个关键词。"
-                                   style="width: 300px">
-                            <el-option v-for="item in hexo.keywords" :key="item" :label="item" :value="item"/>
-                        </el-select>
+                        <el-tag
+                            v-for="keyword in hexo.keywords"
+                            :key="keyword"
+                            closable
+                            :disable-transitions="false"
+                            @close="keywordRemove(keyword)"
+                            style="margin-right: 5px;"
+                        >
+                            {{ keyword }}
+                        </el-tag>
+                        <el-input
+                            v-if="keywordInput"
+                            ref="keywordInputRef"
+                            v-model="keywordInputText"
+                            size="small"
+                            style="width: 72px;"
+                            @keyup.enter="keywordAdd"
+                            @blur="keywordAdd"
+                        />
+                        <el-button v-else size="small" @click="showKeywordInput">
+                            新关键字
+                        </el-button>
                     </el-form-item>
                     <el-form-item label="您的昵称">
                         <el-input v-model="hexo.author"></el-input>
@@ -227,6 +244,7 @@ import ThemeConfigEditor from "@/components/ThemeConfigEditor/index.vue";
 
 import languages from './components/languages';
 import timezones from './components/timezones';
+import ArrayUtil from "@/utils/ArrayUtil";
 
 export default defineComponent({
     components: {HexoConfigEditor, ThemeConfigEditor},
@@ -234,7 +252,9 @@ export default defineComponent({
         hexo: new Hexo(),
         theme: "",
         activeName: 'site',
-        themeList: new Array<string>()
+        themeList: new Array<string>(),
+        keywordInput: false,
+        keywordInputText: ""
     }),
     created() {
         Constant.PATH.HEXO_CONFIG().then(path => {
@@ -270,7 +290,7 @@ export default defineComponent({
                 if (e.code == 'KeyS') {
                     if (this.activeName === 'theme') {
                         this.saveTheme();
-                    }else {
+                    } else {
                         this.save();
                     }
                 }
@@ -281,6 +301,30 @@ export default defineComponent({
         document.onkeydown = null;
     },
     methods: {
+        showKeywordInput() {
+            this.keywordInput = true;
+            this.keywordInputText = "";
+            this.$nextTick(() => {
+                let keywordInputRef = this.$refs.keywordInputRef as HTMLElement;
+                keywordInputRef.focus();
+            })
+        },
+        keywordAdd() {
+            if (this.keywordInputText !== "" && !ArrayUtil.contains(this.hexo.keywords, this.keywordInputText)) {
+                try {
+                    this.hexo.keywords.push(this.keywordInputText);
+                } catch (e) {
+                    console.error(e);
+                    this.hexo.keywords = [this.keywordInputText];
+                }
+            }
+            this.keywordInput = false;
+            this.keywordInputText = "";
+        },
+        keywordRemove(keyword: string) {
+            let deleteIndex = this.hexo.keywords.indexOf(keyword);
+            this.hexo.keywords.splice(deleteIndex, 1);
+        },
         languageSuggestion(keyword: string, cb: any) {
             if (keyword && keyword !== '') {
                 cb(languages.filter(item => {
