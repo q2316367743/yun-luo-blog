@@ -7,6 +7,7 @@ import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import {FileEntry} from "@tauri-apps/api/fs";
 import {invoke} from "@tauri-apps/api/tauri";
 import HexoUtil from "@/utils/HexoUtil";
+import {useSettingStore} from "@/store/SettingStore";
 
 /**
  * 启动应用
@@ -61,6 +62,13 @@ export default {
      * 执行同步
      */
     async sync(): Promise<void> {
+        // 获取hexo命令目录
+        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        if (!hexoCommandPath || hexoCommandPath === "") {
+            return new Promise<void>((resolve, reject) => {
+                reject("请配置hexo命令路径");
+            })
+        }
         // TODO: 同步：将文章复制到目标文件夹 -> 执行构建命令 -> 推送到远程
         const loading = ElLoading.service({
             lock: true,

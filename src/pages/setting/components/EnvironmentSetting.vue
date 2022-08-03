@@ -1,5 +1,5 @@
 <template>
-    <el-form :model="basicSetting" label-width="120px" style="width: 500px">
+    <el-form :model="environmentSetting" label-width="120px" style="width: 500px">
         <el-form-item label="node文件路径">
             <el-input v-model="environmentSetting.nodePath">
                 <template #append>
@@ -104,13 +104,9 @@ export default defineComponent({
                 }]
             });
             if (typeof selected === 'object' && selected) {
-                this.basicSetting.gitPath = (selected as string[])[0];
+                this.environmentSetting.gitPath = (selected as string[])[0];
             }
         },
-        openFolder() {
-            openWindow(this.basicSetting.path);
-            this.$router.push('/setting')
-        }
     }
 });
 </script>

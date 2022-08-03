@@ -36,7 +36,7 @@
             </div>
         </div>
         <!-- 文章设置 -->
-        <el-dialog v-model="settingDialog" top="5vh" draggable :close-on-click-modal="false">
+        <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false">
             <template #header>
                 <h2>文章设置</h2>
             </template>

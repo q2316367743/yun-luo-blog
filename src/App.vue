@@ -148,6 +148,12 @@ export default defineComponent({
                     type: 'success',
                     message: '同步成功'
                 });
+            }).catch(e => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: e
+                });
             })
         },
         openSetting() {

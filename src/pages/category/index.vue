@@ -1,6 +1,6 @@
 <template>
     <div id="category">
-        <el-tree :data="categoryTree" :props="categoryProps">
+        <el-tree :data="categoryTree" :props="categoryProps" default-expand-all>
             <template #default="{ node, data }">
                 <div style="display: flex;justify-content: space-between;width: 100%;">
                     <div>
