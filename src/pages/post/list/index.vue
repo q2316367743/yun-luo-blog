@@ -2,25 +2,29 @@
     <div id="post">
         <header class="header">
             <div class="left">
-                <div class="left-delete" v-if="deletePostIds.length > 0" @click="deleteByIds">
-                    <div style="margin-top: 1px;">
-                        <el-icon>
-                            <Delete/>
-                        </el-icon>
-                    </div>
-                    <div style="margin-left: 6px;">选中 {{ deletePostIds.length }}</div>
-                </div>
-            </div>
-            <div class="right">
-                <el-input v-model="keyword" placeholder="搜索文章" class="input-with-select" v-if="showSearch"
-                          @blur="searchBlur" ref="searchInput" @input="searchPost">
+                <el-input v-model="keyword" placeholder="搜索文章" class="input-with-select" @input="searchPost"
+                          clearable>
                     <template #append>
                         <el-button :icon="search" @click="searchPost"/>
                     </template>
                 </el-input>
+                <el-select v-model="status" placeholder="状态" style="width: 100px;" @change="searchPost" clearable>
+                    <el-option label="草稿" :value="1"/>
+                    <el-option label="发布" :value="2"/>
+                    <el-option label="回收站" :value="3"/>
+                </el-select>
+                <el-select v-model="type" placeholder="排序" style="width: 130px;margin-left: 5px" @change="searchPost"
+                           clearable>
+                    <el-option label="标题(a-z)" :value="1"/>
+                    <el-option label="标题(z-a)" :value="2"/>
+                    <el-option label="更新时间(新-旧)" :value="3"/>
+                    <el-option label="更新时间(旧-新)" :value="4"/>
+                    <el-option label="创建时间(新-旧)" :value="5"/>
+                    <el-option label="创建时间(旧-新)" :value="6"/>
+                </el-select>
+            </div>
+            <div class="right">
                 <div class="option">
-                    <el-button v-if="!showSearch" type="primary" link :icon="search" @click="showSearchClick">
-                    </el-button>
                     <el-button type="primary" link :icon="refresh" @click="refreshPost"></el-button>
                     <el-button type="primary" link :icon="plus" @click="toRouteLink('/post/new')"></el-button>
                 </div>
@@ -28,61 +32,56 @@
         </header>
         <main class="main">
             <el-scrollbar>
-                <el-checkbox-group v-model="deletePostIds" v-if="showPosts.length > 0">
-                    <div v-for="(post, index) in showPosts" :key="index" class="post">
-                        <div class="choose">
-                            <el-checkbox :label="post.id"><br/></el-checkbox>
-                        </div>
-                        <div class="board" @click="toPostInfo(post)">
-                            <div class="title">{{ post.title }}</div>
-                            <div class="description">
-                                <div class="status" v-if="post.status === 1">
-                                    <span class="badge draft"></span>
-                                    <span>草稿</span>
-                                </div>
-                                <div class="status" v-else-if="post.status === 2">
-                                    <span class="badge release"></span>
-                                    <span>发布</span>
-                                </div>
-                                <div class="status" v-else-if="post.status === 3">
-                                    <span class="badge recycle"></span>
-                                    <span>回收站</span>
-                                </div>
-                                <div class="update-time">
-                                    <el-icon>
-                                        <Calendar/>
-                                    </el-icon>
-                                    <span>{{ format(new Date(post.updated)) }}</span>
-                                </div>
-                                <div class="tag" v-if="post.tags.length > 0">
-                                    <el-icon>
-                                        <price-tag/>
-                                    </el-icon>
-                                    <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
-                                </div>
-                                <div class="category" v-if="post.categories.length > 0">
-                                    <el-icon>
-                                        <collection-tag/>
-                                    </el-icon>
-                                    <span v-for="category in post.categories" class="category-item">{{
-                                            category
-                                        }}</span>
-                                </div>
+                <div v-for="(post, index) in showPosts" :key="index" class="post">
+                    <div class="board" @click="toPostInfo(post)">
+                        <div class="title">{{ post.title }}</div>
+                        <div class="description">
+                            <div class="status" v-if="post.status === 1">
+                                <span class="badge draft"></span>
+                                <span>草稿</span>
+                            </div>
+                            <div class="status" v-else-if="post.status === 2">
+                                <span class="badge release"></span>
+                                <span>发布</span>
+                            </div>
+                            <div class="status" v-else-if="post.status === 3">
+                                <span class="badge recycle"></span>
+                                <span>回收站</span>
+                            </div>
+                            <div class="update-time">
+                                <el-icon>
+                                    <Calendar/>
+                                </el-icon>
+                                <span>{{ format(new Date(post.updated)) }}</span>
+                            </div>
+                            <div class="tag" v-if="post.tags.length > 0">
+                                <el-icon>
+                                    <price-tag/>
+                                </el-icon>
+                                <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
+                            </div>
+                            <div class="category" v-if="post.categories.length > 0">
+                                <el-icon>
+                                    <collection-tag/>
+                                </el-icon>
+                                <span v-for="category in post.categories" class="category-item">{{
+                                        category
+                                    }}</span>
                             </div>
                         </div>
-                        <div class="option">
-                            <el-button type="danger" link @click="deleteById(post.id)">删除</el-button>
-                        </div>
                     </div>
-                </el-checkbox-group>
-                <el-empty v-else description="暂无文章" style="margin-top: 110px;"/>
+                    <div class="option">
+                        <el-button type="danger" link @click="deleteById(post.id)">删除</el-button>
+                    </div>
+                </div>
+                <el-empty v-if="showPosts.length === 0" description="暂无文章" style="margin-top: 110px;"/>
             </el-scrollbar>
         </main>
     </div>
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Search, Plus, Refresh, Calendar, PriceTag, CollectionTag, Delete} from '@element-plus/icons-vue';
+import {Calendar, CollectionTag, Delete, Plus, PriceTag, Refresh, Search} from '@element-plus/icons-vue';
 import {ElMessage, ElMessageBox} from "element-plus";
 
 import PostView from '@/views/PostView';
@@ -100,10 +99,10 @@ export default defineComponent({
     },
     data: () => ({
         keyword: '',
-        showSearch: false,
         posts: new Array<PostView>(),
         showPosts: new Array<PostView>(),
-        deletePostIds: new Array<number>(),
+        status: null,
+        type: 1,
         page: {
             number: 1,
             size: 10,
@@ -118,25 +117,27 @@ export default defineComponent({
     },
     methods: {
         format: DateUtil.formatDateTime,
-        searchBlur() {
-            if (this.keyword === '') {
-                this.showSearch = false;
-            }
-        },
-        showSearchClick() {
-            this.showSearch = true;
-            this.$nextTick(() => {
-                let searchInput = this.$refs.searchInput as HTMLElement;
-                searchInput.focus();
-            });
-        },
         searchPost() {
-            this.showPosts = [];
-            this.posts.forEach(post => {
-                if (post.title.indexOf(this.keyword) > -1) {
-                    this.showPosts.push(post);
-                }
-            })
+            this.showPosts = this.posts.filter(e => this.keyword == '' || e.title.indexOf(this.keyword) > -1)
+                .filter(e => !this.status || this.status === 0 || e.status === this.status)
+                .sort((e1, e2) => {
+                    if (this.type === 1) {
+                        return e1.title.localeCompare(e2.title);
+                    } else if (this.type === 2) {
+                        return e2.title.localeCompare(e1.title);
+                    } else if (this.type === 3) {
+                        return e2.updated - e1.updated
+                    } else if (this.type === 4) {
+                        return e1.updated - e2.updated
+                    } else if (this.type === 5) {
+                        return e2.date - e1.date
+                    } else if (this.type === 6) {
+                        return e1.date - e2.date
+                    } else {
+                        // 默认标题正序
+                        return e1.title.localeCompare(e2.title);
+                    }
+                });
         },
         toRouteLink(link: string) {
             this.$router.push(link);
@@ -169,7 +170,7 @@ export default defineComponent({
                 }
             ).then(() => {
                 // 先删除路径
-                postService.deleteById([id!]).then(() => {
+                postService.deleteById(id!).then(() => {
                     // 删除成功，准备删除源文件
                     ElMessage({
                         type: 'success',
@@ -181,42 +182,6 @@ export default defineComponent({
                         this.searchPost();
                     })
                 }).catch((e) => {
-                    ElMessage({
-                        type: 'error',
-                        message: '删除失败，' + e,
-                    })
-                });
-            }).catch(() => {
-                ElMessage({
-                    type: 'info',
-                    message: '取消删除',
-                })
-            })
-        },
-        deleteByIds() {
-            ElMessageBox.confirm(
-                '确定删除这些文章，删除后将无法恢复',
-                '警告',
-                {
-                    confirmButtonText: '删除',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                }
-            ).then(() => {
-                // 先删除路径
-                postService.deleteById(this.deletePostIds).then(() => {
-                    this.deletePostIds = [];
-                    // 删除成功，准备删除源文件
-                    ElMessage({
-                        type: 'success',
-                        message: '删除成功',
-                    });
-                    postService.list().then(posts => {
-                        this.posts = posts;
-                        this.searchPost();
-                    })
-                }).catch((e) => {
-                    this.deletePostIds = [];
                     ElMessage({
                         type: 'error',
                         message: '删除失败，' + e,
@@ -252,20 +217,8 @@ export default defineComponent({
         border-bottom: #eeeeee solid 1px;
 
         .left {
-            padding: 5px 5px 5px 26px;
             font-size: 0.9em;
 
-            .left-delete {
-                display: flex;
-                background-color: #fafafa;
-                padding: 6px;
-                border-radius: 5px;
-
-                &:hover {
-                    background-color: #eaeaea;
-                    cursor: pointer;
-                }
-            }
         }
 
         .right {
@@ -311,14 +264,6 @@ export default defineComponent({
 
                 .option {
                     display: block;
-                }
-            }
-
-            .choose {
-                width: 30px;
-
-                .el-checkbox {
-                    margin-top: 13px;
                 }
             }
 

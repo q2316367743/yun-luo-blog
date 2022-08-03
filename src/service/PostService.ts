@@ -235,7 +235,7 @@ export default class TagService {
             if (condition.status) {
                 if (where) {
                     where = where.and(e => e.status == condition.status);
-                }else {
+                } else {
                     where = this.postDao.where('status').equals(condition.status);
                 }
             }
@@ -244,7 +244,7 @@ export default class TagService {
         if (where) {
             // 具有条件
             posts = await where.toArray();
-        }else {
+        } else {
             // 没有条件
             posts = await this.postDao.toArray();
         }
@@ -361,30 +361,28 @@ export default class TagService {
         })
     }
 
-    deleteById(ids: Array<number>): Promise<void> {
+    deleteById(id: number): Promise<void> {
         return this.dexieInstance.transaction('readwrite',
             [this.postDao, this.postTagDao, this.tagDao],
             async (trans: Transaction) => {
                 let postDao = trans.table('Post') as Dexie.Table<Post, number>;
                 let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
-                for (let id of ids) {
-                    // 先查询文章
-                    let post = await postDao.where({id: id}).first();
-                    if (!post) {
-                        return new Promise<void>((resolve, reject) => {
-                            reject('文章不存在，请刷新后重试');
-                        });
-                    }
-                    // 删除文章
-                    await postDao.delete(post.id);
-                    // 删除标签关联
-                    let postTags = await postTagDao.where({postId: post.id}).toArray();
-                    for (let postTag of postTags) {
-                        await postTagDao.delete(postTag.id!);
-                    }
-                    // 删除内容
-                    await deleteByPath(post.path)
+                // 先查询文章
+                let post = await postDao.where({id: id}).first();
+                if (!post) {
+                    return new Promise<void>((resolve, reject) => {
+                        reject('文章不存在，请刷新后重试');
+                    });
                 }
+                // 删除文章
+                await postDao.delete(post.id);
+                // 删除标签关联
+                let postTags = await postTagDao.where({postId: post.id}).toArray();
+                for (let postTag of postTags) {
+                    await postTagDao.delete(postTag.id!);
+                }
+                // 删除内容
+                await deleteByPath(post.path)
                 return new Promise<void>((resolve) => {
                     resolve();
                 });
