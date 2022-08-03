@@ -34,9 +34,11 @@ export default defineComponent({
         instance = monaco.editor.create(container, {
             value: this.modelValue,
             language: 'markdown',
-            automaticLayout: true
+            automaticLayout: true,
+            wordWrap: 'on',
+            cursorSmoothCaretAnimation: true
         });
-        instance.onDidChangeModelContent((e) => {
+        instance.onDidChangeModelContent(() => {
             const value = instance.getValue();
             if (this.content !== value) {
                 this.$emit('update:modelValue', value);
