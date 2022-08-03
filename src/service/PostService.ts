@@ -6,7 +6,7 @@ import DexieInstance from '@/plugins/dexie';
 import Constant from '@/global/Constant';
 
 import ArrayUtil from '@/utils/ArrayUtil';
-import FileUtil from "@/utils/FileUtil";
+import FileApi from "@/api/FileApi";
 import {deleteByPath, parsePost, savePost} from '@/utils/PostUtil'
 
 import Post from '@/entities/Post';
@@ -62,7 +62,7 @@ export default class TagService {
         console.log('如果没有路径，先生成目录和文件名')
         if (!post.path || post.path === '') {
             let postPath = await Constant.PATH.POST();
-            post.path = await FileUtil.resolve(postPath, post.title + ".md");
+            post.path = await FileApi.resolve(postPath, post.title + ".md");
             post.fileName = post.title + ".md";
             console.log('先生成目录和文件名', post.path, post.fileName);
         }
@@ -322,7 +322,7 @@ export default class TagService {
         });
         // 获取文件
         let postPath = await Constant.PATH.POST()
-        let files = await FileUtil.listDir(postPath, true);
+        let files = await FileApi.listDir(postPath, true);
         // 获取全部文章目录
         let posts = await this.postDao.toArray();
         // 删除全部文章

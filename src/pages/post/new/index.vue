@@ -109,7 +109,6 @@ import {
 } from '@element-plus/icons-vue';
 import highlight from 'highlight.js';
 import 'highlight.js/styles/docco.css'
-import {open} from '@tauri-apps/api/dialog';
 import * as monaco from 'monaco-editor';
 import {ElLoading, ElMessage} from "element-plus";
 
@@ -119,6 +118,7 @@ import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
 import {copyImage, parsePost} from "@/utils/PostUtil";
 import {postService, tagService, categoryService} from '@/global/BeanFactory';
+import DialogApi from "@/api/DialogApi";
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
@@ -236,7 +236,7 @@ export default defineComponent({
             this.$router.push(link);
         },
         async insertImage() {
-            const selected = await open({
+            const selected = await DialogApi.open({
                 title: '请选择图片',
                 multiple: true,
                 filters: [{

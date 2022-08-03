@@ -109,9 +109,10 @@ import {ElLoading, ElMessage} from "element-plus";
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
 import HexoUtil from "@/utils/HexoUtil";
-import {open, open as openWindow} from "@tauri-apps/api/shell";
 import Constant from "@/global/Constant";
 import SettingPage from '@/pages/setting/index.vue';
+
+import NativeApi from "@/api/NativeApi";
 
 export default defineComponent({
     components: {
@@ -164,7 +165,7 @@ export default defineComponent({
         },
         openFolder() {
             Constant.PATH.BASE().then(path => {
-                openWindow(path);
+                NativeApi.open(path);
             })
         },
         commandClick(command: string) {

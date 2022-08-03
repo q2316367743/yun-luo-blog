@@ -3,41 +3,38 @@
         <el-form-item label="node文件路径">
             <el-input v-model="environmentSetting.nodePath">
                 <template #append>
-                    <el-button :icon="folder" @click="openNodeDialog" />
+                    <el-button :icon="folder" @click="openNodeDialog"/>
                 </template>
             </el-input>
         </el-form-item>
         <el-form-item label="npm文件路径">
             <el-input v-model="environmentSetting.npmPath">
                 <template #append>
-                    <el-button :icon="folder" @click="openNpmDialog" />
+                    <el-button :icon="folder" @click="openNpmDialog"/>
                 </template>
             </el-input>
         </el-form-item>
         <el-form-item label="hexo文件路径">
             <el-input v-model="environmentSetting.hexoPath">
                 <template #append>
-                    <el-button :icon="folder" @click="openHexoDialog" />
+                    <el-button :icon="folder" @click="openHexoDialog"/>
                 </template>
             </el-input>
         </el-form-item>
         <el-form-item label="git文件路径">
             <el-input v-model="environmentSetting.gitPath">
                 <template #append>
-                    <el-button :icon="folder" @click="openGitDialog" />
+                    <el-button :icon="folder" @click="openGitDialog"/>
                 </template>
             </el-input>
         </el-form-item>
     </el-form>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw } from "vue";
-import { useLocalStorage } from '@vueuse/core';
-import { Folder } from "@element-plus/icons-vue";
-import { documentDir } from '@tauri-apps/api/path';
-import { open } from '@tauri-apps/api/dialog';
-import { open as openWindow } from '@tauri-apps/api/shell';
+import {defineComponent, markRaw} from "vue";
+import {Folder} from "@element-plus/icons-vue";
 import {useSettingStore} from "@/store/SettingStore";
+import DialogApi from "@/api/DialogApi";
 
 export default defineComponent({
     setup() {
@@ -52,7 +49,7 @@ export default defineComponent({
     }),
     methods: {
         async openNodeDialog() {
-            const selected = await open({
+            const selected = await DialogApi.open({
                 title: '请选择node文件路径',
                 multiple: true,
                 defaultPath: 'C:\\Program Files',
@@ -66,10 +63,10 @@ export default defineComponent({
             }
         },
         async openNpmDialog() {
-            const selected = await open({
+            const selected = await DialogApi.open({
                 title: '请选择npm文件路径',
                 multiple: true,
-                defaultPath: this.environmentSetting.nodePath === '' ? 'C:\\Program Files' :  this.environmentSetting.nodePath,
+                defaultPath: this.environmentSetting.nodePath === '' ? 'C:\\Program Files' : this.environmentSetting.nodePath,
                 filters: [{
                     name: 'Application',
                     extensions: ['cmd', 'sh']
@@ -80,10 +77,10 @@ export default defineComponent({
             }
         },
         async openHexoDialog() {
-            const selected = await open({
+            const selected = await DialogApi.open({
                 title: '请选择hexo文件路径',
                 multiple: true,
-                defaultPath: this.environmentSetting.nodePath === '' ? 'C:\\Program Files' :  this.environmentSetting.nodePath,
+                defaultPath: this.environmentSetting.nodePath === '' ? 'C:\\Program Files' : this.environmentSetting.nodePath,
                 filters: [{
                     name: 'Application',
                     extensions: ['cmd', 'sh']
@@ -94,7 +91,7 @@ export default defineComponent({
             }
         },
         async openGitDialog() {
-            const selected = await open({
+            const selected = await DialogApi.open({
                 title: '请选择git文件路径',
                 multiple: true,
                 defaultPath: 'C:\\Program Files',

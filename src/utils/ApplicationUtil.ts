@@ -1,13 +1,12 @@
 import Constant from '@/global/Constant';
-import FileUtil from "@/utils/FileUtil";
+import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
 import {ElLoading, ElMessage} from "element-plus";
 import {postService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
-import {FileEntry} from "@tauri-apps/api/fs";
-import {invoke} from "@tauri-apps/api/tauri";
 import HexoUtil from "@/utils/HexoUtil";
 import {useSettingStore} from "@/store/SettingStore";
+import FileEntry from "@/api/entities/FileEntry";
 
 /**
  * 启动应用
@@ -22,26 +21,26 @@ export default {
         // 获取文档目录
         // 创建基础文件夹
         Constant.PATH.BASE().then(path => {
-            FileUtil.createDir(path).catch(() => {
+            FileApi.createDir(path).catch(() => {
             });
             // 创建配置文件夹
             Constant.PATH.CONFIG().then(path => {
-                FileUtil.createDir(path).catch(() => {
+                FileApi.createDir(path).catch(() => {
                 });
             })
             // 文章目录
             Constant.PATH.POST().then(path => {
-                FileUtil.createDir(path).catch(() => {
+                FileApi.createDir(path).catch(() => {
                 });
             })
             // 图片目录
             Constant.PATH.POST_IMAGES().then(path => {
-                FileUtil.createDir(path).catch(() => {
+                FileApi.createDir(path).catch(() => {
                 });
             })
             // Hexo目录
             Constant.PATH.HEXO().then(path => {
-                FileUtil.createDir(path).catch(() => {
+                FileApi.createDir(path).catch(() => {
                 });
             });
         })
@@ -81,7 +80,7 @@ export default {
         let hexoConfig = await Constant.PATH.HEXO_CONFIG();
         let hexoConfigContent = "";
         try {
-            hexoConfigContent=  await FileUtil.readFile(hexoConfig)
+            hexoConfigContent=  await FileApi.readFile(hexoConfig)
         }catch (e) {
             ElMessage({
                 showClose: true,
@@ -92,17 +91,17 @@ export default {
         }
         let hexo = new Hexo(hexoConfigContent);
         let postImage = await Constant.PATH.POST_IMAGES();
-        let source_dir = await FileUtil.resolve(hexoPath, hexo.source_dir);
-        let _posts = await FileUtil.resolve(source_dir, "_posts");
+        let source_dir = await FileApi.resolve(hexoPath, hexo.source_dir);
+        let _posts = await FileApi.resolve(source_dir, "_posts");
         // _posts文件夹可能不存在
-        await FileUtil.createDir(_posts);
+        await FileApi.createDir(_posts);
         // 复制图片到目标文件夹
-        await FileUtil.copyDir(_posts, postImage);
+        await FileApi.copyDir(_posts, postImage);
         // 复制发布的文章
         let posts = await postService.list({
             status: PostStatusEnum.RELEASE
         });
-        await FileUtil.copyFileToDir(_posts, false, posts.map(e => {
+        await FileApi.copyFileToDir(_posts, false, posts.map(e => {
             return {
                 name: e.fileName,
                 path: e.path

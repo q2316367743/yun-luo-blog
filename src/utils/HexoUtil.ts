@@ -1,8 +1,8 @@
-import {invoke} from "@tauri-apps/api/tauri";
 import Constant from "@/global/Constant";
-import FileUtil from "@/utils/FileUtil";
+import FileApi from "@/api/FileApi";
 import {useSettingStore} from "@/store/SettingStore";
 import {ElLoading} from "element-plus";
+import NativeApi from "@/api/NativeApi";
 
 let packageJson = `{
   "name": "hexo",
@@ -42,12 +42,12 @@ export default {
         let hexoPath = await Constant.PATH.HEXO();
         loading.setText("重置目录");
         // 先删除旧的目录
-        await FileUtil.removeDir(hexoPath);
+        await FileApi.removeDir(hexoPath);
         // 创建新的目录
-        await FileUtil.createDir(hexoPath);
+        await FileApi.createDir(hexoPath);
         loading.setText("执行初始化命令");
         // 执行初始化命令
-        await invoke("command_run", {
+        await NativeApi.invoke("command_run", {
             command: hexoCommandPath,
             arg: Constant.HEXO.INIT,
             currentDir: hexoPath
@@ -70,7 +70,7 @@ export default {
             })
         }
         let hexoPath = await Constant.PATH.HEXO();
-        await invoke('command_run', {
+        await NativeApi.invoke('command_run', {
             command: hexoCommandPath,
             arg: Constant.HEXO.CLEAN,
             currentDir: hexoPath
@@ -92,7 +92,7 @@ export default {
             })
         }
         let hexoPath = await Constant.PATH.HEXO();
-        await invoke('command_run', {
+        await NativeApi.invoke('command_run', {
             command: hexoCommandPath,
             arg: Constant.HEXO.DEPLOY,
             currentDir: hexoPath

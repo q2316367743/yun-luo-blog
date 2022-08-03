@@ -1,6 +1,4 @@
-import {documentDir, resolve} from "@tauri-apps/api/path";
-
-let document = "";
+import FileApi from "@/api/FileApi";
 
 // 基础
 const BASE = 'yun-luo-blog';
@@ -29,32 +27,32 @@ export default {
     HEXO_THEME: HEXO_THEME,
     PATH: {
         BASE: async (): Promise<string> => {
-            let document = await documentDir();
-            return resolve(document, BASE);
+            let document = await FileApi.documentDir();
+            return FileApi.resolve(document, BASE);
         },
         POST: async (): Promise<string> => {
-            let document = await documentDir();
-            return resolve(document, BASE, POST);
+            let document = await FileApi.documentDir();
+            return FileApi.resolve(document, BASE, POST);
         },
         CONFIG: async (): Promise<string> => {
-            let document = await documentDir();
-            return resolve(document, BASE, CONFIG);
+            let document = await FileApi.documentDir();
+            return FileApi.resolve(document, BASE, CONFIG);
         },
         POST_IMAGES: async (): Promise<string> => {
-            let document = await documentDir();
-            return resolve(document, BASE, POST_IMAGES);
+            let document = await FileApi.documentDir();
+            return FileApi.resolve(document, BASE, POST_IMAGES);
         },
         HEXO: async (): Promise<string> => {
-            let document = await documentDir();
-            return resolve(document, BASE, HEXO);
+            let document = await FileApi.documentDir();
+            return FileApi.resolve(document, BASE, HEXO);
         },
         HEXO_CONFIG: async (): Promise<string> => {
-            let document = await documentDir();
-            return resolve(document, BASE, HEXO, HEXO_CONFIG);
+            let document = await FileApi.documentDir();
+            return FileApi.resolve(document, BASE, HEXO, HEXO_CONFIG);
         },
         HEXO_THEME: async (): Promise<string> => {
-            let document = await documentDir();
-            return resolve(document, BASE, HEXO, HEXO_THEME);
+            let document = await FileApi.documentDir();
+            return FileApi.resolve(document, BASE, HEXO, HEXO_THEME);
         }
     },
 }

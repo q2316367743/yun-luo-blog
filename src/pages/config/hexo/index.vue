@@ -237,7 +237,7 @@ import {defineComponent} from "vue";
 import {ElMessage, TabsPaneContext} from "element-plus";
 
 import Hexo from "@/global/config/Hexo";
-import FileUtil from "@/utils/FileUtil";
+import FileApi from "@/api/FileApi";
 import Constant from "@/global/Constant";
 import HexoConfigEditor from "@/components/HexoConfigEditor/index.vue";
 import ThemeConfigEditor from "@/components/ThemeConfigEditor/index.vue";
@@ -258,13 +258,13 @@ export default defineComponent({
     }),
     created() {
         Constant.PATH.HEXO_CONFIG().then(path => {
-            FileUtil.readFile(path).then(content => {
+            FileApi.readFile(path).then(content => {
                 this.hexo.parse(content);
                 // 解析后尝试解析
                 Constant.PATH.HEXO().then(hexoPath => {
                     // 读取文件内容
-                    FileUtil.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
-                        FileUtil.readFile(themePath).then(themeContent => {
+                    FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
+                        FileApi.readFile(themePath).then(themeContent => {
                             this.theme = themeContent;
                         }).catch((e) => {
                             console.error('不存在目录', e);
@@ -274,7 +274,7 @@ export default defineComponent({
             });
         });
         Constant.PATH.HEXO_THEME().then(path => {
-            FileUtil.listDir(path).then(files => {
+            FileApi.listDir(path).then(files => {
                 for (let file of files) {
                     if (file.children) {
                         this.themeList.push(file.name!);
@@ -355,7 +355,7 @@ export default defineComponent({
         },
         save() {
             Constant.PATH.HEXO_CONFIG().then(path => {
-                FileUtil.writeFile(path, this.hexo.render()).then(() => {
+                FileApi.writeFile(path, this.hexo.render()).then(() => {
                     ElMessage({
                         showClose: true,
                         message: '保存成功',
@@ -377,8 +377,8 @@ export default defineComponent({
         },
         saveTheme() {
             Constant.PATH.HEXO().then(hexoPath => {
-                FileUtil.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
-                    FileUtil.writeFile(themePath, this.theme).then(() => {
+                FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
+                    FileApi.writeFile(themePath, this.theme).then(() => {
                         ElMessage({
                             showClose: true,
                             message: '保存成功',

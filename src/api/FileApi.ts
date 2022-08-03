@@ -11,9 +11,13 @@ import {
     writeBinaryFile,
     writeTextFile
 } from '@tauri-apps/api/fs';
-import {resolve} from "@tauri-apps/api/path";
+import {documentDir, resolve} from "@tauri-apps/api/path";
 
 export default {
+
+    documentDir(): Promise<string> {
+        return documentDir();
+    },
 
     readFile(path: string): Promise<string> {
         return readTextFile(path, {

@@ -1,7 +1,7 @@
 import PostView from '@/views/PostView';
 import Constant from '@/global/Constant';
-import FileUtil from "@/utils/FileUtil";
-import HttpUtil from "@/utils/HttpUtil";
+import FileApi from "@/api/FileApi";
+import HttpApi from "@/api/HttpApi";
 import {useSettingStore} from '@/store/SettingStore'
 import Entry from "@/global/Entry";
 import jsyaml from "js-yaml";
@@ -38,7 +38,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
         lang: "",
         extra: new Array<Entry>()
     } as PostView;
-    const contents = await FileUtil.readFile(path);
+    const contents = await FileApi.readFile(path);
     let lines = contents.split('\n');
     let start = true;
     let lastIndex = 0;
@@ -129,11 +129,11 @@ export async function savePost(post: PostView): Promise<void> {
     content += "\n---\n"
     content += post.content;
     console.log('处理完成，开始保存')
-    return FileUtil.writeFile(post.path, content)
+    return FileApi.writeFile(post.path, content)
 }
 
 export async function deleteByPath(path: string): Promise<void> {
-    return FileUtil.removeFile(path);
+    return FileApi.removeFile(path);
 }
 
 /**
@@ -183,10 +183,10 @@ export async function copyImage(imagePath: string): Promise<string> {
  * @returns 新的文件地址
  */
 async function localImage(imagePath: string, name: string): Promise<string> {
-    let byte = await FileUtil.readBinaryFile(imagePath);
+    let byte = await FileApi.readBinaryFile(imagePath);
     let postImage = await Constant.PATH.POST_IMAGES();
-    let newPath = await FileUtil.resolve(postImage, name);
-    await FileUtil.writeBinaryFile(newPath, byte)
+    let newPath = await FileApi.resolve(postImage, name);
+    await FileApi.writeBinaryFile(newPath, byte)
     return new Promise<string>((resolve) => {
         resolve(name);
     })
@@ -217,7 +217,7 @@ interface PicGoResult {
  */
 async function picGoImage(imagePath: string): Promise<PicGoResult> {
     let imageSetting = useSettingStore().imageSetting;
-    let axiosPromise = await HttpUtil.native({
+    let axiosPromise = await HttpApi.native({
         method: 'POST',
         url: `http://${imageSetting.picGo.address}:${imageSetting.picGo.port}/upload`,
         data: {

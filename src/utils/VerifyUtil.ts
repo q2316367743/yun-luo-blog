@@ -1,9 +1,9 @@
 import Constant from "@/global/Constant";
-import FileUtil from "@/utils/FileUtil";
+import FileApi from "@/api/FileApi";
 
 export async function verifyDirExistByBase(dir: string): Promise<boolean> {
     let basePath = await Constant.PATH.BASE();
-    let files = await FileUtil.listDir(basePath);
+    let files = await FileApi.listDir(basePath);
     for (let file of files) {
         if (file.children) {
             // 文件夹
