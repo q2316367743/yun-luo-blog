@@ -7,7 +7,7 @@
         "distDir": "../dist"
     },
     "package": {
-        "productName": "yun-luo-blog",
+        "productName": "云落博客",
         "version": "0.1.0"
     },
     "tauri": {
@@ -101,6 +101,9 @@
                 "timestampUrl": "",
                 "webviewInstallMode": {
                     "type": "embedBootstrapper"
+                },
+                "wix": {
+                    "language": "zh-CN"
                 }
             }
         },
