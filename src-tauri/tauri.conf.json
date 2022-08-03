@@ -70,7 +70,7 @@
         },
         "bundle": {
             "active": true,
-            "category": "DeveloperTool",
+            "category": "Education",
             "copyright": "",
             "deb": {
                 "depends": []
@@ -98,7 +98,10 @@
             "windows": {
                 "certificateThumbprint": null,
                 "digestAlgorithm": "sha256",
-                "timestampUrl": ""
+                "timestampUrl": "",
+                "webviewInstallMode": {
+                    "type": "embedBootstrapper"
+                }
             }
         },
         "security": {
