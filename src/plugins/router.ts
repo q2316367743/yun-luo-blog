@@ -1,7 +1,6 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 
 
-import GuidePage from '@/pages/guide/index.vue';
 import PostListPage from '@/pages/post/list/index.vue';
 import PostNewPage from '@/pages/post/new/index.vue';
 import TagPage from '@/pages/tag/index.vue';
@@ -15,11 +14,6 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
         redirect: "/post/list"
-    },
-    {
-        path: '/guide',
-        name: 'guide',
-        component: GuidePage
     },
     {
         path: '/post',

@@ -24,13 +24,13 @@
                         字数：{{ textLength }}
                     </div>
                 </el-popover>
-                <el-tooltip class="box-item" effect="dark" content="插入图片" placement="left">
+                <el-tooltip class="box-item" effect="light" content="插入图片" placement="left">
                     <el-button link :icon="pictureFilled" @click="insertImage"></el-button>
                 </el-tooltip>
-                <el-tooltip class="box-item" effect="dark" content="文章设置" placement="left">
+                <el-tooltip class="box-item" effect="light" content="文章设置" placement="left">
                     <el-button link :icon="tools" @click="openSetting"></el-button>
                 </el-tooltip>
-                <el-tooltip class="box-item" effect="dark" content="预览" placement="left">
+                <el-tooltip class="box-item" effect="light" content="预览（具体以主题为准）" placement="left">
                     <el-button link :icon="starFilled" @click="openPreview"></el-button>
                 </el-tooltip>
             </div>
