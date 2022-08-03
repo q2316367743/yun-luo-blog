@@ -15,5 +15,5 @@ export default defineConfig({
         }
     },
     plugins: [vue()],
-    base: './'
+    base: process.env.ELECTRON=="true" ? './' : ""
 })

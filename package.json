@@ -1,52 +1,88 @@
 {
-  "name": "yun-luo-blog",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
-  "description": "云落博客",
-  "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri"
-  },
-  "dependencies": {
-    "@element-plus/icons-vue": "^2.0.6",
-    "@tauri-apps/api": "^1.0.2",
-    "@vueuse/core": "^8.9.3",
-    "axios": "^0.27.2",
-    "dexie": "^3.2.2",
-    "element-plus": "^2.2.9",
-    "highlight.js": "^11.6.0",
-    "js-yaml": "^4.1.0",
-    "less": "^4.1.3",
-    "less-loader": "^11.0.0",
-    "markdown-it": "^13.0.1",
-    "mitt": "^3.0.0",
-    "monaco-editor": "^0.33.0",
-    "pinia": "^2.0.16",
-    "vue": "^3.2.37",
-    "vue-router": "4"
-  },
-  "devDependencies": {
-    "@tauri-apps/cli": "^1.0.4",
-    "@types/js-yaml": "^4.0.5",
-    "@types/markdown-it": "^12.2.3",
-    "@types/node": "^18.0.5",
-    "@vitejs/plugin-vue": "^3.0.0",
-    "typescript": "^4.6.4",
-    "vite": "^3.0.0",
-    "vue-tsc": "^0.38.4"
-  },
-  "author": {
-    "name": "Esion",
-    "email": "m17762618644@163.com",
-    "url": "https://blog.esion.xyz"
-  },
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "directory": "./",
-    "url": "https://gitea.esion.xyz/Esion/yun-luo-blog"
-  }
+    "name": "yun-luo-blog",
+    "private": true,
+    "version": "0.1.0",
+    "description": "云落博客",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "tauri": "tauri",
+        "start": "electron .",
+        "packager": "electron-packager ./dist/ --platform=win32 --arch=x64 --overwrite",
+        "electron": "wait-on tcp:5173 && cross-env IS_DEV=true electron electron/electron.js",
+        "electron:dev": "concurrently -k \"cross-env BROWSER=none pnpm dev\" \"pnpm electron\"",
+        "electron:build.win": "pnpm build && electron-builder --win --dir",
+        "electron:build.linux": "pnpm build && electron-builder --linux appImage",
+        "electron:build.test": "pnpm build && electron-builder --dir"
+    },
+    "dependencies": {
+        "@element-plus/icons-vue": "^2.0.6",
+        "@tauri-apps/api": "^1.0.2",
+        "@vueuse/core": "^8.9.3",
+        "axios": "^0.27.2",
+        "dexie": "^3.2.2",
+        "element-plus": "^2.2.9",
+        "highlight.js": "^11.6.0",
+        "js-yaml": "^4.1.0",
+        "less": "^4.1.3",
+        "less-loader": "^11.0.0",
+        "markdown-it": "^13.0.1",
+        "mitt": "^3.0.0",
+        "monaco-editor": "^0.33.0",
+        "pinia": "^2.0.16",
+        "vue": "^3.2.37",
+        "vue-router": "4"
+    },
+    "devDependencies": {
+        "@tauri-apps/cli": "^1.0.4",
+        "@types/js-yaml": "^4.0.5",
+        "@types/markdown-it": "^12.2.3",
+        "@types/node": "^18.0.5",
+        "@vitejs/plugin-vue": "^3.0.0",
+        "@vueuse/electron": "^9.0.2",
+        "concurrently": "^7.3.0",
+        "cross-env": "^7.0.3",
+        "electron": "^20.0.0",
+        "electron-builder": "^23.3.3",
+        "electron-packager": "^15.5.1",
+        "typescript": "^4.6.4",
+        "vite": "^3.0.0",
+        "vue-tsc": "^0.38.4",
+        "wait-on": "^6.0.1"
+    },
+    "author": {
+        "name": "Esion",
+        "email": "m17762618644@163.com",
+        "url": "https://blog.esion.xyz"
+    },
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "directory": "./",
+        "url": "https://gitea.esion.xyz/Esion/yun-luo-blog"
+    },
+    "build": {
+        "appId": "xyz.esion.blog",
+        "productName": "云落博客",
+        "copyright": "Copyright © 2022 esion.xyz",
+        "mac": {
+            "category": "public.app-category.utilities"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true
+        },
+        "files": [
+            "dist/**/*",
+            "electron/**/*"
+        ],
+        "directories": {
+            "buildResources": "assets",
+            "output": "dist_electron"
+        },
+        "electronDownload": {
+            "mirror": "https://npm.taobao.org/mirrors/electron/"
+        }
+    }
 }
