@@ -32,7 +32,7 @@ export default defineComponent({
         const container = this.$refs.container as HTMLElement;
         instance = monaco.editor.create(container, {
             value: this.modelValue,
-            language: 'hexo',
+            language: 'yaml',
             automaticLayout: true
         });
         instance.onDidChangeModelContent(() => {
