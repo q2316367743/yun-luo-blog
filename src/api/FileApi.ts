@@ -50,11 +50,22 @@ async function listDir(path: string, recursive: boolean = false): Promise<FileEn
  * 创建文件夹
  *
  * @param path 文件夹
+ * @param recursive 是否递归创建文件夹
  */
-function createDir(path: string): Promise<void> {
-    return new Promise<void>((resolve) => {
-        resolve()
-    })
+async function createDir(path: string, recursive: boolean = false): Promise<void> {
+    let result = (await ipcRenderer.invoke('file:createDir', {
+        path,
+        recursive
+    })) as Result;
+    if (result.code) {
+        return new Promise<void>(resolve => {
+            resolve(result.data);
+        });
+    } else {
+        return new Promise<void>((resolve1, reject) => {
+            reject(result.message)
+        })
+    }
 }
 
 /**
@@ -63,10 +74,20 @@ function createDir(path: string): Promise<void> {
  * @param path 文件夹路径
  * @param recursive 是否递归删除
  */
-function removeDir(path: string, recursive: boolean = false): Promise<void> {
-    return new Promise<void>((resolve) => {
-        resolve()
-    })
+async function removeDir(path: string, recursive: boolean = false): Promise<void> {
+    let result = (await ipcRenderer.invoke('file:removeDir', {
+        path,
+        recursive
+    })) as Result;
+    if (result.code) {
+        return new Promise<void>(resolve => {
+            resolve(result.data);
+        });
+    } else {
+        return new Promise<void>((resolve1, reject) => {
+            reject(result.message)
+        })
+    }
 }
 
 /**
@@ -77,8 +98,8 @@ function removeDir(path: string, recursive: boolean = false): Promise<void> {
  */
 async function copyFile(source: string, target: string): Promise<void> {
     let result = (await ipcRenderer.invoke('file:copyFile', {
-        source: source,
-        target: target
+        source,
+        target
     })) as Result;
     if (result.code) {
         return new Promise<void>(resolve => {
@@ -121,37 +142,44 @@ export default {
         }
     },
 
-    writeFile(path: string, content: string): Promise<void> {
-        return new Promise<void>((resolve) => {
-            resolve()
-        })
+    async writeFile(path: string, content: string): Promise<void> {
+        let result = (await ipcRenderer.invoke('file:writeFile', {
+            path,
+            content
+        })) as Result;
+        if (result.code) {
+            return new Promise<void>(resolve => {
+                resolve(result.data);
+            });
+        } else {
+            return new Promise<void>((resolve1, reject) => {
+                reject(result.message)
+            })
+        }
     },
 
-    readBinaryFile(path: string): Promise<Uint8Array> {
-        return new Promise<Uint8Array>((resolve) => {
-            resolve(new Uint8Array())
-        })
+    async removeFile(path: string): Promise<void> {
+        let result = (await ipcRenderer.invoke('file:removeFile', {
+            path
+        })) as Result;
+        if (result.code) {
+            return new Promise<void>(resolve => {
+                resolve(result.data);
+            });
+        } else {
+            return new Promise<void>((resolve1, reject) => {
+                reject(result.message)
+            })
+        }
     },
 
-    writeBinaryFile(path: string, content: Uint8Array): Promise<void> {
-        return new Promise<void>((resolve) => {
-            resolve()
-        })
-    },
+    listDir,
 
-    removeFile(path: string): Promise<void> {
-        return new Promise<void>((resolve) => {
-            resolve()
-        })
-    },
+    createDir,
 
-    listDir: listDir,
+    removeDir,
 
-    createDir: createDir,
-
-    removeDir: removeDir,
-
-    resolve: resolve,
+    resolve,
 
     /**
      * 将一个文件夹中的文件拷贝到另一个文件夹中

@@ -178,18 +178,19 @@ export async function copyImage(imagePath: string): Promise<string> {
 /**
  * 本地图片模式
  *
- * @param imagePath 图片地址
+ * @param path 图片地址
  * @param name 图片名称
  * @returns 新的文件地址
  */
-async function localImage(imagePath: string, name: string): Promise<string> {
-    let byte = await FileApi.readBinaryFile(imagePath);
+async function localImage(path: string, name: string): Promise<string> {
     let postImage = await Constant.PATH.POST_IMAGES();
-    let newPath = await FileApi.resolve(postImage, name);
-    await FileApi.writeBinaryFile(newPath, byte)
+    await FileApi.copyFileToDir(postImage, false, [{
+        name,
+        path
+    }]);
     return new Promise<string>((resolve) => {
         resolve(name);
-    })
+    });
 }
 
 /**

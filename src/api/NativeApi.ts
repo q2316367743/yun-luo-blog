@@ -28,12 +28,19 @@ export default {
      * 打开一个文件夹
      * @param path
      */
-    openFolder(path: string): Promise<void> {
-        const shell = window.require("electron").shell;
-        shell.showItemInFolder(path.replace(":\\", ":\\\\"));
-        return new Promise<void>((resolve) => {
-            resolve();
-        })
+    async openFolder(path: string): Promise<void> {
+        let result = (await ipcRenderer.invoke('native:openFolder', {
+            path: path
+        })) as Result;
+        if (result.code) {
+            return new Promise<void>(resolve => {
+                resolve(result.data);
+            });
+        } else {
+            return new Promise<void>((resolve, reject) => {
+                reject(result.message)
+            })
+        }
     },
 
     /**
@@ -42,11 +49,20 @@ export default {
      * @param url 网址
      * @param openWith 通过那个浏览器
      */
-    openUrl(url: string, openWith?: string) {
-        window.open(url);
-        return new Promise<void>((resolve) => {
-            resolve();
-        })
+    async openUrl(url: string, openWith?: string) {
+        let result = (await ipcRenderer.invoke('native:openUrl', {
+            url: url,
+            openWith: openWith
+        })) as Result;
+        if (result.code) {
+            return new Promise<void>(resolve => {
+                resolve(result.data);
+            });
+        } else {
+            return new Promise<void>((resolve, reject) => {
+                reject(result.message)
+            })
+        }
     }
 
 }

@@ -2,7 +2,8 @@
 const path = require('path');
 const {app, BrowserWindow, Menu} = require('electron');
 require('./FileHandle');
-require('./NativeHandle')
+require('./NativeHandle');
+require('./DialogHandle');
 
 const isDev = process.env.IS_DEV === "true";
 
@@ -17,7 +18,6 @@ function createWindow() {
         minWidth: 1020,
         minHeight: 560,
         webPreferences: {
-            //preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
             // 官网似乎说是默认false，但是这里必须设置contextIsolation
             contextIsolation: false,
