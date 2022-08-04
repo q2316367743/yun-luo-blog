@@ -35,7 +35,6 @@ function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options
         alt = token.content;
     }
     if (src.startsWith('/')) {
-        // TODO: 此处需要映射本地图片
         src = imagePrefixUrl + src.substring(1);
     }
     return `<img src="${src}" alt="${alt}" />`
