@@ -13,6 +13,14 @@ const HEXO = 'hexo';
 const HEXO_CONFIG = '_config.yml';
 const HEXO_THEME = 'themes';
 
+/**
+ * 获取项目基础目录
+ */
+function basicDir(): Promise<string> {
+    // 此处返回默认目录
+    return FileApi.defaultDir();
+}
+
 export default {
     BASE: BASE,
     POST: POST,
@@ -28,31 +36,31 @@ export default {
     HEXO_THEME: HEXO_THEME,
     PATH: {
         BASE: async (): Promise<string> => {
-            let document = await FileApi.defaultDir();
+            let document = await basicDir();
             return FileApi.resolve(document, BASE);
         },
         POST: async (): Promise<string> => {
-            let document = await FileApi.defaultDir();
+            let document = await basicDir();
             return FileApi.resolve(document, BASE, POST);
         },
         CONFIG: async (): Promise<string> => {
-            let document = await FileApi.defaultDir();
+            let document = await basicDir();
             return FileApi.resolve(document, BASE, CONFIG);
         },
         POST_IMAGES: async (): Promise<string> => {
-            let document = await FileApi.defaultDir();
+            let document = await basicDir();
             return FileApi.resolve(document, BASE, POST_IMAGES);
         },
         HEXO: async (): Promise<string> => {
-            let document = await FileApi.defaultDir();
+            let document = await basicDir();
             return FileApi.resolve(document, BASE, HEXO);
         },
         HEXO_CONFIG: async (): Promise<string> => {
-            let document = await FileApi.defaultDir();
+            let document = await basicDir();
             return FileApi.resolve(document, BASE, HEXO, HEXO_CONFIG);
         },
         HEXO_THEME: async (): Promise<string> => {
-            let document = await FileApi.defaultDir();
+            let document = await basicDir();
             return FileApi.resolve(document, BASE, HEXO, HEXO_THEME);
         }
     },

@@ -99,7 +99,6 @@ ipcMain.handle('file:removeDir', (event, message) => {
 ipcMain.handle('file:defaultDir', () => {
     console.log('file:defaultDir');
     console.log(process.env.HOMEPATH)
-    // FIXME: 此处需要动态
     return {
         code: true,
         message: '成功',
