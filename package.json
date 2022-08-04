@@ -22,6 +22,7 @@
         "axios": "^0.27.2",
         "dexie": "^3.2.2",
         "element-plus": "^2.2.9",
+        "fs-extra": "^10.1.0",
         "highlight.js": "^11.6.0",
         "js-yaml": "^4.1.0",
         "less": "^4.1.3",

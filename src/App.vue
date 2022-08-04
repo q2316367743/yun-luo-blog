@@ -161,11 +161,11 @@ export default defineComponent({
             this.settingDialog = true;
         },
         openGit() {
-            open("https://gitee.com/qiaoshengda/yun-luo-blog")
+            NativeApi.openUrl("https://gitee.com/qiaoshengda/yun-luo-blog")
         },
         openFolder() {
             Constant.PATH.BASE().then(path => {
-                NativeApi.open(path);
+                NativeApi.openFolder(path);
             })
         },
         commandClick(command: string) {

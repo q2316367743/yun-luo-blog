@@ -1,0 +1,75 @@
+const {ipcMain} = require('electron');
+const fs = require('fs');
+const {sep} = require('path');
+
+// 文件操作
+
+ipcMain.handle('file:readFile', (event, args) => {
+    console.log('file:readFile');
+    let path = args.path;
+    return {
+        code: true,
+        message: '成功',
+        data: fs.readFileSync(path, {
+            encoding: "utf-8",
+            flag: "r"
+        })
+    }
+})
+
+ipcMain.handle('file:copyFile', (event, message) => {
+    console.log('file:copyFile');
+    // 拷贝文件
+    let source = message.source;
+    let target = message.target;
+    fs.copyFileSync(source, target)
+    return {
+        code: true,
+        message: '成功'
+    }
+});
+
+// 文件夹操作
+ipcMain.handle('file:listDir', (event, args) => {
+    let targetPath = args.path;
+    let recursive = args.recursive;
+    let fileName = fs.readdirSync(targetPath, {
+        encoding: "utf-8"
+    });
+    return {
+        code: true,
+        message: '成功',
+        data: fileName.map(name => {
+            let $path = [targetPath, name].join(sep);
+            return {
+                name: name,
+                path: $path,
+                children: fs.statSync($path).isDirectory()
+            }
+        })
+    }
+})
+
+// 杂项
+
+ipcMain.handle('file:documentDir', () => {
+    console.log('file:documentDir');
+    // FIXME: 此处需要动态
+    return {
+        code: true,
+        message: '成功',
+        data: 'D:\\Documents\\'
+    };
+});
+
+ipcMain.handle('file:resolve', (event, args) => {
+    console.log('file:resolve');
+    console.log(args.paths.join(sep))
+    return {
+        code: true,
+        message: '成功',
+        data: args.paths.join(sep)
+    };
+
+})
+

@@ -24,7 +24,7 @@ export default {
     /**
      * Hexo初始化
      */
-    async init(): Promise<void>{
+    async init(): Promise<void> {
         const loading = ElLoading.service({
             lock: true,
             text: '开始初始化',
@@ -47,11 +47,7 @@ export default {
         await FileApi.createDir(hexoPath);
         loading.setText("执行初始化命令");
         // 执行初始化命令
-        await NativeApi.invoke("command_run", {
-            command: hexoCommandPath,
-            arg: Constant.HEXO.INIT,
-            currentDir: hexoPath
-        });
+        await NativeApi.invokeCmd(hexoCommandPath, hexoPath, Constant.HEXO.INIT);
         return new Promise<void>((resolve) => {
             loading.close();
             resolve();
@@ -70,11 +66,7 @@ export default {
             })
         }
         let hexoPath = await Constant.PATH.HEXO();
-        await NativeApi.invoke('command_run', {
-            command: hexoCommandPath,
-            arg: Constant.HEXO.CLEAN,
-            currentDir: hexoPath
-        });
+        await NativeApi.invokeCmd(hexoCommandPath, hexoPath, Constant.HEXO.CLEAN);
         return new Promise<void>((resolve) => {
             resolve();
         });
@@ -92,11 +84,7 @@ export default {
             })
         }
         let hexoPath = await Constant.PATH.HEXO();
-        await NativeApi.invoke('command_run', {
-            command: hexoCommandPath,
-            arg: Constant.HEXO.DEPLOY,
-            currentDir: hexoPath
-        });
+        await NativeApi.invokeCmd(hexoCommandPath, hexoPath, Constant.HEXO.DEPLOY);
         return new Promise<void>((resolve) => {
             resolve();
         });

@@ -7,6 +7,6 @@ export default interface FileEntry {
      */
     name?: string;
     /** Children of this entry if it's a directory; null otherwise */
-    children?: FileEntry[];
+    children?: boolean;
     
 }

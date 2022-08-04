@@ -1,31 +1,38 @@
 // electron/electron.js
 const path = require('path');
-const { app, BrowserWindow } = require('electron');
+const {app, BrowserWindow, Menu} = require('electron');
+require('./FileHandle');
+require('./NativeHandle')
 
 const isDev = process.env.IS_DEV === "true";
-console.log("是否是dev：", process.env.IS_DEV)
 
 function createWindow() {
+    // null值取消顶部菜单栏
+    Menu.setApplicationMenu(null);
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        title: '云落博客',
+        width: 1180,
+        height: 740,
+        minWidth: 1020,
+        minHeight: 560,
         webPreferences: {
             //preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
+            // 官网似乎说是默认false，但是这里必须设置contextIsolation
+            contextIsolation: false,
+            preload: path.join(__dirname, "preload.js")
         },
     });
 
-    // and load the index.html of the app.
-    // win.loadFile("index.html");
     mainWindow.loadURL(
         isDev
             ? 'http://localhost:5173'
             : `file://${path.join(__dirname, '../dist/index.html')}`
     ).then(() => {
-        console.log("创建成功")
+        console.log("创建成功");
     });
-    // Open the DevTools.
+    // 打开开发者工具
     if (isDev) {
         mainWindow.webContents.openDevTools();
     }
