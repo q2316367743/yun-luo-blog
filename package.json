@@ -3,6 +3,7 @@
     "private": true,
     "version": "0.1.0",
     "description": "云落博客",
+    "main": "electron/electron.js",
     "scripts": {
         "dev": "vite",
         "build": "vue-tsc --noEmit && vite build",
