@@ -48,7 +48,7 @@
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item command="init">初始化</el-dropdown-item>
-                                <el-dropdown-item command="run">运行</el-dropdown-item>
+                                <el-dropdown-item command="server">运行</el-dropdown-item>
                                 <el-dropdown-item command="deploy">编译</el-dropdown-item>
                                 <el-dropdown-item command="clean">清理</el-dropdown-item>
                             </el-dropdown-menu>
@@ -204,6 +204,29 @@ export default defineComponent({
                             showClose: true,
                             type: 'error',
                             message: '编译失败，' + e
+                        });
+                    });
+                    break;
+                case "server":
+                    const serverLoading = ElLoading.service({
+                        lock: true,
+                        text: '开始运行',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                    });
+                    HexoUtil.server().then(() => {
+                        NativeApi.openUrl("http://localhost:4000")
+                        serverLoading.close();
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: '运行完成'
+                        });
+                    }).catch(e => {
+                        serverLoading.close();
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '运行失败，' + e
                         });
                     });
                     break;

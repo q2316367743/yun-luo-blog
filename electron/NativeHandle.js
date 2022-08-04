@@ -1,9 +1,10 @@
 const {ipcMain, shell} = require('electron');
 const execSync = require('child_process').execSync;
+const exec = require('child_process').exec;
 
-ipcMain.handle('native:invoke', (event, args) => {
-    console.log('native:invoke');
-    console.log(`在目录【${args.currentDir}】下执行命令【${args.command}】【${args.arg}】`)
+ipcMain.handle('native:invoke:cmd', (event, args) => {
+    console.log('native:invoke:cmd');
+    console.log(`在目录【${args.currentDir}】下【同步】执行命令【${args.command}】【${args.arg}】`)
     return {
         code: true,
         message: '成功',
@@ -11,6 +12,19 @@ ipcMain.handle('native:invoke', (event, args) => {
             encoding: "utf-8",
             cwd: args.currentDir
         })
+    }
+});
+
+ipcMain.handle('native:invoke:async', (event, args) => {
+    console.log('native:invoke:async');
+    console.log(`在目录【${args.currentDir}】下【异步】执行命令【${args.command}】【${args.arg}】`)
+    exec(`"${args.command}" ${args.arg}`, {
+        encoding: "utf-8",
+        cwd: args.currentDir
+    })
+    return {
+        code: true,
+        message: '成功'
     }
 });
 

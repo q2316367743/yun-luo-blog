@@ -21,7 +21,8 @@ export default {
         NAME: HEXO,
         INIT: "init",
         CLEAN: "clean",
-        DEPLOY: "deploy"
+        DEPLOY: "deploy",
+        SERVER: "server"
     },
     POST_IMAGES: POST_IMAGES,
     HEXO_THEME: HEXO_THEME,

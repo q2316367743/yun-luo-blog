@@ -72,6 +72,21 @@ export default {
         });
     },
 
+    async server(): Promise<void> {
+        // 获取hexo命令目录
+        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        if (!hexoCommandPath || hexoCommandPath === "") {
+            return new Promise<void>((resolve, reject) => {
+                reject("请配置hexo命令路径");
+            })
+        }
+        let hexoPath = await Constant.PATH.HEXO();
+        await NativeApi.invokeAsync(hexoCommandPath, hexoPath, Constant.HEXO.SERVER);
+        return new Promise<void>((resolve) => {
+            resolve();
+        });
+    },
+
     /**
      * 项目部署
      */

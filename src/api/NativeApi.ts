@@ -7,8 +7,32 @@ const {ipcRenderer} = window.require('electron');
  */
 export default {
 
-    async invokeCmd(cmd: string, currentDir: string, arg?: any): Promise<void> {
-        let result = (await ipcRenderer.invoke('native:invoke', {
+    async invokeCmd(cmd: string, currentDir: string, arg?: string): Promise<void> {
+        let result = (await ipcRenderer.invoke('native:invoke:cmd', {
+            command: cmd,
+            arg: arg,
+            currentDir: currentDir
+        })) as Result;
+        if (result.code) {
+            return new Promise<void>(resolve => {
+                resolve(result.data);
+            });
+        } else {
+            return new Promise<void>((resolve, reject) => {
+                reject(result.message)
+            })
+        }
+    },
+
+    /**
+     * 异步命令，不会阻塞进程
+     *
+     * @param cmd 命令
+     * @param currentDir 当前目录
+     * @param arg 参数
+     */
+    async invokeAsync(cmd: string, currentDir: string, arg?: string): Promise<void> {
+        let result = (await ipcRenderer.invoke('native:invoke:async', {
             command: cmd,
             arg: arg,
             currentDir: currentDir
