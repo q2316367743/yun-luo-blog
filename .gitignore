@@ -25,3 +25,6 @@ dist-ssr
 
 # electron
 dist_electron
+
+# tauri
+src-tauri/target
