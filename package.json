@@ -7,7 +7,6 @@
         "dev": "vite",
         "build": "vue-tsc --noEmit && vite build",
         "preview": "vite preview",
-        "tauri": "tauri",
         "start": "electron .",
         "packager": "electron-packager ./dist/ --platform=win32 --arch=x64 --overwrite",
         "electron": "wait-on tcp:5173 && cross-env IS_DEV=true electron electron/electron.js",
@@ -18,8 +17,8 @@
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.0.6",
-        "@tauri-apps/api": "^1.0.2",
         "@vueuse/core": "^8.9.3",
+        "@vueuse/electron": "^9.0.2",
         "axios": "^0.27.2",
         "dexie": "^3.2.2",
         "element-plus": "^2.2.9",
@@ -35,12 +34,10 @@
         "vue-router": "4"
     },
     "devDependencies": {
-        "@tauri-apps/cli": "^1.0.4",
         "@types/js-yaml": "^4.0.5",
         "@types/markdown-it": "^12.2.3",
         "@types/node": "^18.0.5",
         "@vitejs/plugin-vue": "^3.0.0",
-        "@vueuse/electron": "^9.0.2",
         "concurrently": "^7.3.0",
         "cross-env": "^7.0.3",
         "electron": "^20.0.0",
