@@ -27,31 +27,31 @@ export default {
     HEXO_THEME: HEXO_THEME,
     PATH: {
         BASE: async (): Promise<string> => {
-            let document = await FileApi.documentDir();
+            let document = await FileApi.defaultDir();
             return FileApi.resolve(document, BASE);
         },
         POST: async (): Promise<string> => {
-            let document = await FileApi.documentDir();
+            let document = await FileApi.defaultDir();
             return FileApi.resolve(document, BASE, POST);
         },
         CONFIG: async (): Promise<string> => {
-            let document = await FileApi.documentDir();
+            let document = await FileApi.defaultDir();
             return FileApi.resolve(document, BASE, CONFIG);
         },
         POST_IMAGES: async (): Promise<string> => {
-            let document = await FileApi.documentDir();
+            let document = await FileApi.defaultDir();
             return FileApi.resolve(document, BASE, POST_IMAGES);
         },
         HEXO: async (): Promise<string> => {
-            let document = await FileApi.documentDir();
+            let document = await FileApi.defaultDir();
             return FileApi.resolve(document, BASE, HEXO);
         },
         HEXO_CONFIG: async (): Promise<string> => {
-            let document = await FileApi.documentDir();
+            let document = await FileApi.defaultDir();
             return FileApi.resolve(document, BASE, HEXO, HEXO_CONFIG);
         },
         HEXO_THEME: async (): Promise<string> => {
-            let document = await FileApi.documentDir();
+            let document = await FileApi.defaultDir();
             return FileApi.resolve(document, BASE, HEXO, HEXO_THEME);
         }
     },

@@ -263,7 +263,7 @@ export default defineComponent({
                 // 解析后尝试解析
                 Constant.PATH.HEXO().then(hexoPath => {
                     // 读取文件内容
-                    FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
+                    FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
                         FileApi.readFile(themePath).then(themeContent => {
                             this.theme = themeContent;
                         }).catch((e) => {
@@ -377,7 +377,7 @@ export default defineComponent({
         },
         saveTheme() {
             Constant.PATH.HEXO().then(hexoPath => {
-                FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yaml`).then(themePath => {
+                FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
                     FileApi.writeFile(themePath, this.theme).then(() => {
                         ElMessage({
                             showClose: true,

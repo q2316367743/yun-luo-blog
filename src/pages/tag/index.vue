@@ -151,9 +151,11 @@ export default defineComponent({
             .count {
                 padding: 2px 10px;
                 background-color: #f5f7fa;
+                border-left: 1px solid #dcdfe6;
             }
 
             .option {
+                border-left: 1px solid #dcdfe6;
                 padding: 0 10px;
                 background-color: #f5f7fa;
             }

@@ -114,8 +114,11 @@ async function copyFile(source: string, target: string): Promise<void> {
 
 export default {
 
-    async documentDir(): Promise<string> {
-        let result = (await ipcRenderer.invoke('file:documentDir')) as Result;
+    /**
+     * 获取默认文件夹
+     */
+    async defaultDir(): Promise<string> {
+        let result = (await ipcRenderer.invoke('file:defaultDir')) as Result;
         if (result.code) {
             return new Promise<string>(resolve => {
                 resolve(result.data);

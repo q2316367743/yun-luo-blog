@@ -94,7 +94,7 @@ export default {
         let source_dir = await FileApi.resolve(hexoPath, hexo.source_dir);
         let _posts = await FileApi.resolve(source_dir, "_posts");
         // _posts文件夹可能不存在
-        await FileApi.createDir(_posts);
+        await FileApi.createDir(_posts, true);
         // 复制图片到目标文件夹
         await FileApi.copyDir(_posts, postImage);
         // 复制发布的文章
