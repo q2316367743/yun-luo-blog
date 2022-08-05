@@ -25,19 +25,18 @@ export default {
      * Hexo初始化
      */
     async init(): Promise<void> {
+        // 获取hexo命令目录
+        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        if (!hexoCommandPath || hexoCommandPath === "") {
+            return new Promise<void>((resolve, reject) => {
+                reject("请配置hexo命令路径");
+            })
+        }
         const loading = ElLoading.service({
             lock: true,
             text: '开始初始化',
             background: 'rgba(0, 0, 0, 0.7)',
         });
-        // 获取hexo命令目录
-        let hexoCommandPath = useSettingStore().environment.hexoPath;
-        if (!hexoCommandPath || hexoCommandPath === "") {
-            return new Promise<void>((resolve, reject) => {
-                loading.close();
-                reject("请配置hexo命令路径");
-            })
-        }
         // 获取hexo目录
         let hexoPath = await Constant.PATH.HEXO();
         loading.setText("重置目录");
@@ -65,9 +64,15 @@ export default {
                 reject("请配置hexo命令路径");
             })
         }
+        const loading = ElLoading.service({
+            lock: true,
+            text: '开始清理',
+            background: 'rgba(0, 0, 0, 0.7)',
+        });
         let hexoPath = await Constant.PATH.HEXO();
         await NativeApi.invokeCmd(hexoCommandPath, hexoPath, Constant.HEXO.CLEAN);
         return new Promise<void>((resolve) => {
+            loading.close();
             resolve();
         });
     },
@@ -80,9 +85,15 @@ export default {
                 reject("请配置hexo命令路径");
             })
         }
+        const loading = ElLoading.service({
+            lock: true,
+            text: '开始运行',
+            background: 'rgba(0, 0, 0, 0.7)',
+        });
         let hexoPath = await Constant.PATH.HEXO();
         await NativeApi.invokeAsync(hexoCommandPath, hexoPath, Constant.HEXO.SERVER);
         return new Promise<void>((resolve) => {
+            loading.close();
             resolve();
         });
     },
@@ -98,9 +109,15 @@ export default {
                 reject("请配置hexo命令路径");
             })
         }
+        const loading = ElLoading.service({
+            lock: true,
+            text: '开始打包',
+            background: 'rgba(0, 0, 0, 0.7)',
+        });
         let hexoPath = await Constant.PATH.HEXO();
         await NativeApi.invokeCmd(hexoCommandPath, hexoPath, Constant.HEXO.DEPLOY);
         return new Promise<void>((resolve) => {
+            loading.close();
             resolve();
         });
     }

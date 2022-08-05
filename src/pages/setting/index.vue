@@ -28,7 +28,7 @@ export default defineComponent({
     name: 'setting',
     components: { BasicSetting, SyncSetting, EnvironmentSetting, ImageSetting },
     data: () => ({
-        settingActive: 'blog'
+        settingActive: 'basic'
     }),
 });
 </script>

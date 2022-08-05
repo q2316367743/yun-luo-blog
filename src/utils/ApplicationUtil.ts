@@ -8,7 +8,7 @@ import HexoUtil from "@/utils/HexoUtil";
 import {useSettingStore} from "@/store/SettingStore";
 import FileEntry from "@/api/entities/FileEntry";
 import BlogTypeEnum from "@/enumeration/BlogTypeEnum";
-import strategyContext from "@/strategy/blog/StrategyContext";
+import strategyContext from "@/strategy/blog/BlogStrategyContext";
 
 /**
  * 启动应用
