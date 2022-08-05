@@ -24,9 +24,6 @@ export default defineComponent({
         basicSetting: useSettingStore().basicSetting
     }),
     name: 'blog-setting',
-    created() {
-        document.getElementsByTagName('body')[0]!.style.fontFamily = `${this.basicSetting.font}, "Microsoft YaHei", Arial, sans-serif;`
-    },
     watch: {
         "basicSetting.font": (value) => {
             document.getElementsByTagName('body')[0]!.style.fontFamily = `${value}, "Microsoft YaHei", Arial, sans-serif`

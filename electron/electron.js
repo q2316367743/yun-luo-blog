@@ -1,9 +1,9 @@
 // electron/electron.js
 const path = require('path');
 const {app, BrowserWindow, Menu} = require('electron');
-require('./FileHandle');
-require('./NativeHandle');
-require('./DialogHandle');
+require('./handle/FileHandle');
+require('./handle/NativeHandle');
+require('./handle/DialogHandle');
 
 const isDev = process.env.IS_DEV === "true";
 

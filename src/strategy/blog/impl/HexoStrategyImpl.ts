@@ -8,6 +8,7 @@ import {postService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
+import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext";
 
 /**
  * hexo策略
@@ -68,6 +69,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         loading.setText("迁移文件到dist目录");
         await FileApi.copyDir(await Constant.PATH.DIST(), await Constant.PATH.HEXO_PUBLIC())
         loading.setText("推送到远程");
+        await platformStrategyContext.getStrategy().push();
         return new Promise<void>((resolve) => {
             loading.close();
             resolve();

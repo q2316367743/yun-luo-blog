@@ -119,7 +119,7 @@ import TagView from "@/views/TagView";
 import {copyImage, parsePost} from "@/utils/PostUtil";
 import {postService, tagService, categoryService} from '@/global/BeanFactory';
 import DialogApi from "@/api/DialogApi";
-import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
+import imageStrategyContext from "@/strategy/image/PlatformStrategyContext";
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 

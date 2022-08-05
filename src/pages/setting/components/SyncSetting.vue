@@ -4,7 +4,7 @@
             <el-radio-group v-model="SyncSetting.platform">
                 <el-radio label="1">未设置</el-radio>
                 <el-radio label="2">Github Pages</el-radio>
-                <el-radio label="3">GItee Pages</el-radio>
+                <el-radio label="3">Gitee Pages</el-radio>
                 <el-radio label="4">Coding Pages</el-radio>
                 <el-radio label="5">Netlify</el-radio>
                 <el-radio label="6">SFTP</el-radio>

@@ -1,5 +1,6 @@
 import Constant from '@/global/Constant';
 import FileApi from "@/api/FileApi";
+import {useSettingStore} from "@/store/SettingStore";
 
 /**
  * 启动应用
@@ -41,7 +42,11 @@ export default {
                 FileApi.createDir(path).catch(() => {
                 });
             });
-        })
+        });
+        // 设置字体
+        window.onload = function () {
+            document.getElementsByTagName('body')[0]!.style.fontFamily = `${useSettingStore().basic.font}, "Microsoft YaHei", Arial, sans-serif;`
+        }
     },
 
     /**
