@@ -45,7 +45,7 @@ export default {
         });
         // 设置字体
         window.onload = function () {
-            document.getElementsByTagName('body')[0]!.style.fontFamily = `${useSettingStore().basic.font}, "Microsoft YaHei", Arial, sans-serif;`
+            document.getElementsByTagName('body')[0]!.style.fontFamily = `${useSettingStore().basic.font}, "Microsoft YaHei", Arial, sans-serif`
         }
     },
 

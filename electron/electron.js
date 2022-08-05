@@ -6,6 +6,7 @@ require('./handle/NativeHandle');
 require('./handle/DialogHandle');
 
 const isDev = process.env.IS_DEV === "true";
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 function createWindow() {
     // null值取消顶部菜单栏
@@ -22,7 +23,8 @@ function createWindow() {
             // 官网似乎说是默认false，但是这里必须设置contextIsolation
             contextIsolation: false,
             preload: path.join(__dirname, "preload.js"),
-            webSecurity: false
+            webSecurity: false,
+            allowRunningInsecureContent: false,
         },
     });
 

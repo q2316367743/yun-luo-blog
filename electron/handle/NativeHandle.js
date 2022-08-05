@@ -51,10 +51,10 @@ ipcMain.handle('native:http', async (event, args) => {
     console.log('native:http');
     console.log(args)
     let axiosResponse = await axios(args);
-    console.log(JSON.stringify(axiosResponse))
+    console.log(axiosResponse)
     return {
         code: true,
         message: '成功',
-        data: 'https://static.esion.xyz/picture/lALPJxDjyaOoqqrNBkDNBkA_1600_1600.png_720x720q90g.jpg'
+        data: axiosResponse.data
     }
 })

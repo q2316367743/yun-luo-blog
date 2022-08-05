@@ -12,7 +12,7 @@ const {ipcRenderer} = window.require('electron');
 async function resolve(...paths: string[]): Promise<string> {
     let result = (await ipcRenderer.invoke('file:resolve', {
         paths: paths
-    })) as Result;
+    })) as Result<any>;
     if (result.code) {
         return new Promise<string>(resolve => {
             resolve(result.data);
@@ -34,7 +34,7 @@ async function listDir(path: string, recursive: boolean = false): Promise<FileEn
     let result = (await ipcRenderer.invoke('file:listDir', {
         path: path,
         recursive: recursive
-    })) as Result;
+    })) as Result<any>;
     if (result.code) {
         return new Promise<FileEntry[]>(resolve => {
             resolve(result.data);
@@ -56,7 +56,7 @@ async function createDir(path: string, recursive: boolean = false): Promise<void
     let result = (await ipcRenderer.invoke('file:createDir', {
         path,
         recursive
-    })) as Result;
+    })) as Result<any>;
     if (result.code) {
         return new Promise<void>(resolve => {
             resolve(result.data);
@@ -78,7 +78,7 @@ async function removeDir(path: string, recursive: boolean = true): Promise<void>
     let result = (await ipcRenderer.invoke('file:removeDir', {
         path,
         recursive
-    })) as Result;
+    })) as Result<any>;
     if (result.code) {
         return new Promise<void>(resolve => {
             resolve(result.data);
@@ -100,7 +100,7 @@ async function copyFile(source: string, target: string): Promise<void> {
     let result = (await ipcRenderer.invoke('file:copyFile', {
         source,
         target
-    })) as Result;
+    })) as Result<any>;
     if (result.code) {
         return new Promise<void>(resolve => {
             resolve(result.data);
@@ -118,7 +118,7 @@ export default {
      * 获取默认文件夹
      */
     async defaultDir(): Promise<string> {
-        let result = (await ipcRenderer.invoke('file:defaultDir')) as Result;
+        let result = (await ipcRenderer.invoke('file:defaultDir')) as Result<any>;
         if (result.code) {
             return new Promise<string>(resolve => {
                 resolve(result.data);
@@ -133,7 +133,7 @@ export default {
     async readFile(path: string): Promise<string> {
         let result = (await ipcRenderer.invoke('file:readFile', {
             path: path
-        })) as Result;
+        })) as Result<any>;
         if (result.code) {
             return new Promise<string>(resolve => {
                 resolve(result.data);
@@ -149,7 +149,7 @@ export default {
         let result = (await ipcRenderer.invoke('file:writeFile', {
             path,
             content
-        })) as Result;
+        })) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);
@@ -164,7 +164,7 @@ export default {
     async removeFile(path: string): Promise<void> {
         let result = (await ipcRenderer.invoke('file:removeFile', {
             path
-        })) as Result;
+        })) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);

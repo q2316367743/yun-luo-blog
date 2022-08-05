@@ -1,7 +1,7 @@
 /**
  * ipc调用结果集
  */
-export default interface Result {
+export default interface Result<T> {
 
     /**
      * 状态
@@ -16,6 +16,6 @@ export default interface Result {
     /**
      * 内容
      */
-    data: any;
+    data: T;
 
 }

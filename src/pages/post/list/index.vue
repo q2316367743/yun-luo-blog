@@ -281,7 +281,10 @@ export default defineComponent({
                     margin-top: 15px;
                     color: #999999;
                     height: 20px;
-                    line-height: 10px;
+
+                    .el-icon {
+                        vertical-align: -2px;
+                    }
 
                     .status {
                         .badge {
@@ -289,7 +292,7 @@ export default defineComponent({
                             height: 6px;
                             width: 6px;
                             border-radius: 3px;
-                            margin: 0 4px;
+                            margin: 0 4px 2px;
                         }
 
                         .draft {

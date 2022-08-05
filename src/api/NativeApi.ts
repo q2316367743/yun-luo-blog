@@ -13,7 +13,7 @@ export default {
             command: cmd,
             arg: arg,
             currentDir: currentDir
-        })) as Result;
+        })) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);
@@ -37,7 +37,7 @@ export default {
             command: cmd,
             arg: arg,
             currentDir: currentDir
-        })) as Result;
+        })) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);
@@ -56,7 +56,7 @@ export default {
     async openFolder(path: string): Promise<void> {
         let result = (await ipcRenderer.invoke('native:openFolder', {
             path: path
-        })) as Result;
+        })) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);
@@ -78,7 +78,7 @@ export default {
         let result = (await ipcRenderer.invoke('native:openUrl', {
             url: url,
             openWith: openWith
-        })) as Result;
+        })) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);
@@ -91,7 +91,7 @@ export default {
     },
 
     async http<T>(args: AxiosRequestConfig): Promise<T> {
-        let result = (await ipcRenderer.invoke('native:http', args)) as Result;
+        let result = (await ipcRenderer.invoke('native:http', args)) as Result<any>;
         if (result.code) {
             return new Promise<T>(resolve => {
                 resolve(result.data);
