@@ -2,6 +2,7 @@ import {useSettingStore} from "@/store/SettingStore";
 import PlatformStrategy from "@/strategy/platform/PlatformStrategy";
 import PlatformTypeEnum from "@/enumeration/PlatformTypeEnum";
 import SftpPlatformStrategyImpl from "@/strategy/platform/impl/SftpPlatformStrategyImpl";
+import DefaultPlatformStrategyImpl from "@/strategy/platform/impl/DefaultPlatformStrategyImpl";
 
 /**
  * 图片策略上下文
@@ -34,6 +35,7 @@ class PlatformStrategyContext {
 const platformStrategyContext = PlatformStrategyContext.getInstance();
 
 // 注册策略
+platformStrategyContext.register(PlatformTypeEnum.DEFAULT, new DefaultPlatformStrategyImpl());
 platformStrategyContext.register(PlatformTypeEnum.SFTP, new SftpPlatformStrategyImpl());
 
 export default platformStrategyContext;
