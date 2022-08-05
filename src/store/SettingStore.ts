@@ -44,8 +44,8 @@ const imageSetting = useLocalStorage('imageSetting', {
     }
 });
 
-const blogSetting = useLocalStorage('blogSetting', {
-    type: 'hexo'
+const basicSetting = useLocalStorage('basicSetting', {
+    blogType: 'hexo'
 });
 
 
@@ -63,11 +63,14 @@ export const useSettingStore = defineStore('setting', {
             // 全部的文章
             syncSetting: syncSetting.value,
             imageSetting: imageSetting.value,
-            blogSetting: blogSetting.value,
+            basicSetting: basicSetting.value,
             environmentSetting: environmentSetting.value
         }
     },
     getters: {
+        basic: (state) => {
+            return state.basicSetting
+        },
         sync: (state) => {
             return state.syncSetting;
         },

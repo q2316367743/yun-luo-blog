@@ -21,7 +21,7 @@
                     </el-icon>
                     <span>分类</span>
                 </el-menu-item>
-                <el-menu-item :index="`/config/${blogSetting.type}`">
+                <el-menu-item :index="`/config/${basicSetting.blogType}`">
                     <el-icon>
                         <Menu/>
                     </el-icon>
@@ -128,7 +128,7 @@ export default defineComponent({
     },
     data: () => {
         return {
-            blogSetting: useSettingStore().blogSetting,
+            basicSetting: useSettingStore().basicSetting,
             defaultActive: '/post/list',
             settingDialog: false
         }
