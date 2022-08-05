@@ -93,7 +93,7 @@
         <!-- 文章预览 -->
         <el-drawer v-model="previewDialog" direction="rtl" size="800px">
             <template #header>
-                <h2>{{ post.title }}</h2>
+                <h2>{{ post.title }}（实际效果以配置主题为准）</h2>
             </template>
             <el-scrollbar>
                 <div class="article" ref="article" v-html="previewContent"></div>

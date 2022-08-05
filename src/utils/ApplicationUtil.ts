@@ -1,6 +1,8 @@
 import Constant from '@/global/Constant';
 import FileApi from "@/api/FileApi";
 import {useSettingStore} from "@/store/SettingStore";
+import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
+import {ElNotification} from "element-plus";
 
 /**
  * 启动应用
@@ -46,6 +48,16 @@ export default {
         // 设置字体
         window.onload = function () {
             document.getElementsByTagName('body')[0]!.style.fontFamily = `${useSettingStore().basic.font}, "Microsoft YaHei", Arial, sans-serif`
+        }
+        // 建议提示
+        // 图片未选择图床
+        if (useSettingStore().image.type === ImageTypeEnum.LOCAL) {
+            // 不建议使用本地
+            ElNotification({
+                title: '建议配置图床',
+                message: '检测到未配置图床，建议配置图床使用',
+                type: 'warning',
+            })
         }
     },
 
