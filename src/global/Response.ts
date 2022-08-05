@@ -1,4 +1,4 @@
-export default interface Response {
+export default interface Response<T> {
 
     /**
      * 响应码
@@ -8,6 +8,6 @@ export default interface Response {
     /**
      * 数据
      */
-    data: any;
+    data: T;
 
 }

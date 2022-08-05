@@ -60,10 +60,9 @@ const environmentSetting = useLocalStorage('environmentSetting', {
 export const useSettingStore = defineStore('setting', {
     state: () => {
         return {
-            // 全部的文章
+            basicSetting: basicSetting.value,
             syncSetting: syncSetting.value,
             imageSetting: imageSetting.value,
-            basicSetting: basicSetting.value,
             environmentSetting: environmentSetting.value
         }
     },
@@ -73,6 +72,9 @@ export const useSettingStore = defineStore('setting', {
         },
         sync: (state) => {
             return state.syncSetting;
+        },
+        image: (state) => {
+            return state.imageSetting;
         },
         environment:(state) => {
             return state.environmentSetting;

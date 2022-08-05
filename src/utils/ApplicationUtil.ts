@@ -1,14 +1,6 @@
 import Constant from '@/global/Constant';
 import FileApi from "@/api/FileApi";
-import Hexo from "@/global/config/Hexo";
-import {ElLoading, ElMessage} from "element-plus";
-import {postService} from "@/global/BeanFactory";
-import PostStatusEnum from "@/enumeration/PostStatusEnum";
-import HexoUtil from "@/utils/HexoUtil";
-import {useSettingStore} from "@/store/SettingStore";
-import FileEntry from "@/api/entities/FileEntry";
-import BlogTypeEnum from "@/enumeration/BlogTypeEnum";
-import strategyContext from "@/strategy/blog/BlogStrategyContext";
+import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 
 /**
  * 启动应用
@@ -63,8 +55,7 @@ export default {
      * 同步逻辑
      */
     async sync(): Promise<void> {
-        let basicSetting = useSettingStore().basic;
-        return strategyContext.getStrategy(basicSetting.blogType).sync();
+        return blogStrategyContext.getStrategy().sync();
     },
 
 }

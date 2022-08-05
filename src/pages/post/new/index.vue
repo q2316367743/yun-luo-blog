@@ -119,6 +119,7 @@ import TagView from "@/views/TagView";
 import {copyImage, parsePost} from "@/utils/PostUtil";
 import {postService, tagService, categoryService} from '@/global/BeanFactory';
 import DialogApi from "@/api/DialogApi";
+import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
@@ -255,7 +256,7 @@ export default defineComponent({
                     text: '上传文件中',
                     background: 'rgba(0, 0, 0, 0.7)',
                 });
-                copyImage(path).then((newPath) => {
+                imageStrategyContext.getStrategy().upload(path).then((newPath) => {
                     // 名字插入
                     let monacoEditor = this.$refs.monacoEditor as any;
                     let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;

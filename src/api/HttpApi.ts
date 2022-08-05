@@ -4,12 +4,9 @@ import Response from "@/global/Response";
 
 export default {
 
-    async native(request: Request): Promise<Response> {
-        return new Promise<Response>((resolve) => {
-            resolve({
-                code: 200,
-                data: ''
-            })
+    async native<T>(request: Request): Promise<Response<T>> {
+        return new Promise<Response<T>>((resolve, reject) => {
+            reject('HTTP请求失败')
         })
     }
 
