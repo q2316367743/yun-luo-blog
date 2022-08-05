@@ -1,6 +1,6 @@
 import ImageStrategy from "@/strategy/image/ImageStrategy";
 import {useSettingStore} from "@/store/SettingStore";
-import HttpApi from "@/api/HttpApi";
+import NativeApi from "@/api/NativeApi";
 
 /**
  * PicGo响应体
@@ -22,16 +22,16 @@ interface PicGoResult {
 export default class PicGoImageStrategyImpl implements ImageStrategy {
 
     async upload(path: string): Promise<string> {
-        let imageSetting = useSettingStore().imageSetting;
-        let axiosPromise = await HttpApi.native<PicGoResult>({
-            method: 'POST',
-            url: `http://${imageSetting.picGo.address}:${imageSetting.picGo.port}/upload`,
+        let imageSetting = useSettingStore().image;
+        let response = await NativeApi.http<PicGoResult>({
+            url: `http://${imageSetting.picGo.address}:${imageSetting.picGo.port}`,
+            method: "GET",
             data: {
                 list: [path]
             }
         });
         return new Promise<string>(resolve => {
-            resolve(axiosPromise.data.list[0]);
+            resolve(response.list[0]);
         });
     }
 

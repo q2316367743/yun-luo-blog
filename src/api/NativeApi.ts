@@ -1,4 +1,5 @@
 import Result from "@/global/Result";
+import {AxiosRequestConfig} from "axios";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -73,7 +74,7 @@ export default {
      * @param url 网址
      * @param openWith 通过那个浏览器
      */
-    async openUrl(url: string, openWith?: string) {
+    async openUrl(url: string, openWith?: string): Promise<void> {
         let result = (await ipcRenderer.invoke('native:openUrl', {
             url: url,
             openWith: openWith
@@ -84,6 +85,19 @@ export default {
             });
         } else {
             return new Promise<void>((resolve, reject) => {
+                reject(result.message)
+            })
+        }
+    },
+
+    async http<T>(args: AxiosRequestConfig): Promise<T> {
+        let result = (await ipcRenderer.invoke('native:http', args)) as Result;
+        if (result.code) {
+            return new Promise<T>(resolve => {
+                resolve(result.data);
+            });
+        } else {
+            return new Promise<T>((resolve, reject) => {
                 reject(result.message)
             })
         }

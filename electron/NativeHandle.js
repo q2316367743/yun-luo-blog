@@ -1,6 +1,7 @@
 const {ipcMain, shell} = require('electron');
 const execSync = require('child_process').execSync;
 const exec = require('child_process').exec;
+const axios = require('axios');
 
 ipcMain.handle('native:invoke:cmd', (event, args) => {
     console.log('native:invoke:cmd');
@@ -45,3 +46,15 @@ ipcMain.handle('native:openUrl', async (event, args) => {
         message: '成功'
     }
 });
+
+ipcMain.handle('native:http', async (event, args) => {
+    console.log('native:http');
+    console.log(args)
+    let axiosResponse = await axios(args);
+    console.log(JSON.stringify(axiosResponse))
+    return {
+        code: true,
+        message: '成功',
+        data: 'https://static.esion.xyz/picture/lALPJxDjyaOoqqrNBkDNBkA_1600_1600.png_720x720q90g.jpg'
+    }
+})
