@@ -7,7 +7,6 @@ import Hexo from "@/global/config/Hexo";
 import {postService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
-import HexoUtil from "@/utils/HexoUtil";
 import NativeApi from "@/api/NativeApi";
 
 /**
@@ -63,9 +62,9 @@ export default class HexoStrategyImpl implements BlogStrategy {
             } as FileEntry
         }));
         loading.setText("执行缓存清理");
-        await HexoUtil.clean();
+        await this.clean();
         loading.setText("执行构建命令");
-        await HexoUtil.deploy();
+        await this.deploy();
         loading.setText("迁移文件到dist目录");
 
         loading.setText("推送到远程");
@@ -142,6 +141,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         await NativeApi.invokeAsync(hexoCommandPath, hexoPath, Constant.HEXO.SERVER);
         return new Promise<void>((resolve) => {
             loading.close();
+            NativeApi.openUrl("http://localhost:4000");
             resolve();
         });
     }

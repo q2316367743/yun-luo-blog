@@ -1,6 +1,5 @@
 import Constant from '@/global/Constant';
 import FileApi from "@/api/FileApi";
-import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 
 /**
  * 启动应用
@@ -49,13 +48,6 @@ export default {
         return new Promise<boolean>((resolve) => {
             resolve(true);
         })
-    },
-
-    /**
-     * 同步逻辑
-     */
-    async sync(): Promise<void> {
-        return blogStrategyContext.getStrategy().sync();
     },
 
 }

@@ -101,16 +101,23 @@
 <script lang='ts'>
 import {defineComponent, markRaw} from 'vue'
 import {
-    ArrowDown, CollectionTag, Document, Menu,
-    PriceTag, Refresh, Setting, Folder, Suitcase
+    ArrowDown,
+    CollectionTag,
+    Document,
+    Folder,
+    Menu,
+    PriceTag,
+    Refresh,
+    Setting,
+    Suitcase
 } from '@element-plus/icons-vue';
-import {ElLoading, ElMessage} from "element-plus";
+import {ElMessage} from "element-plus";
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
-import HexoUtil from "@/utils/HexoUtil";
 import Constant from "@/global/Constant";
 import SettingPage from '@/pages/setting/index.vue';
+import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 
 import NativeApi from "@/api/NativeApi";
 
@@ -143,7 +150,7 @@ export default defineComponent({
     },
     methods: {
         sync() {
-            ApplicationUtil.sync().then(() => {
+            blogStrategyContext.getStrategy().sync().then(() => {
                 ElMessage({
                     showClose: true,
                     type: 'success',
@@ -171,7 +178,7 @@ export default defineComponent({
         commandClick(command: string) {
             switch (command) {
                 case "init":
-                    HexoUtil.init().then(() => {
+                    blogStrategyContext.getStrategy().init().then(() => {
                         ElMessage({
                             showClose: true,
                             type: 'success',
@@ -186,20 +193,13 @@ export default defineComponent({
                     });
                     break;
                 case "deploy":
-                    const deployLoading = ElLoading.service({
-                        lock: true,
-                        text: '开始编译',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                    });
-                    HexoUtil.deploy().then(() => {
-                        deployLoading.close();
+                    blogStrategyContext.getStrategy().deploy().then(() => {
                         ElMessage({
                             showClose: true,
                             type: 'success',
                             message: '编译完成'
                         });
                     }).catch(e => {
-                        deployLoading.close();
                         ElMessage({
                             showClose: true,
                             type: 'error',
@@ -208,21 +208,13 @@ export default defineComponent({
                     });
                     break;
                 case "server":
-                    const serverLoading = ElLoading.service({
-                        lock: true,
-                        text: '开始运行',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                    });
-                    HexoUtil.server().then(() => {
-                        NativeApi.openUrl("http://localhost:4000")
-                        serverLoading.close();
+                    blogStrategyContext.getStrategy().server().then(() => {
                         ElMessage({
                             showClose: true,
                             type: 'success',
                             message: '运行完成'
                         });
                     }).catch(e => {
-                        serverLoading.close();
                         ElMessage({
                             showClose: true,
                             type: 'error',
@@ -231,20 +223,13 @@ export default defineComponent({
                     });
                     break;
                 case "clean":
-                    const cleanLoading = ElLoading.service({
-                        lock: true,
-                        text: '开始清理',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                    });
-                    HexoUtil.clean().then(() => {
-                        cleanLoading.close();
+                    blogStrategyContext.getStrategy().clean().then(() => {
                         ElMessage({
                             showClose: true,
                             type: 'success',
                             message: '清理完成'
                         });
                     }).catch(e => {
-                        cleanLoading.close();
                         ElMessage({
                             showClose: true,
                             type: 'error',
