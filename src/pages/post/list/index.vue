@@ -276,7 +276,7 @@ export default defineComponent({
                 }
 
                 .description {
-                    font-size: 0.7em;
+                    font-size: 1em;
                     display: flex;
                     margin-top: 15px;
                     color: #999999;

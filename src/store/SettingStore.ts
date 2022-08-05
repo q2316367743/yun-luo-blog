@@ -45,7 +45,8 @@ const imageSetting = useLocalStorage('imageSetting', {
 });
 
 const basicSetting = useLocalStorage('basicSetting', {
-    blogType: 'hexo'
+    blogType: 'hexo',
+    font: '微软雅黑'
 });
 
 

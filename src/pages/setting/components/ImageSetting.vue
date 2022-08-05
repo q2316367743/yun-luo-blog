@@ -53,7 +53,6 @@ export default defineComponent({
         imageSetting: useSettingStore().imageSetting
     }),
     created() {
-        console.log(this.imageSetting);
     },
     methods: {}
 });

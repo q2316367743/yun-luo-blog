@@ -244,6 +244,32 @@ export default defineComponent({
 </script>
 
 <style lang="less">
+
+@font-face {
+    font-family: JetBrainsMono;
+    src: url('./assets/JetBrainsMono-Medium.woff2');
+}
+
+@font-face {
+    font-family: LXGWWenKai;
+    src: url('./assets/LXGWWenKai-Light.woff');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+::selection {
+    background: #FFAF74;
+    color: #fff;
+}
+
+::-moz-selection {
+    background: #FFAF74;
+    color: #fff;
+}
+
 #app {
     position: fixed;
     top: 0;
