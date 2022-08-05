@@ -4,6 +4,16 @@ import FileApi from "@/api/FileApi";
 
 export default class LocalImageStrategyImpl implements ImageStrategy {
 
+    private postImagePath: string = "";
+
+
+    constructor() {
+        // 创建时赋值
+        this.getPostImagePath().then(path => {
+            this.postImagePath = path;
+        })
+    }
+
     private async getPostImagePath(): Promise<string> {
         let postImages = await Constant.PATH.POST_IMAGES();
         let target = await FileApi.resolve(postImages, "");
@@ -28,11 +38,8 @@ export default class LocalImageStrategyImpl implements ImageStrategy {
         });
     }
 
-    async parse(url: string): Promise<string> {
-        let postImagePath = await this.getPostImagePath();
-        return new Promise<string>(resolve => {
-            resolve(postImagePath + url.substring(1));
-        });
+    parse(url: string): string {
+        return this.postImagePath + url.substring(1);
     }
 
 }

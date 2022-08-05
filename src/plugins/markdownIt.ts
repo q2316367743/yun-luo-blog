@@ -1,18 +1,10 @@
 import MarkdownIt from 'markdown-it';
 import Token from "markdown-it/lib/token";
 import Renderer from "markdown-it/lib/renderer";
-import Constant from "@/global/Constant";
-import FileApi from "@/api/FileApi";
+import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 
-// $DOCUMENT\\yun-luo-blog\\post-images\\
-let imagePrefixUrl = "";
 
 const markdownIt = new MarkdownIt();
-Constant.PATH.POST_IMAGES().then(path => {
-    FileApi.resolve(path, "").then(encodePath => {
-        imagePrefixUrl = `file:///${encodePath}`;
-    })
-})
 
 function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options, env: any, self: Renderer): string {
     let token = tokens[0];
@@ -35,7 +27,7 @@ function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options
         alt = token.content;
     }
     if (src.startsWith('/')) {
-        src = imagePrefixUrl + src.substring(1);
+        src = imageStrategyContext.getStrategy().parse(src);
     }
     return `<img src="${src}" alt="${alt}" />`
 }

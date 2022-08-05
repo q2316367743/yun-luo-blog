@@ -17,6 +17,6 @@ export default interface ImageStrategy {
      * @param url 图片的URL
      * @return 解析后的URL
      */
-    parse(url: string): Promise<string>;
+    parse(url: string): string;
 
 }

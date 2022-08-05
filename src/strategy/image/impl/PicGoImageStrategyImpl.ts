@@ -35,8 +35,8 @@ export default class PicGoImageStrategyImpl implements ImageStrategy {
         });
     }
 
-    parse(url: string): Promise<string> {
-        return Promise.resolve(url);
+    parse(url: string): string {
+        return url;
     }
 
 }
