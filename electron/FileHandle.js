@@ -43,7 +43,7 @@ ipcMain.handle('file:copyFile', (event, message) => {
     let source = message.source;
     let target = message.target;
     // TODO: 此处需要处理，目标文件的文件夹不存在
-    fs.copyFileSync(source, target)
+    fs.copyFileSync(source, target);
     return {
         code: true,
         message: '成功'

@@ -200,11 +200,14 @@ export default {
             let files = await listDir(source, true);
             // 拷贝源文件夹内容到目标文件夹
             for (let file of files) {
-                if (!file.children) {
+                let fileName = file.path.substring(source.length + 1);
+                let targetPath = await resolve(target, fileName ? fileName : (new Date().getTime() + ""));
+                if (file.children) {
+                    // 文件夹的话先新建文件夹
+                    await createDir(targetPath, true);
+                }else {
                     // 只复制文件
-                    let fileName = file.path.substring(source.length + 1);
-                    let targetFilePath = await resolve(target, fileName ? fileName : (new Date().getTime() + ""));
-                    await copyFile(file.path, targetFilePath);
+                    await copyFile(file.path, targetPath);
                 }
             }
         }
