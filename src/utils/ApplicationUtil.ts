@@ -31,6 +31,11 @@ export default {
                 FileApi.createDir(path).catch(() => {
                 });
             })
+            // 部署目录
+            Constant.PATH.DIST().then(path => {
+                FileApi.createDir(path).catch(() => {
+                });
+            });
             // Hexo目录
             Constant.PATH.HEXO().then(path => {
                 FileApi.createDir(path).catch(() => {

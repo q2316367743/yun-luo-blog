@@ -74,7 +74,7 @@ async function createDir(path: string, recursive: boolean = false): Promise<void
  * @param path 文件夹路径
  * @param recursive 是否递归删除
  */
-async function removeDir(path: string, recursive: boolean = false): Promise<void> {
+async function removeDir(path: string, recursive: boolean = true): Promise<void> {
     let result = (await ipcRenderer.invoke('file:removeDir', {
         path,
         recursive
@@ -197,10 +197,15 @@ export default {
         await createDir(target);
         for (let source of sources) {
             // 获取源文件夹内容
-            let files = await listDir(source);
+            let files = await listDir(source, true);
             // 拷贝源文件夹内容到目标文件夹
             for (let file of files) {
-                await copyFile(file.path, await resolve(target, file.name ? file.name : (new Date().getTime() + "")));
+                if (!file.children) {
+                    // 只复制文件
+                    let fileName = file.path.substring(source.length + 1);
+                    let targetFilePath = await resolve(target, fileName ? fileName : (new Date().getTime() + ""));
+                    await copyFile(file.path, targetFilePath);
+                }
             }
         }
         return new Promise<void>((resolve) => {

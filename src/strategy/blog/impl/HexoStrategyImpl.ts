@@ -66,7 +66,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         loading.setText("执行构建命令");
         await this.deploy();
         loading.setText("迁移文件到dist目录");
-
+        await FileApi.copyDir(await Constant.PATH.DIST(), await Constant.PATH.HEXO_PUBLIC())
         loading.setText("推送到远程");
         return new Promise<void>((resolve) => {
             loading.close();
