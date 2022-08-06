@@ -136,8 +136,8 @@
                 </el-tab-pane>
             </el-tabs>
             <template #footer>
-                <el-button type="primary" @click="settingSave">保存</el-button>
                 <el-button @click="settingDialog = false">取消</el-button>
+                <el-button type="primary" @click="settingSave">保存</el-button>
             </template>
         </el-dialog>
     </div>

@@ -83,7 +83,7 @@ ipcMain.handle('file:listDir', (event, args) => {
         handleDir(targetPath, result)
     } else {
         // 不递归
-        fileName.map(name => {
+        result = fileName.map(name => {
             let $path = [targetPath, name].join(sep);
             return {
                 name: name,
