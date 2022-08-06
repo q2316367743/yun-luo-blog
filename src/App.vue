@@ -171,7 +171,7 @@ export default defineComponent({
             NativeApi.openUrl("https://gitee.com/qiaoshengda/yun-luo-blog")
         },
         openFolder() {
-            Constant.PATH.BASE().then(path => {
+            Constant.PATH.POST().then(path => {
                 NativeApi.openFolder(path);
             })
         },

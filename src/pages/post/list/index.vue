@@ -126,13 +126,13 @@ export default defineComponent({
                     } else if (this.type === 2) {
                         return e2.title.localeCompare(e1.title);
                     } else if (this.type === 3) {
-                        return e2.updated - e1.updated
+                        return e2.updated.getTime() - e1.updated.getTime()
                     } else if (this.type === 4) {
-                        return e1.updated - e2.updated
+                        return e1.updated.getTime() - e2.updated.getTime()
                     } else if (this.type === 5) {
-                        return e2.date - e1.date
+                        return e2.date.getTime() - e1.date.getTime()
                     } else if (this.type === 6) {
-                        return e1.date - e2.date
+                        return e1.date.getTime() - e2.date.getTime()
                     } else {
                         // 默认标题正序
                         return e1.title.localeCompare(e2.title);
