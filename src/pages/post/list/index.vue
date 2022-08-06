@@ -289,7 +289,7 @@ export default defineComponent({
                 })
             })
         },
-        openSettingDialog(id: number) {
+        openSettingDialog(id?: number) {
             // 获取数据
             tagService.list().then(tags => {
                 this.tags = tags;
@@ -297,7 +297,7 @@ export default defineComponent({
             categoryService.list().then((categoryTree: Array<CategoryView>) => {
                 this.categoryTree = categoryTree;
             })
-            postService.info(id).then(post => {
+            postService.info(id!).then(post => {
                 if (post) {
                     // 存在文章，查询文章详情
                     parsePost(post.path, post.fileName, true).then(post => {
