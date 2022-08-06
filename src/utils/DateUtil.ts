@@ -12,7 +12,9 @@ let lastYear = lastMonthDate.getFullYear();
 let lastMonth = lastMonthDate.getMonth();
 
 /*时间戳改日期--不传第二个参数返回年月日,传第二个参数返回年月日时分秒*/
-function formatDateTime(date: Date) {
+function formatDateTime(data: Date | string | number) {
+    let date = new Date();
+    date = new Date(data);
     let y = date.getFullYear();
     let m = date.getMonth() + 1;
     let mS = m < 10 ? ('0' + m) : (m + '');
@@ -124,6 +126,7 @@ function getYearStartDate() {
     let yearStartDate = new Date(nowYear, 0, 1);
     return formatDate(yearStartDate);
 }
+
 // 获得本年结束日期
 function getYearEndDate() {
     let yearEndDate = new Date(nowYear, 11, 1);

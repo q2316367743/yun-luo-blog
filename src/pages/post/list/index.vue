@@ -52,7 +52,7 @@
                                 <el-icon>
                                     <Calendar/>
                                 </el-icon>
-                                <span>{{ format(new Date(post.updated)) }}</span>
+                                <span>{{ format(post.updated) }}</span>
                             </div>
                             <div class="tag" v-if="post.tags.length > 0">
                                 <el-icon>
@@ -71,22 +71,89 @@
                         </div>
                     </div>
                     <div class="option">
+                        <el-button type="primary" link @click="openSettingDialog(post.id)">设置</el-button>
                         <el-button type="danger" link @click="deleteById(post.id)">删除</el-button>
                     </div>
                 </div>
                 <el-empty v-if="showPosts.length === 0" description="暂无文章" style="margin-top: 110px;"/>
             </el-scrollbar>
         </main>
+        <!-- 文章设置 -->
+        <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false">
+            <template #header>
+                <h2>文章设置</h2>
+            </template>
+            <el-tabs v-model="activeName">
+                <el-tab-pane label="常规" name="basic">
+                    <el-form v-model="post" label-position="top">
+                        <el-form-item label="文章标题">
+                            <el-input v-model="post.title"></el-input>
+                        </el-form-item>
+                        <el-form-item label="标签">
+                            <el-select v-model="post.tags" multiple filterable allow-create default-first-option
+                                       :reserve-keyword="false" style="width: 314px" placeholder="请选择标签">
+                                <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="分类">
+                            <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
+                                         clearable placeholder="请选择分类"/>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="高级" name="senior">
+                    <el-form v-model="post" label-position="top">
+                        <el-form-item label="文章网址">
+                            <el-input v-model="post.permalink"></el-input>
+                        </el-form-item>
+                        <el-form-item label="创建时间">
+                            <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
+                        </el-form-item>
+                        <el-form-item label="状态">
+                            <el-select v-model="post.status">
+                                <el-option :value="1" label="草稿"/>
+                                <el-option :value="2" label="发布"/>
+                                <el-option :value="3" label="回收站"/>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="SEO" name="seo">Role</el-tab-pane>
+                <el-tab-pane label="额外属性" name="extra">
+                    <!-- 其他属性 -->
+                    <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
+                        <el-input v-model="item.key" style="width: 50%;margin: 5px;">
+                            <template #prepend>K</template>
+                        </el-input>
+                        <el-input v-model="item.value" style="width: 50%;margin: 5px;">
+                            <template #prepend>V</template>
+                            <template #append>
+                                <el-button :icon="close" @click="extraRemove(item.id)"></el-button>
+                            </template>
+                        </el-input>
+                    </div>
+                    <el-button type="primary" @click="extraAdd">新增</el-button>
+                </el-tab-pane>
+            </el-tabs>
+            <template #footer>
+                <el-button type="primary" @click="settingSave">保存</el-button>
+                <el-button @click="settingDialog = false">取消</el-button>
+            </template>
+        </el-dialog>
     </div>
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Calendar, CollectionTag, Delete, Plus, PriceTag, Refresh, Search} from '@element-plus/icons-vue';
+import {Calendar, CollectionTag, Delete, Plus, PriceTag, Refresh, Search, Close} from '@element-plus/icons-vue';
 import {ElMessage, ElMessageBox} from "element-plus";
 
 import PostView from '@/views/PostView';
 import DateUtil from '@/utils/DateUtil';
-import {postService} from '@/global/BeanFactory';
+import {categoryService, postService, tagService} from '@/global/BeanFactory';
+import Entry from "@/global/Entry";
+import TagView from "@/views/TagView";
+import CategoryView from "@/views/CategoryView";
+import {parsePost} from "@/utils/PostUtil";
 
 export default defineComponent({
     name: 'post',
@@ -95,7 +162,8 @@ export default defineComponent({
         const search = markRaw(Search);
         const plus = markRaw(Plus);
         const refresh = markRaw(Refresh);
-        return {search, plus, refresh}
+        const close = markRaw(Close);
+        return {search, plus, refresh, close}
     },
     data: () => ({
         keyword: '',
@@ -107,13 +175,40 @@ export default defineComponent({
             number: 1,
             size: 10,
             total: 0
-        }
+        },
+        post: {
+            id: 0,
+            title: '新文章',
+            fileName: '',
+            path: '',
+            status: 1,
+            date: new Date(),
+            updated: new Date(),
+            comments: false,
+            tags: [],
+            categories: [],
+            permalink: "",
+            excerpt: "",
+            disableNunjucks: "",
+            lang: "",
+            extra: new Array<Entry>(),
+            content: ''
+        } as PostView,
+        settingDialog: false,
+        activeName: "basic",
+        categoryProps: {
+            checkStrictly: true,
+            value: 'name',
+            label: 'name'
+        },
+        tags: new Array<TagView>(),
+        categoryTree: new Array<CategoryView>()
     }),
     created() {
         postService.list().then(posts => {
             this.posts = posts;
             this.searchPost();
-        })
+        });
     },
     methods: {
         format: DateUtil.formatDateTime,
@@ -126,13 +221,13 @@ export default defineComponent({
                     } else if (this.type === 2) {
                         return e2.title.localeCompare(e1.title);
                     } else if (this.type === 3) {
-                        return e2.updated.getTime() - e1.updated.getTime()
+                        return new Date(e2.updated).getTime() - new Date(e1.updated).getTime()
                     } else if (this.type === 4) {
-                        return e1.updated.getTime() - e2.updated.getTime()
+                        return new Date(e1.updated).getTime() - new Date(e2.updated).getTime()
                     } else if (this.type === 5) {
-                        return e2.date.getTime() - e1.date.getTime()
+                        return new Date(e2.date).getTime() - new Date(e1.date).getTime()
                     } else if (this.type === 6) {
-                        return e1.date.getTime() - e2.date.getTime()
+                        return new Date(e1.date).getTime() - new Date(e2.date).getTime()
                     } else {
                         // 默认标题正序
                         return e1.title.localeCompare(e2.title);
@@ -193,6 +288,67 @@ export default defineComponent({
                     message: '取消删除',
                 })
             })
+        },
+        openSettingDialog(id: number) {
+            // 获取数据
+            tagService.list().then(tags => {
+                this.tags = tags;
+            })
+            categoryService.list().then((categoryTree: Array<CategoryView>) => {
+                this.categoryTree = categoryTree;
+            })
+            postService.info(id).then(post => {
+                if (post) {
+                    // 存在文章，查询文章详情
+                    parsePost(post.path, post.fileName, true).then(post => {
+                        this.post = post!;
+                        // 重新对post.id赋值
+                        this.post.id = id;
+                    });
+                } else {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '文章不存在，请刷新后重试'
+                    });
+                    this.$router.push('/post/list');
+                }
+            });
+            // 打开设置弹窗
+            this.settingDialog = true;
+        },
+        extraAdd() {
+            this.post.extra.push({
+                id: new Date().getTime(),
+                key: "",
+                value: ""
+            })
+        },
+        extraRemove(id: number) {
+            this.post.extra = this.post.extra.filter(e => e.id !== id);
+        },
+        settingSave() {
+            postService.update(this.post).then(() => {
+                this.settingDialog = false;
+                postService.list().then(posts => {
+                    this.posts = posts;
+                    this.searchPost();
+                });
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '保存成功'
+                });
+                // 更新列表
+            }).catch(e => {
+                this.settingDialog = false;
+                console.error(e);
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '保存失败，' + e
+                });
+            });
         }
     }
 });

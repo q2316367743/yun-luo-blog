@@ -30,12 +30,12 @@ export default interface PostView {
     /**
      * 建立日期 - 文件建立日期，时间戳
      */
-    date: Date;
+    date: Date | string | number;
 
     /**
      * 更新日期 - 文件更新日期，时间戳
      */
-    updated: Date;
+    updated: Date | string | number;
 
     /**
      * 开启文章的评论功能
