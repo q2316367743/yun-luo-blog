@@ -328,7 +328,6 @@ export default defineComponent({
         languageSuggestion(keyword: string, cb: any) {
             if (keyword && keyword !== '') {
                 cb(languages.filter(item => {
-                    console.log(item, keyword)
                     return item.indexOf(keyword) > -1;
                 }))
             } else {
@@ -342,11 +341,9 @@ export default defineComponent({
             if (keyword && keyword !== '') {
                 // 有关键字
                 cb(timezones.filter(item => {
-                    console.log(item, keyword)
                     return item.indexOf(keyword) > -1;
                 }))
             } else {
-                console.log(timezones)
                 cb(timezones)
             }
         },

@@ -21,6 +21,12 @@
                     </el-icon>
                     <span>分类</span>
                 </el-menu-item>
+                <el-menu-item index="/pretty">
+                    <el-icon>
+                        <shopping-cart-full></shopping-cart-full>
+                    </el-icon>
+                    <span>美化</span>
+                </el-menu-item>
                 <el-menu-item :index="`/config/${basicSetting.blogType}`">
                     <el-icon>
                         <Menu/>
@@ -109,7 +115,8 @@ import {
     PriceTag,
     Refresh,
     Setting,
-    Suitcase
+    Suitcase,
+    ShoppingCartFull
 } from '@element-plus/icons-vue';
 import {ElMessage} from "element-plus";
 
@@ -123,7 +130,7 @@ import NativeApi from "@/api/NativeApi";
 
 export default defineComponent({
     components: {
-        Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag, SettingPage
+        Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag, ShoppingCartFull, SettingPage
     },
     setup() {
         const setting = markRaw(Setting);

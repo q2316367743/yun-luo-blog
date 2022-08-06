@@ -13,20 +13,38 @@
                 <el-option label="宋体" value="宋体"></el-option>
             </el-select>
         </el-form-item>
+        <el-form-item label="项目目录">
+            <el-input v-model="basicSetting.path" disabled>
+                <template #append>
+                    <el-button :icon="folder" @click="openFolderDialog"/>
+                </template>
+            </el-input>
+        </el-form-item>
     </el-form>
 </template>
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, markRaw} from "vue";
 import {useSettingStore} from '@/store/SettingStore';
+import {Folder} from "@element-plus/icons-vue";
 
 export default defineComponent({
+    name: "basic-setting",
+    setup() {
+        const folder = markRaw(Folder);
+        return {
+            folder
+        }
+    },
     data: () => ({
         basicSetting: useSettingStore().basicSetting
     }),
-    name: 'blog-setting',
     watch: {
         "basicSetting.font": (value) => {
             document.getElementsByTagName('body')[0]!.style.fontFamily = `${value}, "Microsoft YaHei", Arial, sans-serif`
+        }
+    },
+    methods: {
+        openFolderDialog() {
         }
     }
 });

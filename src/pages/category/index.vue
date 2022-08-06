@@ -49,7 +49,6 @@ export default defineComponent({
         categoryList() {
             categoryService.list().then(categoryTree => {
                 this.categoryTree = categoryTree;
-                console.log(categoryTree);
             })
         },
         categoryAdd(id: number) {

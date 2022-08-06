@@ -5,6 +5,7 @@ import PostListPage from '@/pages/post/list/index.vue';
 import PostNewPage from '@/pages/post/new/index.vue';
 import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
+import PrettyPage from '@/pages/pretty/index.vue';
 import HexoConfigPage from '@/pages/config/hexo/index.vue';
 
 /**
@@ -40,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/category',
         name: 'category',
         component: CategoryPage
+    },
+    {
+        path: '/pretty',
+        name: 'pretty',
+        component: PrettyPage
     },
     {
         path: '/config/hexo',

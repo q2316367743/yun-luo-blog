@@ -1,4 +1,5 @@
 import FileApi from "@/api/FileApi";
+import {useSettingStore} from "@/store/SettingStore";
 
 // 基础
 const BASE = 'yun-luo-blog';
@@ -20,8 +21,15 @@ const HEXO_PUBLIC = 'public';
  * 获取项目基础目录
  */
 function basicDir(): Promise<string> {
-    // 此处返回默认目录
-    return FileApi.defaultDir();
+    try {
+        let path = useSettingStore().basic.path;
+        if (path && path !== "") {
+            return Promise.resolve(path);
+        }
+        return FileApi.defaultDir();
+    } catch (e) {
+        return FileApi.defaultDir();
+    }
 }
 
 export default {
