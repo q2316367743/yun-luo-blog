@@ -2,6 +2,7 @@ import MarkdownIt from 'markdown-it';
 import Token from "markdown-it/lib/token";
 import Renderer from "markdown-it/lib/renderer";
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
+import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 
 
 const markdownIt = new MarkdownIt();
@@ -27,7 +28,8 @@ function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options
         alt = token.content;
     }
     if (src.startsWith('/')) {
-        src = imageStrategyContext.getStrategy().parse(src);
+        // 本地解析
+        src = imageStrategyContext.getStrategy(ImageTypeEnum.LOCAL).parse(src);
     }
     return `<img src="${src}" alt="${alt}" />`
 }

@@ -6,10 +6,9 @@ export default interface ImageStrategy {
     /**
      * 上传图片
      *
-     * @param path 图片地址
      * @return 上传完后的图片地址
      */
-    upload(path: string): Promise<string>;
+    upload(): Promise<string>;
 
     /**
      * 解析图片URL

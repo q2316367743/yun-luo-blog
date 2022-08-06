@@ -116,7 +116,7 @@ import markdownIt from '@/plugins/markdownIt';
 
 import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
-import { parsePost} from "@/utils/PostUtil";
+import {parsePost} from "@/utils/PostUtil";
 import {postService, tagService, categoryService} from '@/global/BeanFactory';
 import DialogApi from "@/api/DialogApi";
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
@@ -237,56 +237,50 @@ export default defineComponent({
             this.$router.push(link);
         },
         async insertImage() {
-            const selected = await DialogApi.open({
-                title: '请选择图片',
-                multiple: true,
-                filters: [{
-                    name: 'Image',
-                    extensions: ['jpg', 'jpeg', 'png', 'webp']
-                }, {
-                    name: '全部',
-                    extensions: ['*']
-                }]
+            // 复制图片
+            const loading = ElLoading.service({
+                lock: true,
+                text: '选择图片中',
+                background: 'rgba(0, 0, 0, 0.7)',
             });
-            if (typeof selected === 'object' && selected) {
-                let path = (selected as string[])[0];
-                // 复制图片
-                const loading = ElLoading.service({
-                    lock: true,
-                    text: '上传文件中',
-                    background: 'rgba(0, 0, 0, 0.7)',
+            imageStrategyContext.getStrategy().upload().then((newPath) => {
+                console.log('名字插入')
+                // 名字插入
+                let monacoEditor = this.$refs.monacoEditor as any;
+                let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;
+                instance.executeEdits("", [{
+                    range: {
+                        startLineNumber: instance.getPosition()!.lineNumber,
+                        startColumn: instance.getPosition()!.column,
+                        endLineNumber: instance.getPosition()!.lineNumber,
+                        endColumn: instance.getPosition()!.column
+                    },
+                    text: `![在这里插入图片描述](${newPath})`,
+                    forceMoveMarkers: true
+                }]);
+                loading.close();
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '上传成功'
                 });
-                imageStrategyContext.getStrategy().upload(path).then((newPath) => {
-                    // 名字插入
-                    let monacoEditor = this.$refs.monacoEditor as any;
-                    let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;
-                    instance.executeEdits("", [{
-                        range: {
-                            startLineNumber: instance.getPosition()!.lineNumber,
-                            startColumn: instance.getPosition()!.column,
-                            endLineNumber: instance.getPosition()!.lineNumber,
-                            endColumn: instance.getPosition()!.column
-                        },
-                        text: `![在这里插入图片描述](${newPath})`,
-                        forceMoveMarkers: true
-                    }]);
-                    loading.close();
+
+            }).catch((e) => {
+                loading.close();
+                if (e === "") {
                     ElMessage({
                         showClose: true,
-                        type: 'success',
-                        message: '插入成功'
+                        type: 'info',
+                        message: '取消上传'
                     });
-
-                }).catch(e => {
-                    console.error(e);
-                    loading.close();
+                } else {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: '插入失败，' + e
+                        message: '上传失败，' + e
                     });
-                });
-            }
+                }
+            });
         },
         openSetting() {
             this.settingDialog = true;

@@ -32,10 +32,15 @@ const imageSetting = useLocalStorage('imageSetting', {
     qiNiu: {
         accessKey: '',
         secretKey: '',
+        // 存储空间名
         storageSpace: '',
+        // 访问网址
         accessUrl: '',
+        // 存储区域
         storageArea: '',
+        // 网址后缀
         urlSuffix: '',
+        // 指定存储路径
         storagePath: ''
     },
     picGo: {

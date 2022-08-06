@@ -49,9 +49,7 @@ ipcMain.handle('native:openUrl', async (event, args) => {
 
 ipcMain.handle('native:http', async (event, args) => {
     console.log('native:http');
-    console.log(args)
     let axiosResponse = await axios(args);
-    console.log(axiosResponse)
     return {
         code: true,
         message: '成功',

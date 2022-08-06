@@ -12,7 +12,8 @@ class ImageStrategyContext {
     private strategyMap = new Map<number, ImageStrategy>();
     private static instance = new ImageStrategyContext();
 
-    private constructor(){}
+    private constructor() {
+    }
 
     public static getInstance(): ImageStrategyContext {
         return this.instance;
@@ -22,9 +23,14 @@ class ImageStrategyContext {
         this.strategyMap.set(name, strategy);
     }
 
-    public getStrategy(): ImageStrategy {
-        let image = useSettingStore().image;
-        let strategy = this.strategyMap.get(image.type);
+    public getStrategy(name?: number): ImageStrategy {
+        let strategy;
+        if (name) {
+            strategy = this.strategyMap.get(name);
+        } else {
+            let image = useSettingStore().image;
+            strategy = this.strategyMap.get(image.type);
+        }
         if (!strategy) {
             return this.strategyMap.get(ImageTypeEnum.LOCAL)!;
         }
@@ -32,6 +38,7 @@ class ImageStrategyContext {
     }
 
 }
+
 const imageStrategyContext = ImageStrategyContext.getInstance();
 
 // 注册策略

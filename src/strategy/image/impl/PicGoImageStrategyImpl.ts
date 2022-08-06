@@ -2,6 +2,8 @@ import ImageStrategy from "@/strategy/image/ImageStrategy";
 import {useSettingStore} from "@/store/SettingStore";
 import NativeApi from "@/api/NativeApi";
 import Result from "@/global/Result";
+import DialogApi from "@/api/DialogApi";
+import {ElLoading} from "element-plus";
 
 /**
  * PicGo响应体
@@ -22,19 +24,40 @@ interface PicGoResult {
 
 export default class PicGoImageStrategyImpl implements ImageStrategy {
 
-    async upload(path: string): Promise<string> {
-        let imageSetting = useSettingStore().image;
-        let response = await NativeApi.http<PicGoResult>({
-            url: `http://${imageSetting.picGo.address}:${imageSetting.picGo.port}/upload`,
-            method: "POST",
-            data: {
-                list: [path]
-            }
+    async upload(): Promise<string> {
+        const selected = await DialogApi.open({
+            title: '请选择图片',
+            multiple: true,
+            filters: [{
+                name: 'Image',
+                extensions: ['jpg', 'jpeg', 'png', 'webp']
+            }, {
+                name: '全部',
+                extensions: ['*']
+            }]
         });
-        console.log(response)
-        return new Promise<string>(resolve => {
-            resolve(response.result[0]);
-        });
+        if (typeof selected === 'object' && selected) {
+            const loading = ElLoading.service({
+                lock: true,
+                text: '上传图片中',
+                background: 'rgba(0, 0, 0, 0.7)',
+            });
+            let path = (selected as string[])[0];
+            let imageSetting = useSettingStore().image;
+            let response = await NativeApi.http<PicGoResult>({
+                url: `http://${imageSetting.picGo.address}:${imageSetting.picGo.port}/upload`,
+                method: "POST",
+                data: {
+                    list: [path]
+                }
+            });
+            loading.close();
+            return new Promise<string>(resolve => {
+                resolve(response.result[0]);
+            });
+        } else {
+            return Promise.reject("");
+        }
     }
 
     parse(url: string): string {
