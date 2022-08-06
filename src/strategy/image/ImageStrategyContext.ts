@@ -3,6 +3,7 @@ import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import LocalImageStrategyImpl from "@/strategy/image/impl/LocalImageStrategyImpl";
 import {useSettingStore} from "@/store/SettingStore";
 import PicGoImageStrategyImpl from "@/strategy/image/impl/PicGoImageStrategyImpl";
+import QiNiuImageStrategyImpl from "@/strategy/image/impl/QiNiuImageStrategyImpl";
 
 /**
  * 图片策略上下文
@@ -43,6 +44,7 @@ const imageStrategyContext = ImageStrategyContext.getInstance();
 
 // 注册策略
 imageStrategyContext.register(ImageTypeEnum.LOCAL, new LocalImageStrategyImpl());
+imageStrategyContext.register(ImageTypeEnum.QI_NIU, new QiNiuImageStrategyImpl());
 imageStrategyContext.register(ImageTypeEnum.PIC_GO, new PicGoImageStrategyImpl());
 
 export default imageStrategyContext;
