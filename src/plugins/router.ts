@@ -5,8 +5,8 @@ import PostListPage from '@/pages/post/list/index.vue';
 import PostNewPage from '@/pages/post/new/index.vue';
 import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
-import PrettyPage from '@/pages/pretty/index.vue';
-import HexoConfigPage from '@/pages/config/hexo/index.vue';
+import PrettyHexoPage from '@/pages/pretty/hexo/index.vue';
+import ConfigHexoPage from '@/pages/config/hexo/index.vue';
 
 /**
  * 定义路由模块
@@ -43,14 +43,14 @@ const routes: Array<RouteRecordRaw> = [
         component: CategoryPage
     },
     {
-        path: '/pretty',
-        name: 'pretty',
-        component: PrettyPage
+        path: '/pretty/hexo',
+        name: 'pretty-hexo',
+        component: PrettyHexoPage
     },
     {
         path: '/config/hexo',
         name: 'config-hexo',
-        component: HexoConfigPage
+        component: ConfigHexoPage
     }
 ]
 

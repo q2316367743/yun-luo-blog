@@ -135,12 +135,30 @@ ipcMain.handle('file:defaultDir', () => {
 
 ipcMain.handle('file:resolve', (event, args) => {
     console.log('file:resolve');
-    console.log(args.paths.join(sep))
     return {
         code: true,
         message: '成功',
         data: args.paths.join(sep)
     };
 
+})
+
+ipcMain.handle('file:exist', (event, args) => {
+    console.log('file:exist');
+    return {
+        code: true,
+        message: '成功',
+        data: fs.existsSync(args.path)
+    };
+})
+
+ipcMain.handle('file:rename', (event, args) => {
+    console.log('file:rename');
+    fs.renameSync(args.oldPath, args.newPath)
+    return {
+        code: true,
+        message: '成功',
+        data: true
+    };
 })
 

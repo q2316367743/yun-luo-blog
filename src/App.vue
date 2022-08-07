@@ -21,7 +21,7 @@
                     </el-icon>
                     <span>分类</span>
                 </el-menu-item>
-                <el-menu-item index="/pretty">
+                <el-menu-item :index="`/pretty/${basicSetting.blogType}`">
                     <el-icon>
                         <shopping-cart-full></shopping-cart-full>
                     </el-icon>

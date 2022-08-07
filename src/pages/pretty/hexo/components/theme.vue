@@ -3,9 +3,12 @@
         <el-scrollbar>
             <el-row>
                 <el-col :span="24" style="margin-bottom: 10px" v-for="theme in themes" :key="theme">
-                    <el-card>
+                    <el-card shadow="hover">
                         <div class="theme-card">
-                            <div>{{ theme }}</div>
+                            <div>
+                                <span>{{ theme }}</span>
+                                <el-button type="primary" link :icon="edit" @click="themeRename(theme)"></el-button>
+                            </div>
                             <div>
                                 <el-button type="success" link :disabled="theme === hexo.theme"
                                            @click="chooseTheme(theme)">选中
@@ -28,8 +31,11 @@
                         <el-radio :label="2">npm</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="地址" v-if="themeInfo.mode === 1">
+                <el-form-item label="地址" v-if="themeInfo.mode === 1" required>
                     <el-input v-model="themeInfo.url" placeholder="请输入git远程地址"></el-input>
+                </el-form-item>
+                <el-form-item label="主题重命名" v-if="themeInfo.mode === 1">
+                    <el-input v-model="themeInfo.name" placeholder="请输入新的主题重命名"></el-input>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -41,7 +47,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Plus} from "@element-plus/icons-vue";
+import {Plus, Edit} from "@element-plus/icons-vue";
 import Hexo from "@/global/config/Hexo";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
@@ -56,13 +62,15 @@ export default defineComponent({
     name: 'pretty-theme',
     setup() {
         const plus = markRaw(Plus);
-        return {plus}
+        const edit = markRaw(Edit);
+        return {plus, edit}
     },
     data: () => ({
         themeAddDialog: false,
         themeInfo: {
             mode: 1,
-            url: ''
+            url: '',
+            name: ''
         },
         themes: new Array<string>(),
         themeActive: '',
@@ -92,7 +100,8 @@ export default defineComponent({
         openThemeAddDialog() {
             this.themeInfo = {
                 mode: 1,
-                url: ''
+                url: '',
+                name: ''
             }
             this.themeAddDialog = true;
         },
@@ -123,7 +132,7 @@ export default defineComponent({
                     background: 'rgba(0, 0, 0, 0.7)',
                 });
                 Constant.PATH.HEXO_THEME().then(path => {
-                    NativeApi.invokeCmd(gitPath, path, `clone ${this.themeInfo.url}`).then(() => {
+                    NativeApi.invokeCmd(gitPath, path, `clone ${this.themeInfo.url.trim()}`).then(() => {
                         ElMessage({
                             showClose: true,
                             type: "success",
@@ -161,6 +170,64 @@ export default defineComponent({
                         type: 'error',
                     })
                 });
+            })
+        },
+        themeRename(theme: string) {
+            ElMessageBox.prompt('新输入新的主要名字', '主题重命名', {
+                confirmButtonText: '修改',
+                cancelButtonText: '取消',
+            }).then(async ({value}) => {
+                console.log('开始重命名', theme, value.trim())
+                // 0. 验证主题名字不能与原先一样
+                console.log("0. 验证主题名字不能与原先一样")
+                console.log("value.trim() === \"\"", value.trim() === "");
+                if (value.trim() === "") {
+                    console.log("主题名字不能为空")
+                    ElMessage({
+                        showClose: true,
+                        type: "warning",
+                        message: "主题名字不能为空"
+                    });
+                    return false
+                }
+                console.log("value.trim() === theme.trim()", value.trim() === theme.trim());
+                if (value.trim() === theme.trim()) {
+                    console.log("主题名字不能与原先一样")
+                    ElMessage({
+                        showClose: true,
+                        type: "warning",
+                        message: "主题名字不能与原先一样"
+                    });
+                    return false
+                }
+                // 1. 重命名
+                console.log("1. 重命名")
+                let themePath = await Constant.PATH.HEXO_THEME();
+                let oldPath = await FileApi.resolve(themePath, theme);
+                let newPath = await FileApi.resolve(themePath, value);
+                await FileApi.rename(oldPath, newPath);
+                // 2. 如果当前主题已被选中修改hexo主题选择
+                console.log("2. 如果当前主题已被选中修改hexo主题选择")
+                if (this.hexo.theme.trim() !== value.trim()) {
+                    console.log("2.1 修改主题")
+                    let configPath = await Constant.PATH.HEXO_CONFIG();
+                    this.hexo.theme = value.trim();
+                    await FileApi.writeFile(configPath, this.hexo.render());
+                }
+                // 3. 重新查询主题
+                console.log("3. 重新查询主题")
+                this.listTheme();
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: `主题重命名成功`,
+                })
+            }).catch(() => {
+                ElMessage({
+                    showClose: true,
+                    type: 'info',
+                    message: '取消重命名',
+                })
             })
         }
     }

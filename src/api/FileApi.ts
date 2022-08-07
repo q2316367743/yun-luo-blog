@@ -25,12 +25,55 @@ async function resolve(...paths: string[]): Promise<string> {
 }
 
 /**
+ * 文件目录是否存在
+ * @param path 文件目录
+ */
+async function exist(path: string): Promise<boolean> {
+    let result = (await ipcRenderer.invoke('file:exist', {
+        path
+    })) as Result<boolean>;
+    if (result.code) {
+        return new Promise<boolean>(resolve => {
+            resolve(result.data);
+        });
+    } else {
+        return new Promise<boolean>((resolve1, reject) => {
+            reject(result.message)
+        })
+    }
+
+}
+
+async function rename(oldPath: string, newPath: string): Promise<void> {
+    if (!(await exist(oldPath))) {
+        return Promise.reject("旧路径不存在")
+    }
+    let result = (await ipcRenderer.invoke('file:rename', {
+        oldPath,
+        newPath
+    })) as Result<boolean>;
+    if (result.code) {
+        return new Promise<void>(resolve => {
+            resolve();
+        });
+    } else {
+        return new Promise<void>((resolve1, reject) => {
+            reject(result.message)
+        })
+    }
+}
+
+/**
  * 读取文件夹下全部文件
  *
  * @param path 文件夹路径
  * @param recursive 是否递归
  */
 async function listDir(path: string, recursive: boolean = false): Promise<FileEntry[]> {
+    if (!(await exist(path))) {
+        // 文件夹不存在，返回空
+        return Promise.resolve([]);
+    }
     let result = (await ipcRenderer.invoke('file:listDir', {
         path: path,
         recursive: recursive
@@ -53,6 +96,11 @@ async function listDir(path: string, recursive: boolean = false): Promise<FileEn
  * @param recursive 是否递归创建文件夹
  */
 async function createDir(path: string, recursive: boolean = false): Promise<void> {
+    if (await exist(path)) {
+        // 如果文件已存在，则不需要创建
+        console.error(`path:${path}已存在`)
+        return Promise.resolve();
+    }
     let result = (await ipcRenderer.invoke('file:createDir', {
         path,
         recursive
@@ -131,6 +179,9 @@ export default {
     },
 
     async readFile(path: string): Promise<string> {
+        if (!(await exist(path))) {
+            return Promise.reject(`目录【${path}】不存在`);
+        }
         let result = (await ipcRenderer.invoke('file:readFile', {
             path: path
         })) as Result<any>;
@@ -175,6 +226,10 @@ export default {
             })
         }
     },
+
+    exist,
+
+    rename,
 
     listDir,
 
