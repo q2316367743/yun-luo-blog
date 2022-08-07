@@ -1,5 +1,5 @@
 import {Dexie, Transaction} from 'dexie';
-import {ElLoading} from 'element-plus';
+import {ElLoading, ElMessage} from 'element-plus';
 
 
 import DexieInstance from '@/plugins/dexie';
@@ -320,42 +320,61 @@ export default class TagService {
             text: '获取目录中',
             background: 'rgba(0, 0, 0, 0.7)',
         });
-        // 获取文件
-        let postPath = await Constant.PATH.POST()
-        let files = await FileApi.listDir(postPath, true);
-        // 获取全部文章目录
-        let posts = await this.postDao.toArray();
-        // 删除全部文章
-        for (let post of posts) {
-            this.postDao.delete(post.id);
-        }
-        // 删除全部标签关系
-        let postTags = await this.postTagDao.toArray();
-        for (let postTag of postTags) {
-            this.postTagDao.delete(postTag.id!);
-        }
-        // 删除旧的分类关系
-        let postCategories = await this.postCategoryDao.toArray();
-        for (let postCategory of postCategories) {
-            this.postCategoryDao.delete(postCategory.id!);
-        }
-        let index = 0;
-        for (let file of files) {
-            index += 1;
-            if (loading) {
-                loading.setText(`开始处理${index} / ${files.length}`);
+        try {
+
+            // 获取文件
+            let postPath = await Constant.PATH.POST()
+            let files = await FileApi.listDir(postPath, true);
+            // 获取全部文章目录
+            let posts = await this.postDao.toArray();
+            // 删除全部文章
+            for (let post of posts) {
+                this.postDao.delete(post.id);
             }
-            if (file.children) {
-                // 跳过文件夹
-                continue;
+            // 删除全部标签关系
+            let postTags = await this.postTagDao.toArray();
+            for (let postTag of postTags) {
+                this.postTagDao.delete(postTag.id!);
             }
-            let postView = await parsePost(file.path, file.name!, false);
-            if (postView) {
-                // 处理逻辑
-                await this.insert(postView, false);
+            // 删除旧的分类关系
+            let postCategories = await this.postCategoryDao.toArray();
+            for (let postCategory of postCategories) {
+                this.postCategoryDao.delete(postCategory.id!);
             }
+            let index = 0;
+            for (let file of files) {
+                index += 1;
+                if (loading) {
+                    loading.setText(`开始处理${index} / ${files.length}`);
+                }
+                if (file.children) {
+                    // 跳过文件夹
+                    continue;
+                }
+                let postView = await parsePost(file.path, file.name!, false);
+                if (postView) {
+                    // 处理逻辑，此处会报错，
+                    try {
+                        await this.insert(postView, false);
+                    }catch (e) {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: `新增【${postView.title}】失败`
+                        });
+                    }
+                }
+            }
+        }catch (e) {
+            console.error(e);
+            ElMessage({
+                showClose: true,
+                type: 'error',
+                message: `新增失败，${e}`
+            });
+        }finally {
+            loading.close();
         }
-        loading.close();
         return new Promise<void>((resolve) => {
             resolve();
         })
