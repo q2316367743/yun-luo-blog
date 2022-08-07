@@ -72,10 +72,14 @@ export default class TagService {
         console.log('插入完成', postId);
         // 再插入标签
         console.log('再插入标签')
-        await this.insertTag(postId, post.tags, postTagDao, tagDao);
+        if (post.tags) {
+            await this.insertTag(postId, post.tags, postTagDao, tagDao);
+        }
         // 再插入分类
         console.log('再插入分类')
-        await this.insertCategory(postId, post.categories, postCategoryDao, categoryDao);
+        if (post.categories) {
+            await this.insertCategory(postId, post.categories, postCategoryDao, categoryDao);
+        }
         if (saveContent) {
             console.log('此处保存内容')
             // 此处保存内容
