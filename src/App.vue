@@ -149,6 +149,7 @@ export default defineComponent({
     },
     created() {
         ApplicationUtil.launch();
+        ApplicationUtil.suggest();
         ApplicationUtil.isInit("").then((isInit) => {
             if (!isInit) {
                 // TODO: 如果没有初始化，则无法访问：主题。主题设置。插件、博客设置。

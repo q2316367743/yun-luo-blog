@@ -49,7 +49,12 @@ export default {
         window.onload = function () {
             document.getElementsByTagName('body')[0]!.style.fontFamily = `${useSettingStore().basic.font}, "Microsoft YaHei", Arial, sans-serif`
         }
-        // 建议提示
+    },
+
+    /**
+     * 显示建议
+     */
+    suggest() {
         // 图片未选择图床
         if (useSettingStore().image.type === ImageTypeEnum.LOCAL) {
             // 不建议使用本地
