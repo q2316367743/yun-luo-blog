@@ -16,6 +16,7 @@ const HEXO = 'hexo';
 const HEXO_CONFIG = '_config.yml';
 const HEXO_THEME = 'themes';
 const HEXO_PUBLIC = 'public';
+const HEXO_PACKAGE_JSON = 'package.json';
 
 /**
  * 获取项目基础目录
@@ -82,5 +83,9 @@ export default {
             let document = await basicDir();
             return FileApi.resolve(document, BASE, HEXO, HEXO_PUBLIC);
         },
+        HEXO_PACKAGE_JSON: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, HEXO, HEXO_PACKAGE_JSON);
+        }
     },
 }

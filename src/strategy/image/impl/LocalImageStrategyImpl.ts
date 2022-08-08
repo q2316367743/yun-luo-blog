@@ -48,7 +48,7 @@ export default class LocalImageStrategyImpl implements ImageStrategy {
                 path
             }]);
             return new Promise<string>((resolve) => {
-                resolve(`/post-images/${name}`);
+                resolve(`/${Constant.POST_IMAGES}/${name}`);
             });
         }else {
             return Promise.reject("");
