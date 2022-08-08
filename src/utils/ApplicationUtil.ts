@@ -66,15 +66,4 @@ export default {
         }
     },
 
-    /**
-     * 判断是否初始化指定目录
-     *
-     * @param path 指定目录
-     */
-    isInit(path: string): Promise<boolean> {
-        return new Promise<boolean>((resolve) => {
-            resolve(true);
-        })
-    },
-
 }

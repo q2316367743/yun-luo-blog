@@ -115,10 +115,10 @@ import {
     PriceTag,
     Refresh,
     Setting,
-    Suitcase,
-    ShoppingCartFull
+    ShoppingCartFull,
+    Suitcase
 } from '@element-plus/icons-vue';
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
@@ -150,11 +150,6 @@ export default defineComponent({
     created() {
         ApplicationUtil.launch();
         ApplicationUtil.suggest();
-        ApplicationUtil.isInit("").then((isInit) => {
-            if (!isInit) {
-                // TODO: 如果没有初始化，则无法访问：主题。主题设置。插件、博客设置。
-            }
-        });
     },
     methods: {
         sync() {
@@ -165,10 +160,10 @@ export default defineComponent({
                     message: '同步成功'
                 });
             }).catch(e => {
-                ElMessage({
-                    showClose: true,
-                    type: 'error',
-                    message: e
+                ElMessageBox.alert(e, '同步失败', {
+                    confirmButtonText: '确定',
+                    type: "error",
+                    draggable: true
                 });
             })
         },
@@ -193,10 +188,10 @@ export default defineComponent({
                             message: '初始化完成'
                         });
                     }).catch(e => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'error',
-                            message: '初始化失败，' + e
+                        ElMessageBox.alert(e, '初始化失败', {
+                            confirmButtonText: '确定',
+                            type: "error",
+                            draggable: true
                         });
                     });
                     break;
@@ -208,10 +203,10 @@ export default defineComponent({
                             message: '编译完成'
                         });
                     }).catch(e => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'error',
-                            message: '编译失败，' + e
+                        ElMessageBox.alert(e, '编译失败', {
+                            confirmButtonText: '确定',
+                            type: "error",
+                            draggable: true
                         });
                     });
                     break;
@@ -223,10 +218,10 @@ export default defineComponent({
                             message: '运行完成'
                         });
                     }).catch(e => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'error',
-                            message: '运行失败，' + e
+                        ElMessageBox.alert(e, '运行失败', {
+                            confirmButtonText: '确定',
+                            type: "error",
+                            draggable: true
                         });
                     });
                     break;
@@ -238,10 +233,10 @@ export default defineComponent({
                             message: '清理完成'
                         });
                     }).catch(e => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'error',
-                            message: '清理失败，' + e
+                        ElMessageBox.alert(e, '清理失败', {
+                            confirmButtonText: '确定',
+                            type: "error",
+                            draggable: true
                         });
                     });
                     break;
