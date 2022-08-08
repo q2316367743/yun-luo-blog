@@ -267,18 +267,18 @@ export default defineComponent({
                 Constant.PATH.HEXO_CONFIG().then(path => {
                     FileApi.readFile(path).then(content => {
                         this.hexo.parse(content);
+                        // 主题配置文件
+                        Constant.PATH.HEXO().then(hexoPath => {
+                            // 读取文件内容
+                            FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
+                                FileApi.readFile(themePath).then(themeContent => {
+                                    this.theme = themeContent;
+                                }).catch((e) => {
+                                    console.error('不存在目录', e);
+                                })
+                            })
+                        });
                     });
-                });
-                // 主题配置文件
-                Constant.PATH.HEXO().then(hexoPath => {
-                    // 读取文件内容
-                    FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
-                        FileApi.readFile(themePath).then(themeContent => {
-                            this.theme = themeContent;
-                        }).catch((e) => {
-                            console.error('不存在目录', e);
-                        })
-                    })
                 });
                 // 查询博客主题
                 Constant.PATH.HEXO_THEME().then(path => {

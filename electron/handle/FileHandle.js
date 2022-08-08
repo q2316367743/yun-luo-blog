@@ -5,7 +5,7 @@ const {sep} = require('path');
 // 文件操作
 
 ipcMain.handle('file:readFile', (event, args) => {
-    console.log('file:readFile');
+    console.log('file:readFile', args.path);
     let path = args.path;
     return {
         code: true,
