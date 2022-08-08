@@ -196,6 +196,7 @@ export default defineComponent({
             ElMessageBox.prompt('新输入新的主要名字', '主题重命名', {
                 confirmButtonText: '修改',
                 cancelButtonText: '取消',
+                inputValue: theme
             }).then(async ({value}) => {
                 console.log('开始重命名', theme, value.trim())
                 // 0. 验证主题名字不能与原先一样
@@ -230,6 +231,16 @@ export default defineComponent({
                 console.log("2. 如果当前主题已被选中修改hexo主题选择")
                 if (this.hexo.theme.trim() !== value.trim()) {
                     console.log("2.1 修改主题")
+                    // 修改主题文件或创建主题文件
+                    let oldConfigPath = await FileApi.resolve(await Constant.PATH.HEXO(), `_config.${this.hexo.theme.trim()}.yml`);
+                    let newConfigPath = await FileApi.resolve(await Constant.PATH.HEXO(), `_config.${value.trim()}.yml`);
+                    if (await FileApi.exist(oldConfigPath)) {
+                        // 存在，则重命名
+                        await FileApi.rename(oldConfigPath, newConfigPath);
+                    }else {
+                        // 不存在，则创建
+                        await FileApi.createDir(newConfigPath);
+                    }
                     let configPath = await Constant.PATH.HEXO_CONFIG();
                     this.hexo.theme = value.trim();
                     await FileApi.writeFile(configPath, this.hexo.render());
