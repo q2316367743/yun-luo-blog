@@ -14,10 +14,10 @@ function createWindow() {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         title: '云落博客',
-        width: 1180,
-        height: 740,
-        minWidth: 1020,
-        minHeight: 560,
+        width: 1210,
+        height: 710,
+        minWidth: 1210,
+        minHeight: 710,
         webPreferences: {
             nodeIntegration: true,
             // 官网似乎说是默认false，但是这里必须设置contextIsolation
