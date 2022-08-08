@@ -13,17 +13,24 @@ export default {
             text: '选择文件',
             background: 'rgba(0, 0, 0, 0.7)',
         });
-        let result = (await ipcRenderer.invoke('dialog:open', options)) as Result<any>;
-        if (result.code) {
-            return new Promise<null | string | string[]>(resolve => {
-                loading.close();
-                resolve(result.data);
-            });
-        } else {
-            return new Promise<null | string | string[]>((resolve1, reject) => {
-                loading.close();
-                reject(result.message)
-            })
+        try {
+            let result = (await ipcRenderer.invoke('dialog:open', options)) as Result<any>;
+            if (result.code) {
+                return new Promise<null | string | string[]>(resolve => {
+                    loading.close();
+                    resolve(result.data);
+                });
+            } else {
+                return new Promise<null | string | string[]>((resolve1, reject) => {
+                    loading.close();
+                    reject(result.message)
+                })
+            }
+        }catch (e) {
+            console.error(e);
+            return Promise.reject(e);
+        }finally {
+            loading.close();
         }
     }
 

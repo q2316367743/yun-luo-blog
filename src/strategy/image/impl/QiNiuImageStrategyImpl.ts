@@ -59,19 +59,26 @@ export default class QiNiuImageStrategyImpl implements ImageStrategy {
             text: '上传图片中',
             background: 'rgba(0, 0, 0, 0.7)',
         });
-        document.getElementById("app")!.append(upload);
-        upload.click();
-        return new Promise<string>(resolve => {
-            upload.addEventListener('change', ev => {
-                let element = ev.target as HTMLInputElement
-                let file = element.files!.item(0)!;
-                // 获取Key
-                NativeApi.http<any>({
-                    url: ""
+        try {
+            document.getElementById("app")!.append(upload);
+            upload.click();
+            return new Promise<string>(resolve => {
+                upload.addEventListener('change', ev => {
+                    let element = ev.target as HTMLInputElement
+                    let file = element.files!.item(0)!;
+                    // 获取Key
+                    NativeApi.http<any>({
+                        url: ""
+                    })
+                    loading.close();
                 })
-                loading.close();
             })
-        })
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(e);
+        } finally {
+            loading.close();
+        }
     }
 
     parse(url: string): string {

@@ -325,7 +325,6 @@ export default class TagService {
             background: 'rgba(0, 0, 0, 0.7)',
         });
         try {
-
             // 获取文件
             let postPath = await Constant.PATH.POST()
             let files = await FileApi.listDir(postPath, true);
