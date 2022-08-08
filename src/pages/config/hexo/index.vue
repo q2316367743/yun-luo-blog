@@ -1,7 +1,7 @@
 <template>
     <!-- 面板 -->
     <div id="config-hexo">
-        <el-tabs v-model="activeName" @tab-click="tabClick">
+        <el-tabs v-model="activeName" @tab-click="tabClick" v-if="blogIsInit">
             <el-tab-pane label="网站" name="site">
                 <el-form label-width="80px">
                     <el-form-item label="标题">
@@ -220,13 +220,14 @@
             <el-tab-pane label="主题配置" name="theme">
             </el-tab-pane>
         </el-tabs>
+        <el-empty style="margin-top: 20vh;" v-else description="博客尚未初始化，请先初始化后重试"/>
         <div id="code" v-if="activeName === 'code'" style="height: calc(100% - 110px);">
             <hexo-config-editor v-model="hexo.content"></hexo-config-editor>
         </div>
         <div id="theme" v-if="activeName === 'theme'" style="height: calc(100% - 110px);">
             <theme-config-editor v-model="theme"></theme-config-editor>
         </div>
-        <div style="text-align: right;padding: 20px;">
+        <div style="text-align: right;padding: 20px;" v-if="blogIsInit">
             <el-button type="primary" @click="save" v-if="activeName !== 'theme'">保存</el-button>
             <el-button type="primary" @click="saveTheme" v-else>保存</el-button>
         </div>
@@ -245,6 +246,7 @@ import ThemeConfigEditor from "@/components/ThemeConfigEditor/index.vue";
 import languages from './components/languages';
 import timezones from './components/timezones';
 import ArrayUtil from "@/utils/ArrayUtil";
+import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 
 export default defineComponent({
     components: {HexoConfigEditor, ThemeConfigEditor},
@@ -254,13 +256,20 @@ export default defineComponent({
         activeName: 'site',
         themeList: new Array<string>(),
         keywordInput: false,
-        keywordInputText: ""
+        keywordInputText: "",
+        blogIsInit: false,
     }),
     created() {
-        Constant.PATH.HEXO_CONFIG().then(path => {
-            FileApi.readFile(path).then(content => {
-                this.hexo.parse(content);
-                // 解析后尝试解析
+        blogStrategyContext.getStrategy().isInit().then(isInit => {
+            this.blogIsInit = isInit;
+            if (isInit) {
+                // 主配置文件
+                Constant.PATH.HEXO_CONFIG().then(path => {
+                    FileApi.readFile(path).then(content => {
+                        this.hexo.parse(content);
+                    });
+                });
+                // 主题配置文件
                 Constant.PATH.HEXO().then(hexoPath => {
                     // 读取文件内容
                     FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
@@ -270,32 +279,32 @@ export default defineComponent({
                             console.error('不存在目录', e);
                         })
                     })
-                })
-            });
-        });
-        Constant.PATH.HEXO_THEME().then(path => {
-            FileApi.listDir(path).then(files => {
-                for (let file of files) {
-                    if (file.children) {
-                        this.themeList.push(file.name!);
-                    }
-                }
-            });
-        });
-    },
-    mounted() {
-        document.onkeydown = (e) => {
-            // 各种快捷键
-            if (e.ctrlKey) {
-                if (e.code == 'KeyS') {
-                    if (this.activeName === 'theme') {
-                        this.saveTheme();
-                    } else {
-                        this.save();
+                });
+                // 查询博客主题
+                Constant.PATH.HEXO_THEME().then(path => {
+                    FileApi.listDir(path).then(files => {
+                        for (let file of files) {
+                            if (file.children) {
+                                this.themeList.push(file.name!);
+                            }
+                        }
+                    });
+                });
+                // 增加快捷键
+                document.onkeydown = (e) => {
+                    // 各种快捷键
+                    if (e.ctrlKey) {
+                        if (e.code == 'KeyS') {
+                            if (this.activeName === 'theme') {
+                                this.saveTheme();
+                            } else {
+                                this.save();
+                            }
+                        }
                     }
                 }
             }
-        }
+        })
     },
     unmounted() {
         document.onkeydown = null;

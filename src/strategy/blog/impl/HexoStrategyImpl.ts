@@ -15,7 +15,15 @@ import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext
  */
 export default class HexoStrategyImpl implements BlogStrategy {
 
+    async isInit(): Promise<boolean> {
+        let items = await FileApi.listDir(await Constant.PATH.HEXO());
+        return Promise.resolve(items.length > 0);
+    }
+
     async sync(): Promise<void> {
+        if (!(await this.isInit())) {
+            return Promise.reject("博客未初始化，请初始化后重试")
+        }
         // 获取hexo命令目录
         let hexoCommandPath = useSettingStore().environment.hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
@@ -119,6 +127,9 @@ export default class HexoStrategyImpl implements BlogStrategy {
     }
 
     async clean(): Promise<void> {
+        if (!(await this.isInit())) {
+            return Promise.reject("博客未初始化，请初始化后重试")
+        }
         // 获取hexo命令目录
         let hexoCommandPath = useSettingStore().environment.hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
@@ -147,6 +158,9 @@ export default class HexoStrategyImpl implements BlogStrategy {
     }
 
     async server(): Promise<void> {
+        if (!(await this.isInit())) {
+            return Promise.reject("博客未初始化，请初始化后重试")
+        }
         // 获取hexo命令目录
         let hexoCommandPath = useSettingStore().environment.hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
@@ -174,6 +188,9 @@ export default class HexoStrategyImpl implements BlogStrategy {
     }
 
     async deploy(): Promise<void> {
+        if (!(await this.isInit())) {
+            return Promise.reject("博客未初始化，请初始化后重试")
+        }
         // 获取hexo命令目录
         let hexoCommandPath = useSettingStore().environment.hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {

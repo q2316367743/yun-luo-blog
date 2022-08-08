@@ -1,6 +1,6 @@
 <template>
-    <div id="theme">
-        <el-scrollbar>
+    <div id="pretty-theme">
+        <el-scrollbar v-if="blogIsInit">
             <el-row>
                 <el-col :span="24" style="margin-bottom: 10px" v-for="theme in themes" :key="theme">
                     <el-card shadow="hover">
@@ -20,7 +20,8 @@
                 </el-col>
             </el-row>
         </el-scrollbar>
-        <div class="theme-add">
+        <el-empty v-else description="博客尚未初始化，请先初始化后重试"/>
+        <div class="theme-add" v-if="blogIsInit">
             <el-button type="primary" circle :icon="plus" @click="openThemeAddDialog"></el-button>
         </div>
         <el-dialog v-model="themeAddDialog" title="新增主题">
@@ -31,8 +32,8 @@
                         <el-radio :label="2">npm</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="地址" v-if="themeInfo.mode === 1" required>
-                    <el-input v-model="themeInfo.url" placeholder="请输入git远程地址"></el-input>
+                <el-form-item label="地址" v-if="themeInfo.mode === 1">
+                    <el-input v-model="themeInfo.url" placeholder="请输入git远程地址（必填）"></el-input>
                 </el-form-item>
                 <el-form-item label="主题重命名" v-if="themeInfo.mode === 1">
                     <el-input v-model="themeInfo.name" placeholder="请输入新的主题重命名"></el-input>
@@ -47,13 +48,14 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Plus, Edit} from "@element-plus/icons-vue";
+import {Edit, Plus} from "@element-plus/icons-vue";
 import Hexo from "@/global/config/Hexo";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import NativeApi from "@/api/NativeApi";
 import {useSettingStore} from "@/store/SettingStore";
+import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -74,13 +76,20 @@ export default defineComponent({
         },
         themes: new Array<string>(),
         themeActive: '',
-        hexo: new Hexo()
+        hexo: new Hexo(),
+        blogIsInit: false
     }),
     created() {
-        Constant.PATH.HEXO_CONFIG().then(async path => {
-            this.hexo.parse(await FileApi.readFile(path));
+        blogStrategyContext.getStrategy().isInit().then(isInit => {
+            this.blogIsInit = isInit;
+            if (isInit) {
+                // 初始化后在进行查询
+                Constant.PATH.HEXO_CONFIG().then(async path => {
+                    this.hexo.parse(await FileApi.readFile(path));
+                });
+                this.listTheme();
+            }
         });
-        this.listTheme();
     },
     methods: {
         listTheme() {
@@ -132,7 +141,11 @@ export default defineComponent({
                     background: 'rgba(0, 0, 0, 0.7)',
                 });
                 Constant.PATH.HEXO_THEME().then(path => {
-                    NativeApi.invokeCmd(gitPath, path, `clone ${this.themeInfo.url.trim()}`).then(() => {
+                    NativeApi.invokeCmd(
+                        gitPath,
+                        path,
+                        `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`
+                    ).then(() => {
                         ElMessage({
                             showClose: true,
                             type: "success",
@@ -144,10 +157,17 @@ export default defineComponent({
                     }).catch(e => {
                         console.error(e);
                         this.themeAddDialog = false;
+                        loading.close();
                     });
                 }).catch(e => {
                     console.error(e);
+                    ElMessage({
+                        showClose: true,
+                        type: "error",
+                        message: "clone错误，" + e
+                    });
                     this.themeAddDialog = false;
+                    loading.close();
                 });
             } else if (this.themeInfo.mode === 2) {
                 // npm
@@ -234,7 +254,7 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="less">
-#theme {
+#pretty-theme {
     position: absolute;
     top: 0;
     left: 0;
