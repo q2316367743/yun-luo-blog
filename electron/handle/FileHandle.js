@@ -42,8 +42,11 @@ ipcMain.handle('file:copyFile', (event, message) => {
     // 拷贝文件
     let source = message.source;
     let target = message.target;
+    let recursive = message.recursive;
     // TODO: 此处需要处理，目标文件的文件夹不存在
-    fs.copyFileSync(source, target);
+    fs.cpSync(source, target, {
+        recursive: recursive
+    });
     return {
         code: true,
         message: '成功'

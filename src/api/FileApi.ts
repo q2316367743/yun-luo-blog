@@ -139,15 +139,17 @@ async function removeDir(path: string, recursive: boolean = true): Promise<void>
 }
 
 /**
- * 将一个路径的文件，复制到新文件路径
+ * 将一个路径，复制到新路径
  *
- * @param source 原始文件路径
- * @param target 新文件路径
+ * @param source 原始路径
+ * @param target 新路径
+ * @param recursive 是否递归复制（复制文件夹时有效）
  */
-async function copyFile(source: string, target: string): Promise<void> {
+async function copyFile(source: string, target: string, recursive: boolean = false): Promise<void> {
     let result = (await ipcRenderer.invoke('file:copyFile', {
         source,
-        target
+        target,
+        recursive
     })) as Result<any>;
     if (result.code) {
         return new Promise<void>(resolve => {
@@ -226,6 +228,8 @@ export default {
             })
         }
     },
+
+    copyFile,
 
     exist,
 

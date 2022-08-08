@@ -58,8 +58,6 @@ export default class HexoStrategyImpl implements BlogStrategy {
             let _posts = await FileApi.resolve(source_dir, "_posts");
             // _posts文件夹可能不存在
             await FileApi.createDir(_posts, true);
-            // 复制图片到目标文件夹
-            await FileApi.copyDir(_posts, postImage);
             // 复制发布的文章
             let posts = await postService.list({
                 status: PostStatusEnum.RELEASE
@@ -74,6 +72,19 @@ export default class HexoStrategyImpl implements BlogStrategy {
             await this.clean();
             loading.setText("执行构建命令");
             await this.deploy();
+            loading.setText("复制本地图片到目标文件夹");
+            // 创建目标文件夹
+            let targetDirPath = await FileApi.resolve(await Constant.PATH.HEXO_PUBLIC(), Constant.POST_IMAGES);
+            await FileApi.createDir(targetDirPath);
+            let postImages = await FileApi.listDir(postImage, true);
+            for (let item of postImages) {
+                let targetPath = await FileApi.resolve(targetDirPath, item.name!);
+                if (item.children) {
+                    await FileApi.createDir(targetPath);
+                }else {
+                    await FileApi.copyFile(item.path, targetPath);
+                }
+            }
             loading.setText("迁移文件到dist目录");
             await FileApi.copyDir(await Constant.PATH.DIST(), await Constant.PATH.HEXO_PUBLIC())
             loading.setText("推送到远程");

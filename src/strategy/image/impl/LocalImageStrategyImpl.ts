@@ -16,8 +16,8 @@ export default class LocalImageStrategyImpl implements ImageStrategy {
     }
 
     private async getPostImagePath(): Promise<string> {
-        let postImages = await Constant.PATH.POST_IMAGES();
-        let target = await FileApi.resolve(postImages, "");
+        let base = await Constant.PATH.BASE();
+        let target = await FileApi.resolve(base, "");
         return new Promise<string>(resolve => {
             resolve(`file:///${target}`);
         })
@@ -48,7 +48,7 @@ export default class LocalImageStrategyImpl implements ImageStrategy {
                 path
             }]);
             return new Promise<string>((resolve) => {
-                resolve(`/${name}`);
+                resolve(`/post-images/${name}`);
             });
         }else {
             return Promise.reject("");
