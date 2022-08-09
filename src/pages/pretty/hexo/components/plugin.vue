@@ -20,9 +20,9 @@
         </el-scrollbar>
         <el-empty v-else description="博客尚未初始化，请先初始化后重试"/>
         <div class="plugin-add" v-if="blogIsInit">
-            <el-button type="primary" circle :icon="plus" @click="openPluginAddDialog"></el-button>
+            <el-button type="primary" link :icon="plus" @click="openPluginAddDialog"></el-button>
         </div>
-        <el-dialog v-model="pluginAddDialog" title="新增插件">
+        <el-dialog v-model="pluginAddDialog" title="新增插件" draggable top="25vh">
             <el-form v-model="plugin" label-width="80px">
                 <el-form-item label="名称">
                     <el-input v-model="plugin.name"></el-input>
@@ -239,9 +239,9 @@ export default defineComponent({
     bottom: 0;
 
     .plugin-add {
-        position: absolute;
-        right: 100px;
-        bottom: 20px;
+        position: fixed;
+        right: 20px;
+        top: 20px;
     }
 
     .plugin-card {

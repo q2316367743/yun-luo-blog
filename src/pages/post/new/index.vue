@@ -96,7 +96,7 @@
                 <h2>{{ post.title }}（实际效果以配置主题为准）</h2>
             </template>
             <el-scrollbar>
-                <div class="article" ref="article" v-html="previewContent"></div>
+                <div class="entry" ref="article" v-html="previewContent"></div>
             </el-scrollbar>
         </el-drawer>
     </div>
@@ -118,12 +118,11 @@ import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
 import {parsePost} from "@/utils/PostUtil";
 import {postService, tagService, categoryService} from '@/global/BeanFactory';
-import DialogApi from "@/api/DialogApi";
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
-import './actUI.css'
+import './post.css'
 import Entry from "@/global/Entry";
 import CategoryView from "@/views/CategoryView";
 

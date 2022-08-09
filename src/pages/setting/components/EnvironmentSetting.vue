@@ -28,8 +28,8 @@
                 </template>
             </el-input>
         </el-form-item>
-        <el-form-item label="npm镜像(如不熟悉请勿更改)">
-            <el-input v-model="environmentSetting.npmMirror"/>
+        <el-form-item label="npm镜像">
+            <el-input v-model="environmentSetting.npmMirror" placeholder="如不熟悉请勿更改"/>
         </el-form-item>
     </el-form>
 </template>

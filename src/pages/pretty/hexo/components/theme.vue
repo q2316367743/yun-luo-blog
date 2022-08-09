@@ -22,9 +22,9 @@
         </el-scrollbar>
         <el-empty v-else description="博客尚未初始化，请先初始化后重试"/>
         <div class="theme-add" v-if="blogIsInit">
-            <el-button type="primary" circle :icon="plus" @click="openThemeAddDialog"></el-button>
+            <el-button type="primary" link :icon="plus" @click="openThemeAddDialog"></el-button>
         </div>
-        <el-dialog v-model="themeAddDialog" title="新增主题">
+        <el-dialog v-model="themeAddDialog" title="新增主题" draggable top="25vh">
             <el-form label-width="100px">
                 <el-form-item label="方式">
                     <el-radio-group v-model="themeInfo.mode">
@@ -330,11 +330,6 @@ export default defineComponent({
                     message: `主题重命名成功`,
                 })
             }).catch(() => {
-                ElMessage({
-                    showClose: true,
-                    type: 'info',
-                    message: '取消重命名',
-                })
             })
         },
         openThemeDialog() {
@@ -372,9 +367,9 @@ export default defineComponent({
     bottom: 0;
 
     .theme-add {
-        position: absolute;
-        right: 100px;
-        bottom: 20px;
+        position: fixed;
+        right: 20px;
+        top: 20px;
     }
 }
 
