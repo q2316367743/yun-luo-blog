@@ -373,7 +373,7 @@ export default defineComponent({
 
     .theme-add {
         position: absolute;
-        right: 20px;
+        right: 100px;
         bottom: 20px;
     }
 }

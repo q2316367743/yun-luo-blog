@@ -11,7 +11,7 @@
                                 <el-tag style="margin-left: 10px;">{{ dependency.version }}</el-tag>
                             </div>
                             <div>
-                                <el-button type="danger" link>删除</el-button>
+                                <el-button type="danger" link @click="uninstall(dependency.name)">删除</el-button>
                             </div>
                         </div>
                     </el-card>
@@ -44,7 +44,7 @@ import {Edit, Plus} from "@element-plus/icons-vue";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
-import {ElMessage} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import {useSettingStore} from "@/store/SettingStore";
 import NativeApi from "@/api/NativeApi";
 
@@ -95,6 +95,7 @@ export default defineComponent({
             Constant.PATH.HEXO_PACKAGE_JSON().then(path => {
                 FileApi.readFile(path).then(content => {
                     let packageJson = JSON.parse(content);
+                    this.dependencies = [];
                     if (packageJson.dependencies) {
                         for (let dependency of Object.keys(packageJson.dependencies)) {
                             this.dependencies.push({
@@ -141,6 +142,11 @@ export default defineComponent({
                 if (environment.npmMirror && environment.npmMirror !== "") {
                     command = command + " --registry " + environment.npmMirror;
                 }
+                const loading = ElLoading.service({
+                    lock: true,
+                    text: '执行安装命令中',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                });
                 NativeApi.invokeCmd(environment.npmPath,
                     path,
                     command
@@ -149,15 +155,17 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: "success",
-                        message: "导入成功"
+                        message: "安装成功"
                     });
                     this.pluginAddDialog = false;
+                    loading.close();
                 }).catch(e => {
                     ElMessage({
                         showClose: true,
                         type: "error",
                         message: "安装命令执行失败，" + e
                     });
+                    loading.close();
                 })
             }).catch(e => {
                 ElMessage({
@@ -165,6 +173,58 @@ export default defineComponent({
                     type: "error",
                     message: "异常，" + e
                 });
+            })
+        },
+        uninstall(plugin: string) {
+            ElMessageBox.confirm(`确认删除插件【${plugin}】？`, "确认删除", {
+                type: "warning",
+                cancelButtonText: "取消",
+                confirmButtonText: "删除"
+            }).then(() => {
+                // 检查git地址是否选择
+                let environment = useSettingStore().environment;
+                if (environment.npmPath == "") {
+                    ElMessage({
+                        showClose: true,
+                        type: "error",
+                        message: "请先在设置 -> 环境配置进行npm地址设置"
+                    });
+                    return;
+                }
+                Constant.PATH.HEXO().then(path => {
+                    const loading = ElLoading.service({
+                        lock: true,
+                        text: '执行删除命令中',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                    });
+                    NativeApi.invokeCmd(environment.npmPath,
+                        path,
+                        `remove ${plugin}`
+                    ).then(() => {
+                        this.listPlugin();
+                        ElMessage({
+                            showClose: true,
+                            type: "success",
+                            message: "删除成功"
+                        });
+                        this.pluginAddDialog = false;
+                        loading.close();
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: "error",
+                            message: "删除命令执行失败，" + e
+                        });
+                        loading.close();
+                    })
+                }).catch(e => {
+                    ElMessage({
+                        showClose: true,
+                        type: "error",
+                        message: "异常，" + e
+                    });
+                })
+            }).catch(() => {
             })
         }
     }
@@ -180,7 +240,7 @@ export default defineComponent({
 
     .plugin-add {
         position: absolute;
-        right: 20px;
+        right: 100px;
         bottom: 20px;
     }
 
