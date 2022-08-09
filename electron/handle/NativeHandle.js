@@ -1,6 +1,5 @@
 const {ipcMain, shell} = require('electron');
-const execSync = require('child_process').execSync;
-const exec = require('child_process').exec;
+const child_process = require('child_process');
 const axios = require('axios');
 const compressing = require("compressing");
 
@@ -10,7 +9,7 @@ ipcMain.handle('native:invoke:cmd', (event, args) => {
     return {
         code: true,
         message: '成功',
-        data: execSync(`"${args.command}" ${args.arg}`, {
+        data: child_process.execSync(`"${args.command}" ${args.arg}`, {
             encoding: "utf-8",
             cwd: args.currentDir
         })
@@ -20,10 +19,24 @@ ipcMain.handle('native:invoke:cmd', (event, args) => {
 ipcMain.handle('native:invoke:async', (event, args) => {
     console.log('native:invoke:async');
     console.log(`在目录【${args.currentDir}】下【异步】执行命令【${args.command}】【${args.arg}】`)
-    exec(`"${args.command}" ${args.arg}`, {
+    let childProcessWithoutNullStreams = child_process.spawn(args.command, [args.arg], {
         encoding: "utf-8",
         cwd: args.currentDir
-    })
+    });
+    childProcessWithoutNullStreams.stdout.on('data', function (data) {
+        console.log(`native:invoke:async:stdout:${args.id}`);
+        event.sender.send(`native:invoke:async:stdout:${args.id}`, data);
+    });
+
+    childProcessWithoutNullStreams.stderr.on('data', function (data) {
+        event.sender.send(`native:invoke:async:stderr:${args.id}`, data);
+        console.log(`native:invoke:async:stderr:${args.id}`);
+    });
+
+    childProcessWithoutNullStreams.on('exit', function (code) {
+        event.sender.send(`native:invoke:async:exit:${args.id}`, code);
+        console.log(`native:invoke:async:exit :${args.id}`);
+    });
     return {
         code: true,
         message: '成功'

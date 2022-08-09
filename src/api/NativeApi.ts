@@ -2,8 +2,18 @@ import Result from "@/global/Result";
 import {AxiosRequestConfig} from "axios";
 import CompressingOptions from "@/api/entities/CompressingOptions";
 import FileApi from "@/api/FileApi";
+import {ElNotification} from "element-plus";
 
 const {ipcRenderer} = window.require('electron');
+
+function Uint8ArrayToString(arr: Uint8Array): string {
+    let dataString = "";
+    for (let i = 0; i < arr.length; i++) {
+        dataString += String.fromCharCode(arr[i]);
+    }
+    return dataString
+
+}
 
 /**
  * 原生方法
@@ -35,11 +45,35 @@ export default {
      * @param arg 参数
      */
     async invokeAsync(cmd: string, currentDir: string, arg?: string): Promise<void> {
+        let id = new Date().getTime();
         let result = (await ipcRenderer.invoke('native:invoke:async', {
+            id,
             command: cmd,
             arg: arg,
             currentDir: currentDir
         })) as Result<any>;
+        // 监听
+        ipcRenderer.on(`native:invoke:async:stdout:${id}`, (event: any, args: Uint8Array) => {
+            ElNotification({
+                title: '消息',
+                message: Uint8ArrayToString(args),
+                type: 'success',
+            });
+        });
+        ipcRenderer.on(`native:invoke:async:stderr:${id}`, (event: any, args: Uint8Array) => {
+            ElNotification({
+                title: '错误',
+                message: Uint8ArrayToString(args),
+                type: 'error',
+            });
+        });
+        ipcRenderer.on(`native:invoke:async:exit:${id}`, (event: any, args: Uint8Array) => {
+            ElNotification({
+                title: '退出',
+                message: Uint8ArrayToString(args),
+                type: 'info',
+            });
+        });
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);

@@ -1,6 +1,6 @@
 import BlogStrategy from "@/strategy/blog/BlogStrategy";
 import {useSettingStore} from "@/store/SettingStore";
-import {ElLoading, ElMessage} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
@@ -81,7 +81,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 let targetPath = await FileApi.resolve(targetDirPath, item.name!);
                 if (item.children) {
                     await FileApi.createDir(targetPath);
-                }else {
+                } else {
                     await FileApi.copyFile(item.path, targetPath);
                 }
             }
@@ -189,7 +189,17 @@ export default class HexoStrategyImpl implements BlogStrategy {
             await NativeApi.invokeAsync(hexoCommandPath, hexoPath, Constant.HEXO.SERVER);
             return new Promise<void>((resolve) => {
                 loading.close();
-                NativeApi.openUrl("http://localhost:4000");
+                ElMessageBox.confirm(
+                    '程序运行成功，是否打开网页',
+                    '成功', {
+                        confirmButtonText: '打开',
+                        cancelButtonText: '取消',
+                        type: 'success',
+                    }
+                ).then(() => {
+                    NativeApi.openUrl("http://localhost:4000");
+                }).catch(() => {
+                })
                 resolve();
             });
         } catch (e) {
