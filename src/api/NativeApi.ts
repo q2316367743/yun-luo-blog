@@ -1,5 +1,7 @@
 import Result from "@/global/Result";
 import {AxiosRequestConfig} from "axios";
+import CompressingOptions from "@/api/entities/CompressingOptions";
+import FileApi from "@/api/FileApi";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -98,6 +100,22 @@ export default {
             });
         } else {
             return new Promise<T>((resolve, reject) => {
+                reject(result.message)
+            })
+        }
+    },
+
+    async compressing(args: CompressingOptions): Promise<void> {
+        if (!(await FileApi.exist(args.source))) {
+            return Promise.reject("源文件不存在");
+        }
+        let result = (await ipcRenderer.invoke('native:compressing', args)) as Result<any>;
+        if (result.code) {
+            return new Promise<void>(resolve => {
+                resolve(result.data);
+            });
+        } else {
+            return new Promise<void>((resolve, reject) => {
                 reject(result.message)
             })
         }

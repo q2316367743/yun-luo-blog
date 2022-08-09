@@ -61,7 +61,8 @@ const environmentSetting = useLocalStorage('environmentSetting', {
     nodePath: '',
     npmPath: '',
     hexoPath: '',
-    gitPath: ''
+    gitPath: '',
+    npmMirror: 'https://registry.npmmirror.com'
 });
 
 export const useSettingStore = defineStore('setting', {

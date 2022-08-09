@@ -25,18 +25,25 @@
             <el-button type="primary" circle :icon="plus" @click="openThemeAddDialog"></el-button>
         </div>
         <el-dialog v-model="themeAddDialog" title="新增主题">
-            <el-form label-width="80px">
+            <el-form label-width="100px">
                 <el-form-item label="方式">
                     <el-radio-group v-model="themeInfo.mode">
                         <el-radio :label="1">git</el-radio>
-                        <el-radio :label="2">npm</el-radio>
+                        <el-radio :label="2">压缩包</el-radio>
                     </el-radio-group>
+                </el-form-item>
+                <el-form-item label="主题重命名">
+                    <el-input v-model="themeInfo.name" placeholder="请输入新的主题重命名（非必填）"></el-input>
                 </el-form-item>
                 <el-form-item label="地址" v-if="themeInfo.mode === 1">
                     <el-input v-model="themeInfo.url" placeholder="请输入git远程地址（必填）"></el-input>
                 </el-form-item>
-                <el-form-item label="主题重命名" v-if="themeInfo.mode === 1">
-                    <el-input v-model="themeInfo.name" placeholder="请输入新的主题重命名"></el-input>
+                <el-form-item label="压缩包地址" v-if="themeInfo.mode === 2">
+                    <el-input v-model="themeInfo.compressionPath">
+                        <template #append>
+                            <el-button :icon="folder" @click="openThemeDialog"/>
+                        </template>
+                    </el-input>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -48,7 +55,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Edit, Plus} from "@element-plus/icons-vue";
+import {Edit, Folder, Plus} from "@element-plus/icons-vue";
 import Hexo from "@/global/config/Hexo";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
@@ -56,6 +63,7 @@ import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import NativeApi from "@/api/NativeApi";
 import {useSettingStore} from "@/store/SettingStore";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
+import DialogApi from "@/api/DialogApi";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -65,14 +73,16 @@ export default defineComponent({
     setup() {
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);
-        return {plus, edit}
+        const folder = markRaw(Folder);
+        return {plus, edit, folder}
     },
     data: () => ({
         themeAddDialog: false,
         themeInfo: {
             mode: 1,
+            name: '',
             url: '',
-            name: ''
+            compressionPath: ''
         },
         themes: new Array<string>(),
         themeActive: '',
@@ -110,68 +120,134 @@ export default defineComponent({
             this.themeInfo = {
                 mode: 1,
                 url: '',
-                name: ''
+                name: '',
+                compressionPath: ''
             }
             this.themeAddDialog = true;
         },
         themeAddClick() {
             if (this.themeInfo.mode === 1) {
-                // git
-                if (this.themeInfo.url === "") {
+                this.themeForGit();
+            } else if (this.themeInfo.mode === 2) {
+                this.themeForCompression();
+            }
+        },
+        themeForGit() {
+            // git
+            if (this.themeInfo.url === "") {
+                ElMessage({
+                    showClose: true,
+                    type: "warning",
+                    message: "请输入git地址"
+                })
+                return;
+            }
+            let gitPath = useSettingStore().environment.gitPath;
+            if (!gitPath || gitPath === "") {
+                ElMessage({
+                    showClose: true,
+                    type: "warning",
+                    message: "请配置git命令地址"
+                })
+                return;
+            }
+            // 执行命令
+            const loading = ElLoading.service({
+                lock: true,
+                text: '主题clone中',
+                background: 'rgba(0, 0, 0, 0.7)',
+            });
+            Constant.PATH.HEXO_THEME().then(path => {
+                NativeApi.invokeCmd(
+                    gitPath,
+                    path,
+                    `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`
+                ).then(() => {
                     ElMessage({
                         showClose: true,
-                        type: "warning",
-                        message: "请输入git地址"
-                    })
-                    return;
-                }
-                let gitPath = useSettingStore().environment.gitPath;
-                if (!gitPath || gitPath === "") {
-                    ElMessage({
-                        showClose: true,
-                        type: "warning",
-                        message: "请配置git命令地址"
-                    })
-                    return;
-                }
-                // 执行命令
-                const loading = ElLoading.service({
-                    lock: true,
-                    text: '主题clone中',
-                    background: 'rgba(0, 0, 0, 0.7)',
-                });
-                Constant.PATH.HEXO_THEME().then(path => {
-                    NativeApi.invokeCmd(
-                        gitPath,
-                        path,
-                        `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`
-                    ).then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: "success",
-                            message: "clone成功"
-                        });
-                        this.listTheme();
-                        loading.close();
-                        this.themeAddDialog = false;
-                    }).catch(e => {
-                        console.error(e);
-                        this.themeAddDialog = false;
-                        loading.close();
+                        type: "success",
+                        message: "clone成功"
                     });
+                    this.listTheme();
+                    loading.close();
+                    this.themeAddDialog = false;
                 }).catch(e => {
                     console.error(e);
-                    ElMessage({
-                        showClose: true,
-                        type: "error",
-                        message: "clone错误，" + e
-                    });
                     this.themeAddDialog = false;
                     loading.close();
                 });
-            } else if (this.themeInfo.mode === 2) {
-                // npm
+            }).catch(e => {
+                console.error(e);
+                ElMessage({
+                    showClose: true,
+                    type: "error",
+                    message: "clone错误，" + e
+                });
+                this.themeAddDialog = false;
+                loading.close();
+            });
+        },
+        async themeForCompression() {
+            if (this.themeInfo.compressionPath === "") {
+                ElMessage.error({
+                    showClose: true,
+                    type: "error",
+                    message: "请选择压缩包目录"
+                });
+                return;
             }
+            // 解压
+            const options = {
+                type: 1,
+                source: "",
+                target: "",
+            }
+            // 判断类型
+            if (this.themeInfo.compressionPath.toLowerCase().endsWith("tar")) {
+                options.type = 1;
+            } else if (this.themeInfo.compressionPath.toLowerCase().endsWith("gz")) {
+                options.type = 2;
+            } else if (this.themeInfo.compressionPath.toLowerCase().endsWith("tgz")) {
+                options.type = 3;
+            } else if (this.themeInfo.compressionPath.toLowerCase().endsWith("zip")) {
+                options.type = 4;
+            } else {
+                ElMessage.error({
+                    showClose: true,
+                    type: "error",
+                    message: "未知压缩格式，只支持后缀为.tar、.gz、.tgz、.zip压缩格式"
+                });
+                return;
+            }
+            options.source = this.themeInfo.compressionPath;
+            if (this.themeInfo.name && this.themeInfo.name !== '') {
+                options.target = await FileApi.resolve(await Constant.PATH.HEXO_THEME(), this.themeInfo.name);
+            } else {
+                let tempPath = this.themeInfo.compressionPath;
+                tempPath = tempPath.replaceAll("\\", "/");
+                let name = tempPath.substring(tempPath.lastIndexOf("/") + 1);
+                name = name.substring(0, name.lastIndexOf("."));
+                options.target = await FileApi.resolve(await Constant.PATH.HEXO_THEME(), name);
+            }
+            const loading = ElLoading.service({
+                lock: true,
+                text: '主题解压中',
+                background: 'rgba(0, 0, 0, 0.7)',
+            });
+            NativeApi.compressing(options).then(() => {
+                this.listTheme();
+                this.themeAddDialog = false;
+                loading.close();
+            }).catch(e => {
+                console.error(e);
+                ElMessage({
+                    showClose: true,
+                    type: "error",
+                    message: "主题解压错误，" + e
+                });
+                this.themeAddDialog = false;
+                loading.close();
+            });
         },
         chooseTheme(theme: string) {
             this.hexo.theme = theme;
@@ -237,7 +313,7 @@ export default defineComponent({
                     if (await FileApi.exist(oldConfigPath)) {
                         // 存在，则重命名
                         await FileApi.rename(oldConfigPath, newConfigPath);
-                    }else {
+                    } else {
                         // 不存在，则创建
                         await FileApi.createDir(newConfigPath);
                     }
@@ -258,6 +334,29 @@ export default defineComponent({
                     showClose: true,
                     type: 'info',
                     message: '取消重命名',
+                })
+            })
+        },
+        openThemeDialog() {
+            // 上床文件
+            DialogApi.open({
+                multiple: false,
+                directory: false,
+                title: "请选择主题压缩文件",
+                filters: [{
+                    name: "压缩包",
+                    extensions: ['tar', 'gz', 'tgz', 'zip']
+                }]
+            }).then(select => {
+                if (select && select.length > 0) {
+                    this.themeInfo.compressionPath = select[0]
+                }
+            }).catch(e => {
+                console.error(e);
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '选择文件失败，' + e
                 })
             })
         }

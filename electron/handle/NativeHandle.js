@@ -2,6 +2,7 @@ const {ipcMain, shell} = require('electron');
 const execSync = require('child_process').execSync;
 const exec = require('child_process').exec;
 const axios = require('axios');
+const compressing = require("compressing");
 
 ipcMain.handle('native:invoke:cmd', (event, args) => {
     console.log('native:invoke:cmd');
@@ -54,5 +55,31 @@ ipcMain.handle('native:http', async (event, args) => {
         code: true,
         message: '成功',
         data: axiosResponse.data
+    }
+});
+
+ipcMain.handle('native:compressing', async (event, args) => {
+    console.log('native:compressing');
+    let type = args.type;
+    if (type === 1) {
+        await compressing.tar.uncompress(args.source, args.target, {
+            zipFileNameEncoding: 'GBK'
+        });
+    } else if (type === 2) {
+        await compressing.gzip.uncompress(args.source, args.target, {
+            zipFileNameEncoding: 'GBK'
+        });
+    } else if (type === 3) {
+        await compressing.tgz.uncompress(args.source, args.target, {
+            zipFileNameEncoding: 'GBK'
+        });
+    } else if (type === 4) {
+        await compressing.zip.uncompress(args.source, args.target, {
+            zipFileNameEncoding: 'GBK'
+        });
+    }
+    return {
+        code: true,
+        message: '成功'
     }
 })
