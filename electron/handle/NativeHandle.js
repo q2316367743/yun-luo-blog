@@ -95,4 +95,4 @@ ipcMain.handle('native:compressing', async (event, args) => {
         code: true,
         message: '成功'
     }
-})
+});

@@ -4,6 +4,7 @@ const {app, BrowserWindow, Menu} = require('electron');
 require('./handle/FileHandle');
 require('./handle/NativeHandle');
 require('./handle/DialogHandle');
+const registerApplication = require('./handle/ApplicationHandle');
 
 const isDev = process.env.IS_DEV === "true";
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
@@ -39,6 +40,8 @@ function createWindow() {
     if (isDev) {
         mainWindow.webContents.openDevTools();
     }
+    // 注册应用工具
+    registerApplication(mainWindow);
 }
 
 // This method will be called when Electron has finished

@@ -1,12 +1,12 @@
 <template>
     <el-form :model="basicSetting" label-width="100px" style="width: 500px">
-        <el-form-item label="博客类型：">
+        <el-form-item label="博客类型">
             <el-radio-group v-model="basicSetting.blogType">
                 <el-radio label="hexo">Hexo</el-radio>
                 <!-- <el-radio label="vuePress">VuePress</el-radio> -->
             </el-radio-group>
         </el-form-item>
-        <el-form-item label="博客类型：">
+        <el-form-item label="字体">
             <el-select v-model="basicSetting.font">
                 <el-option label="霞鹜文楷" value="LXGWWenKai"></el-option>
                 <el-option label="微软雅黑" value="微软雅黑"></el-option>
@@ -20,12 +20,17 @@
                 </template>
             </el-input>
         </el-form-item>
+        <el-form-item label="开发工具">
+            <el-button type="primary" @click="openDevTools">打开开发工具</el-button>
+        </el-form-item>
     </el-form>
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
 import {useSettingStore} from '@/store/SettingStore';
 import {Folder} from "@element-plus/icons-vue";
+import ApplicationApi from "@/api/ApplicationApi";
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
     name: "basic-setting",
@@ -44,7 +49,14 @@ export default defineComponent({
         }
     },
     methods: {
-        openFolderDialog() {
+        openDevTools() {
+            ApplicationApi.openDevTools().then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: "success",
+                    message: "打开成功"
+                })
+            });
         }
     }
 });
