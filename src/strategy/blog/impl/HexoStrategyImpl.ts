@@ -1,6 +1,6 @@
 import BlogStrategy from "@/strategy/blog/BlogStrategy";
 import {useSettingStore} from "@/store/SettingStore";
-import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
@@ -9,6 +9,7 @@ import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
 import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext";
+import StrUtil from "@/utils/StrUtil";
 
 /**
  * hexo策略
@@ -186,7 +187,33 @@ export default class HexoStrategyImpl implements BlogStrategy {
         });
         try {
             let hexoPath = await Constant.PATH.HEXO();
-            await NativeApi.invokeAsync(hexoCommandPath, hexoPath, Constant.HEXO.SERVER);
+            await NativeApi.invokeAsync({
+                id: new Date().getTime(),
+                command: hexoCommandPath,
+                currentDir: hexoPath,
+                args: Constant.HEXO.SERVER,
+                out: (event, data) => {
+                    ElNotification({
+                        title: '消息',
+                        message: StrUtil.uint8ArrayToString(data),
+                        type: 'success',
+                    });
+                },
+                err: (event, data) => {
+                    ElNotification({
+                        title: '异常',
+                        message: StrUtil.uint8ArrayToString(data),
+                        type: 'error',
+                    });
+                },
+                exit: (event, data) => {
+                    ElNotification({
+                        title: '退出',
+                        message: StrUtil.uint8ArrayToString(data),
+                        type: 'info',
+                    });
+                }
+            });
             return new Promise<void>((resolve) => {
                 loading.close();
                 ElMessageBox.confirm(

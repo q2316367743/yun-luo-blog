@@ -68,7 +68,7 @@
                             content="命令"
                             placement="bottom"
                         >
-                            <div class="nav-item">
+                            <div class="nav-item" @click="terminalDialog = true">
                                 <el-icon :size="18">
                                     <terminal-box/>
                                 </el-icon>
@@ -94,7 +94,7 @@
                             placement="bottom"
                         >
                             <div class="nav-item">
-                                <el-icon :size="18" @click="isDark = !isDark">
+                                <el-icon :size="18" @click="toggleDark">
                                     <sun v-if="!isDark"/>
                                     <moon v-else></moon>
                                 </el-icon>
@@ -136,6 +136,9 @@
                 <setting-page></setting-page>
             </el-scrollbar>
         </el-drawer>
+        <el-dialog v-model="terminalDialog" destroy-on-close draggable>
+            <terminal-hexo-page v-if="basicSetting.blogType === 'hexo'"></terminal-hexo-page>
+        </el-dialog>
     </section>
 </template>
 
@@ -166,16 +169,17 @@ import Moon from "@/icon/Moon.vue"
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
 import Constant from "@/global/Constant";
-import SettingPage from '@/pages/setting/index.vue';
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
-
 import NativeApi from "@/api/NativeApi";
+
+import SettingPage from '@/pages/setting/index.vue';
+import TerminalHexoPage from "@/pages/terminal/hexo/index.vue";
 
 export default defineComponent({
     components: {
         Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag,
         ShoppingCartFull, SettingPage, Expand, Fold, Suitcase,
-        Translate, TerminalBox, Sun, Moon
+        Translate, TerminalBox, Sun, Moon, TerminalHexoPage
     },
     setup() {
         const setting = markRaw(Setting);
@@ -189,6 +193,7 @@ export default defineComponent({
             basicSetting: useSettingStore().basicSetting,
             defaultActive: '/post/list',
             settingDialog: false,
+            terminalDialog: false,
             isCollapse: false,
             isDark: useDark({
                 selector: 'html',
@@ -229,69 +234,8 @@ export default defineComponent({
                 NativeApi.openFolder(path);
             })
         },
-        commandClick(command: string) {
-            switch (command) {
-                case "init":
-                    blogStrategyContext.getStrategy().init().then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'success',
-                            message: '初始化完成'
-                        });
-                    }).catch(e => {
-                        ElMessageBox.alert(e, '初始化失败', {
-                            confirmButtonText: '确定',
-                            type: "error",
-                            draggable: true
-                        });
-                    });
-                    break;
-                case "deploy":
-                    blogStrategyContext.getStrategy().deploy().then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'success',
-                            message: '编译完成'
-                        });
-                    }).catch(e => {
-                        ElMessageBox.alert(e, '编译失败', {
-                            confirmButtonText: '确定',
-                            type: "error",
-                            draggable: true
-                        });
-                    });
-                    break;
-                case "server":
-                    blogStrategyContext.getStrategy().server().then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'success',
-                            message: '运行完成'
-                        });
-                    }).catch(e => {
-                        ElMessageBox.alert(e, '运行失败', {
-                            confirmButtonText: '确定',
-                            type: "error",
-                            draggable: true
-                        });
-                    });
-                    break;
-                case "clean":
-                    blogStrategyContext.getStrategy().clean().then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'success',
-                            message: '清理完成'
-                        });
-                    }).catch(e => {
-                        ElMessageBox.alert(e, '清理失败', {
-                            confirmButtonText: '确定',
-                            type: "error",
-                            draggable: true
-                        });
-                    });
-                    break;
-            }
+        toggleDark() {
+            this.isDark = !this.isDark;
         }
     }
 })
