@@ -14,11 +14,18 @@
             </el-select>
         </el-form-item>
         <el-form-item label="项目目录">
-            <el-input v-model="basicSetting.path" disabled>
-                <template #append>
-                    <el-button :icon="folder" @click="openFolderDialog"/>
-                </template>
-            </el-input>
+            <div class="project-dir">
+                <el-tooltip
+                    effect="light"
+                    content="点击打开项目文件夹"
+                    placement="top"
+                >
+                    <div class="project-path" @click="openProjectDir">{{ basicDir }}</div>
+                </el-tooltip>
+                <div class="project-button">
+                    <el-button :icon="folder"/>
+                </div>
+            </div>
         </el-form-item>
         <el-form-item label="开发工具">
             <el-button type="primary" @click="openDevTools">打开开发工具</el-button>
@@ -31,6 +38,8 @@ import {useSettingStore} from '@/store/SettingStore';
 import {Folder} from "@element-plus/icons-vue";
 import ApplicationApi from "@/api/ApplicationApi";
 import {ElMessage} from "element-plus";
+import Constant from "@/global/Constant";
+import NativeApi from "@/api/NativeApi";
 
 export default defineComponent({
     name: "basic-setting",
@@ -41,8 +50,12 @@ export default defineComponent({
         }
     },
     data: () => ({
-        basicSetting: useSettingStore().basicSetting
+        basicSetting: useSettingStore().basicSetting,
+        basicDir: "",
     }),
+    created() {
+        this.queryBasicDir();
+    },
     watch: {
         "basicSetting.font": (value) => {
             document.getElementsByTagName('body')[0]!.style.fontFamily = `${value}, "Microsoft YaHei", Arial, sans-serif`
@@ -57,9 +70,58 @@ export default defineComponent({
                     message: "打开成功"
                 })
             });
+        },
+        openProjectDir() {
+            Constant.PATH.POST().then(path => {
+                NativeApi.openFolder(path);
+            })
+        },
+        queryBasicDir() {
+            Constant.PATH.BASE().then(path => {
+                this.basicDir = path;
+            })
         }
     }
 });
 </script>
-<style scoped>
+<style scoped lang="less">
+.project-dir {
+    display: flex;
+    background-color: #f5f7fa;
+    border: #e4e7ed solid 1px;
+    border-radius: 4px;
+    height: 32px;
+    padding: 0;
+
+    .project-path {
+        padding: 1px 11px;
+        line-height: 30px;
+        width: 300px;
+        cursor: pointer;
+    }
+
+    .project-button {
+        border-left: 0;
+        background-color: #f5f7fa;
+        color: #909399;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100%;
+        padding: 0 20px;
+        white-space: nowrap;
+        border-left: #dcdfe6 solid 1px;
+
+        .el-button {
+            border-color: transparent;
+            background-color: transparent;
+            color: inherit;
+            display: inline-block;
+            margin: 0 -20px;
+            font-size: inherit;
+        }
+    }
+
+}
 </style>

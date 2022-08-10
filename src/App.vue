@@ -1,8 +1,11 @@
 <template>
     <div id="app">
-        <div id="side">
-            <div id="logo">云落博客</div>
-            <el-menu :default-active="defaultActive" router>
+        <div id="side" :style="{width: isCollapse ? '64px' : '200px'}">
+            <div id="logo" @click="isCollapse = !isCollapse">
+                <span v-if="!isCollapse">云落博客</span>
+                <span v-else>云</span>
+            </div>
+            <el-menu :default-active="defaultActive" router :collapse="isCollapse">
                 <el-menu-item index="/post/list">
                     <el-icon>
                         <document/>
@@ -34,7 +37,7 @@
                     <span>博客设置</span>
                 </el-menu-item>
             </el-menu>
-            <div class="footer">
+            <div class="footer" v-if="!isCollapse">
                 <div>
                     <el-button type="default" @click="sync">
                         <el-icon>
@@ -62,7 +65,7 @@
                     </el-dropdown>
                 </div>
             </div>
-            <div class="bottom">
+            <div class="bottom" :style="{ gridTemplateColumns: isCollapse ? '1fr' : '1fr 1fr 1fr'}">
                 <div>
                     <el-tooltip
                         class="box-item"
@@ -73,7 +76,7 @@
                         <el-button type="primary" link :icon="setting" @click="openSetting"></el-button>
                     </el-tooltip>
                 </div>
-                <div>
+                <div v-if="!isCollapse">
                     <el-tooltip
                         class="box-item"
                         effect="light"
@@ -83,7 +86,7 @@
                         <el-button type="primary" link :icon="suitcase" @click="openGit"></el-button>
                     </el-tooltip>
                 </div>
-                <div>
+                <div v-if="!isCollapse">
                     <el-tooltip
                         class="box-item"
                         effect="light"
@@ -144,7 +147,8 @@ export default defineComponent({
         return {
             basicSetting: useSettingStore().basicSetting,
             defaultActive: '/post/list',
-            settingDialog: false
+            settingDialog: false,
+            isCollapse: false
         }
     },
     created() {
@@ -285,11 +289,11 @@ export default defineComponent({
 }
 
 #side {
-    width: 200px;
     height: 100vh;
     border-right: #dcdfe6 solid 1px;
     position: relative;
     text-align: center;
+    transition: 0.3s width ease-in-out;
 
     .el-menu {
         border-right: #ffffff !important;
@@ -318,7 +322,6 @@ export default defineComponent({
         bottom: 0;
         padding: 5px;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr;
     }
 }
@@ -330,9 +333,10 @@ export default defineComponent({
 
 #logo {
     height: 100px;
-    width: 200px;
+    width: 100%;
     line-height: 100px;
     font-size: 1.5em;
     user-select: none;
+    cursor: pointer;
 }
 </style>
