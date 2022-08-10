@@ -1,5 +1,8 @@
 <template>
-    <div id="tag-page">
+    <div id="container-header">
+        <el-button type="primary">新增</el-button>
+    </div>
+    <div id="container-main" class="tag-page">
         <el-scrollbar>
             <div class="content">
                 <div class="tag" v-for="(tag, index) in tagList" :key="index">
@@ -124,7 +127,7 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="less">
-#tag-page {
+.tag-page {
     padding: 20px;
 
     position: absolute;

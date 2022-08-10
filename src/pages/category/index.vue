@@ -1,22 +1,27 @@
 <template>
-    <div id="category">
-        <el-tree :data="categoryTree" :props="categoryProps" default-expand-all>
-            <template #default="{ node, data }">
-                <div style="display: flex;justify-content: space-between;width: 100%;">
-                    <div>
-                        <span>{{ node.label }}</span>
-                        <span v-if="data.postCount > 0">({{ data.postCount }})</span>
+    <div id="container-header">
+        <el-button type="primary">新增</el-button>
+    </div>
+    <div id="container-main" class="category">
+        <el-scrollbar>
+            <el-tree :data="categoryTree" :props="categoryProps" default-expand-all>
+                <template #default="{ node, data }">
+                    <div style="display: flex;justify-content: space-between;width: 100%;">
+                        <div>
+                            <span>{{ node.label }}</span>
+                            <span v-if="data.postCount > 0">({{ data.postCount }})</span>
+                        </div>
+                        <div>
+                            <el-button type="primary" link @click.stop="categoryAdd(data.id)">新增子分类</el-button>
+                            <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0"
+                                       @click="categoryRemove(data.id)">
+                                删除
+                            </el-button>
+                        </div>
                     </div>
-                    <div>
-                        <el-button type="primary" link @click.stop="categoryAdd(data.id)">新增子分类</el-button>
-                        <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0"
-                                   @click="categoryRemove(data.id)">
-                            删除
-                        </el-button>
-                    </div>
-                </div>
-            </template>
-        </el-tree>
+                </template>
+            </el-tree>
+        </el-scrollbar>
         <div class="category-add">
             <el-button type="primary" circle :icon="plus" @click="categoryAdd(0)"></el-button>
         </div>
@@ -101,7 +106,7 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="less">
-#category {
+.category {
     position: absolute;
     top: 0;
     left: 0;

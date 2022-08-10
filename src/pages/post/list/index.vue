@@ -1,36 +1,29 @@
 <template>
     <div id="post">
-        <header class="header">
-            <div class="left">
-                <el-input v-model="keyword" placeholder="搜索文章" class="input-with-select" @input="searchPost"
-                          clearable>
-                    <template #append>
-                        <el-button :icon="search" @click="searchPost"/>
-                    </template>
-                </el-input>
-                <el-select v-model="status" placeholder="状态" style="width: 100px;" @change="searchPost" clearable>
-                    <el-option label="草稿" :value="1"/>
-                    <el-option label="发布" :value="2"/>
-                    <el-option label="回收站" :value="3"/>
-                </el-select>
-                <el-select v-model="type" placeholder="排序" style="width: 130px;margin-left: 5px" @change="searchPost"
-                           clearable>
-                    <el-option label="标题(a-z)" :value="1"/>
-                    <el-option label="标题(z-a)" :value="2"/>
-                    <el-option label="更新时间(新-旧)" :value="3"/>
-                    <el-option label="更新时间(旧-新)" :value="4"/>
-                    <el-option label="创建时间(新-旧)" :value="5"/>
-                    <el-option label="创建时间(旧-新)" :value="6"/>
-                </el-select>
-            </div>
-            <div class="right">
-                <div class="option">
-                    <el-button type="primary" link :icon="refresh" @click="refreshPost"></el-button>
-                    <el-button type="primary" link :icon="plus" @click="toRouteLink('/post/new')"></el-button>
-                </div>
-            </div>
+        <header class="header" id="container-header">
+            <el-input v-model="keyword" placeholder="搜索文章" class="input-with-select" @input="searchPost"
+                      clearable>
+                <template #append>
+                    <el-button :icon="search" @click="searchPost"/>
+                </template>
+            </el-input>
+            <el-select v-model="status" placeholder="状态" style="width: 100px;" @change="searchPost" clearable>
+                <el-option label="草稿" :value="1"/>
+                <el-option label="发布" :value="2"/>
+                <el-option label="回收站" :value="3"/>
+            </el-select>
+            <el-select v-model="type" placeholder="排序" style="width: 130px;margin-left: 5px" @change="searchPost"
+                       clearable>
+                <el-option label="标题(a-z)" :value="1"/>
+                <el-option label="标题(z-a)" :value="2"/>
+                <el-option label="更新时间(新-旧)" :value="3"/>
+                <el-option label="更新时间(旧-新)" :value="4"/>
+                <el-option label="创建时间(新-旧)" :value="5"/>
+                <el-option label="创建时间(旧-新)" :value="6"/>
+            </el-select>
+            <el-button type="primary" @click="toRouteLink('/post/new')">新增</el-button>
         </header>
-        <main class="main">
+        <main class="main" id="container-main">
             <el-scrollbar>
                 <div v-for="(post, index) in showPosts" :key="index" class="post">
                     <div class="board" @click="toPostInfo(post)">
@@ -144,7 +137,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Calendar, CollectionTag, Delete, Plus, PriceTag, Refresh, Search, Close} from '@element-plus/icons-vue';
+import {Calendar, Close, CollectionTag, Delete, Plus, PriceTag, Refresh, Search} from '@element-plus/icons-vue';
 import {ElMessage, ElMessageBox} from "element-plus";
 
 import PostView from '@/views/PostView';
@@ -364,44 +357,22 @@ export default defineComponent({
 
     .header {
         display: flex;
-        justify-content: space-between;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 42px;
-        border-bottom: #eeeeee solid 1px;
 
-        .left {
-            font-size: 0.9em;
-            margin-left: 5px;
-        }
-
-        .right {
-            display: flex;
-
-            .option {
-                padding: 11px;
-
-                .el-button {
-                    padding-right: 10px;
-                }
-            }
-        }
+        font-size: 0.9em;
 
         .el-input {
             width: 200px;
             margin: 5px;
             height: 32px;
         }
+
+        .el-select {
+            margin: 5px;
+            height: 32px;
+        }
     }
 
     .main {
-        position: absolute;
-        top: 43px;
-        left: 0;
-        right: 0;
-        bottom: 0;
         overflow: auto;
         padding: 10px;
 
