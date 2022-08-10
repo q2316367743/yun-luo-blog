@@ -44,34 +44,6 @@
                     <span>博客设置</span>
                 </el-menu-item>
             </el-menu>
-            <div class="footer" v-show="!isCollapse">
-                <div>
-                    <el-button type="default" @click="sync">
-                        <el-icon>
-                            <refresh/>
-                        </el-icon>
-                        <span>同步</span>
-                    </el-button>
-                </div>
-                <div>
-                    <el-dropdown @command="commandClick">
-                        <el-button type="primary">
-                            <span>操作</span>
-                            <el-icon class="el-icon--right">
-                                <arrow-down/>
-                            </el-icon>
-                        </el-button>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <el-dropdown-item command="init">初始化</el-dropdown-item>
-                                <el-dropdown-item command="server">运行</el-dropdown-item>
-                                <el-dropdown-item command="deploy">编译</el-dropdown-item>
-                                <el-dropdown-item command="clean">清理</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
-                </div>
-            </div>
         </aside>
         <section id="body">
             <header id="header">
@@ -84,17 +56,50 @@
                             content="同步"
                             placement="bottom"
                         >
-                            <div class="nav-item">
+                            <div class="nav-item" @click="sync">
                                 <el-icon>
                                     <refresh/>
                                 </el-icon>
                             </div>
                         </el-tooltip>
-                        <div class="nav-item">
-                            <el-icon>
-                                <full-screen/>
-                            </el-icon>
-                        </div>
+                        <el-tooltip
+                            class="box-item"
+                            effect="light"
+                            content="命令"
+                            placement="bottom"
+                        >
+                            <div class="nav-item">
+                                <el-icon :size="18">
+                                    <terminal-box/>
+                                </el-icon>
+                            </div>
+                        </el-tooltip>
+                        <el-dropdown>
+                            <div class="nav-item">
+                                <el-icon :size="18">
+                                    <translate/>
+                                </el-icon>
+                            </div>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="zhCn">中文</el-dropdown-item>
+                                    <el-dropdown-item command="enUs">English</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                        <el-tooltip
+                            class="box-item"
+                            effect="light"
+                            :content="isDark ? '黑夜' : '日间'"
+                            placement="bottom"
+                        >
+                            <div class="nav-item">
+                                <el-icon :size="18" @click="isDark = !isDark">
+                                    <sun v-if="!isDark"/>
+                                    <moon v-else></moon>
+                                </el-icon>
+                            </div>
+                        </el-tooltip>
                         <el-tooltip
                             class="box-item"
                             effect="light"
@@ -126,9 +131,11 @@
                 <router-view></router-view>
             </main>
         </section>
-        <el-dialog v-model="settingDialog" fullscreen destroy-on-close append-to-body>
-            <setting-page></setting-page>
-        </el-dialog>
+        <el-drawer v-model="settingDialog" size="600px" title="设置" destroy-on-close>
+            <el-scrollbar>
+                <setting-page></setting-page>
+            </el-scrollbar>
+        </el-drawer>
     </section>
 </template>
 
@@ -141,7 +148,6 @@ import {
     Expand,
     Fold,
     Folder,
-    FullScreen,
     Menu,
     PriceTag,
     Refresh,
@@ -150,6 +156,12 @@ import {
     Suitcase
 } from '@element-plus/icons-vue';
 import {ElMessage, ElMessageBox} from "element-plus";
+import {useDark} from '@vueuse/core'
+
+import Translate from "@/icon/Translate.vue";
+import TerminalBox from "@/icon/TerminalBox.vue";
+import Sun from "@/icon/Sun.vue";
+import Moon from "@/icon/Moon.vue"
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
@@ -162,7 +174,8 @@ import NativeApi from "@/api/NativeApi";
 export default defineComponent({
     components: {
         Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag,
-        ShoppingCartFull, SettingPage, FullScreen, Expand, Fold, Suitcase
+        ShoppingCartFull, SettingPage, Expand, Fold, Suitcase,
+        Translate, TerminalBox, Sun, Moon
     },
     setup() {
         const setting = markRaw(Setting);
@@ -176,7 +189,13 @@ export default defineComponent({
             basicSetting: useSettingStore().basicSetting,
             defaultActive: '/post/list',
             settingDialog: false,
-            isCollapse: false
+            isCollapse: false,
+            isDark: useDark({
+                selector: 'html',
+                attribute: 'class',
+                valueDark: 'dark',
+                valueLight: 'light',
+            })
         }
     },
     created() {
@@ -393,6 +412,7 @@ export default defineComponent({
             .nav-item {
                 padding: 10px 15px;
                 cursor: pointer;
+                height: 16px;
 
                 &:hover {
                     background-color: #f5f5f5;
@@ -420,13 +440,14 @@ export default defineComponent({
     z-index: 2;
     box-shadow: 0 0 12px rgba(0, 0, 0, .12);
     border-radius: 4px;
-    max-width: calc(100% - 184px - 16px - 16px - 8px - 16px);
+    max-width: calc(100% - 282px - 16px - 16px - 8px - 16px);
 
-    &>.el-button {
+    & > .el-button {
         margin: 5px;
         height: 32px;
     }
 }
+
 #container-main {
     background-color: #ffffff;
     position: absolute;
@@ -443,7 +464,7 @@ export default defineComponent({
     margin: 10px;
     width: clac(100% - 20px);
     line-height: 30px;
-    font-size: 1.5em;
+    font-size: 1.2em;
     user-select: none;
     justify-content: space-between;
     overflow: hidden;
