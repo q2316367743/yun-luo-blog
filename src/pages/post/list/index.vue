@@ -374,7 +374,7 @@ export default defineComponent({
 
         .left {
             font-size: 0.9em;
-
+            margin-left: 5px;
         }
 
         .right {
