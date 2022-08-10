@@ -1,9 +1,29 @@
 <template>
     <!-- 面板 -->
-    <div id="config-hexo">
-        <el-tabs v-model="activeName" @tab-click="tabClick" v-if="blogIsInit">
+    <div id="container-header" style="padding: 0 20px">
+        <el-tabs v-model="activeName" @tab-click="tabClick">
             <el-tab-pane label="网站" name="site">
-                <el-form label-width="80px">
+            </el-tab-pane>
+            <el-tab-pane label="网址" name="url">
+            </el-tab-pane>
+            <el-tab-pane label="目录" name="directory">
+            </el-tab-pane>
+            <el-tab-pane label="写作" name="writing">
+            </el-tab-pane>
+            <el-tab-pane label="杂项" name="misc">
+            </el-tab-pane>
+            <el-tab-pane label="拓展" name="pagination_extensions">
+            </el-tab-pane>
+            <el-tab-pane label="源码" name="code">
+            </el-tab-pane>
+            <el-tab-pane label="主题配置" name="theme">
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+    <div id="container-main" class="config-hexo">
+        <el-scrollbar>
+            <div v-if="blogIsInit">
+                <el-form label-width="80px" v-if="activeName === 'site'">
                     <el-form-item label="标题">
                         <el-input v-model="hexo.title"></el-input>
                     </el-form-item>
@@ -57,9 +77,7 @@
                         </el-autocomplete>
                     </el-form-item>
                 </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="网址" name="url">
-                <el-form label-width="120px">
+                <el-form label-width="120px" v-else-if="activeName === 'url'">
                     <el-form-item label="URL">
                         <!--suppress HttpUrlsUsage -->
                         <el-input v-model="hexo.url" placeholder="网址, 必须以 http:// 或 https:// 开头"/>
@@ -82,9 +100,7 @@
                                    :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                 </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="目录" name="directory">
-                <el-form label-width="160px">
+                <el-form label-width="160px" v-else-if="activeName === 'directory'">
                     <el-form-item label="资源文件夹">
                         <el-input v-model="hexo.source_dir"/>
                     </el-form-item>
@@ -110,9 +126,7 @@
                         <el-input v-model="hexo.skip_render"/>
                     </el-form-item>
                 </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="写作" name="writing">
-                <el-form label-width="160px">
+                <el-form label-width="160px" v-else-if="activeName === 'writing'">
                     <el-form-item label="新文章的文件名称">
                         <el-input v-model="hexo.new_post_name"></el-input>
                     </el-form-item>
@@ -160,13 +174,14 @@
                                    :active-value="true" :inactive-value="false"/>
                     </el-form-item>
                     <el-form-item label="显示未来的文章">
-                        <el-switch v-model="hexo.future" active-text="true" inactive-text="false" :active-value="true"
+                        <el-switch v-model="hexo.future" active-text="true" inactive-text="false"
+                                   :active-value="true"
                                    :inactive-value="false"/>
                     </el-form-item>
                 </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="分类 & 标签" name="category_and_tag">
-                <el-form label-width="80px">
+                <el-form label-width="120px" v-else-if="activeName === 'misc'">
+                    <!-- 分类 & 标签 -->
+                    <el-divider content-position="left">分类 & 标签</el-divider>
                     <el-form-item label="默认分类">
                         <el-input v-model="hexo.default_category"></el-input>
                     </el-form-item>
@@ -176,10 +191,8 @@
                     <el-form-item label="标签别名">
                         <el-input v-model="hexo.tag_map"></el-input>
                     </el-form-item>
-                </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="日期 / 时间格式" name="date_time_format">
-                <el-form label-width="120px">
+                    <!-- 日期 / 时间格式 -->
+                    <el-divider content-position="left">日期 / 时间格式</el-divider>
                     <el-form-item label="日期格式">
                         <el-input v-model="hexo.date_format"></el-input>
                     </el-form-item>
@@ -193,10 +206,8 @@
                             <el-option label="empty" value="empty"/>
                         </el-select>
                     </el-form-item>
-                </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="分页" name="pagination">
-                <el-form label-width="120px">
+                    <!-- 分页 -->
+                    <el-divider content-position="left">分页</el-divider>
                     <el-form-item label="每页数量">
                         <el-input-number controls-position="right" v-model="hexo.per_page"></el-input-number>
                     </el-form-item>
@@ -205,32 +216,26 @@
                         </el-input>
                     </el-form-item>
                 </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="拓展" name="extensions">
-                <el-form label-width="120px">
+                <el-form label-width="120px" v-else-if="activeName === 'pagination_extensions'">
                     <el-form-item label="主题">
                         <el-select v-model="hexo.theme">
                             <el-option v-for="theme of themeList" :key="theme" :label="theme" :value="theme"/>
                         </el-select>
                     </el-form-item>
                 </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="源码" name="code">
-            </el-tab-pane>
-            <el-tab-pane label="主题配置" name="theme">
-            </el-tab-pane>
-        </el-tabs>
-        <el-empty style="margin-top: 20vh;" v-else description="博客尚未初始化，请先初始化后重试"/>
-        <div id="code" v-if="activeName === 'code'" style="height: calc(100% - 110px);">
-            <hexo-config-editor v-model="hexo.content"></hexo-config-editor>
-        </div>
-        <div id="theme" v-if="activeName === 'theme'" style="height: calc(100% - 110px);">
-            <theme-config-editor v-model="theme"></theme-config-editor>
-        </div>
-        <div style="text-align: right;padding: 20px;" v-if="blogIsInit">
-            <el-button type="primary" @click="save" v-if="activeName !== 'theme'">保存</el-button>
-            <el-button type="primary" @click="saveTheme" v-else>保存</el-button>
-        </div>
+            </div>
+            <el-empty style="margin-top: 20vh;" v-else description="博客尚未初始化，请先初始化后重试"/>
+            <div id="code" v-if="activeName === 'code'" style="height: calc(100vh - 190px);">
+                <hexo-config-editor v-model="hexo.content"></hexo-config-editor>
+            </div>
+            <div id="theme" v-if="activeName === 'theme'" style="height: calc(100vh - 190px);">
+                <theme-config-editor v-model="theme"></theme-config-editor>
+            </div>
+            <div style="text-align: right;padding: 20px;" v-if="blogIsInit">
+                <el-button type="primary" @click="save" v-if="activeName !== 'theme'">保存</el-button>
+                <el-button type="primary" @click="saveTheme" v-else>保存</el-button>
+            </div>
+        </el-scrollbar>
     </div>
 </template>
 <script lang="ts">
@@ -404,7 +409,7 @@ export default defineComponent({
 });
 </script>
 <style lang="less">
-#config-hexo {
+.config-hexo {
     position: absolute;
     top: 0;
     left: 0;

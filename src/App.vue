@@ -416,11 +416,11 @@ export default defineComponent({
     position: absolute;
     top: 0;
     left: 0;
-    right: clac(184px + 16px);
     height: 40px;
     z-index: 2;
     box-shadow: 0 0 12px rgba(0, 0, 0, .12);
     border-radius: 4px;
+    max-width: calc(100% - 184px - 16px - 16px - 8px - 16px);
 
     &>.el-button {
         margin: 5px;

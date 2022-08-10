@@ -1,6 +1,6 @@
 <template>
     <div id="container-header">
-        <el-button type="primary">新增</el-button>
+        <p style="line-height: 40px;padding: 0 20px">一曲新词酒一杯，去年天气旧亭台。</p>
     </div>
     <div id="container-main" class="category">
         <el-scrollbar>
