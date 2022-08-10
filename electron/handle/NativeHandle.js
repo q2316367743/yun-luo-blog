@@ -37,6 +37,10 @@ ipcMain.handle('native:invoke:async', (event, args) => {
         event.sender.send(`native:invoke:async:exit:${args.id}`, code);
         console.log(`native:invoke:async:exit :${args.id}`);
     });
+    ipcMain.on(`native:invoke:async:kill:${args.id}`, () => {
+        console.log(`native:invoke:async:kill:${args.id}`)
+        childProcessWithoutNullStreams.kill(2);
+    })
     return {
         code: true,
         message: '成功'

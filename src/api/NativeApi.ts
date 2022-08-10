@@ -62,6 +62,12 @@ export default {
         }
     },
 
+    async kill(id: number): Promise<void> {
+        console.log(`native:invoke:async:kill:${id}`)
+        ipcRenderer.send(`native:invoke:async:kill:${id}`);
+        return Promise.resolve();
+    },
+
     /**
      * 打开一个文件夹
      * @param path

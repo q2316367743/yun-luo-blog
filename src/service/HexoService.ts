@@ -4,24 +4,7 @@ import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import NativeApi from "@/api/NativeApi";
 import StrUtil from "@/utils/StrUtil";
-
-interface TerminalStack {
-
-    id: number;
-
-    run: boolean;
-
-    success: boolean;
-
-    time: Date,
-
-    show: boolean;
-
-    command: string;
-
-    contents: Array<string>;
-
-}
+import TerminalStack from "@/entities/TerminalStack";
 
 export default class HexoService {
 
@@ -88,6 +71,17 @@ export default class HexoService {
             text: '开始清理',
             background: 'rgba(0, 0, 0, 0.7)',
         });
+        let id = new Date().getTime();
+        this.terminalStackMap.set(id, {
+            id: id,
+            name: "清理",
+            command: Constant.HEXO.SERVER,
+            run: true,
+            success: true,
+            time: new Date(),
+            show: true,
+            contents: []
+        });
         try {
             let hexoPath = await Constant.PATH.HEXO();
             await NativeApi.invokeCmd(hexoCommandPath, hexoPath, Constant.HEXO.CLEAN);
@@ -114,38 +108,18 @@ export default class HexoService {
             text: '开始运行',
             background: 'rgba(0, 0, 0, 0.7)',
         });
-
-        let id = new Date().getTime();
-        this.terminalStackMap.set(id, {
-            id: id,
-            command: "server",
+        let terminalStack = {
+            id: new Date().getTime(),
+            name: "运行",
+            command: Constant.HEXO.SERVER,
             run: true,
             success: true,
             time: new Date(),
             show: true,
             contents: []
-        });
+        }
         try {
-            let hexoPath = await Constant.PATH.HEXO();
-            await NativeApi.invokeAsync({
-                id: id,
-                command: hexoCommandPath,
-                currentDir: hexoPath,
-                args: Constant.HEXO.SERVER,
-                out: (event, data) => {
-                    let terminalStack = this.terminalStackMap.get(id)!;
-                    terminalStack.contents.push("out:   " + StrUtil.uint8ArrayToString(data).replaceAll("\n", "<br />"));
-                },
-                err: (event, data) => {
-                    let terminalStack = this.terminalStackMap.get(id)!;
-                    terminalStack.contents.push("err:   " + StrUtil.uint8ArrayToString(data).replaceAll("\n", "<br />"));
-                },
-                exit: (event, data) => {
-                    let terminalStack = this.terminalStackMap.get(id)!;
-                    terminalStack.run = false;
-                    terminalStack.contents.push("exit:   " + StrUtil.uint8ArrayToString(data).replaceAll("\n", "<br />"));
-                }
-            });
+            await this.runCommand(terminalStack)
             return new Promise<void>((resolve) => {
                 loading.close();
                 ElMessageBox.confirm(
@@ -162,7 +136,7 @@ export default class HexoService {
                 resolve();
             });
         } catch (e) {
-            this.terminalStackMap.get(id)!.success = false;
+            this.terminalStackMap.get(terminalStack.id)!.success = false;
             console.error(e);
             return Promise.reject(e);
         }
@@ -173,15 +147,23 @@ export default class HexoService {
             return Promise.reject("博客未初始化，请初始化后重试")
         }
         // 获取hexo命令目录
-        let hexoCommandPath = await this.getHexoCommandPath();
         const loading = ElLoading.service({
             lock: true,
             text: '开始打包',
             background: 'rgba(0, 0, 0, 0.7)',
         });
         try {
-            let hexoPath = await Constant.PATH.HEXO();
-            await NativeApi.invokeCmd(hexoCommandPath, hexoPath, Constant.HEXO.DEPLOY);
+            let terminalStack = {
+                id: new Date().getTime(),
+                name: "部署",
+                command: Constant.HEXO.DEPLOY,
+                run: true,
+                success: true,
+                time: new Date(),
+                show: true,
+                contents: []
+            }
+            await this.runCommand(terminalStack)
             return new Promise<void>((resolve) => {
                 loading.close();
                 resolve();
@@ -192,6 +174,32 @@ export default class HexoService {
         } finally {
             loading.close();
         }
+    }
+
+    async runCommand(terminalStack: TerminalStack): Promise<void> {
+        this.getTerminalStackMap().set(terminalStack.id, terminalStack);
+        let hexoPath = await Constant.PATH.HEXO();
+        let hexoCommandPath = await this.getHexoCommandPath();
+        let temp = terminalStack;
+        return NativeApi.invokeAsync({
+            id: terminalStack.id,
+            command: hexoCommandPath,
+            currentDir: hexoPath,
+            args: terminalStack.command,
+            out: (event, data) => {
+                let terminalStack = this.terminalStackMap.get(temp.id)!;
+                terminalStack.contents.push("日志：" + StrUtil.uint8ArrayToString(data).replaceAll("\n", "<br />"));
+            },
+            err: (event, data) => {
+                let terminalStack = this.terminalStackMap.get(temp.id)!;
+                terminalStack.contents.push("错误：" + StrUtil.uint8ArrayToString(data).replaceAll("\n", "<br />"));
+            },
+            exit: (event, data) => {
+                let terminalStack = this.terminalStackMap.get(temp.id)!;
+                terminalStack.run = false;
+                terminalStack.contents.push("退出：" + StrUtil.uint8ArrayToString(data).replaceAll("\n", "<br />"));
+            }
+        });
     }
 
 }
