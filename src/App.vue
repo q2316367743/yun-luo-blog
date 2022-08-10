@@ -65,7 +65,7 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            content="命令"
+                            content="终端"
                             placement="bottom"
                         >
                             <div class="nav-item" @click="terminalDialog = true">
@@ -136,7 +136,7 @@
                 <setting-page></setting-page>
             </el-scrollbar>
         </el-drawer>
-        <el-dialog v-model="terminalDialog" destroy-on-close draggable>
+        <el-dialog v-model="terminalDialog" destroy-on-close draggable title="终端">
             <terminal-hexo-page v-if="basicSetting.blogType === 'hexo'"></terminal-hexo-page>
         </el-dialog>
     </section>
