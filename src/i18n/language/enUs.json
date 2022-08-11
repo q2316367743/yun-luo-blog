@@ -11,7 +11,13 @@
         "setting": "setting",
         "confirm": "confirm",
         "success": "success",
-        "fail": "fail"
+        "fail": "fail",
+        "add": "add",
+        "status": "status",
+        "sort": "sort",
+        "delete": "delete",
+        "save": "save",
+        "warning": "warning"
     },
     "menu": {
         "post": "post",
@@ -20,11 +26,46 @@
         "pretty": "pretty",
         "blogSetting": "blog setting"
     },
+    "hint": {
+        "deleteSuccess": "Delete the success",
+        "deleteFail": "Delete failed",
+        "deleteCancel": "Delete the cancelled",
+        "saveSuccess": "Save success",
+        "saveFail": "Save failed"
+    },
+    "placeholder": {
+        "tag": "Please select tag",
+        "category": "Please select category"
+    },
     "app": {
         "projectName": "云落blog",
         "syncSuccess": "synchronous success",
         "syncFail": "synchronization failure",
         "chinese": "中文",
         "english": "English"
+    },
+    "post": {
+        "list": {
+            "searchPost": "search post",
+            "draft": "draft",
+            "release": "release",
+            "recycle": "recycle",
+            "sortTitleAsc": "title(a-z)",
+            "sortTitleDesc": "title(z-a)",
+            "sortUpdateAsc": "update(new-old)",
+            "sortUpdateDesc": "update(old-new)",
+            "sortCreateAsc": "create(new-old)",
+            "sortCreateDesc": "create(old-new)",
+            "postSetting": "post setting",
+            "basic": "basic",
+            "postTitle": "post title",
+            "senior": "senior",
+            "postUrl": "post url",
+            "createTime": "Creation time",
+            "extraAttr": "Additional attributes",
+            "newPost": "New post",
+            "deletePostHint": "Confirm to delete this article. It cannot be restored",
+            "notPostHint": "The article does not exist, please refresh and try again"
+        }
     }
 }

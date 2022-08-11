@@ -1,27 +1,28 @@
 <template>
     <div id="post">
         <header class="header" id="container-header">
-            <el-input v-model="keyword" placeholder="搜索文章" class="input-with-select" @input="searchPost"
-                      clearable>
+            <el-input v-model="keyword" :placeholder="$t('post.list.searchPost')" class="input-with-select"
+                @input="searchPost" clearable>
                 <template #append>
-                    <el-button :icon="search" @click="searchPost"/>
+                    <el-button :icon="search" @click="searchPost" />
                 </template>
             </el-input>
-            <el-select v-model="status" placeholder="状态" style="width: 100px;" @change="searchPost" clearable>
-                <el-option label="草稿" :value="1"/>
-                <el-option label="发布" :value="2"/>
-                <el-option label="回收站" :value="3"/>
+            <el-select v-model="status" :placeholder="$t('common.status')" style="width: 100px;" @change="searchPost"
+                clearable>
+                <el-option :label="$t('post.list.draft')" :value="1" />
+                <el-option :label="$t('post.list.release')" :value="2" />
+                <el-option :label="$t('post.list.recycle')" :value="3" />
             </el-select>
-            <el-select v-model="type" placeholder="排序" style="width: 130px;margin-left: 5px" @change="searchPost"
-                       clearable>
-                <el-option label="标题(a-z)" :value="1"/>
-                <el-option label="标题(z-a)" :value="2"/>
-                <el-option label="更新时间(新-旧)" :value="3"/>
-                <el-option label="更新时间(旧-新)" :value="4"/>
-                <el-option label="创建时间(新-旧)" :value="5"/>
-                <el-option label="创建时间(旧-新)" :value="6"/>
+            <el-select v-model="type" :placeholder="$t('common.sort')" style="width: 130px;margin-left: 5px"
+                @change="searchPost" clearable>
+                <el-option :label="$t('post.list.sortTitleAsc')" :value="1" />
+                <el-option :label="$t('post.list.sortTitleDesc')" :value="2" />
+                <el-option :label="$t('post.list.sortUpdateAsc')" :value="3" />
+                <el-option :label="$t('post.list.sortUpdateDesc')" :value="4" />
+                <el-option :label="$t('post.list.sortCreateAsc')" :value="5" />
+                <el-option :label="$t('post.list.sortCreateDesc')" :value="6" />
             </el-select>
-            <el-button type="primary" @click="toRouteLink('/post/new')">新增</el-button>
+            <el-button type="primary" @click="toRouteLink('/post/new')">{{ $t('common.add') }}</el-button>
         </header>
         <main class="main" id="container-main">
             <el-scrollbar>
@@ -31,88 +32,89 @@
                         <div class="description">
                             <div class="status" v-if="post.status === 1">
                                 <span class="badge draft"></span>
-                                <span>草稿</span>
+                                <span>{{ $t('post.list.draft') }}</span>
                             </div>
                             <div class="status" v-else-if="post.status === 2">
                                 <span class="badge release"></span>
-                                <span>发布</span>
+                                <span>{{ $t('post.list.release') }}</span>
                             </div>
                             <div class="status" v-else-if="post.status === 3">
                                 <span class="badge recycle"></span>
-                                <span>回收站</span>
+                                <span>{{ $t('post.list.recycle') }}</span>
                             </div>
                             <div class="update-time">
                                 <el-icon>
-                                    <Calendar/>
+                                    <Calendar />
                                 </el-icon>
                                 <span>{{ format(post.updated) }}</span>
                             </div>
                             <div class="tag" v-if="post.tags.length > 0">
                                 <el-icon>
-                                    <price-tag/>
+                                    <price-tag />
                                 </el-icon>
                                 <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
                             </div>
                             <div class="category" v-if="post.categories.length > 0">
                                 <el-icon>
-                                    <collection-tag/>
+                                    <collection-tag />
                                 </el-icon>
                                 <span v-for="category in post.categories" class="category-item">{{
                                         category
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="option">
-                        <el-button type="primary" link @click="openSettingDialog(post.id)">设置</el-button>
-                        <el-button type="danger" link @click="deleteById(post.id)">删除</el-button>
+                        <el-button type="primary" link @click="openSettingDialog(post.id)">{{ $t('common.setting') }}
+                        </el-button>
+                        <el-button type="danger" link @click="deleteById(post.id)">{{ $t('common.delete') }}</el-button>
                     </div>
                 </div>
-                <el-empty v-if="showPosts.length === 0" description="暂无文章" style="margin-top: 110px;"/>
+                <el-empty v-if="showPosts.length === 0" description="暂无文章" style="margin-top: 110px;" />
             </el-scrollbar>
         </main>
         <!-- 文章设置 -->
         <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false">
             <template #header>
-                <h2>文章设置</h2>
+                <h2>{{ $t('post.list.postSetting') }}</h2>
             </template>
             <el-tabs v-model="activeName">
-                <el-tab-pane label="常规" name="basic">
+                <el-tab-pane :label="$t('post.list.basic')" name="basic">
                     <el-form v-model="post" label-position="top">
-                        <el-form-item label="文章标题">
+                        <el-form-item :label="$t('post.list.postTitle')">
                             <el-input v-model="post.title"></el-input>
                         </el-form-item>
-                        <el-form-item label="标签">
+                        <el-form-item :label="$t('menu.tag')">
                             <el-select v-model="post.tags" multiple filterable allow-create default-first-option
-                                       :reserve-keyword="false" style="width: 314px" placeholder="请选择标签">
-                                <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
+                                :reserve-keyword="false" style="width: 314px" :placeholder="$t('placeholder.tag')">
+                                <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name" />
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="分类">
+                        <el-form-item :label="$t('menu.category')">
                             <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
-                                         clearable placeholder="请选择分类"/>
+                                clearable :placeholder="$t('placeholder.category')" />
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="高级" name="senior">
+                <el-tab-pane :label="$t('post.list.senior')" name="senior">
                     <el-form v-model="post" label-position="top">
-                        <el-form-item label="文章网址">
+                        <el-form-item :label="$t('post.list.postUrl')">
                             <el-input v-model="post.permalink"></el-input>
                         </el-form-item>
-                        <el-form-item label="创建时间">
-                            <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
+                        <el-form-item :label="$t('post.list.createTime')">
+                            <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()" />
                         </el-form-item>
-                        <el-form-item label="状态">
+                        <el-form-item :label="$t('common.status')">
                             <el-select v-model="post.status">
-                                <el-option :value="1" label="草稿"/>
-                                <el-option :value="2" label="发布"/>
-                                <el-option :value="3" label="回收站"/>
+                                <el-option :value="1" :label="$t('post.list.draft')" />
+                                <el-option :value="2" :label="$t('post.list.release')" />
+                                <el-option :value="3" :label="$t('post.list.recycle')" />
                             </el-select>
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="SEO" name="seo">Role</el-tab-pane>
-                <el-tab-pane label="额外属性" name="extra">
+                <el-tab-pane label="SEO" name="seo"></el-tab-pane>
+                <el-tab-pane :label="$t('post.list.extraAttr')" name="extra">
                     <!-- 其他属性 -->
                     <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
                         <el-input v-model="item.key" style="width: 50%;margin: 5px;">
@@ -125,38 +127,38 @@
                             </template>
                         </el-input>
                     </div>
-                    <el-button type="primary" @click="extraAdd">新增</el-button>
+                    <el-button type="primary" @click="extraAdd">{{ $t('common.add') }}</el-button>
                 </el-tab-pane>
             </el-tabs>
             <template #footer>
-                <el-button @click="settingDialog = false">取消</el-button>
-                <el-button type="primary" @click="settingSave">保存</el-button>
+                <el-button @click="settingDialog = false">{{ $t('common.cancel') }}</el-button>
+                <el-button type="primary" @click="settingSave">{{ $t('common.save') }}</el-button>
             </template>
         </el-dialog>
     </div>
 </template>
 <script lang="ts">
-import {defineComponent, markRaw} from "vue";
-import {Calendar, Close, CollectionTag, Delete, Plus, PriceTag, Refresh, Search} from '@element-plus/icons-vue';
-import {ElMessage, ElMessageBox} from "element-plus";
+import { defineComponent, markRaw } from "vue";
+import { Calendar, Close, CollectionTag, Delete, Plus, PriceTag, Refresh, Search } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox } from "element-plus";
 
 import PostView from '@/views/PostView';
 import DateUtil from '@/utils/DateUtil';
-import {categoryService, postService, tagService} from '@/global/BeanFactory';
+import { categoryService, postService, tagService } from '@/global/BeanFactory';
 import Entry from "@/global/Entry";
 import TagView from "@/views/TagView";
 import CategoryView from "@/views/CategoryView";
-import {parsePost} from "@/utils/PostUtil";
+import { parsePost } from "@/utils/PostUtil";
 
 export default defineComponent({
     name: 'post',
-    components: {Calendar, PriceTag, CollectionTag, Delete},
+    components: { Calendar, PriceTag, CollectionTag, Delete },
     setup() {
         const search = markRaw(Search);
         const plus = markRaw(Plus);
         const refresh = markRaw(Refresh);
         const close = markRaw(Close);
-        return {search, plus, refresh, close}
+        return { search, plus, refresh, close }
     },
     data: () => ({
         keyword: '',
@@ -171,7 +173,7 @@ export default defineComponent({
         },
         post: {
             id: 0,
-            title: '新文章',
+            title: '',
             fileName: '',
             path: '',
             status: 1,
@@ -249,11 +251,11 @@ export default defineComponent({
         },
         deleteById(id?: number) {
             ElMessageBox.confirm(
-                '确定删除此文章，删除后将无法恢复',
-                '警告',
+                this.$t('post.list.deletePostHint'),
+                this.$t('common.warning'),
                 {
-                    confirmButtonText: '删除',
-                    cancelButtonText: '取消',
+                    confirmButtonText: this.$t('common.delete'),
+                    cancelButtonText: this.$t('common.cancel'),
                     type: 'warning',
                 }
             ).then(() => {
@@ -262,7 +264,7 @@ export default defineComponent({
                     // 删除成功，准备删除源文件
                     ElMessage({
                         type: 'success',
-                        message: '删除成功',
+                        message: this.$t('hint.deleteSuccess'),
                     });
 
                     postService.list().then(posts => {
@@ -272,13 +274,13 @@ export default defineComponent({
                 }).catch((e) => {
                     ElMessage({
                         type: 'error',
-                        message: '删除失败，' + e,
+                        message: this.$t('hint.deleteFail') + ',' + e,
                     })
                 });
             }).catch(() => {
                 ElMessage({
                     type: 'info',
-                    message: '取消删除',
+                    message: this.$t('hint.deleteCancel'),
                 })
             })
         },
@@ -302,7 +304,7 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: '文章不存在，请刷新后重试'
+                        message: this.$t('post.list.notPostHint')
                     });
                     this.$router.push('/post/list');
                 }
@@ -330,7 +332,7 @@ export default defineComponent({
                 ElMessage({
                     showClose: true,
                     type: 'success',
-                    message: '保存成功'
+                    message: this.$t('hint.saveSuccess')
                 });
                 // 更新列表
             }).catch(e => {
@@ -339,7 +341,7 @@ export default defineComponent({
                 ElMessage({
                     showClose: true,
                     type: 'error',
-                    message: '保存失败，' + e
+                    message: this.$t('hint.saveFail') + "," + e
                 });
             });
         }

@@ -11,7 +11,13 @@
         "setting": "设置",
         "confirm": "确认",
         "success": "成功",
-        "fail": "失败"
+        "fail": "失败",
+        "add": "新增",
+        "status": "状态",
+        "sort": "排序",
+        "delete": "删除",
+        "save": "保存",
+        "warning": "警告"
     },
     "menu": {
         "post": "文章",
@@ -20,11 +26,47 @@
         "pretty": "美化",
         "blogSetting": "博客设置"
     },
+    "hint": {
+        "deleteSuccess": "删除成功",
+        "deleteFail": "删除失败",
+        "deleteCancel": "删除取消",
+        "saveSuccess": "保存成功",
+        "saveFail": "保存失败"
+    },
+    "placeholder": {
+        "tag": "请选择标签",
+        "category": "请选择分类"
+    },
     "app": {
         "projectName": "云落博客",
         "syncSuccess": "同步成功",
         "syncFail": "同步失败",
         "chinese": "中文",
         "english": "English"
+    },
+    "post": {
+        "list": {
+            "searchPost": "搜索文章",
+            "draft": "草稿",
+            "release": "发布",
+            "recycle": "回收站",
+            "sortTitleAsc": "标题(a-z)",
+            "sortTitleDesc": "标题(z-a)",
+            "sortUpdateAsc": "更新时间(新-旧)",
+            "sortUpdateDesc": "更新时间(旧-新)",
+            "sortCreateAsc": "创建时间(新-旧)",
+            "sortCreateDesc": "创建时间(旧-新)",
+            "postSetting": "文章设置",
+            "basic": "基础",
+            "postTitle": "文章标题",
+            "senior": "高级",
+            "postUrl": "文章网址",
+            "createTime": "创建时间",
+            "extraAttr": "额外属性",
+            "newPost": "新文章",
+            "deletePostHint": "确定删除此文章，删除后将无法恢复",
+            "deleteCancel": "取消删除",
+            "notPostHint": "文章不存在，请刷新后重试"
+        }
     }
 }
