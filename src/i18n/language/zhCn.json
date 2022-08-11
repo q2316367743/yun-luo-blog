@@ -1,0 +1,30 @@
+{
+    "common": {
+        "search": "搜索",
+        "refresh": "刷新",
+        "cancel": "取消",
+        "synchronous": "同步",
+        "terminal": "终端",
+        "light": "日间",
+        "dark": "黑夜",
+        "support": "Star一下，支持作者",
+        "setting": "设置",
+        "confirm": "确认",
+        "success": "成功",
+        "fail": "失败"
+    },
+    "menu": {
+        "post": "文章",
+        "tag": "标签",
+        "category": "分类",
+        "pretty": "美化",
+        "blogSetting": "博客设置"
+    },
+    "app": {
+        "projectName": "云落博客",
+        "syncSuccess": "同步成功",
+        "syncFail": "同步失败",
+        "chinese": "中文",
+        "english": "English"
+    }
+}

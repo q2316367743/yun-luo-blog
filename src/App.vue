@@ -2,7 +2,7 @@
     <section id="app">
         <aside id="side" :style="{width: isCollapse ? '64px' : '200px'}">
             <div id="logo" :style="{display: isCollapse ? 'block' : 'flex'}">
-                <div v-if="!isCollapse">云落博客</div>
+                <div v-if="!isCollapse">{{ $t('app.projectName') }}</div>
                 <div style="text-align: center;padding: 3px;cursor: pointer" @click="isCollapse = !isCollapse">
                     <el-icon v-if="isCollapse">
                         <Expand/>
@@ -17,31 +17,31 @@
                     <el-icon>
                         <document/>
                     </el-icon>
-                    <span>文章</span>
+                    <span>{{ $t('menu.post') }}</span>
                 </el-menu-item>
                 <el-menu-item index="/tag">
                     <el-icon>
                         <price-tag/>
                     </el-icon>
-                    <span>标签</span>
+                    <span>{{ $t('menu.tag') }}</span>
                 </el-menu-item>
                 <el-menu-item index="/category">
                     <el-icon>
                         <collection-tag/>
                     </el-icon>
-                    <span>分类</span>
+                    <span>{{ $t('menu.category') }}</span>
                 </el-menu-item>
                 <el-menu-item :index="`/pretty/${basicSetting.blogType}`">
                     <el-icon>
                         <shopping-cart-full></shopping-cart-full>
                     </el-icon>
-                    <span>美化</span>
+                    <span>{{ $t('menu.pretty') }}</span>
                 </el-menu-item>
                 <el-menu-item :index="`/config/${basicSetting.blogType}`">
                     <el-icon>
                         <Menu/>
                     </el-icon>
-                    <span>博客设置</span>
+                    <span>{{ $t('menu.blogSetting') }}</span>
                 </el-menu-item>
             </el-menu>
         </aside>
@@ -53,7 +53,7 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            content="同步"
+                            :content="$t('common.synchronous')"
                             placement="bottom"
                         >
                             <div class="nav-item" @click="sync">
@@ -65,7 +65,7 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            content="终端"
+                            :content="$t('common.terminal')"
                             placement="bottom"
                         >
                             <div class="nav-item" @click="terminalDialog = true">
@@ -74,7 +74,7 @@
                                 </el-icon>
                             </div>
                         </el-tooltip>
-                        <el-dropdown>
+                        <el-dropdown @command="changeI18n">
                             <div class="nav-item">
                                 <el-icon :size="18">
                                     <translate/>
@@ -82,15 +82,15 @@
                             </div>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item command="zhCn">中文</el-dropdown-item>
-                                    <el-dropdown-item command="enUs">English</el-dropdown-item>
+                                    <el-dropdown-item command="zhCn">{{ $t('app.chinese') }}</el-dropdown-item>
+                                    <el-dropdown-item command="enUs">{{ $t('app.english') }}</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            :content="isDark ? '黑夜' : '日间'"
+                            :content="isDark ? $t('common.dark') : $t('common.light')"
                             placement="bottom"
                         >
                             <div class="nav-item">
@@ -103,7 +103,7 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            content="Start一下，支持作者！"
+                            :content="$t('common.support')"
                             placement="bottom"
                         >
                             <div class="nav-item" @click="openGit">
@@ -115,7 +115,7 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            content="设置"
+                            :content="$t('common.setting')"
                             placement="bottom"
                         >
                             <div class="nav-item" @click="openSetting">
@@ -131,12 +131,12 @@
                 <router-view></router-view>
             </main>
         </section>
-        <el-drawer v-model="settingDialog" size="600px" title="设置" destroy-on-close>
+        <el-drawer v-model="settingDialog" size="600px" :title="$t('common.setting')" destroy-on-close>
             <el-scrollbar>
                 <setting-page></setting-page>
             </el-scrollbar>
         </el-drawer>
-        <el-dialog v-model="terminalDialog" destroy-on-close draggable title="终端">
+        <el-dialog v-model="terminalDialog" destroy-on-close draggable :title="$t('common.terminal')">
             <terminal-hexo-page v-if="basicSetting.blogType === 'hexo'"></terminal-hexo-page>
         </el-dialog>
     </section>
@@ -206,6 +206,7 @@ export default defineComponent({
     created() {
         ApplicationUtil.launch();
         ApplicationUtil.suggest();
+        console.log(this.$i18n)
     },
     methods: {
         sync() {
@@ -213,11 +214,11 @@ export default defineComponent({
                 ElMessage({
                     showClose: true,
                     type: 'success',
-                    message: '同步成功'
+                    message: this.$t('app.syncSuccess')
                 });
             }).catch(e => {
-                ElMessageBox.alert(e, '同步失败', {
-                    confirmButtonText: '确定',
+                ElMessageBox.alert(e, this.$t('app.syncFail'), {
+                    confirmButtonText: this.$t('common.confirm'),
                     type: "error",
                     draggable: true
                 });
@@ -236,181 +237,14 @@ export default defineComponent({
         },
         toggleDark() {
             this.isDark = !this.isDark;
+        },
+        changeI18n(language: string) {
+            this.$i18n.locale = language;
+            this.basicSetting.language = language;
         }
     }
 })
 </script>
 
 <style lang="less">
-
-@font-face {
-    font-family: JetBrainsMono;
-    src: url('./assets/JetBrainsMono-Medium.woff2');
-}
-
-@font-face {
-    font-family: LXGWWenKai;
-    src: url('./assets/LXGWWenKai-Light.woff');
-}
-
-* {
-    margin: 0;
-    padding: 0;
-}
-
-::selection {
-    background: #FFAF74;
-    color: #fff;
-}
-
-::-moz-selection {
-    background: #FFAF74;
-    color: #fff;
-}
-
-#app {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
-    display: flex;
-}
-
-#side {
-    height: clac(100vh - 32px);
-    position: relative;
-    transition: 0.3s width ease-in-out;
-    overflow-x: hidden;
-    margin: 16px 0 16px 16px;
-    box-shadow: 0 0 12px rgba(0, 0, 0, .12);
-    background-color: #ffffff;
-    border-radius: 4px;
-
-    .el-menu {
-        border-right: #ffffff !important;
-    }
-
-    .footer {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 10px;
-        padding: 10px;
-        transition: 0.3s ease-in-out;
-        text-align: center;
-
-        div {
-            margin: 10px;
-
-            button {
-                margin: 0 auto;
-            }
-        }
-    }
-
-    .bottom {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 5px;
-        padding: 5px;
-        display: grid;
-        grid-template-rows: 1fr;
-        text-align: center;
-    }
-}
-
-#body {
-    width: 100%;
-    position: relative;
-}
-
-#header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    z-index: 1;
-
-    .nav-bar {
-        margin: 16px 16px 0 16px;
-        height: 40px;
-        display: flex;
-        justify-content: space-between;
-        border-radius: 4px;
-        z-index: 9999999;
-
-        .navigation {
-            box-shadow: 0 0 12px rgba(0, 0, 0, .12);
-            display: flex;
-            align-items: center;
-            height: 100%;
-            margin-left: auto;
-            background-color: #ffffff;
-
-            .nav-item {
-                padding: 10px 15px;
-                cursor: pointer;
-                height: 16px;
-
-                &:hover {
-                    background-color: #f5f5f5;
-                }
-            }
-        }
-    }
-}
-
-#container {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-}
-
-// 通用
-#container-header {
-    background-color: #ffffff;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 40px;
-    z-index: 2;
-    box-shadow: 0 0 12px rgba(0, 0, 0, .12);
-    border-radius: 4px;
-    max-width: calc(100% - 282px - 16px - 16px - 8px - 16px);
-
-    & > .el-button {
-        margin: 5px;
-        height: 32px;
-    }
-}
-
-#container-main {
-    background-color: #ffffff;
-    position: absolute;
-    top: 56px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    box-shadow: 0 0 12px rgba(0, 0, 0, .12);
-    border-radius: 4px;
-}
-
-#logo {
-    height: 30px;
-    margin: 10px;
-    width: clac(100% - 20px);
-    line-height: 30px;
-    font-size: 1.2em;
-    user-select: none;
-    justify-content: space-between;
-    overflow: hidden;
-}
 </style>

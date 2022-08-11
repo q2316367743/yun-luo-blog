@@ -52,12 +52,12 @@ const imageSetting = useLocalStorage('imageSetting', {
 const basicSetting = useLocalStorage('basicSetting', {
     blogType: 'hexo',
     font: '微软雅黑',
-    path: ""
+    path: "",
+    language: 'zhCn'
 });
 
 
 const environmentSetting = useLocalStorage('environmentSetting', {
-    path: '',
     nodePath: '',
     npmPath: '',
     hexoPath: '',

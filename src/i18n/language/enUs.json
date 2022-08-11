@@ -1,0 +1,30 @@
+{
+    "common": {
+        "search": "search",
+        "refresh": "refresh",
+        "cancel": "cancel",
+        "synchronous": "synchronous",
+        "terminal": "terminal",
+        "light": "light",
+        "dark": "dark",
+        "support": "Star, support the author",
+        "setting": "setting",
+        "confirm": "confirm",
+        "success": "success",
+        "fail": "fail"
+    },
+    "menu": {
+        "post": "post",
+        "tag": "tag",
+        "category": "category",
+        "pretty": "pretty",
+        "blogSetting": "blog setting"
+    },
+    "app": {
+        "projectName": "云落blog",
+        "syncSuccess": "synchronous success",
+        "syncFail": "synchronization failure",
+        "chinese": "中文",
+        "english": "English"
+    }
+}
