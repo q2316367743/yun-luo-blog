@@ -10,7 +10,6 @@ import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
 import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext";
 import ServerApi from "@/api/ServerApi";
-import {spawn} from "child_process";
 
 /**
  * hexo策略
