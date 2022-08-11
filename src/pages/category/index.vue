@@ -1,6 +1,6 @@
 <template>
     <div id="container-header">
-        <p style="line-height: 40px;padding: 0 20px">一曲新词酒一杯，去年天气旧亭台。</p>
+        <p style="line-height: 40px;padding: 0 20px">{{ $t('category.title') }}</p>
     </div>
     <div id="container-main" class="category">
         <el-scrollbar>
@@ -9,14 +9,13 @@
                     <div style="display: flex;justify-content: space-between;width: 100%;">
                         <div>
                             <span>{{ node.label }}</span>
-                            <span v-if="data.postCount > 0">({{ data.postCount }})</span>
+                            <span v-if="data.postCount > 0" v-text="'()' + data.postCount + ')'"></span>
                         </div>
                         <div>
-                            <el-button type="primary" link @click.stop="categoryAdd(data.id)">新增子分类</el-button>
+                            <el-button type="primary" link @click.stop="categoryAdd(data.id)">
+                                {{ $t('category.addSubCategory') }}</el-button>
                             <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0"
-                                       @click="categoryRemove(data.id)">
-                                删除
-                            </el-button>
+                                @click="categoryRemove(data.id)">{{ $t('common.delete') }}</el-button>
                         </div>
                     </div>
                 </template>
@@ -28,18 +27,18 @@
     </div>
 </template>
 <script lang="ts">
-import {defineComponent, markRaw} from "vue";
-import {Plus} from '@element-plus/icons-vue';
+import { defineComponent, markRaw } from "vue";
+import { Plus } from '@element-plus/icons-vue';
 
-import {categoryService} from "@/global/BeanFactory";
+import { categoryService } from "@/global/BeanFactory";
 import CategoryView from "@/views/CategoryView";
-import {ElMessage, ElMessageBox} from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 export default defineComponent({
     name: 'category',
     setup() {
         const plus = markRaw(Plus);
-        return {plus}
+        return { plus }
     },
     data: () => ({
         categoryProps: {
@@ -57,10 +56,10 @@ export default defineComponent({
             })
         },
         categoryAdd(id: number) {
-            ElMessageBox.prompt('请输入分类名称', '新增分类', {
-                confirmButtonText: '新增',
-                cancelButtonText: '取消',
-            }).then(({value}) => {
+            ElMessageBox.prompt(this.$t('category.addCategoryHint'), this.$t('category.addCategory'), {
+                confirmButtonText: this.$t('common.add'),
+                cancelButtonText: this.$t('common.cancel'),
+            }).then(({ value }) => {
                 categoryService.insert({
                     name: value,
                     parentId: id
@@ -68,20 +67,25 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: `新增成功`,
+                        message: this.$t('hint.addSuccess'),
                     });
                     this.categoryList();
                 });
-            }).catch(() => {
+            }).catch((e) => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: this.$t('hint.addFail') + ',' + e,
+                });
             });
         },
         categoryRemove(id: number) {
             ElMessageBox.confirm(
-                '此操作将永远删除此分类，是否继续？',
-                'Warning',
+                this.$t('category.deleteCategoryHint'),
+                this.$t('common.warning'),
                 {
-                    confirmButtonText: '删除',
-                    cancelButtonText: '取消',
+                    confirmButtonText: this.$t('common.delete'),
+                    cancelButtonText: this.$t('common.cancel'),
                     type: 'warning',
                 }
             ).then(() => {
@@ -89,14 +93,14 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: '成功删除分类',
+                        message: this.$t('hint.deleteSuccess'),
                     });
                     this.categoryList();
                 }).catch((e) => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: '删除失败，' + e,
+                        message: this.$t('hint.deleteFail') + ',' + e,
                     });
                 })
             }).catch(() => {

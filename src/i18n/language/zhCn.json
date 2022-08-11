@@ -31,7 +31,9 @@
         "deleteFail": "删除失败",
         "deleteCancel": "删除取消",
         "saveSuccess": "保存成功",
-        "saveFail": "保存失败"
+        "saveFail": "保存失败",
+        "addSuccess": "新增成功",
+        "addFail": "新增失败"
     },
     "placeholder": {
         "tag": "请选择标签",
@@ -68,5 +70,12 @@
             "deleteCancel": "取消删除",
             "notPostHint": "文章不存在，请刷新后重试"
         }
+    },
+    "category": {
+        "title": "一曲新词酒一杯，去年天气旧亭台。",
+        "addCategory": "新增分类",
+        "addSubCategory": "新增子分类",
+        "addCategoryHint": "请输入分类名称",
+        "deleteCategoryHint": "此操作将永远删除此分类，是否继续？"
     }
 }
