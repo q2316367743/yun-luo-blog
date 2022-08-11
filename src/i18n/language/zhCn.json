@@ -7,7 +7,6 @@
         "terminal": "终端",
         "light": "日间",
         "dark": "黑夜",
-        "support": "Star一下，支持作者",
         "setting": "设置",
         "confirm": "确认",
         "success": "成功",
@@ -47,7 +46,9 @@
         "syncSuccess": "同步成功",
         "syncFail": "同步失败",
         "chinese": "中文",
-        "english": "English"
+        "english": "English",
+        "serverStandby": "服务未启动",
+        "serverRun": "服务运行中"
     },
     "post": {
         "list": {

@@ -41,7 +41,6 @@ async function exist(path: string): Promise<boolean> {
             reject(result.message)
         })
     }
-
 }
 
 async function rename(oldPath: string, newPath: string): Promise<void> {

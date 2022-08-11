@@ -7,7 +7,6 @@
         "terminal": "terminal",
         "light": "light",
         "dark": "dark",
-        "support": "Star, support the author",
         "setting": "setting",
         "confirm": "confirm",
         "success": "success",
@@ -47,7 +46,9 @@
         "syncSuccess": "synchronous success",
         "syncFail": "synchronization failure",
         "chinese": "中文",
-        "english": "English"
+        "english": "English",
+        "serverStandby": "Service not started",
+        "serverRun": "Service running"
     },
     "post": {
         "list": {

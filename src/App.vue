@@ -103,12 +103,13 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            :content="$t('common.support')"
+                            :content="server ? $t('app.serverRun') : $t('app.serverStandby')"
                             placement="bottom"
                         >
-                            <div class="nav-item" @click="openGit">
+                            <div class="nav-item" @click="runServer">
                                 <el-icon>
-                                    <suitcase/>
+                                    <run v-if="server" style="color: #67c23a;"/>
+                                    <server v-else/>
                                 </el-icon>
                             </div>
                         </el-tooltip>
@@ -165,6 +166,8 @@ import Translate from "@/icon/Translate.vue";
 import TerminalBox from "@/icon/TerminalBox.vue";
 import Sun from "@/icon/Sun.vue";
 import Moon from "@/icon/Moon.vue"
+import Server from '@/icon/Server.vue';
+import Run from '@/icon/Run.vue';
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
@@ -179,7 +182,7 @@ export default defineComponent({
     components: {
         Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag,
         ShoppingCartFull, SettingPage, Expand, Fold, Suitcase,
-        Translate, TerminalBox, Sun, Moon, TerminalHexoPage
+        Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run
     },
     setup() {
         const setting = markRaw(Setting);
@@ -200,13 +203,13 @@ export default defineComponent({
                 attribute: 'class',
                 valueDark: 'dark',
                 valueLight: 'light',
-            })
+            }),
+            server: false
         }
     },
     created() {
         ApplicationUtil.launch();
         ApplicationUtil.suggest();
-        console.log(this.$i18n)
     },
     methods: {
         sync() {
@@ -227,8 +230,43 @@ export default defineComponent({
         openSetting() {
             this.settingDialog = true;
         },
-        openGit() {
-            NativeApi.openUrl("https://gitee.com/qiaoshengda/yun-luo-blog")
+        runServer() {
+            this.server = !this.server;
+            if (this.server) {
+                // 服务运行
+                blogStrategyContext.getStrategy().serverStart().then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: "success",
+                        message: "运行成功"
+                    });
+                }).catch((e => {
+                    console.error(e);
+                    ElMessage({
+                        showClose: true,
+                        type: "error",
+                        message: "运行失败" + ',' + e
+                    });
+                }));
+            } else {
+                // 停止服务
+                blogStrategyContext.getStrategy().serverStop().then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: "success",
+                        message: "停止运行"
+                    });
+                }).catch((e => {
+                    if (e) {
+                        console.error(e);
+                        ElMessage({
+                            showClose: true,
+                            type: "error",
+                            message: "停止运行失败" + ',' + e
+                        });
+                    }
+                }));
+            }
         },
         openFolder() {
             Constant.PATH.POST().then(path => {

@@ -4,6 +4,7 @@ const {app, BrowserWindow, Menu} = require('electron');
 require('./handle/FileHandle');
 require('./handle/NativeHandle');
 require('./handle/DialogHandle');
+require('./handle/ServerHandle');
 const registerApplication = require('./handle/ApplicationHandle');
 
 const isDev = process.env.IS_DEV === "true";

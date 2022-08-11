@@ -1,6 +1,6 @@
 import BlogStrategy from "@/strategy/blog/BlogStrategy";
 import {useSettingStore} from "@/store/SettingStore";
-import {ElLoading, ElMessage} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
@@ -9,6 +9,8 @@ import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
 import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext";
+import ServerApi from "@/api/ServerApi";
+import {spawn} from "child_process";
 
 /**
  * hexo策略
@@ -69,9 +71,9 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 } as FileEntry
             }));
             loading.setText("执行缓存清理");
-            await this.invoke(Constant.HEXO.CLEAN);
+            await this.invokeCommand(Constant.HEXO.CLEAN);
             loading.setText("执行构建命令");
-            await this.invoke(Constant.HEXO.DEPLOY);
+            await this.invokeCommand(Constant.HEXO.DEPLOY);
             loading.setText("复制本地图片到目标文件夹");
             // 创建目标文件夹
             let targetDirPath = await FileApi.resolve(await Constant.PATH.HEXO_PUBLIC(), Constant.POST_IMAGES);
@@ -102,7 +104,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
     }
 
 
-    async invoke(command: string): Promise<void> {
+    async invokeCommand(command: string): Promise<void> {
         if (!(await this.isInit())) {
             return Promise.reject("博客未初始化，请初始化后重试")
         }
@@ -118,6 +120,35 @@ export default class HexoStrategyImpl implements BlogStrategy {
         return new Promise<void>((resolve) => {
             resolve();
         });
+    }
+
+    async serverStart(): Promise<void> {
+        let hexoPublicPath = await Constant.PATH.HEXO_PUBLIC();
+        await ServerApi.start(hexoPublicPath);
+        ElMessageBox.confirm('服务器成功运行，是否打开浏览器？', '信息', {
+            confirmButtonText: "打开",
+            cancelButtonText: "取消"
+        }).then(() => {
+            NativeApi.openUrl("http://localhost:8888");
+        }).catch(() => {});
+        return Promise.resolve();
+    }
+
+    serverStatus(): Promise<boolean> {
+        return Promise.resolve(false);
+    }
+
+    async serverStop(): Promise<void> {
+        await ServerApi.stop((e) => {
+            if (e) {
+                console.log(e)
+                ElNotification({
+                    type: 'error',
+                    message: "1" + e
+                });
+            }
+        })
+        return Promise.resolve();
     }
 
 }
