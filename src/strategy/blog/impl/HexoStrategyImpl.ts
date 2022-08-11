@@ -144,7 +144,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 console.log(e)
                 ElNotification({
                     type: 'error',
-                    message: "1" + e
+                    message: "" + e
                 });
             }
         })
