@@ -1,0 +1,48 @@
+@main-background-color: #21252b;
+@card-background-color: #282c34;
+
+.dark {
+    #app {
+        background-color: @main-background-color;
+
+        #body {
+            background-color: @main-background-color;
+
+            #header {
+                background-color: @main-background-color;
+
+                .nav-bar {
+                    background-color: @main-background-color;
+
+                    .navigation {
+                        background-color: @card-background-color;
+
+                        .nav-item {
+                            background-color: @card-background-color;
+
+                            .el-icon {
+                                background-color: @card-background-color;
+                            }
+                        }
+                    }
+                }
+            }
+
+            #container {
+                background-color: @card-background-color;
+
+                #container-header {
+                    background-color: @card-background-color;
+                }
+
+                #container-main {
+                    background-color: @card-background-color;
+                }
+                // 文章列表
+                #post .main .post:hover {
+                    background-color: @main-background-color;
+                }
+            }
+        }
+    }
+}
