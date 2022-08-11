@@ -17,7 +17,8 @@
         "sort": "排序",
         "delete": "删除",
         "save": "保存",
-        "warning": "警告"
+        "warning": "警告",
+        "update": "修改"
     },
     "menu": {
         "post": "文章",
@@ -33,7 +34,9 @@
         "saveSuccess": "保存成功",
         "saveFail": "保存失败",
         "addSuccess": "新增成功",
-        "addFail": "新增失败"
+        "addFail": "新增失败",
+        "updateSuccess": "修改成功",
+        "updateFail": "修改失败"
     },
     "placeholder": {
         "tag": "请选择标签",
@@ -77,5 +80,13 @@
         "addSubCategory": "新增子分类",
         "addCategoryHint": "请输入分类名称",
         "deleteCategoryHint": "此操作将永远删除此分类，是否继续？"
+    },
+    "tag": {
+        "title": "独在异乡为异客，每逢佳节倍思亲。",
+        "addTag": "新增标签",
+        "addTagHint": "请输入标签名称",
+        "updateTag": "修改标签",
+        "updateTagHint": "请输入新标签名称",
+        "deleteHint": "此操作将永久删除改标签. 是否继续?"
     }
 }

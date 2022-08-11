@@ -17,7 +17,8 @@
         "sort": "sort",
         "delete": "delete",
         "save": "save",
-        "warning": "warning"
+        "warning": "warning",
+        "update": "update"
     },
     "menu": {
         "post": "post",
@@ -33,7 +34,9 @@
         "saveSuccess": "Save success",
         "saveFail": "Save failed",
         "addSuccess": "New success",
-        "addFail": "The new failure"
+        "addFail": "The new failure",
+        "updateSuccess": "Modify the success",
+        "updateFail": "Modify the failure"
     },
     "placeholder": {
         "tag": "Please select tag",
@@ -76,5 +79,13 @@
         "addSubCategory": "Adding subcategories",
         "addCategoryHint": "Please enter a category name",
         "deleteCategoryHint": "This operation will delete this category forever. Do you want to continue?"
+    },
+    "tag": {
+        "title": "独在异乡为异客，每逢佳节倍思亲。",
+        "addTag": "The new labels",
+        "addTagHint": "Please enter the label name",
+        "updateTag": "Modify the label",
+        "updateTagHint": "Please enter a new label name",
+        "deleteHint": "This action will permanently remove the change label. Do you want to continue?"
     }
 }

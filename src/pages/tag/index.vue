@@ -1,6 +1,6 @@
 <template>
     <div id="container-header">
-        <p style="line-height: 40px;padding: 0 20px">独在异乡为异客，每逢佳节倍思亲。</p>
+        <p style="line-height: 40px;padding: 0 20px">{{ $t('tag.title') }}</p>
     </div>
     <div id="container-main" class="tag-page">
         <el-scrollbar>
@@ -21,21 +21,21 @@
     </div>
 </template>
 <script lang="ts">
-import {defineComponent, markRaw} from "vue";
-import {Delete, Edit, Plus, PriceTag} from '@element-plus/icons-vue';
+import { defineComponent, markRaw } from "vue";
+import { Delete, Edit, Plus, PriceTag } from '@element-plus/icons-vue';
 
-import {tagService} from "@/global/BeanFactory";
+import { tagService } from "@/global/BeanFactory";
 import TagView from '@/views/TagView';
-import {ElMessage, ElMessageBox} from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 export default defineComponent({
     name: 'tag',
-    components: {PriceTag},
+    components: { PriceTag },
     setup() {
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);
         const deleted = markRaw(Delete);
-        return {plus, edit, deleted}
+        return { plus, edit, deleted }
     },
     data: () => ({
         tagList: new Array<TagView>()
@@ -50,15 +50,15 @@ export default defineComponent({
             });
         },
         tagAdd() {
-            ElMessageBox.prompt('请输入标签名称', '新增标签', {
-                confirmButtonText: '新增',
-                cancelButtonText: '取消',
-            }).then(({value}) => {
+            ElMessageBox.prompt(this.$t('tag.addTagHint'), this.$t('tag.addTag'), {
+                confirmButtonText: this.$t('common.add'),
+                cancelButtonText: this.$t('common.cancel'),
+            }).then(({ value }) => {
                 tagService.insert(value).then(() => {
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: `新增成功`,
+                        message: this.$t('hint.addSuccess'),
                     });
                     this.tagListAll();
                 });
@@ -70,23 +70,23 @@ export default defineComponent({
                 // 文章数量不为0，不允许修改
                 return;
             }
-            ElMessageBox.prompt('请输入标签名称', '修改标签', {
-                confirmButtonText: '修改',
-                cancelButtonText: '取消',
+            ElMessageBox.prompt(this.$t('tag.updateTagHint'), this.$t('tag.updateTag'), {
+                confirmButtonText: this.$t('common.update'),
+                cancelButtonText: this.$t('common.cancel'),
                 inputValue: tag.name
-            }).then(({value}) => {
+            }).then(({ value }) => {
                 tagService.update(tag.id, value).then(() => {
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: `更新成功`,
+                        message: this.$t('hint.updateSuccess'),
                     });
                     this.tagListAll();
                 }).catch((e) => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: `更新失败，` + e,
+                        message: this.$t('hint.updateFail') + ',' + e,
                     });
                 });
             });
@@ -97,11 +97,11 @@ export default defineComponent({
                 return;
             }
             ElMessageBox.confirm(
-                `此操作将永久删除标签【${tag.name}】. 是否继续?`,
-                '警告',
+                `此操作将永久删除改标签. 是否继续?`,
+                this.$t('common.warning'),
                 {
-                    confirmButtonText: '删除',
-                    cancelButtonText: '取消',
+                    confirmButtonText: this.$t('common.delete'),
+                    cancelButtonText: this.$t('common.cancel'),
                     type: 'warning',
                 }
             ).then(() => {
@@ -109,14 +109,14 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: '删除成功',
+                        message: this.$t('hint.deleteSuccess'),
                     });
                     this.tagListAll();
                 }).catch(e => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: e,
+                        message: this.$t('hint.deleteFail') + ',' + e,
                     });
                 })
             }).catch(() => {
