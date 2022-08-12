@@ -9,7 +9,7 @@
                     <div style="display: flex;justify-content: space-between;width: 100%;">
                         <div>
                             <span>{{ node.label }}</span>
-                            <span v-if="data.postCount > 0" v-text="'()' + data.postCount + ')'"></span>
+                            <span v-if="data.postCount > 0" v-text="'(' + data.postCount + ')'"></span>
                         </div>
                         <div>
                             <el-button type="primary" link @click.stop="categoryAdd(data.id)">

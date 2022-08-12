@@ -25,56 +25,54 @@ export default class ServerService {
     constructor() {
         // 构造函数时注册事件
         emitter.on(MessageEventEnum.POST_ADD, () => {
-            this.serverUpdate()
+            this.serverUpdate();
         });
         emitter.on(MessageEventEnum.POST_UPDATE, () => {
-            this.serverUpdate()
+            this.serverUpdate();
         });
         emitter.on(MessageEventEnum.POST_DELETE, () => {
-            this.serverUpdate()
+            this.serverUpdate();
         });
     }
 
     /**
      * 服务器资源更新
      */
-    private serverUpdate(): Promise<void> {
-        return new Promise<void>(resolve => {
-            // 只有在运行中才会重新部署
-            if (this.status === ServerStatusEnum.RUN) {
-                // 服务器状态变为更新中
-                this.status = ServerStatusEnum.UPDATE;
-                // 发布服务器更新开始事件
-                emitter.emit(MessageEventEnum.SERVER_UPDATE_START)
-                // 将文件构建到dist目录
-                blogStrategyContext.getStrategy().build().then(() => {
-                    // 部署完成。服务器状态变为运行中
-                    this.status = ServerStatusEnum.RUN;
-                    // 发布服务器更新完成事件
-                    emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
-                    if (this.todo) {
-                        // 存在待办，再次部署
-                        this.todo = false;
-                        this.serverUpdate().then(() => {
-                        });
-                    }
-                }).catch((e) => {
-                    // 部署失败。服务器状态变为运行中
-                    this.status = ServerStatusEnum.RUN;
-                    // 发布服务器更新完成事件
-                    emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
-                    ElNotification({
-                        title: '服务器资源更新错误',
-                        message: '' + e,
-                        type: 'error',
-                    });
+    private serverUpdate(): void {
+        // 只有在运行中才会重新部署
+        if (this.status === ServerStatusEnum.RUN) {
+            // 服务器状态变为更新中
+            this.status = ServerStatusEnum.UPDATE;
+            // 发布服务器更新开始事件
+            emitter.emit(MessageEventEnum.SERVER_UPDATE_START)
+            // 将文件构建到dist目录
+            console.log('开始构建', new Date().getTime())
+            blogStrategyContext.getStrategy().build().then(() => {
+                console.log('构建完成', new Date().getTime())
+                // 部署完成。服务器状态变为运行中
+                this.status = ServerStatusEnum.RUN;
+                // 发布服务器更新完成事件
+                emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
+                if (this.todo) {
+                    // 存在待办，再次部署
+                    this.todo = false;
+                    this.serverUpdate();
+                }
+            }).catch((e) => {
+                // 部署失败。服务器状态变为运行中
+                this.status = ServerStatusEnum.RUN;
+                // 发布服务器更新完成事件
+                emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
+                ElNotification({
+                    title: '服务器资源更新错误',
+                    message: '' + e,
+                    type: 'error',
                 });
-            } else if (this.status === ServerStatusEnum.UPDATE) {
-                // 更新中无法直接更新，，增加一个待办
-                this.todo = true;
-            }
-            return resolve();
-        })
+            });
+        } else if (this.status === ServerStatusEnum.UPDATE) {
+            // 更新中无法直接更新，，增加一个待办
+            this.todo = true;
+        }
     }
 
     async start(): Promise<void> {

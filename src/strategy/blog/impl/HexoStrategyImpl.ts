@@ -1,6 +1,6 @@
 import BlogStrategy from "@/strategy/blog/BlogStrategy";
 import {useSettingStore} from "@/store/SettingStore";
-import {ElLoading, ElMessage, ElMessageBox, ElNotification} from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
@@ -37,15 +37,14 @@ export default class HexoStrategyImpl implements BlogStrategy {
             background: 'rgba(0, 0, 0, 0.7)',
         });
         try {
-            await this.selfBuild(loading);
-            loading.setText("迁移文件到dist目录");
-            await FileApi.copyDir(await Constant.PATH.DIST(), await Constant.PATH.HEXO_PUBLIC())
+            await this.copyPost(loading);
+            await this.clean(loading);
+            await this.deploy(loading);
+            await this.copyPostImage(loading);
+            await this.copyToDist(loading);
             loading.setText("推送到远程");
             await platformStrategyContext.getStrategy().push();
-            return new Promise<void>((resolve) => {
-                loading.close();
-                resolve();
-            })
+            return Promise.resolve();
         } catch (e) {
             console.error(e);
             return Promise.reject(e);
@@ -55,16 +54,15 @@ export default class HexoStrategyImpl implements BlogStrategy {
     }
 
     async build(): Promise<void> {
-        return this.selfBuild();
+        await this.copyPost();
+        await this.clean();
+        await this.deploy();
+        await this.copyPostImage();
+        await this.copyToDist();
+        return Promise.resolve();
     }
 
-    /**
-     * 文件打包部署，此处不仅仅是执行命令，还处理了图片资源
-     *
-     * @param loading 加载层
-     * @private
-     */
-    private async selfBuild(loading?: { setText: (message: string) => void }): Promise<void> {
+    private async copyPost(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
             loading.setText("将文章复制到目标文件夹");
         }
@@ -83,7 +81,6 @@ export default class HexoStrategyImpl implements BlogStrategy {
             console.error(e);
         }
         let hexo = new Hexo(hexoConfigContent);
-        let postImage = await Constant.PATH.POST_IMAGES();
         let source_dir = await FileApi.resolve(hexoPath, hexo.source_dir);
         let _posts = await FileApi.resolve(source_dir, "_posts");
         // _posts文件夹可能不存在
@@ -98,22 +95,35 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 path: e.path
             } as FileEntry
         }));
+        return Promise.resolve();
+    }
+
+    private async clean(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
             loading.setText("执行缓存清理");
         }
         // 清理缓存
         await this.invokeCommand(Constant.HEXO.CLEAN);
+        return Promise.resolve();
+    }
+
+    private async deploy(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
             loading.setText("执行构建命令");
         }
         // 执行部署命令
         await this.invokeCommand(Constant.HEXO.DEPLOY);
+        return Promise.resolve();
+    }
+
+    private async copyPostImage(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
             loading.setText("复制本地图片到目标文件夹");
         }
         // 将图片资源复制
         let targetDirPath = await FileApi.resolve(await Constant.PATH.HEXO_PUBLIC(), Constant.POST_IMAGES);
         await FileApi.createDir(targetDirPath);
+        let postImage = await Constant.PATH.POST_IMAGES();
         let postImages = await FileApi.listDir(postImage, true);
         for (let item of postImages) {
             let targetPath = await FileApi.resolve(targetDirPath, item.name!);
@@ -126,6 +136,12 @@ export default class HexoStrategyImpl implements BlogStrategy {
         return Promise.resolve();
     }
 
+    private async copyToDist(loading?: { setText: (message: string) => void }): Promise<void> {
+        if (loading) {
+            loading.setText("迁移文件到dist目录");
+        }
+        await FileApi.copyDir(await Constant.PATH.DIST(), await Constant.PATH.HEXO_PUBLIC())
+    }
 
     async invokeCommand(command: string): Promise<void> {
         if (!(await this.isInit())) {
