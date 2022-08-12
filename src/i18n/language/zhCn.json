@@ -2,9 +2,13 @@
     "app": {
         "chinese": "中文",
         "english": "English",
+        "openBrowser": "打开浏览器",
+        "openDist": "打开部署目录",
         "projectName": "云落博客",
         "serverRun": "服务运行中",
         "serverStandby": "服务未启动",
+        "serverStart": "启动服务器",
+        "serverStop": "停止服务器",
         "serverUnknown": "服务状态未知",
         "serverUpdate": "服务更新中",
         "syncFail": "同步失败",

@@ -123,6 +123,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 await FileApi.copyFile(item.path, targetPath);
             }
         }
+        return Promise.resolve();
     }
 
 

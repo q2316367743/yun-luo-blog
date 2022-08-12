@@ -106,13 +106,29 @@
                             :content="serverStatus"
                             placement="bottom"
                         >
-                            <div class="nav-item" @click="runServer">
-                                <el-icon>
-                                    <run v-if="server === 1" style="color: #67c23a;"/>
-                                    <loader v-else-if="server === 2"/>
-                                    <server v-else-if="server === 3"/>
-                                </el-icon>
-                            </div>
+                            <el-dropdown trigger="contextmenu" @command="serverOperation">
+                                <div class="nav-item">
+                                    <el-icon>
+                                        <run v-if="server === 1" style="color: #67c23a;"/>
+                                        <loader v-else-if="server === 2"/>
+                                        <server v-else-if="server === 3"/>
+                                    </el-icon>
+                                </div>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item command="start" v-if="server === 3">
+                                            {{ $t('app.serverStart') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item command="stop" v-if="server === 1">
+                                            {{ $t('app.serverStop') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item command="dist">{{ $t('app.openDist') }}</el-dropdown-item>
+                                        <el-dropdown-item command="browser" v-if="server === 1 || server === 2">
+                                            {{ $t('app.openBrowser') }}
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
                         </el-tooltip>
                         <el-tooltip
                             class="box-item"
@@ -144,6 +160,7 @@
     </section>
 </template>
 
+<!--suppress JSIncompatibleTypesComparison -->
 <script lang='ts'>
 import {defineComponent, markRaw} from 'vue'
 import {
@@ -283,41 +300,45 @@ export default defineComponent({
             if (!this.serverDisable) {
                 // 服务禁用
                 this.serverDisable = true;
-                if (this.server === ServerStatusEnum.RUN) {
-                    // 服务正在运行中，停止服务
-                    serverService.stop().then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: "success",
-                            message: "停止运行"
-                        });
-                    }).catch(e => {
-                        if (e) {
-                            console.error(e);
-                            ElMessage({
-                                showClose: true,
-                                type: "error",
-                                message: "停止运行失败" + ',' + e
-                            });
-                        }
+                // 服务已停止，服务运行
+                serverService.start().then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: "success",
+                        message: "运行成功"
                     });
-                } else if (this.server === ServerStatusEnum.STOP) {
-                    // 服务已停止，服务运行
-                    serverService.start().then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: "success",
-                            message: "运行成功"
-                        });
-                    }).catch(e => {
+                }).catch(e => {
+                    console.error(e);
+                    ElMessage({
+                        showClose: true,
+                        type: "error",
+                        message: "运行失败" + ',' + e
+                    });
+                });
+            }
+        },
+        stopServer() {
+            // 只有服务没有禁用中，才可以点击
+            if (!this.serverDisable) {
+                // 服务禁用
+                this.serverDisable = true;
+                // 服务正在运行中，停止服务
+                serverService.stop().then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: "success",
+                        message: "停止运行"
+                    });
+                }).catch(e => {
+                    if (e) {
                         console.error(e);
                         ElMessage({
                             showClose: true,
                             type: "error",
-                            message: "运行失败" + ',' + e
+                            message: "停止运行失败" + ',' + e
                         });
-                    });
-                }
+                    }
+                });
             }
         },
         openFolder() {
@@ -331,6 +352,24 @@ export default defineComponent({
         changeI18n(language: string) {
             this.$i18n.locale = language;
             this.basicSetting.language = language;
+        },
+        serverOperation(command: string) {
+            switch (command) {
+                case "start":
+                    this.runServer();
+                    break;
+                case "stop":
+                    this.stopServer();
+                    break;
+                case "dist":
+                    Constant.PATH.DIST().then(path => {
+                        NativeApi.openFolder(path);
+                    })
+                    break;
+                case "browser":
+                    NativeApi.openUrl("http://localhost:8888");
+                    break;
+            }
         }
     }
 })
