@@ -1,7 +1,6 @@
 /**
  * 策略接口
  */
-import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
 
 export default interface BlogStrategy {
 
@@ -17,7 +16,9 @@ export default interface BlogStrategy {
 
     /**
      * 将文件打包到dist目录，不进行同步
+     *
+     * @param callback 完成构建后回调
      */
-    build(): Promise<void>
+    build(callback: () => void): Promise<void>
 
 }

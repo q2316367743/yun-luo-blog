@@ -100,3 +100,18 @@ ipcMain.handle('native:compressing', async (event, args) => {
         message: '成功'
     }
 });
+
+// 异步命令，直接监听
+ipcMain.on('native:invoke:batch', (event, args) => {
+    console.log('native:invoke:batch');
+    for (let item of args.batch) {
+        // 每一个都同步执行
+        child_process.execSync(`"${item.command}" ${item.arg}`, {
+            encoding: "utf-8",
+            cwd: item.dir
+        });
+    }
+    // 全部执行结束，发送完成事件
+    console.log(`native:invoke:batch:${args.id}`);
+    event.sender.send(`native:invoke:batch:${args.id}`);
+});

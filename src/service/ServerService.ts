@@ -46,9 +46,8 @@ export default class ServerService {
             // 发布服务器更新开始事件
             emitter.emit(MessageEventEnum.SERVER_UPDATE_START)
             // 将文件构建到dist目录
-            console.log('开始构建', new Date().getTime())
-            blogStrategyContext.getStrategy().build().then(() => {
-                console.log('构建完成', new Date().getTime())
+            blogStrategyContext.getStrategy().build(() => {
+                // 回调成功
                 // 部署完成。服务器状态变为运行中
                 this.status = ServerStatusEnum.RUN;
                 // 发布服务器更新完成事件
@@ -58,7 +57,10 @@ export default class ServerService {
                     this.todo = false;
                     this.serverUpdate();
                 }
+            }).then(() => {
+                // 命令发送完成，并不代表构建完成
             }).catch((e) => {
+                console.error(e)
                 // 部署失败。服务器状态变为运行中
                 this.status = ServerStatusEnum.RUN;
                 // 发布服务器更新完成事件

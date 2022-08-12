@@ -3,6 +3,7 @@ import {AxiosRequestConfig} from "axios";
 import CompressingOptions from "@/api/entities/CompressingOptions";
 import FileApi from "@/api/FileApi";
 import CommandAsyncOptions from "@/api/entities/CommandAsyncOptions";
+import CommandBatchOptions from "@/api/entities/CommandBatchOptions";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -109,6 +110,11 @@ export default {
         }
     },
 
+    /**
+     * 发送http请求
+     *
+     * @param args 请求参数
+     */
     async http<T>(args: AxiosRequestConfig): Promise<T> {
         let result = (await ipcRenderer.invoke('native:http', args)) as Result<any>;
         if (result.code) {
@@ -122,6 +128,11 @@ export default {
         }
     },
 
+    /**
+     * 文件解压缩
+     *
+     * @param args 参数
+     */
     async compressing(args: CompressingOptions): Promise<void> {
         if (!(await FileApi.exist(args.source))) {
             return Promise.reject("源文件不存在");
@@ -136,6 +147,24 @@ export default {
                 reject(result.message)
             })
         }
+    },
+
+    /**
+     * 批量执行命令
+     *
+     * @param options 相关参数
+     */
+    async invokeCommandBatch(options: CommandBatchOptions): Promise<void> {
+        let id = new Date().getTime();
+        await ipcRenderer.send('native:invoke:batch', {
+            id: id,
+            batch: options.batch
+        });
+        // 监听完成事件
+        ipcRenderer.on(`native:invoke:batch:${id}`, () => {
+            options.callback()
+        });
+        return Promise.resolve();
     }
 
 }
