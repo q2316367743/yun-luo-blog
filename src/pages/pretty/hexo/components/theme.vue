@@ -158,7 +158,7 @@ export default defineComponent({
                 background: 'rgba(0, 0, 0, 0.7)',
             });
             Constant.PATH.HEXO_THEME().then(path => {
-                NativeApi.invokeCmd(
+                NativeApi.invokeSync(
                     gitPath,
                     path,
                     `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`

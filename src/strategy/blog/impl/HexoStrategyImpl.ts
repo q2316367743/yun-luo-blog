@@ -9,7 +9,7 @@ import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
 import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext";
-import CommandBatchOptions from "@/api/entities/CommandBatchOptions";
+import CommandAsyncOptions from "@/api/entities/CommandAsyncOptions";
 
 /**
  * hexo策略
@@ -57,37 +57,14 @@ export default class HexoStrategyImpl implements BlogStrategy {
     async build(callback: () => void): Promise<void> {
         // 基础
         console.log('开始构建', new Date().getTime());
-        if (!(await this.isInit())) {
-            return Promise.reject("博客未初始化，请初始化后重试")
-        }
-        // 获取hexo命令目录
-        let hexoCommandPath = useSettingStore().environment.hexoPath;
-        if (!hexoCommandPath || hexoCommandPath === "") {
-            return new Promise<void>((_resolve, reject) => {
-                reject("请配置hexo命令路径");
-            })
-        }
-        let hexoPath = await Constant.PATH.HEXO();
         console.log('拷贝文章', new Date().getTime());
         await this.copyPost();
-        let options = {
-            batch: [{
-                command: hexoCommandPath,
-                args: Constant.HEXO.CLEAN,
-                dir: hexoPath
-            }, {
-                command: hexoCommandPath,
-                args: Constant.HEXO.DEPLOY,
-                dir: hexoPath
-            }],
-            callback: () => {
-                console.log('构建完成', new Date().getTime());
-                // 命令执行完，在进行后续复制
-                this.copyPostImage().then(() => this.copyToDist().then(callback));
-            }
-        } as CommandBatchOptions;
         console.log('执行命令', new Date().getTime());
-        await NativeApi.invokeCommandBatch(options);
+        await this.invokeAsync(() => {
+            // 执行后置命令
+            console.log('执行后置命令', new Date().getTime());
+            this.copyPostImage().then(() => this.copyToDist().then(callback));
+        });
         console.log('命令已执行', new Date().getTime());
         return Promise.resolve();
     }
@@ -185,10 +162,37 @@ export default class HexoStrategyImpl implements BlogStrategy {
             })
         }
         let hexoPath = await Constant.PATH.HEXO();
-        await NativeApi.invokeCmd(hexoCommandPath, hexoPath, command);
+        await NativeApi.invokeSync(hexoCommandPath, hexoPath, command);
         return new Promise<void>((resolve) => {
             resolve();
         });
+    }
+
+    async invokeAsync(callback: () => void) {
+        if (!(await this.isInit())) {
+            return Promise.reject("博客未初始化，请初始化后重试")
+        }
+        // 获取hexo命令目录
+        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        if (!hexoCommandPath || hexoCommandPath === "") {
+            return new Promise<void>((_resolve, reject) => {
+                reject("请配置hexo命令路径");
+            })
+        }
+        let hexoPath = await Constant.PATH.HEXO();
+        await NativeApi.invokeAsync({
+            command: hexoCommandPath,
+            args: Constant.HEXO.CLEAN,
+            currentDir: hexoPath,
+            callback: () => {
+                NativeApi.invokeAsync({
+                    command: hexoCommandPath,
+                    args: Constant.HEXO.DEPLOY,
+                    currentDir: hexoPath,
+                    callback: callback
+                })
+            }
+        })
     }
 
 }

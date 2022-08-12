@@ -188,8 +188,7 @@ export default class HexoService {
         let hexoPath = await Constant.PATH.HEXO();
         let hexoCommandPath = await this.getHexoCommandPath();
         let temp = terminalStack;
-        return NativeApi.invokeAsync({
-            id: terminalStack.id,
+        return NativeApi.invokeSpawn({
             command: hexoCommandPath,
             currentDir: hexoPath,
             args: terminalStack.command,

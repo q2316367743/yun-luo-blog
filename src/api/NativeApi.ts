@@ -3,7 +3,7 @@ import {AxiosRequestConfig} from "axios";
 import CompressingOptions from "@/api/entities/CompressingOptions";
 import FileApi from "@/api/FileApi";
 import CommandAsyncOptions from "@/api/entities/CommandAsyncOptions";
-import CommandBatchOptions from "@/api/entities/CommandBatchOptions";
+import CommandSpawnOptions from "@/api/entities/CommandSpawnOptions";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -13,8 +13,8 @@ const {ipcRenderer} = window.require('electron');
  */
 export default {
 
-    async invokeCmd(cmd: string, currentDir: string, arg?: string): Promise<void> {
-        let result = (await ipcRenderer.invoke('native:invoke:cmd', {
+    async invokeSync(cmd: string, currentDir: string, arg?: string): Promise<void> {
+        let result = (await ipcRenderer.invoke('native:invoke:sync', {
             command: cmd,
             arg: arg,
             currentDir: currentDir
@@ -31,25 +31,46 @@ export default {
     },
 
     /**
+     * 批量执行命令
+     *
+     * @param options 相关参数
+     */
+    async invokeAsync(options: CommandAsyncOptions): Promise<void> {
+        let id = new Date().getTime();
+        await ipcRenderer.send('native:invoke:async', {
+            id: id,
+            command: options.command,
+            arg: options.args,
+            currentDir: options.currentDir
+        });
+        // 监听完成事件
+        ipcRenderer.on(`native:invoke:async:${id}`, () => {
+            options.callback()
+        });
+        return Promise.resolve();
+    },
+
+    /**
      * 异步命令，不会阻塞进程
      *
      * @param options 命令参数
      */
-    async invokeAsync(options: CommandAsyncOptions): Promise<void> {
-        let result = (await ipcRenderer.invoke('native:invoke:async', {
-            id: options.id,
+    async invokeSpawn(options: CommandSpawnOptions): Promise<void> {
+        let id = new Date().getTime();
+        let result = (await ipcRenderer.invoke('native:invoke:spawn', {
+            id: id,
             command: options.command,
             arg: options.args,
             currentDir: options.currentDir
         })) as Result<any>;
         // 监听
-        ipcRenderer.on(`native:invoke:async:stdout:${options.id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:stdout:${id}`, (event: any, args: Uint8Array) => {
             options.out(event, args);
         });
-        ipcRenderer.on(`native:invoke:async:stderr:${options.id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:stderr:${id}`, (event: any, args: Uint8Array) => {
             options.err(event, args);
         });
-        ipcRenderer.on(`native:invoke:async:exit:${options.id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:exit:${id}`, (event: any, args: Uint8Array) => {
             options.exit(event, args);
         });
         if (result.code) {
@@ -148,23 +169,5 @@ export default {
             })
         }
     },
-
-    /**
-     * 批量执行命令
-     *
-     * @param options 相关参数
-     */
-    async invokeCommandBatch(options: CommandBatchOptions): Promise<void> {
-        let id = new Date().getTime();
-        await ipcRenderer.send('native:invoke:batch', {
-            id: id,
-            batch: options.batch
-        });
-        // 监听完成事件
-        ipcRenderer.on(`native:invoke:batch:${id}`, () => {
-            options.callback()
-        });
-        return Promise.resolve();
-    }
 
 }

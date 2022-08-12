@@ -4,11 +4,6 @@
 export default interface CommandAsyncOptions {
 
     /**
-     * 指定的ID
-     */
-    id: number;
-
-    /**
      * 命令
      */
     command: string;
@@ -24,24 +19,8 @@ export default interface CommandAsyncOptions {
     currentDir: string;
 
     /**
-     * 输出流
-     * @param event 事件
-     * @param data 数据
+     * 完成回调
      */
-    out: (event: any, data: Uint8Array) => void;
-
-    /**
-     * 错误流
-     * @param event 事件
-     * @param data 数据
-     */
-    err: (event: any, data: Uint8Array) => void;
-
-    /**
-     * 退出
-     * @param event 事件
-     * @param data 数据
-     */
-    exit: (event: any, data: Uint8Array) => void;
+    callback: () => void;
 
 }

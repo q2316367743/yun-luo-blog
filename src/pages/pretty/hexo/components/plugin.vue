@@ -147,7 +147,7 @@ export default defineComponent({
                     text: '执行安装命令中',
                     background: 'rgba(0, 0, 0, 0.7)',
                 });
-                NativeApi.invokeCmd(environment.npmPath,
+                NativeApi.invokeSync(environment.npmPath,
                     path,
                     command
                 ).then(() => {
@@ -197,7 +197,7 @@ export default defineComponent({
                         text: '执行删除命令中',
                         background: 'rgba(0, 0, 0, 0.7)',
                     });
-                    NativeApi.invokeCmd(environment.npmPath,
+                    NativeApi.invokeSync(environment.npmPath,
                         path,
                         `remove ${plugin}`
                     ).then(() => {
