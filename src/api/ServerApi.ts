@@ -7,10 +7,12 @@ export default {
     /**
      * 开始一个服务器
      * @param path 服务器地址
+     * @param port 服务器端口
      */
-    async start(path: string): Promise<void> {
+    async start(path: string, port: number): Promise<void> {
         let result = (await ipcRenderer.invoke('server:start', {
-            serverDir: path
+            serverDir: path,
+            port
         })) as Result<void>;
         if (result.code) {
             return new Promise<void>(resolve => {
@@ -25,7 +27,7 @@ export default {
 
     /**
      * 停止这个服务器
-     * @param callback
+     * @param callback 错误回调
      */
     async stop(callback: (error: Error) => void): Promise<void> {
         let result = (await ipcRenderer.invoke('server:stop', {})) as Result<void>;

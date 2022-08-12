@@ -39,11 +39,9 @@ ipcMain.handle('server:start', (event, args) => {
                 }
                 res.write(data);
                 res.end();
-
             }
-
         });
-    }).listen(8888);
+    }).listen(args.port);
     return {
         code: true,
         message: '成功'

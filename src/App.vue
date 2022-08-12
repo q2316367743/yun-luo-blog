@@ -103,13 +103,14 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
-                            :content="server ? $t('app.serverRun') : $t('app.serverStandby')"
+                            :content="serverStatus"
                             placement="bottom"
                         >
                             <div class="nav-item" @click="runServer">
                                 <el-icon>
-                                    <run v-if="server" style="color: #67c23a;"/>
-                                    <server v-else/>
+                                    <run v-if="server === 1" style="color: #67c23a;"/>
+                                    <loader v-else-if="server === 2"/>
+                                    <server v-else-if="server === 3"/>
                                 </el-icon>
                             </div>
                         </el-tooltip>
@@ -168,6 +169,7 @@ import Sun from "@/icon/Sun.vue";
 import Moon from "@/icon/Moon.vue"
 import Server from '@/icon/Server.vue';
 import Run from '@/icon/Run.vue';
+import Loader from '@/icon/Loader.vue';
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
@@ -177,12 +179,17 @@ import NativeApi from "@/api/NativeApi";
 
 import SettingPage from '@/pages/setting/index.vue';
 import TerminalHexoPage from "@/pages/terminal/hexo/index.vue";
+import {serverService} from "@/global/BeanFactory";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
+import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
 
 export default defineComponent({
     components: {
         Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag,
         ShoppingCartFull, SettingPage, Expand, Fold, Suitcase,
-        Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run
+        Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run,
+        Loader
     },
     setup() {
         const setting = markRaw(Setting);
@@ -204,12 +211,53 @@ export default defineComponent({
                 valueDark: 'dark',
                 valueLight: 'light',
             }),
-            server: false
+            // 服务是否允许，true：运行中
+            server: ServerStatusEnum.STOP,
+            // 服务按钮是否禁用
+            serverDisable: false
         }
     },
     created() {
         ApplicationUtil.launch();
         ApplicationUtil.suggest();
+        // 此处注册服务器事件
+        emitter.on(MessageEventEnum.SERVER_START, () => {
+            // 服务启动
+            this.server = ServerStatusEnum.RUN;
+            // 解除服务禁用
+            this.serverDisable = false;
+        });
+        emitter.on(MessageEventEnum.SERVER_UPDATE_START, () => {
+            // 服务更新开始
+            this.server = ServerStatusEnum.UPDATE;
+            // 更新中，服务禁用
+            this.serverDisable = true;
+        });
+        emitter.on(MessageEventEnum.SERVER_UPDATE_COMPLETE, () => {
+            // 服务更新结束
+            this.server = ServerStatusEnum.RUN;
+            // 解除服务禁用
+            this.serverDisable = false;
+        });
+        emitter.on(MessageEventEnum.SERVER_STOP, () => {
+            // 服务停止
+            this.server = ServerStatusEnum.STOP;
+            // 解除服务禁用
+            this.serverDisable = false;
+        });
+    },
+    computed: {
+        serverStatus(): string {
+            if (ServerStatusEnum.RUN === this.server) {
+                return this.$t('app.serverRun')
+            } else if (this.server === ServerStatusEnum.UPDATE) {
+                return this.$t('app.serverUpdate');
+            } else if (this.server === ServerStatusEnum.STOP) {
+                return this.$t('app.serverStandby');
+            } else {
+                return this.$t('app.serverUnknown');
+            }
+        }
     },
     methods: {
         sync() {
@@ -231,41 +279,45 @@ export default defineComponent({
             this.settingDialog = true;
         },
         runServer() {
-            this.server = !this.server;
-            if (this.server) {
-                // 服务运行
-                blogStrategyContext.getStrategy().serverStart().then(() => {
-                    ElMessage({
-                        showClose: true,
-                        type: "success",
-                        message: "运行成功"
+            // 只有服务没有禁用中，才可以点击
+            if (!this.serverDisable) {
+                // 服务禁用
+                this.serverDisable = true;
+                if (this.server === ServerStatusEnum.RUN) {
+                    // 服务正在运行中，停止服务
+                    serverService.stop().then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: "success",
+                            message: "停止运行"
+                        });
+                    }).catch(e => {
+                        if (e) {
+                            console.error(e);
+                            ElMessage({
+                                showClose: true,
+                                type: "error",
+                                message: "停止运行失败" + ',' + e
+                            });
+                        }
                     });
-                }).catch((e => {
-                    console.error(e);
-                    ElMessage({
-                        showClose: true,
-                        type: "error",
-                        message: "运行失败" + ',' + e
-                    });
-                }));
-            } else {
-                // 停止服务
-                blogStrategyContext.getStrategy().serverStop().then(() => {
-                    ElMessage({
-                        showClose: true,
-                        type: "success",
-                        message: "停止运行"
-                    });
-                }).catch((e => {
-                    if (e) {
+                } else if (this.server === ServerStatusEnum.STOP) {
+                    // 服务已停止，服务运行
+                    serverService.start().then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: "success",
+                            message: "运行成功"
+                        });
+                    }).catch(e => {
                         console.error(e);
                         ElMessage({
                             showClose: true,
                             type: "error",
-                            message: "停止运行失败" + ',' + e
+                            message: "运行失败" + ',' + e
                         });
-                    }
-                }));
+                    });
+                }
             }
         },
         openFolder() {

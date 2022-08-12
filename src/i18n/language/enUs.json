@@ -1,92 +1,94 @@
 {
-    "common": {
-        "search": "search",
-        "refresh": "refresh",
-        "cancel": "cancel",
-        "synchronous": "synchronous",
-        "terminal": "terminal",
-        "light": "light",
-        "dark": "dark",
-        "setting": "setting",
-        "confirm": "confirm",
-        "success": "success",
-        "fail": "fail",
-        "add": "add",
-        "status": "status",
-        "sort": "sort",
-        "delete": "delete",
-        "save": "save",
-        "warning": "warning",
-        "update": "update"
-    },
-    "menu": {
-        "post": "post",
-        "tag": "tag",
-        "category": "category",
-        "pretty": "pretty",
-        "blogSetting": "blog setting"
-    },
-    "hint": {
-        "deleteSuccess": "Delete the success",
-        "deleteFail": "Delete failed",
-        "deleteCancel": "Delete the cancelled",
-        "saveSuccess": "Save success",
-        "saveFail": "Save failed",
-        "addSuccess": "New success",
-        "addFail": "The new failure",
-        "updateSuccess": "Modify the success",
-        "updateFail": "Modify the failure"
-    },
-    "placeholder": {
-        "tag": "Please select tag",
-        "category": "Please select category"
-    },
     "app": {
-        "projectName": "云落blog",
-        "syncSuccess": "synchronous success",
-        "syncFail": "synchronization failure",
         "chinese": "中文",
         "english": "English",
+        "projectName": "云落blog",
+        "serverRun": "Service running",
         "serverStandby": "Service not started",
-        "serverRun": "Service running"
+        "serverUnknown": "Service status unknown",
+        "serverUpdate": "Service update in progress",
+        "syncFail": "synchronization failure",
+        "syncSuccess": "synchronous success"
+    },
+    "category": {
+        "addCategory": "The new classification",
+        "addCategoryHint": "Please enter a category name",
+        "addSubCategory": "Adding subcategories",
+        "deleteCategoryHint": "This operation will delete this category forever. Do you want to continue?",
+        "title": "一曲新词酒一杯，去年天气旧亭台。"
+    },
+    "common": {
+        "add": "add",
+        "cancel": "cancel",
+        "confirm": "confirm",
+        "dark": "dark",
+        "delete": "delete",
+        "fail": "fail",
+        "light": "light",
+        "refresh": "refresh",
+        "save": "save",
+        "search": "search",
+        "setting": "setting",
+        "sort": "sort",
+        "status": "status",
+        "success": "success",
+        "synchronous": "synchronous",
+        "terminal": "terminal",
+        "update": "update",
+        "warning": "warning"
+    },
+    "hint": {
+        "addFail": "The new failure",
+        "addSuccess": "New success",
+        "deleteCancel": "Delete the cancelled",
+        "deleteFail": "Delete failed",
+        "deleteSuccess": "Delete the success",
+        "saveFail": "Save failed",
+        "saveSuccess": "Save success",
+        "updateFail": "Modify the failure",
+        "updateSuccess": "Modify the success"
+    },
+    "menu": {
+        "blogSetting": "blog setting",
+        "category": "category",
+        "post": "post",
+        "pretty": "pretty",
+        "tag": "tag"
+    },
+    "placeholder": {
+        "category": "Please select category",
+        "tag": "Please select tag"
     },
     "post": {
         "list": {
-            "searchPost": "search post",
+            "basic": "basic",
+            "createTime": "Creation time",
+            "deletePostHint": "Confirm to delete this article. It cannot be restored",
             "draft": "draft",
-            "release": "release",
+            "extraAttr": "Additional attributes",
+            "newPost": "New post",
+            "notPostHint": "The article does not exist, please refresh and try again",
+            "postSetting": "post setting",
+            "postTitle": "post title",
+            "postUrl": "post url",
             "recycle": "recycle",
+            "release": "release",
+            "searchPost": "search post",
+            "senior": "senior",
+            "sortCreateAsc": "create(new-old)",
+            "sortCreateDesc": "create(old-new)",
             "sortTitleAsc": "title(a-z)",
             "sortTitleDesc": "title(z-a)",
             "sortUpdateAsc": "update(new-old)",
-            "sortUpdateDesc": "update(old-new)",
-            "sortCreateAsc": "create(new-old)",
-            "sortCreateDesc": "create(old-new)",
-            "postSetting": "post setting",
-            "basic": "basic",
-            "postTitle": "post title",
-            "senior": "senior",
-            "postUrl": "post url",
-            "createTime": "Creation time",
-            "extraAttr": "Additional attributes",
-            "newPost": "New post",
-            "deletePostHint": "Confirm to delete this article. It cannot be restored",
-            "notPostHint": "The article does not exist, please refresh and try again"
+            "sortUpdateDesc": "update(old-new)"
         }
     },
-    "category": {
-        "title": "一曲新词酒一杯，去年天气旧亭台。",
-        "addCategory": "The new classification",
-        "addSubCategory": "Adding subcategories",
-        "addCategoryHint": "Please enter a category name",
-        "deleteCategoryHint": "This operation will delete this category forever. Do you want to continue?"
-    },
     "tag": {
-        "title": "独在异乡为异客，每逢佳节倍思亲。",
         "addTag": "The new labels",
         "addTagHint": "Please enter the label name",
+        "deleteHint": "This action will permanently remove the change label. Do you want to continue?",
+        "title": "独在异乡为异客，每逢佳节倍思亲。",
         "updateTag": "Modify the label",
-        "updateTagHint": "Please enter a new label name",
-        "deleteHint": "This action will permanently remove the change label. Do you want to continue?"
+        "updateTagHint": "Please enter a new label name"
     }
 }

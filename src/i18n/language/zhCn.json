@@ -1,93 +1,94 @@
 {
-    "common": {
-        "search": "搜索",
-        "refresh": "刷新",
-        "cancel": "取消",
-        "synchronous": "同步",
-        "terminal": "终端",
-        "light": "日间",
-        "dark": "黑夜",
-        "setting": "设置",
-        "confirm": "确认",
-        "success": "成功",
-        "fail": "失败",
-        "add": "新增",
-        "status": "状态",
-        "sort": "排序",
-        "delete": "删除",
-        "save": "保存",
-        "warning": "警告",
-        "update": "修改"
-    },
-    "menu": {
-        "post": "文章",
-        "tag": "标签",
-        "category": "分类",
-        "pretty": "美化",
-        "blogSetting": "博客设置"
-    },
-    "hint": {
-        "deleteSuccess": "删除成功",
-        "deleteFail": "删除失败",
-        "deleteCancel": "删除取消",
-        "saveSuccess": "保存成功",
-        "saveFail": "保存失败",
-        "addSuccess": "新增成功",
-        "addFail": "新增失败",
-        "updateSuccess": "修改成功",
-        "updateFail": "修改失败"
-    },
-    "placeholder": {
-        "tag": "请选择标签",
-        "category": "请选择分类"
-    },
     "app": {
-        "projectName": "云落博客",
-        "syncSuccess": "同步成功",
-        "syncFail": "同步失败",
         "chinese": "中文",
         "english": "English",
+        "projectName": "云落博客",
+        "serverRun": "服务运行中",
         "serverStandby": "服务未启动",
-        "serverRun": "服务运行中"
+        "serverUnknown": "服务状态未知",
+        "serverUpdate": "服务更新中",
+        "syncFail": "同步失败",
+        "syncSuccess": "同步成功"
+    },
+    "category": {
+        "addCategory": "新增分类",
+        "addCategoryHint": "请输入分类名称",
+        "addSubCategory": "新增子分类",
+        "deleteCategoryHint": "此操作将永远删除此分类，是否继续？",
+        "title": "一曲新词酒一杯，去年天气旧亭台。"
+    },
+    "common": {
+        "add": "新增",
+        "cancel": "取消",
+        "confirm": "确认",
+        "dark": "黑夜",
+        "delete": "删除",
+        "fail": "失败",
+        "light": "日间",
+        "refresh": "刷新",
+        "save": "保存",
+        "search": "搜索",
+        "setting": "设置",
+        "sort": "排序",
+        "status": "状态",
+        "success": "成功",
+        "synchronous": "同步",
+        "terminal": "终端",
+        "update": "修改",
+        "warning": "警告"
+    },
+    "hint": {
+        "addFail": "新增失败",
+        "addSuccess": "新增成功",
+        "deleteCancel": "删除取消",
+        "deleteFail": "删除失败",
+        "deleteSuccess": "删除成功",
+        "saveFail": "保存失败",
+        "saveSuccess": "保存成功",
+        "updateFail": "修改失败",
+        "updateSuccess": "修改成功"
+    },
+    "menu": {
+        "blogSetting": "博客设置",
+        "category": "分类",
+        "post": "文章",
+        "pretty": "美化",
+        "tag": "标签"
+    },
+    "placeholder": {
+        "category": "请选择分类",
+        "tag": "请选择标签"
     },
     "post": {
         "list": {
-            "searchPost": "搜索文章",
+            "basic": "基础",
+            "createTime": "创建时间",
+            "deletePostHint": "确定删除此文章，删除后将无法恢复",
             "draft": "草稿",
-            "release": "发布",
+            "extraAttr": "额外属性",
+            "newPost": "新文章",
+            "notPostHint": "文章不存在，请刷新后重试",
+            "postSetting": "文章设置",
+            "postTitle": "文章标题",
+            "postUrl": "文章网址",
             "recycle": "回收站",
+            "release": "发布",
+            "searchPost": "搜索文章",
+            "senior": "高级",
+            "sortCreateAsc": "创建时间(新-旧)",
+            "sortCreateDesc": "创建时间(旧-新)",
             "sortTitleAsc": "标题(a-z)",
             "sortTitleDesc": "标题(z-a)",
             "sortUpdateAsc": "更新时间(新-旧)",
-            "sortUpdateDesc": "更新时间(旧-新)",
-            "sortCreateAsc": "创建时间(新-旧)",
-            "sortCreateDesc": "创建时间(旧-新)",
-            "postSetting": "文章设置",
-            "basic": "基础",
-            "postTitle": "文章标题",
-            "senior": "高级",
-            "postUrl": "文章网址",
-            "createTime": "创建时间",
-            "extraAttr": "额外属性",
-            "newPost": "新文章",
-            "deletePostHint": "确定删除此文章，删除后将无法恢复",
-            "deleteCancel": "取消删除",
-            "notPostHint": "文章不存在，请刷新后重试"
+            "sortUpdateDesc": "更新时间(旧-新)"
         }
     },
-    "category": {
-        "title": "一曲新词酒一杯，去年天气旧亭台。",
-        "addCategory": "新增分类",
-        "addSubCategory": "新增子分类",
-        "addCategoryHint": "请输入分类名称",
-        "deleteCategoryHint": "此操作将永远删除此分类，是否继续？"
-    },
     "tag": {
-        "title": "独在异乡为异客，每逢佳节倍思亲。",
         "addTag": "新增标签",
         "addTagHint": "请输入标签名称",
+        "deleteHint": "此操作将永久删除改标签. 是否继续?",
+        "title": "独在异乡为异客，每逢佳节倍思亲。",
         "updateTag": "修改标签",
-        "updateTagHint": "请输入新标签名称",
-        "deleteHint": "此操作将永久删除改标签. 是否继续?"
+        "updateTagHint": "请输入新标签名称"
     }
 }

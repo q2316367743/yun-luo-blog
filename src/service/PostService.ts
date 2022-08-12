@@ -3,20 +3,23 @@ import {ElLoading, ElMessage} from 'element-plus';
 
 
 import DexieInstance from '@/plugins/dexie';
+import emitter from '@/plugins/mitt';
+
 import Constant from '@/global/Constant';
 
 import ArrayUtil from '@/utils/ArrayUtil';
-import FileApi from "@/api/FileApi";
 import {deleteByPath, parsePost, savePost} from '@/utils/PostUtil'
+import FileApi from "@/api/FileApi";
 
 import Post from '@/entities/Post';
 import PostTag from '@/entities/PostTag';
 import Tag from '@/entities/Tag';
-
-import PostView from '@/views/PostView';
 import PostCategory from "@/entities/PostCategory";
 import Category from "@/entities/Category";
+
+import PostView from '@/views/PostView';
 import PostCondition from "@/condition/PostCondition";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 export default class TagService {
 
@@ -48,6 +51,8 @@ export default class TagService {
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
                 let categoryDao = trans.table('Category') as Dexie.Table<Category, number>;
                 await this.insertSelf(post, postDao, postTagDao, postCategoryDao, tagDao, categoryDao, saveContent);
+                // 新增结束
+                emitter.emit(MessageEventEnum.POST_ADD);
             });
     }
 
@@ -97,6 +102,8 @@ export default class TagService {
                 let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
                 let categoryDao = trans.table('Category') as Dexie.Table<Category, number>;
                 await this.updateSelf(post, postDao, postTagDao, postCategoryDao, tagDao, categoryDao, saveContent);
+                // 更新结束
+                emitter.emit(MessageEventEnum.POST_UPDATE);
             });
     }
 
@@ -405,6 +412,8 @@ export default class TagService {
                 }
                 // 删除内容
                 await deleteByPath(post.path)
+                // 删除结束
+                emitter.emit(MessageEventEnum.POST_DELETE);
                 return new Promise<void>((resolve) => {
                     resolve();
                 });

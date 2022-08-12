@@ -1,7 +1,7 @@
 import PostView from '@/views/PostView';
 import FileApi from "@/api/FileApi";
 import Entry from "@/global/Entry";
-import jsyaml from "js-yaml";
+import jsYaml from "js-yaml";
 import ArrayUtil from "@/utils/ArrayUtil";
 
 const knownKey = ['title', 'status', 'date', 'updated', 'comments', 'tags',
@@ -72,7 +72,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
         }
     }
     // 默认解析
-    let temp = Object.assign({}, jsyaml.load(frontMatter)) as any;
+    let temp = Object.assign({}, jsYaml.load(frontMatter)) as any;
     for (let key of Object.keys(temp)) {
         if (ArrayUtil.contains(excludeKey, key)) {
             // 如果等于拓展，跳过
@@ -122,7 +122,7 @@ export async function savePost(post: PostView): Promise<void> {
     for (let entry of post.extra) {
         target[entry.key] = entry.value;
     }
-    content += jsyaml.dump(target);
+    content += jsYaml.dump(target);
     content += "\n---\n"
     content += post.content;
     console.log('处理完成，开始保存')

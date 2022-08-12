@@ -1,6 +1,8 @@
 /**
  * 策略接口
  */
+import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
+
 export default interface BlogStrategy {
 
     /**
@@ -14,18 +16,8 @@ export default interface BlogStrategy {
     sync(): Promise<void>;
 
     /**
-     * 服务状态
+     * 将文件打包到dist目录，不进行同步
      */
-    serverStatus(): Promise<boolean>;
-
-    /**
-     * 服务开始
-     */
-    serverStart(): Promise<void>;
-
-    /**
-     * 服务停止
-     */
-    serverStop(): Promise<void>;
+    build(): Promise<void>
 
 }
