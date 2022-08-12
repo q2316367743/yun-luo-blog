@@ -10,6 +10,7 @@ ipcMain.handle('server:start', (event, args) => {
     // 启动文件服务器
     fileServer = http.createServer(function (req, res) {
         let url = req.url;
+        url = decodeURIComponent(url);
         if (sep !== "/"){
             url = url.replaceAll("/", sep);
         }

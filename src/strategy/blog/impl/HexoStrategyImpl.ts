@@ -9,7 +9,6 @@ import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
 import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext";
-import CommandAsyncOptions from "@/api/entities/CommandAsyncOptions";
 
 /**
  * hexo策略

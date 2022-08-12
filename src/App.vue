@@ -229,7 +229,7 @@ export default defineComponent({
                 valueLight: 'light',
             }),
             // 服务是否允许，true：运行中
-            server: ServerStatusEnum.STOP,
+            server: ServerStatusEnum.STOP as ServerStatusEnum,
             // 服务按钮是否禁用
             serverDisable: false
         }
@@ -347,7 +347,7 @@ export default defineComponent({
             })
         },
         toggleDark() {
-            this.isDark = !this.isDark;
+            this.isDark.value = !this.isDark;
         },
         changeI18n(language: string) {
             this.$i18n.locale = language;
