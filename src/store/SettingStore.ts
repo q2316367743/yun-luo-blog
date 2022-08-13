@@ -65,13 +65,24 @@ const environmentSetting = useLocalStorage('environmentSetting', {
     npmMirror: 'https://registry.npmmirror.com'
 });
 
+const serverSetting = useLocalStorage('serverSetting', {
+    port: 8888,
+    // 更新是否同步
+    updateBySync: true,
+    // 同步成功是否通知
+    noticeBySyncWithSuccess: false,
+    // 同步错误是否通知
+    noticeBySyncWithError: true
+})
+
 export const useSettingStore = defineStore('setting', {
     state: () => {
         return {
             basicSetting: basicSetting.value,
             syncSetting: syncSetting.value,
             imageSetting: imageSetting.value,
-            environmentSetting: environmentSetting.value
+            environmentSetting: environmentSetting.value,
+            serverSetting: serverSetting
         }
     },
     getters: {
@@ -86,6 +97,9 @@ export const useSettingStore = defineStore('setting', {
         },
         environment:(state) => {
             return state.environmentSetting;
+        },
+        server: (state) => {
+            return state.serverSetting;
         }
     },
     actions: {}

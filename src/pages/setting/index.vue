@@ -7,8 +7,8 @@
             <el-collapse-item title="图片设置" name="image">
                 <image-setting></image-setting>
             </el-collapse-item>
-            <el-collapse-item title="同步设置" name="sync">
-                <sync-setting></sync-setting>
+            <el-collapse-item title="服务器设置" name="sync">
+                <server-setting></server-setting>
             </el-collapse-item>
             <el-collapse-item title="环境设置" name="environment">
                 <environment-setting></environment-setting>
@@ -21,12 +21,12 @@ import {defineComponent} from "vue";
 
 import BasicSetting from "./components/BasicSetting.vue";
 import ImageSetting from "./components/ImageSetting.vue";
-import SyncSetting from "./components/SyncSetting.vue";
+import ServerSetting from "./components/ServerSetting.vue";
 import EnvironmentSetting from "./components/EnvironmentSetting.vue";
 
 export default defineComponent({
     name: 'setting',
-    components: {BasicSetting, SyncSetting, EnvironmentSetting, ImageSetting},
+    components: {BasicSetting, ServerSetting, EnvironmentSetting, ImageSetting},
     data: () => ({
         settingActive: 'basic'
     }),
