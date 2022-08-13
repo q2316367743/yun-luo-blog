@@ -2,10 +2,11 @@ const {ipcMain} = require('electron');
 const Client = require('ssh2-sftp-client');
 
 /**
- * SFTP上传
+ * SFTP链接
  *
  */
-ipcMain.handle('ssh:sftp', async (event, args) => {
+ipcMain.handle('sftp:upload', async (event, args) => {
+    console.log('sftp:upload');
     let sftp = new Client();
     await sftp.connect(args);
     await sftp.uploadDir(args.localDir, args.remoteDir);

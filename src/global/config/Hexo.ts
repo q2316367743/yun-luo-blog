@@ -1,4 +1,4 @@
-import jsyaml from 'js-yaml';
+import jsYaml from 'js-yaml';
 
 // # Hexo Configuration
 // ## Docs: https://hexo.io/docs/configuration.html
@@ -315,7 +315,7 @@ export default class Hexo {
     constructor(fileContent: string | void) {
         if (fileContent && fileContent !== '') {
             // 解析文件内容
-            let yaml = jsyaml.load(fileContent);
+            let yaml = jsYaml.load(fileContent);
             Object.assign(this, yaml);
         }
     }
@@ -326,7 +326,7 @@ export default class Hexo {
      * @param fileContent 文件内容
      */
     parse(fileContent: string) {
-        let yaml = jsyaml.load(fileContent);
+        let yaml = jsYaml.load(fileContent);
         Object.assign(this, yaml);
         this.content = fileContent;
     }
@@ -335,10 +335,10 @@ export default class Hexo {
      * 渲染内容
      */
     render(): string {
-        let target = Object.assign({}, jsyaml.load(this.content), this);
+        let target = Object.assign({}, jsYaml.load(this.content), this);
         // @ts-ignore
         delete target.content;
-        this.content = jsyaml.dump(target, {
+        this.content = jsYaml.dump(target, {
             indent: 2
         });
         return this.content;

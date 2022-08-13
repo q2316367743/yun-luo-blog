@@ -1,13 +1,12 @@
 import MarkdownIt from 'markdown-it';
 import Token from "markdown-it/lib/token";
-import Renderer from "markdown-it/lib/renderer";
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 
 
 const markdownIt = new MarkdownIt();
 
-function imageRenderer(tokens: Token[], idx: number, options: MarkdownIt.Options, env: any, self: Renderer): string {
+function imageRenderer(tokens: Token[]): string {
     let token = tokens[0];
     if (!token) {
         return "";

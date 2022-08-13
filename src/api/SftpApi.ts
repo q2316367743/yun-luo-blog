@@ -10,8 +10,8 @@ export default {
      *
      * @param config ssh配置
      */
-    async sftp(config: SshConfig): Promise<void> {
-        let result = (await ipcRenderer.invoke('ssh:sftp', config)) as Result<any>;
+    async upload(config: SshConfig): Promise<void> {
+        let result = (await ipcRenderer.invoke('sftp:upload', config)) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
                 resolve(result.data);

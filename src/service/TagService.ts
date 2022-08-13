@@ -101,7 +101,7 @@ export default class TagService {
                     } as TagView;
                     tagViews.push(tagView);
                 }
-                return new Promise<Array<TagView>>((resolve, reject) => {
+                return new Promise<Array<TagView>>((resolve) => {
                     resolve(tagViews);
                 })
             })

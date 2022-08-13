@@ -6,7 +6,6 @@ import Constant from "@/global/Constant";
 import ServerApi from "@/api/ServerApi";
 import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
-import ServerSetting from "@/entities/setting/ServerSetting";
 import {useSettingStore} from "@/store/SettingStore";
 
 /**
@@ -19,7 +18,7 @@ export default class ServerService {
      */
     status: ServerStatusEnum = ServerStatusEnum.STOP;
     /**
-     * 是否有待办，
+     * 是否有待办
      */
     todo: boolean = false;
 

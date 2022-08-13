@@ -3,7 +3,6 @@ import FileApi from "@/api/FileApi";
 import {useSettingStore} from "@/store/SettingStore";
 import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import {ElNotification} from "element-plus";
-import {exists} from "fs";
 
 /**
  * 启动应用
