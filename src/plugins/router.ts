@@ -7,6 +7,10 @@ import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
 import PrettyHexoPage from '@/pages/pretty/hexo/index.vue';
 import ConfigHexoPage from '@/pages/config/hexo/index.vue';
+import ToolPage from '@/pages/tool/index.vue';
+import ToolImportPage from '@/pages/tool/pages/import.vue';
+import ToolBackupPage from '@/pages/tool/pages/backup.vue';
+import ToolSyncRemotePage from '@/pages/tool/pages/sync-remote.vue';
 
 /**
  * 定义路由模块
@@ -51,6 +55,26 @@ const routes: Array<RouteRecordRaw> = [
         path: '/config/hexo',
         name: 'config-hexo',
         component: ConfigHexoPage
+    },
+    {
+        path: "/tool",
+        name: 'tool',
+        component: ToolPage,
+    },
+    {
+        path: '/tool/backup',
+        name: 'tool-backup',
+        component: ToolBackupPage
+    },
+    {
+        path: '/tool/import',
+        name: 'tool-import',
+        component: ToolImportPage
+    },
+    {
+        path: '/tool/sync-remote',
+        name: 'tool-sync-remote',
+        component: ToolSyncRemotePage
     }
 ]
 

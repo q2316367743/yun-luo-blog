@@ -12,7 +12,7 @@
                     </el-icon>
                 </div>
             </div>
-            <el-menu :default-active="defaultActive" router :collapse="isCollapse">
+            <el-menu :default-active="$route.path" router :collapse="isCollapse">
                 <el-menu-item index="/post/list">
                     <el-icon>
                         <document/>
@@ -42,6 +42,12 @@
                         <Menu/>
                     </el-icon>
                     <span>{{ $t('menu.blogSetting') }}</span>
+                </el-menu-item>
+                <el-menu-item index="/tool">
+                    <el-icon>
+                        <tools/>
+                    </el-icon>
+                    <span>{{ $t('menu.tool') }}</span>
                 </el-menu-item>
             </el-menu>
         </aside>
@@ -187,6 +193,7 @@ import Moon from "@/icon/Moon.vue"
 import Server from '@/icon/Server.vue';
 import Run from '@/icon/Run.vue';
 import Loader from '@/icon/Loader.vue';
+import Tools from '@/icon/Tools.vue';
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
 import {useSettingStore} from "@/store/SettingStore";
@@ -204,7 +211,7 @@ import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
 export default defineComponent({
     components: {
         Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag,
-        ShoppingCartFull, SettingPage, Expand, Fold, Suitcase,
+        ShoppingCartFull, SettingPage, Expand, Fold, Suitcase, Tools,
         Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run,
         Loader
     },
@@ -251,10 +258,10 @@ export default defineComponent({
             this.serverDisable = true;
         });
         emitter.on(MessageEventEnum.SERVER_UPDATE_COMPLETE, () => {
-            // 服务更新结束
-            this.server = ServerStatusEnum.RUN;
             // 解除服务禁用
             this.serverDisable = false;
+            // 服务更新结束
+            this.server = ServerStatusEnum.RUN;
         });
         emitter.on(MessageEventEnum.SERVER_STOP, () => {
             // 服务停止
@@ -347,7 +354,7 @@ export default defineComponent({
             })
         },
         toggleDark() {
-            this.isDark.value = !this.isDark;
+            this.isDark = !this.isDark;
         },
         changeI18n(language: string) {
             this.$i18n.locale = language;

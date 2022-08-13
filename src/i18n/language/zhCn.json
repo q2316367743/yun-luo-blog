@@ -57,7 +57,8 @@
         "category": "分类",
         "post": "文章",
         "pretty": "美化",
-        "tag": "标签"
+        "tag": "标签",
+        "tool": "工具"
     },
     "placeholder": {
         "category": "请选择分类",

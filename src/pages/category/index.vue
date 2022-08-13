@@ -1,8 +1,8 @@
 <template>
-    <div id="container-header">
-        <p style="line-height: 40px;padding: 0 20px">{{ $t('category.title') }}</p>
-    </div>
-    <div id="container-main" class="category">
+    <container-header>
+        {{ $t('category.title') }}
+    </container-header>
+    <container-main class="category">
         <el-scrollbar>
             <el-tree :data="categoryTree" :props="categoryProps" default-expand-all>
                 <template #default="{ node, data }">
@@ -13,9 +13,11 @@
                         </div>
                         <div>
                             <el-button type="primary" link @click.stop="categoryAdd(data.id)">
-                                {{ $t('category.addSubCategory') }}</el-button>
+                                {{ $t('category.addSubCategory') }}
+                            </el-button>
                             <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0"
-                                @click="categoryRemove(data.id)">{{ $t('common.delete') }}</el-button>
+                                       @click="categoryRemove(data.id)">{{ $t('common.delete') }}
+                            </el-button>
                         </div>
                     </div>
                 </template>
@@ -24,21 +26,25 @@
         <div class="category-add">
             <el-button type="primary" circle :icon="plus" @click="categoryAdd(0)"></el-button>
         </div>
-    </div>
+    </container-main>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw } from "vue";
-import { Plus } from '@element-plus/icons-vue';
+import {defineComponent, markRaw} from "vue";
+import {Plus} from '@element-plus/icons-vue';
 
-import { categoryService } from "@/global/BeanFactory";
+import ContainerHeader from "@/components/Container/ContainerHeader.vue";
+import ContainerMain from "@/components/Container/ContainerMain.vue";
+
+import {categoryService} from "@/global/BeanFactory";
 import CategoryView from "@/views/CategoryView";
-import { ElMessage, ElMessageBox } from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 export default defineComponent({
     name: 'category',
+    components: {ContainerMain, ContainerHeader},
     setup() {
         const plus = markRaw(Plus);
-        return { plus }
+        return {plus}
     },
     data: () => ({
         categoryProps: {
@@ -59,7 +65,7 @@ export default defineComponent({
             ElMessageBox.prompt(this.$t('category.addCategoryHint'), this.$t('category.addCategory'), {
                 confirmButtonText: this.$t('common.add'),
                 cancelButtonText: this.$t('common.cancel'),
-            }).then(({ value }) => {
+            }).then(({value}) => {
                 categoryService.insert({
                     name: value,
                     parentId: id

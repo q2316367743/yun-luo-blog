@@ -57,7 +57,8 @@
         "category": "category",
         "post": "post",
         "pretty": "pretty",
-        "tag": "tag"
+        "tag": "tag",
+        "tool": "tool"
     },
     "placeholder": {
         "category": "Please select category",

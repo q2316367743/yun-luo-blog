@@ -5,7 +5,7 @@ const {sep} = require('path');
 
 let fileServer;
 
-ipcMain.handle('server:start', (event, args) => {
+ipcMain.handle('server:start', (_event, args) => {
     console.log('server:start');
     // 启动文件服务器
     fileServer = http.createServer(function (req, res) {

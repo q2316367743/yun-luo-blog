@@ -1,6 +1,6 @@
 <template>
     <!-- 面板 -->
-    <div id="container-header" style="padding: 0 20px">
+    <container-header>
         <el-tabs v-model="activeName" @tab-click="tabClick">
             <el-tab-pane label="网站" name="site">
             </el-tab-pane>
@@ -19,8 +19,8 @@
             <el-tab-pane label="主题配置" name="theme">
             </el-tab-pane>
         </el-tabs>
-    </div>
-    <div id="container-main" class="config-hexo">
+    </container-header>
+    <container-main class="config-hexo">
         <el-scrollbar>
             <div v-if="blogIsInit">
                 <el-form label-width="80px" v-if="activeName === 'site'">
@@ -236,7 +236,7 @@
                 <el-button type="primary" @click="saveTheme" v-else>保存</el-button>
             </div>
         </el-scrollbar>
-    </div>
+    </container-main>
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
@@ -245,8 +245,11 @@ import {ElMessage, TabsPaneContext} from "element-plus";
 import Hexo from "@/global/config/Hexo";
 import FileApi from "@/api/FileApi";
 import Constant from "@/global/Constant";
+
 import HexoConfigEditor from "@/components/HexoConfigEditor/index.vue";
 import ThemeConfigEditor from "@/components/ThemeConfigEditor/index.vue";
+import ContainerHeader from "@/components/Container/ContainerHeader.vue";
+import ContainerMain from "@/components/Container/ContainerMain.vue";
 
 import languages from './components/languages';
 import timezones from './components/timezones';
@@ -254,7 +257,7 @@ import ArrayUtil from "@/utils/ArrayUtil";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 
 export default defineComponent({
-    components: {HexoConfigEditor, ThemeConfigEditor},
+    components: {ContainerMain, ContainerHeader, HexoConfigEditor, ThemeConfigEditor},
     data: () => ({
         hexo: new Hexo(),
         theme: "",

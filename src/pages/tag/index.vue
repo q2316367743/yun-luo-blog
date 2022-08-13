@@ -1,8 +1,6 @@
 <template>
-    <div id="container-header">
-        <p style="line-height: 40px;padding: 0 20px">{{ $t('tag.title') }}</p>
-    </div>
-    <div id="container-main" class="tag-page">
+    <container-header>{{ $t('tag.title') }}</container-header>
+    <container-main class="tag-page">
         <el-scrollbar>
             <div class="content">
                 <div class="tag" v-for="(tag, index) in tagList" :key="index">
@@ -18,24 +16,26 @@
         <div class="tag-add">
             <el-button type="primary" circle :icon="plus" @click="tagAdd"></el-button>
         </div>
-    </div>
+    </container-main>
 </template>
 <script lang="ts">
-import { defineComponent, markRaw } from "vue";
-import { Delete, Edit, Plus, PriceTag } from '@element-plus/icons-vue';
+import {defineComponent, markRaw} from "vue";
+import {Delete, Edit, Plus, PriceTag} from '@element-plus/icons-vue';
 
-import { tagService } from "@/global/BeanFactory";
+import {tagService} from "@/global/BeanFactory";
 import TagView from '@/views/TagView';
-import { ElMessage, ElMessageBox } from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
+import ContainerHeader from "@/components/Container/ContainerHeader.vue";
+import ContainerMain from "@/components/Container/ContainerMain.vue";
 
 export default defineComponent({
     name: 'tag',
-    components: { PriceTag },
+    components: {ContainerMain, ContainerHeader, PriceTag},
     setup() {
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);
         const deleted = markRaw(Delete);
-        return { plus, edit, deleted }
+        return {plus, edit, deleted}
     },
     data: () => ({
         tagList: new Array<TagView>()
@@ -53,7 +53,7 @@ export default defineComponent({
             ElMessageBox.prompt(this.$t('tag.addTagHint'), this.$t('tag.addTag'), {
                 confirmButtonText: this.$t('common.add'),
                 cancelButtonText: this.$t('common.cancel'),
-            }).then(({ value }) => {
+            }).then(({value}) => {
                 tagService.insert(value).then(() => {
                     ElMessage({
                         showClose: true,
@@ -74,7 +74,7 @@ export default defineComponent({
                 confirmButtonText: this.$t('common.update'),
                 cancelButtonText: this.$t('common.cancel'),
                 inputValue: tag.name
-            }).then(({ value }) => {
+            }).then(({value}) => {
                 tagService.update(tag.id, value).then(() => {
                     ElMessage({
                         showClose: true,
