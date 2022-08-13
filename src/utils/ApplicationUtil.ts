@@ -3,6 +3,7 @@ import FileApi from "@/api/FileApi";
 import {useSettingStore} from "@/store/SettingStore";
 import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import {ElNotification} from "element-plus";
+import {exists} from "fs";
 
 /**
  * 启动应用
@@ -35,6 +36,20 @@ export default {
                 });
             })
             // 部署目录
+            Constant.PATH.DIST().then(path => {
+                FileApi.createDir(path).catch(() => {
+                });
+            });
+            // git忽略文件
+            Constant.PATH.GITIGNORE().then(path => {
+                FileApi.exist(path).then(exists => {
+                    if (!exists) {
+                        // 不存在则创建
+                        FileApi.writeFile(path, Constant.CONTENT.GITIGNORE).catch(() => {
+                        })
+                    }
+                })
+            })
             Constant.PATH.DIST().then(path => {
                 FileApi.createDir(path).catch(() => {
                 });

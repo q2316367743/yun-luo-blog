@@ -11,12 +11,18 @@ const CONFIG = '.config';
 const POST_IMAGES = 'post-images';
 // 打包后的资源
 const DIST = 'dist';
+// git忽略文件
+const GITIGNORE = ".gitignore";
 // hexo
 const HEXO = 'hexo';
 const HEXO_CONFIG = '_config.yml';
 const HEXO_THEME = 'themes';
 const HEXO_PUBLIC = 'public';
 const HEXO_PACKAGE_JSON = 'package.json';
+
+const GITIGNORE_CONTENT = `dist
+hexo/public
+hexo/node_modules`;
 
 /**
  * 获取项目基础目录
@@ -37,6 +43,9 @@ export default {
     BASE: BASE,
     POST: POST,
     CONFIG: CONFIG,
+    CONTENT: {
+        GITIGNORE:  GITIGNORE_CONTENT
+    },
     HEXO: {
         NAME: HEXO,
         INIT: "init",
@@ -66,6 +75,10 @@ export default {
         DIST: async (): Promise<string> => {
             let document = await basicDir();
             return FileApi.resolve(document, BASE, DIST);
+        },
+        GITIGNORE: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, GITIGNORE);
         },
         HEXO: async (): Promise<string> => {
             let document = await basicDir();
