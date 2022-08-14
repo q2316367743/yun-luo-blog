@@ -20,7 +20,7 @@
         </el-scrollbar>
         <el-empty v-else description="博客尚未初始化，请先初始化后重试"/>
         <div class="plugin-add" v-if="blogIsInit">
-            <el-button type="primary" link :icon="plus" @click="openPluginAddDialog"></el-button>
+            <el-button type="primary" circle :icon="plus" @click="openPluginAddDialog"></el-button>
         </div>
         <el-dialog v-model="pluginAddDialog" title="新增插件" draggable top="25vh">
             <el-form v-model="plugin" label-width="80px">
@@ -45,8 +45,8 @@ import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
-import {useSettingStore} from "@/store/SettingStore";
 import NativeApi from "@/api/NativeApi";
+import {settingService} from "@/global/BeanFactory";
 
 /**
  * 依赖
@@ -125,7 +125,7 @@ export default defineComponent({
                 return;
             }
             // 检查git地址是否选择
-            let environment = useSettingStore().environment;
+            let environment = settingService.getEnvironment();
             if (environment.npmPath == "") {
                 ElMessage({
                     showClose: true,
@@ -182,7 +182,7 @@ export default defineComponent({
                 confirmButtonText: "删除"
             }).then(() => {
                 // 检查git地址是否选择
-                let environment = useSettingStore().environment;
+                let environment = settingService.getEnvironment();
                 if (environment.npmPath == "") {
                     ElMessage({
                         showClose: true,
@@ -240,8 +240,8 @@ export default defineComponent({
 
     .plugin-add {
         position: fixed;
-        right: 20px;
-        top: 20px;
+        right: 120px;
+        bottom: 42px;
     }
 
     .plugin-card {

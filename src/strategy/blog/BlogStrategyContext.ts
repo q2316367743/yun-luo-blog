@@ -4,7 +4,7 @@
 import BlogStrategy from "@/strategy/blog/BlogStrategy";
 import BlogTypeEnum from "@/enumeration/BlogTypeEnum";
 import HexoStrategyImpl from "@/strategy/blog/impl/HexoStrategyImpl";
-import {useSettingStore} from "@/store/SettingStore";
+import {settingService} from "@/global/BeanFactory";
 
 class BlogStrategyContext {
 
@@ -22,7 +22,7 @@ class BlogStrategyContext {
     }
 
     public getStrategy(): BlogStrategy {
-        let basicSetting = useSettingStore().basic;
+        let basicSetting = settingService.getBasic();
         let strategy = this.strategyMap.get(basicSetting.blogType);
         if (!strategy) {
             return this.strategyMap.get(BlogTypeEnum.HEXO)!;

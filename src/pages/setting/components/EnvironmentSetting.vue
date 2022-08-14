@@ -31,13 +31,17 @@
         <el-form-item label="npm镜像">
             <el-input v-model="environmentSetting.npmMirror" placeholder="如不熟悉请勿更改"/>
         </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="save">保存</el-button>
+        </el-form-item>
     </el-form>
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
 import {Folder} from "@element-plus/icons-vue";
-import {useSettingStore} from "@/store/SettingStore";
 import DialogApi from "@/api/DialogApi";
+import {settingService} from "@/global/BeanFactory";
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
     setup() {
@@ -48,7 +52,7 @@ export default defineComponent({
     },
     name: 'environment-setting',
     data: () => ({
-        environmentSetting: useSettingStore().environmentSetting
+        environmentSetting: settingService.getEnvironment()
     }),
     methods: {
         async openNodeDialog() {
@@ -107,6 +111,21 @@ export default defineComponent({
                 this.environmentSetting.gitPath = (selected as string[])[0];
             }
         },
+        save() {
+            settingService.saveEnvironment(this.environmentSetting).then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '环境设置 - 保存成功'
+                });
+            }).catch(e => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '环境设置 - 保存失败，' + e
+                });
+            });
+        }
     }
 });
 </script>

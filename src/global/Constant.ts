@@ -1,8 +1,12 @@
 import FileApi from "@/api/FileApi";
-import {useSettingStore} from "@/store/SettingStore";
 
 // 文件
-const CONFIG_SERVER = 'server.json';
+const SETTING_SERVER = 'setting-server.json';
+const SETTING_BASIC = 'setting-basic.json';
+const SETTING_IMAGE = 'setting-image.json';
+const SETTING_ENVIRONMENT = 'setting-environment.json';
+const SETTING_SYNC_REMOTE = 'setting-sync-remote.json';
+const SETTING_SYNC_LOCAL = 'setting-sync-local.json';
 
 // 文件夹
 
@@ -34,26 +38,28 @@ hexo/node_modules`;
 /**
  * 获取项目基础目录
  */
-function basicDir(): Promise<string> {
-    try {
-        let path = useSettingStore().basic.path;
-        if (path && path !== "") {
-            return Promise.resolve(path);
-        }
-        return FileApi.defaultDir();
-    } catch (e) {
-        return FileApi.defaultDir();
+async function basicDir(): Promise<string> {
+    let basePath = localStorage.getItem('basePath');
+    if (!basePath) {
+        basePath = await FileApi.defaultDir();
+        localStorage.setItem('basePath', basePath);
     }
+    return Promise.resolve(basePath);
 }
 
 export default {
     BASE: BASE,
     POST: POST,
-    CONFIG: {
-        SERVER: CONFIG_SERVER
+    SETTING: {
+        SERVER: SETTING_SERVER,
+        BASIC: SETTING_BASIC,
+        IMAGE: SETTING_IMAGE,
+        SYNC_REMOTE: SETTING_SYNC_REMOTE,
+        SYNC_LOCAL: SETTING_SYNC_LOCAL,
+        ENVIRONMENT: SETTING_ENVIRONMENT
     },
     CONTENT: {
-        GITIGNORE:  CONTENT_GITIGNORE
+        GITIGNORE: CONTENT_GITIGNORE
     },
     HEXO: {
         NAME: HEXO,
@@ -69,9 +75,29 @@ export default {
             let document = await basicDir();
             return FileApi.resolve(document, BASE, GITIGNORE);
         },
-        CONFIG_SERVER: async (): Promise<string> => {
+        SETTING_SERVER: async (): Promise<string> => {
             let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, CONFIG_SERVER);
+            return FileApi.resolve(document, BASE, CONFIG, SETTING_SERVER);
+        },
+        SETTING_BASIC: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, SETTING_BASIC);
+        },
+        SETTING_IMAGE: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, SETTING_IMAGE);
+        },
+        SETTING_ENVIRONMENT: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, SETTING_ENVIRONMENT);
+        },
+        SETTING_SYNC_REMOTE: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, SETTING_SYNC_REMOTE);
+        },
+        SETTING_SYNC_LOCAL: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, SETTING_SYNC_LOCAL);
         }
     },
     FOLDER: {

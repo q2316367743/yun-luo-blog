@@ -30,7 +30,6 @@ export default defineComponent({
     data: () => ({}),
     methods: {
         toRouter(path: string) {
-            console.log(path)
             this.$router.push(path);
         }
     }

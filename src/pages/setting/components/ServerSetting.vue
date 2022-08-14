@@ -42,6 +42,12 @@ export default defineComponent({
                     type: 'success',
                     message: '服务器设置 - 保存成功'
                 })
+            }).catch(e => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '服务器设置 - 保存失败，' + e
+                });
             });
         }
     }

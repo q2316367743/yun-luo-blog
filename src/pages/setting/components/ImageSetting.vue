@@ -47,21 +47,41 @@
         <el-form-item label="端口" v-if="imageSetting.type === 3">
             <el-input-number v-model="imageSetting.picGo.port" controls-position="right"></el-input-number>
         </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="save">保存</el-button>
+        </el-form-item>
     </el-form>
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-import {useSettingStore} from '@/store/SettingStore';
+import {settingService} from "@/global/BeanFactory";
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
     name: 'blog-setting',
     data: () => ({
-        imageSetting: useSettingStore().imageSetting,
+        imageSetting: settingService.getImage(),
         storageAreaSelect: true
     }),
     created() {
     },
-    methods: {}
+    methods: {
+        save() {
+            settingService.saveImage(this.imageSetting).then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '图片设置 - 保存成功'
+                });
+            }).catch(e => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '图片设置 - 保存失败，' + e
+                });
+            });
+        }
+    }
 });
 </script>
 <style scoped>

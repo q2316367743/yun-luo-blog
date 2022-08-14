@@ -1,9 +1,9 @@
 import ImageStrategy from '@/strategy/image/ImageStrategy';
 import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import LocalImageStrategyImpl from "@/strategy/image/impl/LocalImageStrategyImpl";
-import {useSettingStore} from "@/store/SettingStore";
 import PicGoImageStrategyImpl from "@/strategy/image/impl/PicGoImageStrategyImpl";
 import QiNiuImageStrategyImpl from "@/strategy/image/impl/QiNiuImageStrategyImpl";
+import {settingService} from "@/global/BeanFactory";
 
 /**
  * 图片策略上下文
@@ -29,7 +29,7 @@ class ImageStrategyContext {
         if (name) {
             strategy = this.strategyMap.get(name);
         } else {
-            let image = useSettingStore().image;
+            let image = settingService.getImage();
             strategy = this.strategyMap.get(image.type);
         }
         if (!strategy) {

@@ -1,10 +1,9 @@
 import BlogStrategy from "@/strategy/blog/BlogStrategy";
-import {useSettingStore} from "@/store/SettingStore";
 import {ElLoading, ElMessage} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
-import {postService} from "@/global/BeanFactory";
+import {postService, settingService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
@@ -25,7 +24,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             return Promise.reject("博客未初始化，请初始化后重试")
         }
         // 获取hexo命令目录
-        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        let hexoCommandPath = settingService.getEnvironment().hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
             return new Promise<void>((_resolve, reject) => {
                 reject("请配置hexo命令路径");
@@ -154,7 +153,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             return Promise.reject("博客未初始化，请初始化后重试")
         }
         // 获取hexo命令目录
-        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        let hexoCommandPath = settingService.getEnvironment().hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
             return new Promise<void>((_resolve, reject) => {
                 reject("请配置hexo命令路径");
@@ -172,7 +171,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             return Promise.reject("博客未初始化，请初始化后重试")
         }
         // 获取hexo命令目录
-        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        let hexoCommandPath = settingService.getEnvironment().hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
             return new Promise<void>((_resolve, reject) => {
                 reject("请配置hexo命令路径");

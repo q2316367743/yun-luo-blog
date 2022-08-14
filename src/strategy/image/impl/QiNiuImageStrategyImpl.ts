@@ -1,8 +1,8 @@
 import ImageStrategy from "@/strategy/image/ImageStrategy";
-import {useSettingStore} from "@/store/SettingStore";
 import {ElLoading} from "element-plus";
 import NativeApi from "@/api/NativeApi";
 import ArrayUtil from "@/utils/ArrayUtil";
+import {settingService} from "@/global/BeanFactory";
 
 export default class QiNiuImageStrategyImpl implements ImageStrategy {
 
@@ -45,7 +45,7 @@ export default class QiNiuImageStrategyImpl implements ImageStrategy {
     upload(): Promise<string> {
         return Promise.reject("暂不支持")
         // 获取七牛云配置信息
-        let image = useSettingStore().image;
+        let image = settingService.getImage();
         let storageArea = image.qiNiu.storageArea;
         if (!storageArea || storageArea === "") {
             return Promise.reject("存储空间未设置");

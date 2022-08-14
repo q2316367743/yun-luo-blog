@@ -6,16 +6,19 @@ export default {
      * @param target
      */
     assignWithTarget<T>(source: any, target: T): T {
+        let result = {} as any;
         if (!source) {
-            return target;
+            source = {};
         }
         for (let key of Object.keys(target)) {
             if (source[key]) {
+                result[key] = source[key];
+            }else {
                 // @ts-ignore
-                target[key] = source[key];
+                result[key] = target[key];
             }
         }
-        return target;
+        return result;
     },
 
     /**

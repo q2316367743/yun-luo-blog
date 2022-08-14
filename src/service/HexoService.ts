@@ -1,10 +1,10 @@
-import {useSettingStore} from "@/store/SettingStore";
 import {ElLoading, ElMessageBox} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import NativeApi from "@/api/NativeApi";
 import StrUtil from "@/utils/StrUtil";
 import TerminalStack from "@/entities/TerminalStack";
+import {settingService} from "@/global/BeanFactory";
 
 export default class HexoService {
 
@@ -16,7 +16,7 @@ export default class HexoService {
     }
 
     async getHexoCommandPath(): Promise<string> {
-        let hexoCommandPath = useSettingStore().environment.hexoPath;
+        let hexoCommandPath = settingService.getEnvironment().hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
             return new Promise<string>((resolve, reject) => {
                 reject("请配置hexo命令路径");

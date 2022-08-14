@@ -22,7 +22,7 @@
         </el-scrollbar>
         <el-empty v-else description="博客尚未初始化，请先初始化后重试"/>
         <div class="theme-add" v-if="blogIsInit">
-            <el-button type="primary" link :icon="plus" @click="openThemeAddDialog"></el-button>
+            <el-button type="primary" circle :icon="plus" @click="openThemeAddDialog"></el-button>
         </div>
         <el-dialog v-model="themeAddDialog" title="新增主题" draggable top="25vh">
             <el-form label-width="100px">
@@ -61,9 +61,9 @@ import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import NativeApi from "@/api/NativeApi";
-import {useSettingStore} from "@/store/SettingStore";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import DialogApi from "@/api/DialogApi";
+import {settingService} from "@/global/BeanFactory";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -142,7 +142,7 @@ export default defineComponent({
                 })
                 return;
             }
-            let gitPath = useSettingStore().environment.gitPath;
+            let gitPath = settingService.getEnvironment().gitPath;
             if (!gitPath || gitPath === "") {
                 ElMessage({
                     showClose: true,
@@ -368,8 +368,8 @@ export default defineComponent({
 
     .theme-add {
         position: fixed;
-        right: 20px;
-        top: 20px;
+        right: 120px;
+        bottom: 42px;
     }
 }
 

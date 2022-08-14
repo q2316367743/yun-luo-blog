@@ -196,14 +196,13 @@ import Loader from '@/icon/Loader.vue';
 import Tools from '@/icon/Tools.vue';
 
 import ApplicationUtil from '@/utils/ApplicationUtil';
-import {useSettingStore} from "@/store/SettingStore";
 import Constant from "@/global/Constant";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import NativeApi from "@/api/NativeApi";
 
 import SettingPage from '@/pages/setting/index.vue';
 import TerminalHexoPage from "@/pages/terminal/hexo/index.vue";
-import {serverService} from "@/global/BeanFactory";
+import {serverService, settingService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
@@ -224,7 +223,7 @@ export default defineComponent({
     },
     data: () => {
         return {
-            basicSetting: useSettingStore().basicSetting,
+            basicSetting: settingService.getBasic(),
             defaultActive: '/post/list',
             settingDialog: false,
             terminalDialog: false,
@@ -242,8 +241,6 @@ export default defineComponent({
         }
     },
     created() {
-        // 建议
-        ApplicationUtil.suggest();
         // 此处注册服务器事件
         emitter.on(MessageEventEnum.SERVER_START, () => {
             // 服务启动

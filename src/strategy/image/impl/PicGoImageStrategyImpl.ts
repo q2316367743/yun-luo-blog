@@ -1,8 +1,8 @@
 import ImageStrategy from "@/strategy/image/ImageStrategy";
-import {useSettingStore} from "@/store/SettingStore";
 import NativeApi from "@/api/NativeApi";
 import DialogApi from "@/api/DialogApi";
 import {ElLoading} from "element-plus";
+import {settingService} from "@/global/BeanFactory";
 
 /**
  * PicGo响应体
@@ -43,7 +43,7 @@ export default class PicGoImageStrategyImpl implements ImageStrategy {
             });
             try {
                 let path = (selected as string[])[0];
-                let imageSetting = useSettingStore().image;
+                let imageSetting = settingService.getImage();
                 let response = await NativeApi.http<PicGoResult>({
                     url: `http://${imageSetting.picGo.address}:${imageSetting.picGo.port}/upload`,
                     method: "POST",

@@ -29,16 +29,19 @@
         <el-form-item label="开发工具">
             <el-button type="primary" @click="openDevTools">打开开发工具</el-button>
         </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="save">保存</el-button>
+        </el-form-item>
     </el-form>
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {useSettingStore} from '@/store/SettingStore';
 import {Folder} from "@element-plus/icons-vue";
 import ApplicationApi from "@/api/ApplicationApi";
 import {ElMessage} from "element-plus";
 import Constant from "@/global/Constant";
 import NativeApi from "@/api/NativeApi";
+import {settingService} from "@/global/BeanFactory";
 
 export default defineComponent({
     name: "basic-setting",
@@ -49,7 +52,7 @@ export default defineComponent({
         }
     },
     data: () => ({
-        basicSetting: useSettingStore().basicSetting,
+        basicSetting: settingService.getBasic(),
         basicDir: "",
     }),
     created() {
@@ -79,6 +82,21 @@ export default defineComponent({
             Constant.FOLDER.BASE().then(path => {
                 this.basicDir = path;
             })
+        },
+        save() {
+            settingService.saveBasic(this.basicSetting).then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '基础设置 - 保存成功'
+                })
+            }).catch(e => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '基础设置 - 保存失败，' + e
+                });
+            });
         }
     }
 });
