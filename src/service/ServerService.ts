@@ -6,7 +6,7 @@ import Constant from "@/global/Constant";
 import ServerApi from "@/api/ServerApi";
 import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
-import {useSettingStore} from "@/store/SettingStore";
+import {serverService, settingService} from "@/global/BeanFactory";
 
 /**
  * 服务器 - 服务
@@ -47,7 +47,7 @@ export default class ServerService {
             emitter.emit(MessageEventEnum.SERVER_UPDATE_START)
             // 将文件构建到dist目录
             blogStrategyContext.getStrategy().build(() => {
-                if (useSettingStore().serverSetting.noticeBySyncWithSuccess) {
+                if (settingService.getServer().noticeBySyncWithSuccess) {
                     ElNotification({
                         title: '服务器资源同步',
                         message: '服务器资源已更新',
@@ -72,7 +72,7 @@ export default class ServerService {
                 this.status = ServerStatusEnum.RUN;
                 // 发布服务器更新完成事件
                 emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
-                if (useSettingStore().serverSetting.noticeBySyncWithError) {
+                if (settingService.getServer().noticeBySyncWithError) {
                     ElNotification({
                         title: '服务器资源同步',
                         message: '服务器资源更新错误' + ',' + e,
@@ -87,8 +87,9 @@ export default class ServerService {
     }
 
     async start(): Promise<void> {
-        let dist = await Constant.PATH.DIST();
-        await ServerApi.start(dist, useSettingStore().serverSetting.port);
+        let dist = await Constant.FOLDER.DIST();
+        let serverSetting = settingService.getServer();
+        await ServerApi.start(dist, serverSetting.port);
         // 状态变为运行中
         this.status = ServerStatusEnum.RUN;
         // 发布服务器启动事件
@@ -97,7 +98,7 @@ export default class ServerService {
             confirmButtonText: "打开",
             cancelButtonText: "取消"
         }).then(() => {
-            NativeApi.openUrl(`http://localhost:${useSettingStore().serverSetting.port}`);
+            NativeApi.openUrl(`http://localhost:${serverSetting.port}`);
         }).catch(() => {
             // 取消打开浏览器
         });

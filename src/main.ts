@@ -19,6 +19,7 @@ import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import ApplicationUtil from "@/utils/ApplicationUtil";
 
 // Monaco Editor 在Vite中的配置
 // @ts-ignore
@@ -40,7 +41,7 @@ self.MonacoEnvironment = {
     }
 }
 
-// 创建时注册语言服务
+// 启动时注册语言服务
 monaco.languages.register({ id: 'markdown' });
 monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
 monaco.languages.setLanguageConfiguration('markdown', markdown.config);
@@ -48,6 +49,8 @@ monaco.languages.registerCompletionItemProvider('markdown', markdown.provider);
 monaco.languages.register({ id: 'yaml' });
 monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
 monaco.languages.setLanguageConfiguration('yaml', yaml.config);
+// 启动时检测
+ApplicationUtil.launch();
 
 
 createApp(App)

@@ -204,7 +204,7 @@ const config = {
 
 // 图片
 const imageNames = new Array<string>();
-Constant.PATH.POST_IMAGES().then(path => {
+Constant.FOLDER.POST_IMAGES().then(path => {
     FileApi.listDir(path).then(files => {
         for (let file of files) {
             imageNames.push(file.name!);

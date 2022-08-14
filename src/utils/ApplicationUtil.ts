@@ -16,31 +16,31 @@ export default {
     launch() {
         // 获取文档目录
         // 创建基础文件夹
-        Constant.PATH.BASE().then(path => {
+        Constant.FOLDER.BASE().then(path => {
             FileApi.createDir(path).catch(() => {
             });
             // 创建配置文件夹
-            Constant.PATH.CONFIG().then(path => {
+            Constant.FOLDER.CONFIG().then(path => {
                 FileApi.createDir(path).catch(() => {
                 });
             })
             // 文章目录
-            Constant.PATH.POST().then(path => {
+            Constant.FOLDER.POST().then(path => {
                 FileApi.createDir(path).catch(() => {
                 });
             })
             // 图片目录
-            Constant.PATH.POST_IMAGES().then(path => {
+            Constant.FOLDER.POST_IMAGES().then(path => {
                 FileApi.createDir(path).catch(() => {
                 });
             })
             // 部署目录
-            Constant.PATH.DIST().then(path => {
+            Constant.FOLDER.DIST().then(path => {
                 FileApi.createDir(path).catch(() => {
                 });
             });
             // git忽略文件
-            Constant.PATH.GITIGNORE().then(path => {
+            Constant.FILE.GITIGNORE().then(path => {
                 FileApi.exist(path).then(exists => {
                     if (!exists) {
                         // 不存在则创建
@@ -49,12 +49,12 @@ export default {
                     }
                 })
             })
-            Constant.PATH.DIST().then(path => {
+            Constant.FOLDER.DIST().then(path => {
                 FileApi.createDir(path).catch(() => {
                 });
             });
             // Hexo目录
-            Constant.PATH.HEXO().then(path => {
+            Constant.FOLDER.HEXO().then(path => {
                 FileApi.createDir(path).catch(() => {
                 });
             });
@@ -78,6 +78,6 @@ export default {
                 type: 'warning',
             })
         }
-    },
+    }
 
 }

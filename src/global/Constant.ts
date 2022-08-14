@@ -1,6 +1,11 @@
 import FileApi from "@/api/FileApi";
 import {useSettingStore} from "@/store/SettingStore";
 
+// 文件
+const CONFIG_SERVER = 'server.json';
+
+// 文件夹
+
 // 基础
 const BASE = 'yun-luo-blog';
 // 文章
@@ -20,7 +25,9 @@ const HEXO_THEME = 'themes';
 const HEXO_PUBLIC = 'public';
 const HEXO_PACKAGE_JSON = 'package.json';
 
-const GITIGNORE_CONTENT = `dist
+// 文件内容
+
+const CONTENT_GITIGNORE = `dist
 hexo/public
 hexo/node_modules`;
 
@@ -42,9 +49,11 @@ function basicDir(): Promise<string> {
 export default {
     BASE: BASE,
     POST: POST,
-    CONFIG: CONFIG,
+    CONFIG: {
+        SERVER: CONFIG_SERVER
+    },
     CONTENT: {
-        GITIGNORE:  GITIGNORE_CONTENT
+        GITIGNORE:  CONTENT_GITIGNORE
     },
     HEXO: {
         NAME: HEXO,
@@ -55,7 +64,17 @@ export default {
     },
     POST_IMAGES: POST_IMAGES,
     HEXO_THEME: HEXO_THEME,
-    PATH: {
+    FILE: {
+        GITIGNORE: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, GITIGNORE);
+        },
+        CONFIG_SERVER: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, CONFIG_SERVER);
+        }
+    },
+    FOLDER: {
         BASE: async (): Promise<string> => {
             let document = await basicDir();
             return FileApi.resolve(document, BASE);
@@ -75,10 +94,6 @@ export default {
         DIST: async (): Promise<string> => {
             let document = await basicDir();
             return FileApi.resolve(document, BASE, DIST);
-        },
-        GITIGNORE: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, GITIGNORE);
         },
         HEXO: async (): Promise<string> => {
             let document = await basicDir();

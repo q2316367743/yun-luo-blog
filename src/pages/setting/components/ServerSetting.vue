@@ -15,17 +15,36 @@
             <el-switch v-model="serverSetting.noticeBySyncWithError" active-text="true" inactive-text="false"
                        :active-value="true" :inactive-value="false"/>
         </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="save">保存</el-button>
+        </el-form-item>
     </el-form>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import {useSettingStore} from "@/store/SettingStore";
+import {defineComponent} from "vue";
+import ServerSetting from "@/entities/setting/ServerSetting";
+import {settingService} from "@/global/BeanFactory";
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
     name: 'server-setting',
     data: () => ({
-        serverSetting: useSettingStore().serverSetting,
-    })
+        serverSetting: {} as ServerSetting,
+    }),
+    created() {
+        this.serverSetting = settingService.getServer();
+    },
+    methods: {
+        save() {
+            settingService.saveServer(this.serverSetting).then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '服务器设置 - 保存成功'
+                })
+            });
+        }
+    }
 });
 </script>
 <style scoped>

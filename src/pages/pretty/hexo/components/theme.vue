@@ -94,7 +94,7 @@ export default defineComponent({
             this.blogIsInit = isInit;
             if (isInit) {
                 // 初始化后在进行查询
-                Constant.PATH.HEXO_CONFIG().then(async path => {
+                Constant.FOLDER.HEXO_CONFIG().then(async path => {
                     this.hexo.parse(await FileApi.readFile(path));
                 });
                 this.listTheme();
@@ -103,7 +103,7 @@ export default defineComponent({
     },
     methods: {
         listTheme() {
-            Constant.PATH.HEXO_THEME().then(path => {
+            Constant.FOLDER.HEXO_THEME().then(path => {
                 FileApi.listDir(path, false).then(files => {
                     this.themes = new Array<string>();
                     let themes = new Array<string>();
@@ -157,7 +157,7 @@ export default defineComponent({
                 text: '主题clone中',
                 background: 'rgba(0, 0, 0, 0.7)',
             });
-            Constant.PATH.HEXO_THEME().then(path => {
+            Constant.FOLDER.HEXO_THEME().then(path => {
                 NativeApi.invokeSync(
                     gitPath,
                     path,
@@ -221,13 +221,13 @@ export default defineComponent({
             }
             options.source = this.themeInfo.compressionPath;
             if (this.themeInfo.name && this.themeInfo.name !== '') {
-                options.target = await FileApi.resolve(await Constant.PATH.HEXO_THEME(), this.themeInfo.name);
+                options.target = await FileApi.resolve(await Constant.FOLDER.HEXO_THEME(), this.themeInfo.name);
             } else {
                 let tempPath = this.themeInfo.compressionPath;
                 tempPath = tempPath.replaceAll("\\", "/");
                 let name = tempPath.substring(tempPath.lastIndexOf("/") + 1);
                 name = name.substring(0, name.lastIndexOf("."));
-                options.target = await FileApi.resolve(await Constant.PATH.HEXO_THEME(), name);
+                options.target = await FileApi.resolve(await Constant.FOLDER.HEXO_THEME(), name);
             }
             const loading = ElLoading.service({
                 lock: true,
@@ -251,7 +251,7 @@ export default defineComponent({
         },
         chooseTheme(theme: string) {
             this.hexo.theme = theme;
-            Constant.PATH.HEXO_CONFIG().then(path => {
+            Constant.FOLDER.HEXO_CONFIG().then(path => {
                 FileApi.writeFile(path, this.hexo.render()).then(() => {
                     ElMessage({
                         showClose: true,
@@ -299,7 +299,7 @@ export default defineComponent({
                 }
                 // 1. 重命名
                 console.log("1. 重命名")
-                let themePath = await Constant.PATH.HEXO_THEME();
+                let themePath = await Constant.FOLDER.HEXO_THEME();
                 let oldPath = await FileApi.resolve(themePath, theme);
                 let newPath = await FileApi.resolve(themePath, value);
                 await FileApi.rename(oldPath, newPath);
@@ -308,8 +308,8 @@ export default defineComponent({
                 if (this.hexo.theme.trim() !== value.trim()) {
                     console.log("2.1 修改主题")
                     // 修改主题文件或创建主题文件
-                    let oldConfigPath = await FileApi.resolve(await Constant.PATH.HEXO(), `_config.${this.hexo.theme.trim()}.yml`);
-                    let newConfigPath = await FileApi.resolve(await Constant.PATH.HEXO(), `_config.${value.trim()}.yml`);
+                    let oldConfigPath = await FileApi.resolve(await Constant.FOLDER.HEXO(), `_config.${this.hexo.theme.trim()}.yml`);
+                    let newConfigPath = await FileApi.resolve(await Constant.FOLDER.HEXO(), `_config.${value.trim()}.yml`);
                     if (await FileApi.exist(oldConfigPath)) {
                         // 存在，则重命名
                         await FileApi.rename(oldConfigPath, newConfigPath);
@@ -317,7 +317,7 @@ export default defineComponent({
                         // 不存在，则创建
                         await FileApi.createDir(newConfigPath);
                     }
-                    let configPath = await Constant.PATH.HEXO_CONFIG();
+                    let configPath = await Constant.FOLDER.HEXO_CONFIG();
                     this.hexo.theme = value.trim();
                     await FileApi.writeFile(configPath, this.hexo.render());
                 }

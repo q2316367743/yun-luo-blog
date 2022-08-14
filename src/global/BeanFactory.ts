@@ -4,6 +4,7 @@ import PostService from '@/service/PostService';
 import CategoryService from "@/service/CategoryService";
 import HexoService from "@/service/HexoService";
 import ServerService from "@/service/ServerService";
+import SettingService from "@/service/SettingService";
 
 export const dexieInstance = new DexieInstance();
 export const tagService = new TagService(dexieInstance);
@@ -12,3 +13,5 @@ export const categoryService = new CategoryService(dexieInstance);
 
 export const hexoService = new HexoService();
 export const serverService = new ServerService();
+
+export const settingService = new SettingService();

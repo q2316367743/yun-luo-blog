@@ -16,7 +16,7 @@ export default class LocalImageStrategyImpl implements ImageStrategy {
     }
 
     private async getPostImagePath(): Promise<string> {
-        let base = await Constant.PATH.BASE();
+        let base = await Constant.FOLDER.BASE();
         let target = await FileApi.resolve(base, "");
         return new Promise<string>(resolve => {
             resolve(`file:///${target}`);
@@ -42,7 +42,7 @@ export default class LocalImageStrategyImpl implements ImageStrategy {
             let name = items[items.length - 1];
             // 将空格替换
             name = name.replaceAll(' ', '-');
-            let postImage = await Constant.PATH.POST_IMAGES();
+            let postImage = await Constant.FOLDER.POST_IMAGES();
             await FileApi.copyFileToDir(postImage, false, [{
                 name,
                 path

@@ -3,7 +3,6 @@
         <el-form-item label="博客类型">
             <el-radio-group v-model="basicSetting.blogType">
                 <el-radio label="hexo">Hexo</el-radio>
-                <!-- <el-radio label="vuePress">VuePress</el-radio> -->
             </el-radio-group>
         </el-form-item>
         <el-form-item label="字体">
@@ -72,12 +71,12 @@ export default defineComponent({
             });
         },
         openProjectDir() {
-            Constant.PATH.POST().then(path => {
+            Constant.FOLDER.POST().then(path => {
                 NativeApi.openFolder(path);
             })
         },
         queryBasicDir() {
-            Constant.PATH.BASE().then(path => {
+            Constant.FOLDER.BASE().then(path => {
                 this.basicDir = path;
             })
         }

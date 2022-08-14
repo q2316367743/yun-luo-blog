@@ -66,7 +66,7 @@ export default class TagService {
         // 如果没有路径，先生成目录和文件名
         console.log('如果没有路径，先生成目录和文件名')
         if (!post.path || post.path === '') {
-            let postPath = await Constant.PATH.POST();
+            let postPath = await Constant.FOLDER.POST();
             post.path = await FileApi.resolve(postPath, post.title + ".md");
             post.fileName = post.title + ".md";
             console.log('先生成目录和文件名', post.path, post.fileName);
@@ -333,7 +333,7 @@ export default class TagService {
         });
         try {
             // 获取文件
-            let postPath = await Constant.PATH.POST()
+            let postPath = await Constant.FOLDER.POST()
             let files = await FileApi.listDir(postPath, true);
             // 获取全部文章目录
             let posts = await this.postDao.toArray();

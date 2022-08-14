@@ -242,7 +242,7 @@ export default defineComponent({
         }
     },
     created() {
-        ApplicationUtil.launch();
+        // 建议
         ApplicationUtil.suggest();
         // 此处注册服务器事件
         emitter.on(MessageEventEnum.SERVER_START, () => {
@@ -349,7 +349,7 @@ export default defineComponent({
             }
         },
         openFolder() {
-            Constant.PATH.POST().then(path => {
+            Constant.FOLDER.POST().then(path => {
                 NativeApi.openFolder(path);
             })
         },
@@ -369,7 +369,7 @@ export default defineComponent({
                     this.stopServer();
                     break;
                 case "dist":
-                    Constant.PATH.DIST().then(path => {
+                    Constant.FOLDER.DIST().then(path => {
                         NativeApi.openFolder(path);
                     })
                     break;

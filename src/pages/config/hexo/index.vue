@@ -151,9 +151,6 @@
                             <el-option label="文章" value="post"/>
                         </el-select>
                     </el-form-item>
-                    <!-- <el-form-item label="排除的域名">
-                    <el-input v-model="hexo.external_link.exclude"></el-input>
-                </el-form-item> -->
                     <el-form-item label="文件名称转换">
                         <el-select v-model="hexo.filename_case">
                             <el-option label="不转换" :value="0"/>
@@ -272,11 +269,11 @@ export default defineComponent({
             this.blogIsInit = isInit;
             if (isInit) {
                 // 主配置文件
-                Constant.PATH.HEXO_CONFIG().then(path => {
+                Constant.FOLDER.HEXO_CONFIG().then(path => {
                     FileApi.readFile(path).then(content => {
                         this.hexo.parse(content);
                         // 主题配置文件
-                        Constant.PATH.HEXO().then(hexoPath => {
+                        Constant.FOLDER.HEXO().then(hexoPath => {
                             // 读取文件内容
                             FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
                                 FileApi.readFile(themePath).then(themeContent => {
@@ -289,7 +286,7 @@ export default defineComponent({
                     });
                 });
                 // 查询博客主题
-                Constant.PATH.HEXO_THEME().then(path => {
+                Constant.FOLDER.HEXO_THEME().then(path => {
                     FileApi.listDir(path).then(files => {
                         for (let file of files) {
                             if (file.children) {
@@ -368,7 +365,7 @@ export default defineComponent({
             this.hexo.timezone = item;
         },
         save() {
-            Constant.PATH.HEXO_CONFIG().then(path => {
+            Constant.FOLDER.HEXO_CONFIG().then(path => {
                 FileApi.writeFile(path, this.hexo.render()).then(() => {
                     ElMessage({
                         showClose: true,
@@ -390,7 +387,7 @@ export default defineComponent({
             }
         },
         saveTheme() {
-            Constant.PATH.HEXO().then(hexoPath => {
+            Constant.FOLDER.HEXO().then(hexoPath => {
                 FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
                     FileApi.writeFile(themePath, this.theme).then(() => {
                         ElMessage({
