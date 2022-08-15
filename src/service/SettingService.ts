@@ -8,7 +8,7 @@ import ImageSetting from "@/entities/setting/ImageSetting";
 import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import {ElNotification} from "element-plus";
 import EnvironmentSetting from "@/entities/setting/EnvironmentSetting";
-import {useLocalStorage} from "@vueuse/core";
+import SyncRemoteSetting from "@/entities/setting/SyncRemoteSetting";
 
 let basicSetting = {
     blogType: 'hexo',
@@ -53,31 +53,18 @@ let environmentSetting = {
 } as EnvironmentSetting;
 
 // 同步设置
-let syncSetting = useLocalStorage('syncSetting', {
-    platform: "1",
-    agreement: 'https://',
-    url: '',
-    git: {
-        name: '',
-        branches: '',
+let syncRemoteSetting = {
+    type: 1,
+    sftp: {
+        server: '',
+        port: 22,
         username: '',
-        email: '',
-        token: '',
-        cname: '',
-    },
-    coding: {
-        tokenUsername: '',
-    },
-    proxy: {
-        type: '1',
-        path: '',
-        port: 0
-    },
-    netlify: {
-        siteId: '',
-        accessToken: ''
+        connectType: 1,
+        password: '',
+        privateKey: '',
+        remotePath: ''
     }
-});
+} as SyncRemoteSetting;
 
 /**
  * 服务器设置服务
@@ -88,6 +75,7 @@ export default class SettingService {
     private basic: BasicSetting = basicSetting;
     private image: ImageSetting = imageSetting;
     private environment: EnvironmentSetting = environmentSetting;
+    private syncRemote: SyncRemoteSetting = syncRemoteSetting;
 
     constructor() {
         this.initServer().then(() => {
@@ -101,6 +89,9 @@ export default class SettingService {
         });
         this.initEnvironment().then(() => {
             console.log('环境设置初始化成功');
+        });
+        this.initSyncRemote().then(() => {
+            console.log('同步 - 远程设置初始化成功');
         });
     }
 
@@ -141,6 +132,7 @@ export default class SettingService {
         if (!ArrayUtil.contains(['LXGWWenKai', '微软雅黑', '宋体'], this.basic.font)) {
             this.basic.font = '微软雅黑';
             this.saveBasic(this.basic).then(() => {
+                console.log('字体错误，重置基础设置')
             });
         }
         document.getElementsByTagName('body')[0]!.style.fontFamily = `${this.basic.font}, "Microsoft YaHei", Arial, sans-serif`
@@ -191,42 +183,67 @@ export default class SettingService {
     }
 
     /**
+     * 初始化服务器设置
+     */
+    async initSyncRemote(): Promise<void> {
+        let path = await Constant.FILE.SETTING_SYNC_REMOTE();
+        // 读取文件
+        let source = {}
+        if (await FileApi.exist(path)) {
+            try {
+                let content = await FileApi.readFile(path);
+                source = JSON.parse(content);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        this.syncRemote = ObjectUtil.assignWithTarget(source, syncRemoteSetting);
+    }
+
+    /**
      * 获取服务器设置
      */
     getServer(): ServerSetting {
-        return this.server;
+        return JSON.parse(JSON.stringify(this.server));
     }
 
     /**
      * 获取基础设置
      */
     getBasic(): BasicSetting {
-        return this.basic;
+        return JSON.parse(JSON.stringify(this.basic));
+    }
+
+    /**
+     * 获取远程设置
+     */
+    getSyncRemote(): SyncRemoteSetting {
+        return JSON.parse(JSON.stringify(this.syncRemote));
     }
 
     /**
      * 获取基础设置
      */
     getImage(): ImageSetting {
-        return this.image;
+        return JSON.parse(JSON.stringify(this.image));
     }
 
     /**
      * 获取环境设置
      */
     getEnvironment(): EnvironmentSetting {
-        return this.environment;
+        return JSON.parse(JSON.stringify(this.environment));
     }
 
     /**
      * 保存服务器设置
-     * @param serverSetting 服务器设置
+     * @param server 服务器设置
      */
-    async saveServer(serverSetting: ServerSetting): Promise<void> {
+    async saveServer(server: ServerSetting): Promise<void> {
         let path = await Constant.FILE.SETTING_SERVER();
         return new Promise<void>(resolve => {
-            FileApi.writeFile(path, JSON.stringify(serverSetting)).then(() => {
-                this.server = serverSetting;
+            FileApi.writeFile(path, JSON.stringify(server)).then(() => {
+                this.server = server;
                 resolve();
             })
         });
@@ -234,13 +251,13 @@ export default class SettingService {
 
     /**
      * 保存基础设置
-     * @param basicSetting 基础设置
+     * @param basic 基础设置
      */
-    async saveBasic(basicSetting: BasicSetting): Promise<void> {
+    async saveBasic(basic: BasicSetting): Promise<void> {
         let path = await Constant.FILE.SETTING_BASIC();
         return new Promise<void>(resolve => {
-            FileApi.writeFile(path, JSON.stringify(basicSetting)).then(() => {
-                this.basic = basicSetting;
+            FileApi.writeFile(path, JSON.stringify(basic)).then(() => {
+                this.basic = basic;
                 resolve();
             })
         });
@@ -248,13 +265,13 @@ export default class SettingService {
 
     /**
      * 保存图片设置
-     * @param imageSetting 图片设置
+     * @param image 图片设置
      */
-    async saveImage(imageSetting: ImageSetting): Promise<void> {
+    async saveImage(image: ImageSetting): Promise<void> {
         let path = await Constant.FILE.SETTING_IMAGE();
         return new Promise<void>(resolve => {
-            FileApi.writeFile(path, JSON.stringify(imageSetting)).then(() => {
-                this.image = imageSetting;
+            FileApi.writeFile(path, JSON.stringify(image)).then(() => {
+                this.image = image;
                 resolve();
             })
         });
@@ -262,13 +279,27 @@ export default class SettingService {
 
     /**
      * 保存环境设置
-     * @param environmentSetting 环境设置
+     * @param environment 环境设置
      */
-    async saveEnvironment(environmentSetting: EnvironmentSetting): Promise<void> {
+    async saveEnvironment(environment: EnvironmentSetting): Promise<void> {
         let path = await Constant.FILE.SETTING_ENVIRONMENT();
         return new Promise<void>(resolve => {
-            FileApi.writeFile(path, JSON.stringify(environmentSetting)).then(() => {
-                this.environment = environmentSetting;
+            FileApi.writeFile(path, JSON.stringify(environment)).then(() => {
+                this.environment = environment;
+                resolve();
+            })
+        });
+    }
+
+    /**
+     * 保存服务器设置
+     * @param syncRemote 同步 - 远程设置
+     */
+    async saveSyncRemote(syncRemote: SyncRemoteSetting): Promise<void> {
+        let path = await Constant.FILE.SETTING_SYNC_REMOTE();
+        return new Promise<void>(resolve => {
+            FileApi.writeFile(path, JSON.stringify(syncRemote)).then(() => {
+                this.syncRemote = syncRemote;
                 resolve();
             })
         });

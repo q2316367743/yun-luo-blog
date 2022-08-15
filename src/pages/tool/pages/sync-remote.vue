@@ -3,97 +3,156 @@
         <el-page-header title="工具" content="远程同步" @back="goBack" style="margin-top: 8px;"/>
     </container-header>
     <container-main style="padding: 16px">
-        <el-form label-width="120px">
-            <el-form-item label="平台：">
-                <el-radio-group v-model="SyncSetting.platform">
-                    <el-radio label="1">未设置</el-radio>
-                    <el-radio label="2">Github Pages</el-radio>
-                    <el-radio label="3">Gitee Pages</el-radio>
-                    <el-radio label="4">Coding Pages</el-radio>
-                    <el-radio label="5">Netlify</el-radio>
-                    <el-radio label="6">SFTP</el-radio>
+        <el-form label-width="80px">
+            <el-form-item label="同步类型">
+                <el-radio-group v-model="syncRemoteSetting.type">
+                    <el-radio :label="1">未设置</el-radio>
+                    <el-radio :label="2">sftp</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item label="域名：" v-if="SyncSetting.platform !== '1'">
-                <el-input v-model="SyncSetting.url" placeholder="请输入地址" style="width: 400px">
-                    <template #prepend>
-                        <el-select v-model="SyncSetting.agreement" style="width: 90px">
-                            <el-option label="https://" value="https://"/>
-                            <el-option label="http://" value="http://"/>
-                        </el-select>
+        </el-form>
+        <el-form :model="syncRemoteSetting.sftp" label-width="80px" v-if="syncRemoteSetting.type === 2"
+                 :rules="sftpRules" status-icon>
+            <el-form-item label="服务器" prop="server">
+                <el-input v-model="syncRemoteSetting.sftp.server"/>
+            </el-form-item>
+            <el-form-item label="端口" prop="port">
+                <el-input-number v-model="syncRemoteSetting.sftp.port" :min="1" :step="1" :max="65535"
+                                 controls-position="right"/>
+            </el-form-item>
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="syncRemoteSetting.sftp.username"/>
+            </el-form-item>
+            <el-form-item label="链接类型">
+                <el-radio-group v-model="syncRemoteSetting.sftp.connectType">
+                    <el-radio :label="1">密码</el-radio>
+                    <el-radio :label="2">SSH Key</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="密码" v-if="syncRemoteSetting.sftp.connectType === 1" prop="password">
+                <el-input type="password" show-password v-model="syncRemoteSetting.sftp.password"/>
+            </el-form-item>
+            <el-form-item label="ssh私钥" v-else-if="syncRemoteSetting.sftp.connectType === 2" prop="privateKey">
+                <el-input v-model="syncRemoteSetting.sftp.privateKey">
+                    <template #append>
+                        <el-button :icon="folder" @click="openPrivateKeyDialog"/>
                     </template>
                 </el-input>
             </el-form-item>
-            <el-form-item label="仓库名称：" v-if="contains(['2', '3', '4'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.git.name" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="分支：" v-if="contains(['2', '3', '4'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.git.branches" placeholder="master" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="仓库用户名：" v-if="contains(['2', '3', '4'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.git.username" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱：" v-if="contains(['2', '3', '4'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.git.email" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="令牌用户名："
-                          v-if="SyncSetting.platform === '3' && contains(['2', '3', '4'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.coding.tokenUsername" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="令牌：" v-if="contains(['2', '3', '4'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.git.token" type="password" show-password style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="CNAME：" v-if="contains(['2', '3', '4'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.git.cname" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="Site ID：" v-if="contains(['5'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.netlify.siteId" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="Access Token：" v-if="contains(['5'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.netlify.accessToken" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="HTTP代理：" v-if="contains(['2', '3', '4', '5'], SyncSetting.platform)">
-                <el-radio-group v-model="SyncSetting.proxy.type" style="width: 400px">
-                    <el-radio label="1">直连</el-radio>
-                    <el-radio label="2">代理</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="地址："
-                          v-if="SyncSetting.proxy.type === '2' && contains(['2', '3', '4', '5'], SyncSetting.platform)">
-                <el-input v-model="SyncSetting.proxy.path" style="width: 400px"></el-input>
-            </el-form-item>
-            <el-form-item label="端口："
-                          v-if="SyncSetting.proxy.type === '2' && contains(['2', '3', '4', '5'], SyncSetting.platform)">
-                <el-input-number v-model="SyncSetting.proxy.port" :precision="1" :max="65525" style="width: 400px"/>
+            <el-form-item label="远程地址" prop="remotePath">
+                <el-input v-model="syncRemoteSetting.sftp.remotePath"/>
             </el-form-item>
         </el-form>
         <div class="footer">
-            <el-button>测试</el-button>
+            <el-button @click="validation">测试</el-button>
+            <el-button type="primary" @click="save">保存</el-button>
         </div>
     </container-main>
 </template>
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, markRaw} from "vue";
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
-import {useSettingStore} from "@/store/SettingStore";
 import ArrayUtil from "@/utils/ArrayUtil";
+import {settingService} from "@/global/BeanFactory";
+import {FormRules} from "element-plus";
+import {Folder} from "@element-plus/icons-vue";
+import DialogApi from "@/api/DialogApi";
 
 export default defineComponent({
     name: 'tool-sync-remote',
+    setup() {
+        const folder = markRaw(Folder);
+        return {
+            folder
+        }
+    },
     components: {ContainerMain, ContainerHeader},
     data: () => ({
-        SyncSetting: useSettingStore().syncSetting
+        syncRemoteSetting: {
+            type: 1,
+            sftp: {
+                server: '',
+                port: 22,
+                username: '',
+                connectType: 1,
+                password: '',
+                privateKey: '',
+                remotePath: ''
+            }
+        },
+        sftpRules: {
+            server: [
+                {required: true, message: '请输入服务器地址', trigger: 'blur'},
+            ],
+            port: [
+                {required: true, message: "请输入服务器端口号", trigger: 'blur'},
+                {type: 'number', min: 1, max: 65535, defaultField: 22, message: "请输入正确的端口号", trigger: 'blur'}
+            ],
+            username: [
+                {required: true, message: '请输入用户名', trigger: 'blur'},
+            ],
+            password: [
+                {required: true, message: '请输入密码', trigger: 'blur'},
+            ],
+            privateKey: [
+                {required: true, message: '请输入私钥地址', trigger: 'blur'},
+            ],
+            remotePath: [
+                {required: true, message: '请输入远程地址', trigger: 'blur'},
+            ],
+        } as FormRules
     }),
+    created() {
+        this.syncRemoteSetting = settingService.getSyncRemote();
+    },
     methods: {
         contains: ArrayUtil.contains,
         goBack() {
             this.$router.push('/tool');
         },
+        async openPrivateKeyDialog() {
+            const selected = await DialogApi.open({
+                title: '请选择SSH Key文件路径',
+                multiple: true,
+                defaultPath: 'C:\\Users',
+                filters: [{
+                    name: '*',
+                    extensions: ['*']
+                }]
+            });
+            if (typeof selected === 'object' && selected) {
+                this.syncRemoteSetting.sftp.privateKey = (selected)[0];
+            }
+        },
+        validation() {
+            this.test().then(() => {
+                console.log('验证成功')
+            }).catch(() => {
+                console.log('验证失败')
+            })
+        },
+        async test() {
+            return Promise.reject();
+        },
+        save() {
+            this.test().then(() => {
+                console.log('验证成功')
+                console.log('保存成功')
+            }).catch(() => {
+                console.log('验证失败')
+            })
+        }
     }
 });
 </script>
-<style scoped>
+<style scoped lang="less">
+.el-form {
+    .el-input {
+        width: 400px;
+    }
+}
+
 .footer {
     position: absolute;
     left: 0;
