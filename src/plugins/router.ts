@@ -11,6 +11,7 @@ import ToolPage from '@/pages/tool/index.vue';
 import ToolImportPage from '@/pages/tool/pages/import.vue';
 import ToolBackupPage from '@/pages/tool/pages/backup.vue';
 import ToolSyncRemotePage from '@/pages/tool/pages/sync-remote.vue';
+import ToolAboutPage from '@/pages/tool/pages/about.vue';
 
 /**
  * 定义路由模块
@@ -75,6 +76,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/tool/sync-remote',
         name: 'tool-sync-remote',
         component: ToolSyncRemotePage
+    },
+    {
+        path: '/tool/about',
+        name: 'tool-about',
+        component: ToolAboutPage
     }
 ]
 
