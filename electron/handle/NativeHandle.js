@@ -3,7 +3,7 @@ const child_process = require('child_process');
 const axios = require('axios');
 const compressing = require("compressing");
 
-ipcMain.handle('native:invoke:sync', (event, args) => {
+ipcMain.handle('native:invoke:sync', (_event, args) => {
     console.log('native:invoke:sync');
     console.log(`在目录【${args.currentDir}】下【同步】执行命令【${args.command}】【${args.arg}】`)
     return {
@@ -61,7 +61,7 @@ ipcMain.handle('native:invoke:spawn', (event, args) => {
     }
 });
 
-ipcMain.handle('native:openFolder', (event, args) => {
+ipcMain.handle('native:openFolder', (_event, args) => {
     console.log('native:openFolder', args.path);
     shell.showItemInFolder(args.path);
     return {
@@ -70,7 +70,7 @@ ipcMain.handle('native:openFolder', (event, args) => {
     }
 });
 
-ipcMain.handle('native:openUrl', async (event, args) => {
+ipcMain.handle('native:openUrl', async (_event, args) => {
     console.log('native:openUrl', args.url, args.openWith);
     await shell.openExternal(args.url)
     return {
@@ -79,7 +79,7 @@ ipcMain.handle('native:openUrl', async (event, args) => {
     }
 });
 
-ipcMain.handle('native:http', async (event, args) => {
+ipcMain.handle('native:http', async (_event, args) => {
     console.log('native:http');
     let axiosResponse = await axios(args);
     return {
@@ -89,7 +89,7 @@ ipcMain.handle('native:http', async (event, args) => {
     }
 });
 
-ipcMain.handle('native:compressing', async (event, args) => {
+ipcMain.handle('native:compressing', async (_event, args) => {
     console.log('native:compressing');
     let type = args.type;
     if (type === 1) {

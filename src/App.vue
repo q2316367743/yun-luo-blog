@@ -136,18 +136,25 @@
                                 </template>
                             </el-dropdown>
                         </el-tooltip>
-                        <el-tooltip
-                            class="box-item"
-                            effect="light"
-                            :content="$t('common.setting')"
-                            placement="bottom"
-                        >
+                        <el-dropdown trigger="contextmenu" @command="settingOperation">
                             <div class="nav-item" @click="openSetting">
                                 <el-icon>
                                     <setting/>
                                 </el-icon>
                             </div>
-                        </el-tooltip>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="projectDir">
+                                        {{ $t('app.openProjectDir') }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="devtools">
+                                        {{ $t('app.openDevTools') }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     </div>
                 </div>
             </header>
@@ -194,8 +201,6 @@ import Server from '@/icon/Server.vue';
 import Run from '@/icon/Run.vue';
 import Loader from '@/icon/Loader.vue';
 import Tools from '@/icon/Tools.vue';
-
-import ApplicationUtil from '@/utils/ApplicationUtil';
 import Constant from "@/global/Constant";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import NativeApi from "@/api/NativeApi";
@@ -206,6 +211,7 @@ import {serverService, settingService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
+import ApplicationApi from "@/api/ApplicationApi";
 
 export default defineComponent({
     components: {
@@ -372,6 +378,24 @@ export default defineComponent({
                     break;
                 case "browser":
                     NativeApi.openUrl("http://localhost:8888");
+                    break;
+            }
+        },
+        settingOperation(command: string) {
+            switch (command){
+                case "projectDir":
+                    Constant.FOLDER.POST().then(path => {
+                        NativeApi.openFolder(path);
+                    })
+                    break;
+                case "devtools":
+                    ApplicationApi.openDevTools().then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: "success",
+                            message: "打开成功"
+                        })
+                    });
                     break;
             }
         }
