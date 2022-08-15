@@ -1,10 +1,10 @@
-import PlatformStrategy from "@/strategy/platform/PlatformStrategy";
+import SyncRemoteStrategy from "@/strategy/syncRemote/SyncRemoteStrategy";
 import {ElMessage} from "element-plus";
 
 /**
  * 默认策略
  */
-export default class DefaultPlatformStrategyImpl implements PlatformStrategy {
+export default class DefaultSyncRemoteStrategyImpl implements SyncRemoteStrategy {
 
     push(): Promise<void> {
         ElMessage({

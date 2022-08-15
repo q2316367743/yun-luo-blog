@@ -62,7 +62,7 @@ let syncRemoteSetting = {
         connectType: 1,
         password: '',
         privateKey: '',
-        remotePath: ''
+        remoteDir: ''
     }
 } as SyncRemoteSetting;
 

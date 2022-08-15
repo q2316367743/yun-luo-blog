@@ -34,8 +34,8 @@ export default interface SyncRemoteSftpSetting {
     privateKey: string;
 
     /**
-     * 远程地址
+     * 远程目录
      */
-    remotePath: string;
+    remoteDir: string;
 
 }

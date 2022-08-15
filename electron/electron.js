@@ -5,6 +5,7 @@ require('./handle/FileHandle');
 require('./handle/NativeHandle');
 require('./handle/DialogHandle');
 require('./handle/ServerHandle');
+require('./handle/SftpHandle');
 const registerApplication = require('./handle/ApplicationHandle');
 
 const isDev = process.env.IS_DEV === "true";

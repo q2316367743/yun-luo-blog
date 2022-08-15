@@ -12,7 +12,7 @@
             </el-form-item>
         </el-form>
         <el-form :model="syncRemoteSetting.sftp" label-width="80px" v-if="syncRemoteSetting.type === 2"
-                 :rules="sftpRules" status-icon>
+                 :rules="sftpRules" status-icon ref="sftpForm">
             <el-form-item label="服务器" prop="server">
                 <el-input v-model="syncRemoteSetting.sftp.server"/>
             </el-form-item>
@@ -39,8 +39,8 @@
                     </template>
                 </el-input>
             </el-form-item>
-            <el-form-item label="远程地址" prop="remotePath">
-                <el-input v-model="syncRemoteSetting.sftp.remotePath"/>
+            <el-form-item label="远程地址" prop="remoteDir">
+                <el-input v-model="syncRemoteSetting.sftp.remoteDir"/>
             </el-form-item>
         </el-form>
         <div class="footer">
@@ -55,9 +55,10 @@ import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 import ArrayUtil from "@/utils/ArrayUtil";
 import {settingService} from "@/global/BeanFactory";
-import {FormRules} from "element-plus";
+import {FormRules, FormInstance, ElMessage} from "element-plus";
 import {Folder} from "@element-plus/icons-vue";
 import DialogApi from "@/api/DialogApi";
+import SftpApi from "@/api/SftpApi";
 
 export default defineComponent({
     name: 'tool-sync-remote',
@@ -78,7 +79,7 @@ export default defineComponent({
                 connectType: 1,
                 password: '',
                 privateKey: '',
-                remotePath: ''
+                remoteDir: ''
             }
         },
         sftpRules: {
@@ -98,7 +99,7 @@ export default defineComponent({
             privateKey: [
                 {required: true, message: '请输入私钥地址', trigger: 'blur'},
             ],
-            remotePath: [
+            remoteDir: [
                 {required: true, message: '请输入远程地址', trigger: 'blur'},
             ],
         } as FormRules
@@ -127,18 +128,58 @@ export default defineComponent({
         },
         validation() {
             this.test().then(() => {
+                SftpApi.test(this.syncRemoteSetting.sftp).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: '测试连接成功'
+                    })
+                }).catch(e => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '测试连接失败，' + e
+                    })
+                })
                 console.log('验证成功')
-            }).catch(() => {
-                console.log('验证失败')
+            }).catch((e) => {
+                console.log(e)
             })
         },
         async test() {
-            return Promise.reject();
+            let sftpForm = this.$refs.sftpForm as FormInstance;
+            if (!sftpForm) return
+            await sftpForm.validate((valid) => {
+                if (valid) {
+                    return Promise.resolve();
+                } else {
+                    return Promise.reject('字段验证错误');
+                }
+            })
         },
         save() {
             this.test().then(() => {
-                console.log('验证成功')
-                console.log('保存成功')
+                SftpApi.test(this.syncRemoteSetting.sftp).then(() => {
+                    settingService.saveSyncRemote(this.syncRemoteSetting).then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: '数据保存成功'
+                        })
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '数据保存失败，' + e
+                        })
+                    })
+                }).catch(e => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '测试连接失败，' + e
+                    })
+                })
             }).catch(() => {
                 console.log('验证失败')
             })

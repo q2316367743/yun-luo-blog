@@ -7,7 +7,7 @@ import {postService, settingService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
-import platformStrategyContext from "@/strategy/platform/PlatformStrategyContext";
+import syncRemoteStrategyContext from "@/strategy/syncRemote/SyncRemoteStrategyContext";
 
 /**
  * hexo策略
@@ -42,7 +42,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             await this.copyPostImage(loading);
             await this.copyToDist(loading);
             loading.setText("推送到远程");
-            await platformStrategyContext.getStrategy().push();
+            await syncRemoteStrategyContext.getStrategy().push();
             return Promise.resolve();
         } catch (e) {
             console.error(e);
