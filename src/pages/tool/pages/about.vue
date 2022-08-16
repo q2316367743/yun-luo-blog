@@ -39,35 +39,34 @@
                 <h2 id="技术选型">技术选型</h2>
                 <ul>
                     <li>
-                        <el-link href="[Tauri](https://tauri.studio/)" target="_blank" rel="noopener">Tauri</el-link>
+                        <el-link href="https://tauri.studio/" target="_blank">Tauri</el-link>
                     </li>
                     <li>
-                        <el-link href="https://element-plus.gitee.io/zh-CN/" target="_blank" rel="noopener">Element
-                            Plus
+                        <el-link href="https://element-plus.gitee.io/zh-CN/" target="_blank">Element Plus
                         </el-link>
                     </li>
                     <li>
-                        <el-link href="https://v3.cn.vuejs.org/" target="_blank" rel="noopener">Vue3</el-link>
+                        <el-link href="https://v3.cn.vuejs.org/" target="_blank">Vue3</el-link>
                     </li>
                     <li>
-                        <el-link href="https://vitejs.cn/" target="_blank" rel="noopener">Vite2</el-link>
+                        <el-link href="https://vitejs.cn/" target="_blank">Vite2</el-link>
                     </li>
                     <li>
-                        <el-link href="https://www.tslang.cn/" target="_blank" rel="noopener">TypeScript</el-link>
+                        <el-link href="https://www.tslang.cn/" target="_blank">TypeScript</el-link>
                     </li>
                 </ul>
                 <h2 id="站在巨人的肩膀上">站在巨人的肩膀上</h2>
                 <ul>
                     <li>
-                        <el-link href="https://gitee.com/fehey/gridea" target="_blank" rel="noopener">Gridea</el-link>
+                        <el-link href="https://gitee.com/fehey/gridea" target="_blank">Gridea</el-link>
                     </li>
                     <li>
-                        <el-link href="https://gitee.com/cwxyz007/vscode-hexo-utils" target="_blank" rel="noopener">
+                        <el-link href="https://gitee.com/cwxyz007/vscode-hexo-utils" target="_blank">
                             vscode-hexo-utils
                         </el-link>
                     </li>
                     <li>
-                        <el-link href="https://github.com/GetPublii/Publii" target="_blank" rel="noopener">Publii
+                        <el-link href="https://github.com/GetPublii/Publii" target="_blank">Publii
                         </el-link>
                     </li>
                 </ul>

@@ -5,6 +5,9 @@ import Tag from '@/entities/Tag';
 import PostTag from '@/entities/PostTag';
 
 import TagView from '@/views/TagView';
+import Database from "@/plugins/Database";
+import Constant from "@/global/Constant";
+import ArrayUtil from "@/utils/ArrayUtil";
 
 export default class TagService {
 
@@ -12,10 +15,19 @@ export default class TagService {
     tagDao: Dexie.Table<Tag, number>;
     postTagDao: Dexie.Table<PostTag, number>;
 
+    tagMapper: Database<Tag> | undefined;
+    postTagMapper: Database<PostTag> | undefined;
+
     constructor(dexieInstance: DexieInstance) {
         this.dexieInstance = dexieInstance;
         this.tagDao = dexieInstance.getTagDao();
         this.postTagDao = dexieInstance.getPostTagDao();
+        Constant.FILE.DB_TAG().then(path => {
+            this.tagMapper = new Database<Tag>(path);
+        })
+        Constant.FILE.DB_POST_TAG().then(path => {
+            this.postTagMapper = new Database<PostTag>(path);
+        })
     }
 
     async insert(tagName: string, fromPostId: number | void): Promise<void> {
@@ -38,7 +50,7 @@ export default class TagService {
                             postId: fromPostId,
                             tagId: tag.id
                         } as PostTag);
-                    }else {
+                    } else {
                         // 标签存在，还不是插入关系，则是错误
                         return new Promise<void>((resolve, reject) => {
                             reject('分类已存在，无法插入');
@@ -83,28 +95,20 @@ export default class TagService {
         })
     }
 
-    list(): Promise<TagView[]> {
-        return this.dexieInstance.transaction(
-            'readwrite',
-            [this.tagDao, this.postTagDao],
-            async (trans: Transaction) => {
-                let tagDao = trans.table('Tag') as Dexie.Table<Tag, number>;
-                let postTagDao = trans.table('PostTag') as Dexie.Table<PostTag, number>;
-                let tagViews = new Array<TagView>();
-                let tags = await tagDao.toArray();
-                for (let tag of tags) {
-                    let tagView = {
-                        id: tag.id,
-                        name: tag.name,
-                        createTime: tag.createTime,
-                        postCount: await postTagDao.where({tagId: tag.id}).count()
-                    } as TagView;
-                    tagViews.push(tagView);
-                }
-                return new Promise<Array<TagView>>((resolve) => {
-                    resolve(tagViews);
-                })
-            })
+    async list(): Promise<TagView[]> {
+        let tags = await this.tagMapper?.list()!;
+        let postTags = await this.postTagMapper?.list()!;
+        let tagViews = new Array<TagView>();
+        for (let tag of tags) {
+            let tagView = {
+                id: tag.id,
+                name: tag.name,
+                createTime: tag.createTime,
+                postCount: ArrayUtil.size(postTags, 'tagId', tag.id)
+            } as TagView;
+            tagViews.push(tagView);
+        }
+        return Promise.resolve(tagViews);
     }
 
     /**
@@ -113,13 +117,13 @@ export default class TagService {
      * @param id 标签ID
      */
     async removeById(id: number): Promise<void> {
-        let tagPostCount = await this.postTagDao.where("tagId").equals(id).count();
+        let tagPostCount = await this.postTagMapper?.count('tagId', id)!;
         if (tagPostCount > 0) {
             return new Promise<void>((resolve, reject) => {
                 reject('此标签已被文章关联，请先删除文章后再删除标签');
             })
         }
-        await this.tagDao.delete(id);
+        await this.postTagMapper?.delete([id]);
         return new Promise<void>(resolve => {
             resolve();
         })

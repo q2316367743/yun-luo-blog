@@ -14,7 +14,7 @@ export default {
     },
     /**
      * 将一个数组变为map
-     * 
+     *
      * @param arr 数组
      * @param attrName 属性名
      * @param merge key冲突合并解决办法
@@ -40,7 +40,7 @@ export default {
     },
     /**
      * 根据指定属性名对数组进行分组
-     * 
+     *
      * @param arr 数据
      * @param attrName 属性名
      * @returns 分组后的结果
@@ -74,6 +74,21 @@ export default {
             }
         }
         return result;
+    },
+
+    size<T, K extends keyof T>(arr: Array<T>, attrName: K, value: any): number {
+        try {
+            let count = 0;
+            for (let t of arr) {
+                if (t[attrName] === value) {
+                    count += 1;
+                }
+            }
+            return count;
+        }catch (e) {
+            console.error(e);
+            return 0;
+        }
     }
 
 }

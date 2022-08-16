@@ -107,6 +107,26 @@ export default {
         SETTING_SYNC_LOCAL: async (): Promise<string> => {
             let document = await basicDir();
             return FileApi.resolve(document, BASE, CONFIG, SETTING_SYNC_LOCAL);
+        },
+        DB_TAG: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, DB_TAG);
+        },
+        DB_CATEGORY: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, DB_CATEGORY);
+        },
+        DB_POST: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, DB_POST);
+        },
+        DB_POST_TAG: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, DB_POST_TAG);
+        },
+        DB_POST_CATEGORY: async (): Promise<string> => {
+            let document = await basicDir();
+            return FileApi.resolve(document, BASE, CONFIG, DB_POST_CATEGORY);
         }
     },
     FOLDER: {
