@@ -1,12 +1,21 @@
 import FileApi from "@/api/FileApi";
 
 // 文件
+
+// 设置相关
 const SETTING_SERVER = 'setting-server.json';
 const SETTING_BASIC = 'setting-basic.json';
 const SETTING_IMAGE = 'setting-image.json';
 const SETTING_ENVIRONMENT = 'setting-environment.json';
 const SETTING_SYNC_REMOTE = 'setting-sync-remote.json';
 const SETTING_SYNC_LOCAL = 'setting-sync-local.json';
+
+// 数据相关
+const DB_TAG = 'db-tag.json';
+const DB_CATEGORY = 'db-category.json';
+const DB_POST = 'db-post.json';
+const DB_POST_TAG = 'db-post-tag.json';
+const DB_POST_CATEGORY = 'db-post-category.json';
 
 // 文件夹
 

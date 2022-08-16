@@ -60,9 +60,7 @@ export default class CategoryService {
         let postCategories = await this.postCategoryDao.toArray();
         let categoryCountMap = ArrayUtil.count(postCategories, 'categoryId');
         let categories = await this.categoryDao.toArray();
-        return new Promise<Array<CategoryView>>((resolve) => {
-            resolve(tree(categories, categoryCountMap));
-        })
+        return Promise.resolve(tree(categories, categoryCountMap))
     }
 
     /**
@@ -74,9 +72,7 @@ export default class CategoryService {
         parentId: number
     }): Promise<number> {
         if (category.name === "") {
-            return new Promise<number>((resolve, reject) => {
-                reject('分类名称不能为空');
-            })
+            return Promise.reject('分类名称不能为空');
         }
         // 先查询这个父ID是否存在
         let categoryTemp = await this.categoryDao.where({parentId: category.parentId, name: category.name})
@@ -99,9 +95,7 @@ export default class CategoryService {
 
     async update(category: Category): Promise<number> {
         if (category.name === "") {
-            return new Promise<number>((resolve, reject) => {
-                reject('分类名称不能为空');
-            })
+            return Promise.reject('分类名称不能为空');
         }
         let categoryTemp = await this.categoryDao.where({id: category.id})
             .first();
@@ -110,9 +104,7 @@ export default class CategoryService {
             category.updateTime = new Date();
             return this.categoryDao.put(category);
         } else {
-            return new Promise<number>((resolve, reject) => {
-                reject('分类不存在，无法修改');
-            })
+            return Promise.reject('分类不存在，无法修改');
         }
     }
 
