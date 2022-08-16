@@ -230,7 +230,6 @@ export default defineComponent({
     data: () => {
         return {
             basicSetting: settingService.getBasic(),
-            defaultActive: '/post/list',
             settingDialog: false,
             terminalDialog: false,
             isCollapse: false,

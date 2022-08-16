@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 
-
+import LoadingPage from '@/pages/loading/index.vue';
 import PostListPage from '@/pages/post/list/index.vue';
 import PostNewPage from '@/pages/post/new/index.vue';
 import TagPage from '@/pages/tag/index.vue';
@@ -19,7 +19,12 @@ import ToolAboutPage from '@/pages/tool/pages/about.vue';
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
-        redirect: "/post/list"
+        redirect: "/loading"
+    },
+    {
+        path: '/loading',
+        name: 'loading',
+        component: LoadingPage
     },
     {
         path: '/post',
