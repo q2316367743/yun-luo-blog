@@ -2,9 +2,10 @@
     <div style="display: flex;justify-content: space-between">
         <el-button-group>
             <el-button :disabled="initDisable" @click="init">初始化</el-button>
-            <el-button :disabled="serverDisable || !boloIsInit" @click="server">运行</el-button>
-            <el-button :disabled="deployDisable || !boloIsInit" @click="deploy">部署</el-button>
-            <el-button :disabled="cleanDisable || !boloIsInit" @click="clean">清理</el-button>
+            <el-button :disabled="installDisable || !blogIsInit" @click="install">依赖安装</el-button>
+            <el-button :disabled="serverDisable || !blogIsInit" @click="server">运行</el-button>
+            <el-button :disabled="deployDisable || !blogIsInit" @click="deploy">部署</el-button>
+            <el-button :disabled="cleanDisable || !blogIsInit" @click="clean">清理</el-button>
         </el-button-group>
         <div>
             <el-button type="danger" @click="clearStack">清空</el-button>
@@ -15,7 +16,7 @@
         <div v-else>
             <el-timeline>
                 <el-timeline-item :timestamp="formatDateTime(terminalStack.time)" placement="top"
-                    v-for="terminalStack of terminalStacks" :key="terminalStack.id">
+                                  v-for="terminalStack of terminalStacks" :key="terminalStack.id">
                     <el-card>
                         <template #header>
                             <div style="display: flex;justify-content: space-between;">
@@ -27,7 +28,7 @@
                                     <el-tag style="margin-left: 5px;" type="danger" v-else>执行失败</el-tag>
                                     <el-tag style="margin-left: 5px;" v-if="terminalStack.run">运行中</el-tag>
                                     <el-tag style="margin-left: 5px;" type="danger"
-                                        v-if="!terminalStack.run && terminalStack.success">已停止
+                                            v-if="!terminalStack.run && terminalStack.success">已停止
                                     </el-tag>
                                 </div>
                                 <el-button class="button" text v-if="terminalStack.run" @click="kill(terminalStack.id)">
@@ -52,11 +53,11 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import { hexoService } from "@/global/BeanFactory";
+import {defineComponent} from "vue";
+import {hexoService} from "@/global/BeanFactory";
 import DateUtil from "@/utils/DateUtil";
 import NativeApi from "@/api/NativeApi";
-import { ElMessage } from "element-plus";
+import {ElMessage} from "element-plus";
 import TerminalStack from "@/entities/TerminalStack";
 import Constant from "@/global/Constant";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
@@ -65,11 +66,12 @@ export default defineComponent({
     name: 'terminal-hexo',
     data: () => ({
         hexoService: hexoService,
-        boloIsInit: true,
+        blogIsInit: true,
         initDisable: false,
         serverDisable: false,
         deployDisable: false,
-        cleanDisable: false
+        cleanDisable: false,
+        installDisable: false
     }),
     computed: {
         terminalStacks(): Array<TerminalStack> {
@@ -90,6 +92,8 @@ export default defineComponent({
                     if (terminalStack.run && terminalStack.success) {
                         if (terminalStack.command === Constant.HEXO.INIT) {
                             this.initDisable = true
+                        } else if (terminalStack.command === Constant.HEXO.INSTALL) {
+                            this.installDisable = true
                         } else if (terminalStack.command === Constant.HEXO.CLEAN) {
                             this.cleanDisable = true
                         } else if (terminalStack.command === Constant.HEXO.SERVER) {
@@ -100,7 +104,9 @@ export default defineComponent({
                     } else {
                         if (terminalStack.command === Constant.HEXO.INIT) {
                             this.initDisable = false
-                            this.boloIsInit = true;
+                            this.blogIsInit = true;
+                        } else if (terminalStack.command === Constant.HEXO.INSTALL) {
+                            this.cleanDisable = false
                         } else if (terminalStack.command === Constant.HEXO.CLEAN) {
                             this.cleanDisable = false
                         } else if (terminalStack.command === Constant.HEXO.SERVER) {
@@ -119,6 +125,8 @@ export default defineComponent({
             if (terminalStack.run && terminalStack.success) {
                 if (terminalStack.command === Constant.HEXO.INIT) {
                     this.initDisable = true
+                } else if (terminalStack.command === Constant.HEXO.INSTALL) {
+                    this.installDisable = true
                 } else if (terminalStack.command === Constant.HEXO.CLEAN) {
                     this.cleanDisable = true
                 } else if (terminalStack.command === Constant.HEXO.SERVER) {
@@ -129,6 +137,8 @@ export default defineComponent({
             } else {
                 if (terminalStack.command === Constant.HEXO.INIT) {
                     this.initDisable = false
+                } else if (terminalStack.command === Constant.HEXO.INSTALL) {
+                    this.installDisable = false
                 } else if (terminalStack.command === Constant.HEXO.CLEAN) {
                     this.cleanDisable = false
                 } else if (terminalStack.command === Constant.HEXO.SERVER) {
@@ -139,7 +149,7 @@ export default defineComponent({
             }
         }
         blogStrategyContext.getStrategy().isInit().then(isInit => {
-            this.boloIsInit = isInit;
+            this.blogIsInit = isInit;
         })
     },
     methods: {
@@ -210,6 +220,21 @@ export default defineComponent({
                     showClose: true,
                     type: "success",
                     message: "运行成功"
+                });
+            }).catch(e => {
+                ElMessage({
+                    showClose: true,
+                    type: "error",
+                    message: e
+                });
+            });
+        },
+        install() {
+            this.hexoService.install().then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: "success",
+                    message: "安装成功"
                 });
             }).catch(e => {
                 ElMessage({

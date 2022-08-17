@@ -3,32 +3,28 @@ import PostTag from '@/entities/PostTag';
 
 import TagView from '@/views/TagView';
 import Database from "@/plugins/Database";
-import Constant from "@/global/Constant";
 import ArrayUtil from "@/utils/ArrayUtil";
 
 export default class TagService {
 
 
-    tagMapper: Database<Tag> | undefined;
-    postTagMapper: Database<PostTag> | undefined;
+    tagDb: Database<Tag>;
+    postTagDb: Database<PostTag>;
 
-
-    async init(): Promise<void> {
-        this.tagMapper = new Database<Tag>(await Constant.FILE.DB_TAG());
-        await this.tagMapper?.init();
-        this.postTagMapper = new Database<PostTag>(await Constant.FILE.DB_POST_TAG());
-        await this.postTagMapper?.init();
+    constructor(tagDb: Database<Tag>, postTagDb: Database<PostTag>) {
+        this.tagDb = tagDb;
+        this.postTagDb = postTagDb;
     }
 
     async insert(tagName: string, fromPostId: number | void): Promise<void> {
         if (tagName === "") {
             return Promise.reject('标签名称不能为空');
         }
-        let tags = await this.tagMapper?.list({name: tagName});
+        let tags = await this.tagDb?.list({name: tagName});
         let tag = (tags && tags.length > 0) ? tags[0] : undefined;
         if (tag) {
             if (fromPostId) {
-                this.postTagMapper?.insert({
+                this.postTagDb?.insert({
                     postId: fromPostId,
                     tagId: tag.id
                 } as PostTag);
@@ -37,7 +33,7 @@ export default class TagService {
             }
         } else {
             // 没有标签，先新增标签
-            let tagId = await this.tagMapper?.insert({
+            let tagId = await this.tagDb?.insert({
                 name: tagName,
                 createTime: new Date(),
                 updateTime: new Date()
@@ -45,7 +41,7 @@ export default class TagService {
             // 存在这个标签，插入一个记录
             if (fromPostId) {
                 // 只有根据文章来的才插入记录
-                this.postTagMapper?.insert({
+                this.postTagDb?.insert({
                     postId: fromPostId,
                     tagId: tagId
                 } as PostTag);
@@ -58,12 +54,12 @@ export default class TagService {
         if (name === "") {
             return Promise.reject('标签名称不能为空')
         }
-        let tag = await this.tagMapper?.info(id);
+        let tag = await this.tagDb?.info(id);
         if (!tag) {
             // 标签不存在
             return Promise.reject('标签不存在')
         }
-        return this.tagMapper!.update({
+        return this.tagDb!.update({
             id: id,
             name: name,
             createTime: tag.createTime,
@@ -72,8 +68,8 @@ export default class TagService {
     }
 
     async list(): Promise<TagView[]> {
-        let tags = await this.tagMapper?.list()!;
-        let postTags = await this.postTagMapper?.list()!;
+        let tags = this.tagDb?.list()!;
+        let postTags = this.postTagDb?.list()!;
         let tagViews = new Array<TagView>();
         for (let tag of tags) {
             let tagView = {
@@ -93,11 +89,11 @@ export default class TagService {
      * @param id 标签ID
      */
     async removeById(id: number): Promise<void> {
-        let tagPostCount = await this.postTagMapper?.count('tagId', id)!;
+        let tagPostCount = this.postTagDb?.count({tagId: id})!;
         if (tagPostCount > 0) {
             return Promise.reject('此标签已被文章关联，请先删除文章后再删除标签');
         }
-        await this.tagMapper?.delete([id]);
+        await this.tagDb?.delete(id);
         return new Promise<void>(resolve => {
             resolve();
         })

@@ -3,12 +3,16 @@ import ArrayUtil from "@/utils/ArrayUtil";
 
 export default class Database<T> {
 
-    records: Array<T>;
-    path: string;
+    private records: Array<T>;
+    private path: string;
 
     constructor(path: string) {
         this.path = path;
         this.records = new Array<T>();
+    }
+
+    setPath(path: string) {
+        this.path = path;
     }
 
     async init(): Promise<void> {
@@ -31,47 +35,58 @@ export default class Database<T> {
     /**
      * 返回全部数据
      */
-    async list<K extends keyof T>(where?: Record<K, any>): Promise<Array<T>> {
+    list(where?: Partial<T>): Array<T> {
         let result = new Array<T>();
         try {
             for (let item of this.records) {
                 if (where) {
                     for (let key of Object.keys(where)) {
                         // @ts-ignore
-                        if (T[key] == where[key]) {
+                        if (item[key] == where[key]) {
                             result.push(item)
                         }
                     }
-                }else {
+                } else {
                     result.push(item)
                 }
             }
         } catch (e) {
             console.error(e);
         }
-        return Promise.resolve(result);
+        return result;
     }
 
-    async count<A extends keyof T>(attr: A, value: any): Promise<number> {
-        let items = await this.list();
-        let count = 0;
-        for (let item of items) {
-            if (item[attr] === value) {
-                count += 1;
-            }
+    /**
+     * 根据条件查询数量
+     *
+     * @param where 查询条件
+     */
+    count(where?: Partial<T>): number {
+        let items = this.list(where);
+        return items ? items.length : 0;
+    }
+
+    /**
+     * 根据条件查询一个数据
+     *
+     * @param where 查询条件
+     */
+    one(where?: Partial<T>): T | void {
+        let items = this.list(where);
+        if (items && items.length > 0) {
+            return items[0];
         }
-        return Promise.resolve(count);
+        return undefined;
     }
 
-    async info(id: number): Promise<T | void> {
-        let items = await this.list();
-        for (let item of items) {
+    info(id: number): T | void {
+        for (let record of this.records) {
             // @ts-ignore
-            if (item.id && item.id === id) {
-                return Promise.resolve(item);
+            if (record.id && record.id === id) {
+                return record;
             }
         }
-        return Promise.resolve();
+        return undefined;
     }
 
     /**
@@ -128,9 +143,9 @@ export default class Database<T> {
      *
      * @param ids 多条记录ID
      */
-    async delete(ids: Array<number>): Promise<void> {
+    async delete(...ids: Array<number>): Promise<void> {
         let records = new Array<T>();
-        let items = await this.list();
+        let items = this.records;
         for (let item of items) {
             // @ts-ignore
             if (!ArrayUtil.contains(ids, item.id)) {
@@ -139,6 +154,17 @@ export default class Database<T> {
         }
         this.records = records;
         return this.save();
+    }
+
+    async deleteWhere(where?: Partial<T>): Promise<number> {
+        let items = this.list(where);
+        if (items && items.length > 0) {
+            for (let item of items) {
+                // @ts-ignore
+                await this.delete(item.id);
+            }
+        }
+        return Promise.resolve(items ? items.length : 0);
     }
 
 }

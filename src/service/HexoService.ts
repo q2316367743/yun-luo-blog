@@ -25,6 +25,16 @@ export default class HexoService {
         return Promise.resolve(hexoCommandPath);
     }
 
+    async getNpmCommandPath(): Promise<string> {
+        let npmCommandPath = settingService.getEnvironment().npmPath;
+        if (!npmCommandPath || npmCommandPath === "") {
+            return new Promise<string>((resolve, reject) => {
+                reject("请配置npm命令路径");
+            })
+        }
+        return Promise.resolve(npmCommandPath);
+    }
+
     getTerminalStackMap(): Map<number, TerminalStack> {
         return this.terminalStackMap;
     }
@@ -183,10 +193,44 @@ export default class HexoService {
         }
     }
 
-    async runCommand(terminalStack: TerminalStack): Promise<void> {
+    async install(): Promise<void> {
+        if (!(await this.isInit())) {
+            return Promise.reject("博客未初始化，请初始化后重试")
+        }
+        // 获取hexo命令目录
+        const loading = ElLoading.service({
+            lock: true,
+            text: '开始安装',
+            background: 'rgba(0, 0, 0, 0.7)',
+        });
+        try {
+            let terminalStack = {
+                id: new Date().getTime(),
+                name: "部署",
+                command: Constant.HEXO.INSTALL,
+                run: true,
+                success: true,
+                time: new Date(),
+                show: true,
+                contents: []
+            }
+            await this.runCommand(terminalStack, await this.getNpmCommandPath())
+            return new Promise<void>((resolve) => {
+                loading.close();
+                resolve();
+            });
+        } catch (e) {
+            console.error(e);
+            return Promise.reject(e);
+        } finally {
+            loading.close();
+        }
+    }
+
+    async runCommand(terminalStack: TerminalStack, command?: string): Promise<void> {
         this.getTerminalStackMap().set(terminalStack.id, terminalStack);
         let hexoPath = await Constant.FOLDER.HEXO();
-        let hexoCommandPath = await this.getHexoCommandPath();
+        let hexoCommandPath = command ? command : await this.getHexoCommandPath();
         let temp = terminalStack;
         return NativeApi.invokeSpawn({
             command: hexoCommandPath,

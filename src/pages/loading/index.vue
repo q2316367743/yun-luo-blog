@@ -15,7 +15,14 @@
 import {defineComponent} from "vue";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
-import {settingService, tagService} from "@/global/BeanFactory";
+import {
+    categoryDb,
+    postCategoryDb,
+    postDb,
+    postTagDb,
+    settingService,
+    tagDb,
+} from "@/global/BeanFactory";
 import {ElMessageBox} from "element-plus";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
@@ -24,6 +31,8 @@ import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 import * as monaco from "monaco-editor";
 import markdown from "@/plugins/language/markdown";
 import yaml from "@/plugins/language/yaml";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 export default defineComponent({
     name: 'loading',
@@ -55,14 +64,16 @@ export default defineComponent({
                 return;
             }
             // 3. 处理相关目录
-            console.log('3. 处理相关目录');
+            console.log('3. 处理相关目录',  site);
             await this.dirHandle();
             // 4. 部分数据初始化
-            console.log('4. 部分数据初始化', site);
+            console.log('4. 部分数据初始化');
             await imageStrategyContext.init();
             await settingService.init();
-            await tagService.init();
-            // 3.1 启动时注册语言服务
+            console.log('4.1 数据库初始化');
+            await this.dbInit();
+            // 4.2 启动时注册语言服务
+            console.log('4.2 启动时注册语言服务')
             monaco.languages.register({id: 'markdown'});
             monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
             monaco.languages.setLanguageConfiguration('markdown', markdown.config);
@@ -70,8 +81,11 @@ export default defineComponent({
             monaco.languages.register({id: 'yaml'});
             monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
             monaco.languages.setLanguageConfiguration('yaml', yaml.config);
-            // 5. 跳转
-            console.log('5. 跳转');
+            // 5. 发送消息
+            console.log('5. 发送消息');
+            emitter.emit(MessageEventEnum.APP_LAUNCH);
+            // 6. 跳转
+            console.log('6. 跳转');
             this.$router.push('/post/list');
         },
         async dirHandle() {
@@ -81,8 +95,6 @@ export default defineComponent({
             await this.createDir(await Constant.FOLDER.CONFIG());
             // 创建项目配置文件夹
             await this.createDir(await Constant.FOLDER.SITE_CONFIG());
-            // 创建基础数据
-            await this.createDir(await Constant.FOLDER.BASE());
             // 文章目录
             await this.createDir(await Constant.FOLDER.POST());
             // 图片目录
@@ -100,7 +112,6 @@ export default defineComponent({
         },
         async createDir(dir: string) {
             let exist = await FileApi.exist(dir);
-            console.log(dir, exist)
             if (exist) {
                 // 存在的话直接返回
                 return Promise.resolve();
@@ -108,6 +119,18 @@ export default defineComponent({
                 // 不存在则创建
                 return FileApi.createDir(dir);
             }
+        },
+        async dbInit() {
+            tagDb.setPath(await Constant.FILE.DB_TAG());
+            await tagDb.init();
+            categoryDb.setPath(await Constant.FILE.DB_CATEGORY());
+            await categoryDb.init();
+            postDb.setPath(await Constant.FILE.DB_POST());
+            await postDb.init();
+            postTagDb.setPath(await Constant.FILE.DB_POST_TAG());
+            await postTagDb.init();
+            postCategoryDb.setPath(await Constant.FILE.DB_POST_CATEGORY());
+            await postCategoryDb.init();
         }
     }
 });

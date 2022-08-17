@@ -3,6 +3,11 @@
  */
 enum MessageEventEnum {
 
+    /**
+     * 程序启动
+     */
+    APP_LAUNCH = 'app:launch',
+
     // 文章相关
 
     /**

@@ -2,7 +2,7 @@
     <section id="app">
         <aside id="side" :style="{width: isCollapse ? '64px' : '200px'}">
             <div id="logo" :style="{display: isCollapse ? 'block' : 'flex'}">
-                <div v-if="!isCollapse">{{ $t('app.projectName') }}</div>
+                <div v-if="!isCollapse">{{ site.key }}</div>
                 <div style="text-align: center;padding: 3px;cursor: pointer" @click="isCollapse = !isCollapse">
                     <el-icon v-if="isCollapse">
                         <Expand/>
@@ -212,6 +212,8 @@ import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
 import ApplicationApi from "@/api/ApplicationApi";
+import Entry from "@/global/Entry";
+import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
 export default defineComponent({
     components: {
@@ -229,6 +231,8 @@ export default defineComponent({
     },
     data: () => {
         return {
+            setting: markRaw(Setting),
+            folder: markRaw(Folder),
             basicSetting: settingService.getBasic(),
             settingDialog: false,
             terminalDialog: false,
@@ -242,7 +246,12 @@ export default defineComponent({
             // 服务是否允许，true：运行中
             server: ServerStatusEnum.STOP as ServerStatusEnum,
             // 服务按钮是否禁用
-            serverDisable: false
+            serverDisable: false,
+            site: {
+                id: 0,
+                key: '',
+                value: ''
+            } as Entry
         }
     },
     created() {
@@ -271,6 +280,14 @@ export default defineComponent({
             // 解除服务禁用
             this.serverDisable = false;
         });
+        emitter.on(MessageEventEnum.APP_LAUNCH, () => {
+            // APP启动，重新获取站点名称
+            this.site = LocalStorageUtil.getOrDefault(Constant.LOCALSTORAGE.SITE, {
+                id: 0,
+                key: this.$t('app.projectName'),
+                value: ''
+            });
+        })
         this.$router.push('/loading');
     },
     computed: {
@@ -382,7 +399,7 @@ export default defineComponent({
             }
         },
         settingOperation(command: string) {
-            switch (command){
+            switch (command) {
                 case "projectDir":
                     Constant.FOLDER.POST().then(path => {
                         NativeApi.openFolder(path);

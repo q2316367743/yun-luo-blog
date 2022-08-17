@@ -104,6 +104,7 @@ export default {
     HEXO: {
         NAME: HEXO,
         INIT: "init",
+        INSTALL: "install",
         CLEAN: "clean",
         DEPLOY: "deploy",
         SERVER: "server"

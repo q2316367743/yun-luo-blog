@@ -1,9 +1,8 @@
-import {Dexie} from 'dexie';
-import DexieInstance from '@/plugins/dexie';
 import Category from "@/entities/Category";
 import CategoryView from "@/views/CategoryView";
 import PostCategory from "@/entities/PostCategory";
 import ArrayUtil from "@/utils/ArrayUtil";
+import Database from "@/plugins/Database";
 
 /**
  * 将列表转为树形
@@ -45,21 +44,21 @@ function getChildren(categoryView: CategoryView, list: Array<Category>, category
 
 export default class CategoryService {
 
-    postCategoryDao: Dexie.Table<PostCategory, number>;
-    categoryDao: Dexie.Table<Category, number>;
+    categoryMapper: Database<Category>;
+    postCategoryMapper: Database<PostCategory>;
 
-    constructor(dexieInstance: DexieInstance) {
-        this.postCategoryDao = dexieInstance.getPostCategoryDao();
-        this.categoryDao = dexieInstance.getCategoryDao();
+    constructor(categoryMapper: Database<Category>, postCategoryMapper: Database<PostCategory>) {
+        this.categoryMapper = categoryMapper;
+        this.postCategoryMapper = postCategoryMapper;
     }
 
     /**
      * 返回全部
      */
     async list(): Promise<Array<CategoryView>> {
-        let postCategories = await this.postCategoryDao.toArray();
+        let postCategories = this.postCategoryMapper!.list();
         let categoryCountMap = ArrayUtil.count(postCategories, 'categoryId');
-        let categories = await this.categoryDao.toArray();
+        let categories = this.categoryMapper?.list()!;
         return Promise.resolve(tree(categories, categoryCountMap))
     }
 
@@ -75,21 +74,18 @@ export default class CategoryService {
             return Promise.reject('分类名称不能为空');
         }
         // 先查询这个父ID是否存在
-        let categoryTemp = await this.categoryDao.where({parentId: category.parentId, name: category.name})
-            .first();
+        let categoryTemp = await this.categoryMapper?.one({parentId: category.parentId, name: category.name});
         if (categoryTemp) {
             // 存在则直接返回
-            return new Promise<number>((resolve, reject) => {
-                reject('分类已存在，无法插入');
-            })
+            return Promise.reject('分类已存在，无法插入');
         } else {
             // 不存在，则插入
-            return this.categoryDao.add({
+            return this.categoryMapper?.insert({
                 name: category.name,
                 parentId: category.parentId,
                 createTime: new Date(),
                 updateTime: new Date()
-            });
+            })!;
         }
     }
 
@@ -97,12 +93,12 @@ export default class CategoryService {
         if (category.name === "") {
             return Promise.reject('分类名称不能为空');
         }
-        let categoryTemp = await this.categoryDao.where({id: category.id})
-            .first();
+        let categoryTemp = await this.categoryMapper?.one({id: category.id});
         if (categoryTemp) {
             category.createTime = categoryTemp.createTime;
             category.updateTime = new Date();
-            return this.categoryDao.put(category);
+            await this.categoryMapper?.update(category);
+            return Promise.resolve(1);
         } else {
             return Promise.reject('分类不存在，无法修改');
         }
@@ -110,7 +106,7 @@ export default class CategoryService {
 
     async removeById(id: number): Promise<void> {
         console.log('删除分类', id)
-        return this.categoryDao.delete(id);
+        return this.categoryMapper?.delete(id);
     }
 
 }
