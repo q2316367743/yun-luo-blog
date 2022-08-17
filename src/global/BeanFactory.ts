@@ -7,7 +7,7 @@ import ServerService from "@/service/ServerService";
 import SettingService from "@/service/SettingService";
 
 export const dexieInstance = new DexieInstance();
-export const tagService = new TagService(dexieInstance);
+export const tagService = new TagService();
 export const postService = new PostService(dexieInstance);
 export const categoryService = new CategoryService(dexieInstance);
 

@@ -202,25 +202,15 @@ const config = {
     }
 } as monaco.languages.LanguageConfiguration;
 
-// 图片
-const imageNames = new Array<string>();
-Constant.FOLDER.POST_IMAGES().then(path => {
-    FileApi.listDir(path).then(files => {
-        for (let file of files) {
-            imageNames.push(file.name!);
-        }
-    });
-});
-
 /**
  * 语法提示
  */
 const provider = {
-    provideCompletionItems(
+    async provideCompletionItems(
         model: monaco.editor.ITextModel,
         position: monaco.Position,
         context: monaco.languages.CompletionContext,
-    ): monaco.languages.ProviderResult<monaco.languages.CompletionList> {
+    ): Promise<monaco.languages.ProviderResult<monaco.languages.CompletionList>> {
         // Markdown基础语法提示
         let suggestions = [{
             label: '#',
@@ -471,6 +461,11 @@ const provider = {
                 endColumn: position.column + 1
             });
             if (/!\[\S*]\(\/\)/.test(token)) {
+                // 图片
+                const imageNames = new Array<string>();
+                for (let file of await FileApi.listDir(await Constant.FOLDER.POST_IMAGES())) {
+                    imageNames.push(file.name!);
+                }
                 // 对于![]()的图片提供语法提示功能
                 for (let imageName of imageNames) {
                     suggestions.push({

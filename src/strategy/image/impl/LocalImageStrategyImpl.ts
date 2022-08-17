@@ -7,12 +7,8 @@ export default class LocalImageStrategyImpl implements ImageStrategy {
 
     private postImagePath: string = "";
 
-
-    constructor() {
-        // 创建时赋值
-        this.getPostImagePath().then(path => {
-            this.postImagePath = path;
-        })
+    async init(): Promise<void> {
+        this.postImagePath = await this.getPostImagePath();
     }
 
     private async getPostImagePath(): Promise<string> {

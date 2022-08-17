@@ -15,23 +15,74 @@
 import {defineComponent} from "vue";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
+import {settingService, tagService} from "@/global/BeanFactory";
+import {ElMessageBox} from "element-plus";
+import LocalStorageUtil from "@/utils/LocalStorageUtil";
+
+import './loading.less';
+import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
+import * as monaco from "monaco-editor";
+import markdown from "@/plugins/language/markdown";
+import yaml from "@/plugins/language/yaml";
 
 export default defineComponent({
     name: 'loading',
     data: () => ({}),
     async created() {
-        console.log('开始处理文件夹');
-        await this.dirHandle();
-        // 处理完成后跳转
-        console.log('文件夹处理完成，跳转')
-        this.$router.push('/post/list');
+        this.init().then(() => {
+            console.log('初始化完成');
+        }).catch(e => {
+            console.error(e);
+            ElMessageBox.alert('初始化错误', '警告', {
+                type: 'error'
+            });
+        })
     },
     methods: {
+        async init() {
+            // 1。 处理工作空间
+            console.log('1。 处理工作空间');
+            let workspace = LocalStorageUtil.get(Constant.LOCALSTORAGE.WORKSPACE);
+            if (!workspace) {
+                this.$router.push('/workspace');
+                return;
+            }
+            // 2. 处理站点
+            console.log('2. 处理站点', workspace);
+            let site = LocalStorageUtil.get(Constant.LOCALSTORAGE.SITE);
+            if (!site) {
+                this.$router.push('/site');
+                return;
+            }
+            // 3. 处理相关目录
+            console.log('3. 处理相关目录');
+            await this.dirHandle();
+            // 4. 部分数据初始化
+            console.log('4. 部分数据初始化', site);
+            await imageStrategyContext.init();
+            await settingService.init();
+            await tagService.init();
+            // 3.1 启动时注册语言服务
+            monaco.languages.register({id: 'markdown'});
+            monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
+            monaco.languages.setLanguageConfiguration('markdown', markdown.config);
+            monaco.languages.registerCompletionItemProvider('markdown', markdown.provider);
+            monaco.languages.register({id: 'yaml'});
+            monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
+            monaco.languages.setLanguageConfiguration('yaml', yaml.config);
+            // 5. 跳转
+            console.log('5. 跳转');
+            this.$router.push('/post/list');
+        },
         async dirHandle() {
-            // 创建基础数据
+            // 创建基础文件夹
             await this.createDir(await Constant.FOLDER.BASE());
             // 创建配置文件夹
             await this.createDir(await Constant.FOLDER.CONFIG());
+            // 创建项目配置文件夹
+            await this.createDir(await Constant.FOLDER.SITE_CONFIG());
+            // 创建基础数据
+            await this.createDir(await Constant.FOLDER.BASE());
             // 文章目录
             await this.createDir(await Constant.FOLDER.POST());
             // 图片目录
@@ -49,6 +100,7 @@ export default defineComponent({
         },
         async createDir(dir: string) {
             let exist = await FileApi.exist(dir);
+            console.log(dir, exist)
             if (exist) {
                 // 存在的话直接返回
                 return Promise.resolve();
@@ -71,132 +123,4 @@ export default defineComponent({
     background-color: #ffffff;
     font-weight: 100;
 }
-
-
-/* Start the loader code, first, let's align it the center of screen */
-.loader {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    /* disable selection and cursor changes */
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    cursor: default;
-    min-width: 33.25em;
-}
-
-.loader div {
-    position: relative;
-    width: 2.5em;
-    height: 2.5em;
-    background: #fff;
-    -webkit-border-radius: 100%;
-    -moz-border-radius: 100%;
-    border-radius: 100%;
-    margin: 0 5px;
-    float: left;
-    font-size: 1.65em;
-    line-height: 2.5em;
-    animation: bounce 1.5s infinite ease-in-out;
-}
-
-.loader div:after {
-    content: '';
-    position: absolute;
-    bottom: -2em;
-    left: 0.35em;
-    width: 1.8em;
-    height: 0.5em;
-    background: #322b27;
-    -webkit-border-radius: 100%;
-    -moz-border-radius: 100%;
-    border-radius: 100%;
-}
-
-.loader div:nth-child(1) {
-    animation: bounceFirst 1.5s infinite ease-in-out;
-    animation-delay: 0ms;
-    background: #DB2F00;
-    color: #fff;
-}
-
-.loader div:nth-child(2) {
-    animation-delay: 0ms;
-    background: #ff6d37;
-    color: #fff;
-}
-
-.loader div:nth-child(3) {
-    animation-delay: 50ms;
-    background: #ffa489;
-    color: #fff;
-}
-
-.loader div:nth-child(4) {
-    animation-delay: 100ms;
-    background: #f2f2f2;
-    color: #555;
-}
-
-.loader div:nth-child(5) {
-    animation-delay: 150ms;
-    background: #99d3d4;
-    color: #fff;
-}
-
-.loader div:nth-child(6) {
-    animation-delay: 200ms;
-    background: #56bebf;
-    color: #fff;
-}
-
-.loader div:nth-child(7) {
-    animation-delay: 250ms;
-    color: #fff;
-    background: #13A3A5;
-}
-
-@keyframes bounceFirst {
-    0% {
-        transform: translateX(0px);
-    }
-    20% {
-        transform: translateX(-50px);
-    }
-    28% {
-        transform: translateX(-50px);
-    }
-    50% {
-        transform: translateX(100px);
-    }
-    80%, 100% {
-        transform: translateX(0px);
-    }
-}
-
-
-
-@keyframes bounce {
-    0% {
-        transform: translateX(0px);
-    }
-    20% {
-        transform: translateX(0px);
-    }
-    28% {
-        transform: translateX(0px);
-    }
-    50% {
-        transform: translateX(100px);
-    }
-    80%, 100% {
-        transform: translateX(0px);
-    }
-}
-
 </style>

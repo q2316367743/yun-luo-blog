@@ -1,0 +1,119 @@
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    user-select: none;
+    cursor: default;
+    min-width: 33.25em;
+
+    div {
+        position: relative;
+        width: 2.5em;
+        height: 2.5em;
+        background: #fff;
+        -webkit-border-radius: 100%;
+        -moz-border-radius: 100%;
+        border-radius: 100%;
+        margin: 0 5px;
+        float: left;
+        font-size: 1.65em;
+        line-height: 2.5em;
+        animation: bounce 1.5s infinite ease-in-out;
+
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: -2em;
+            left: 0.35em;
+            width: 1.8em;
+            height: 0.5em;
+            background: #322b27;
+            -webkit-border-radius: 100%;
+            -moz-border-radius: 100%;
+            border-radius: 100%;
+        }
+
+        &:nth-child(1) {
+            animation: bounceFirst 1.5s infinite ease-in-out;
+            animation-delay: 0ms;
+            background: #DB2F00;
+            color: #fff;
+        }
+
+        &:nth-child(2) {
+            animation-delay: 0ms;
+            background: #ff6d37;
+            color: #fff;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 50ms;
+            background: #ffa489;
+            color: #fff;
+        }
+
+        &:nth-child(4) {
+            animation-delay: 100ms;
+            background: #f2f2f2;
+            color: #555;
+        }
+
+        &:nth-child(5) {
+            animation-delay: 150ms;
+            background: #99d3d4;
+            color: #fff;
+        }
+
+        &:nth-child(6) {
+            animation-delay: 200ms;
+            background: #56bebf;
+            color: #fff;
+        }
+
+        &:nth-child(7) {
+            animation-delay: 250ms;
+            color: #fff;
+            background: #13A3A5;
+        }
+
+    }
+}
+
+@keyframes bounceFirst {
+    0% {
+        transform: translateX(0px);
+    }
+    20% {
+        transform: translateX(-50px);
+    }
+    28% {
+        transform: translateX(-50px);
+    }
+    50% {
+        transform: translateX(100px);
+    }
+    80%, 100% {
+        transform: translateX(0px);
+    }
+}
+
+
+@keyframes bounce {
+    0% {
+        transform: translateX(0px);
+    }
+    20% {
+        transform: translateX(0px);
+    }
+    28% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(100px);
+    }
+    80%, 100% {
+        transform: translateX(0px);
+    }
+}

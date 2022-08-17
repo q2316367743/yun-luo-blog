@@ -4,6 +4,11 @@
 export default interface ImageStrategy {
 
     /**
+     * 初始化
+     */
+    init(): Promise<void>;
+
+    /**
      * 上传图片
      *
      * @return 上传完后的图片地址

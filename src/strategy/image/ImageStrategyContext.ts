@@ -20,6 +20,12 @@ class ImageStrategyContext {
         return this.instance;
     }
 
+    public async init(): Promise<void> {
+        for (let item of this.strategyMap.values()) {
+            await item.init();
+        }
+    }
+
     public register(name: number, strategy: ImageStrategy) {
         this.strategyMap.set(name, strategy);
     }

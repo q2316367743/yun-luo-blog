@@ -271,6 +271,7 @@ export default defineComponent({
             // 解除服务禁用
             this.serverDisable = false;
         });
+        this.$router.push('/loading');
     },
     computed: {
         serverStatus(): string {

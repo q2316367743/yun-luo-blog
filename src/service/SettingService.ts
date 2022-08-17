@@ -78,27 +78,20 @@ export default class SettingService {
     private syncRemote: SyncRemoteSetting = syncRemoteSetting;
 
     constructor() {
-        this.initServer().then(() => {
-            console.log('服务器设置初始化成功');
-        });
-        this.initBasic().then(() => {
-            console.log('基础设置初始化成功');
-        });
-        this.initImage().then(() => {
-            console.log('图片设置初始化成功');
-        });
-        this.initEnvironment().then(() => {
-            console.log('环境设置初始化成功');
-        });
-        this.initSyncRemote().then(() => {
-            console.log('同步 - 远程设置初始化成功');
-        });
+    }
+
+    async init(): Promise<void> {
+        await this.initServer();
+        await this.initBasic();
+        await this.initImage();
+        await this.initEnvironment();
+        await this.initSyncRemote();
     }
 
     /**
      * 初始化服务器设置
      */
-    async initServer(): Promise<void> {
+    private async initServer(): Promise<void> {
         let path = await Constant.FILE.SETTING_SERVER();
         // 读取文件
         let source = {}
@@ -116,7 +109,7 @@ export default class SettingService {
     /**
      * 初始化基础设置
      */
-    async initBasic(): Promise<void> {
+    private async initBasic(): Promise<void> {
         let path = await Constant.FILE.SETTING_BASIC();
         // 读取文件
         let source = {}
@@ -141,7 +134,7 @@ export default class SettingService {
     /**
      * 初始化服务器设置
      */
-    async initImage(): Promise<void> {
+    private async initImage(): Promise<void> {
         let path = await Constant.FILE.SETTING_IMAGE();
         // 读取文件
         let source = {}
@@ -167,7 +160,7 @@ export default class SettingService {
     /**
      * 初始化环境设置
      */
-    async initEnvironment(): Promise<void> {
+    private async initEnvironment(): Promise<void> {
         let path = await Constant.FILE.SETTING_ENVIRONMENT();
         // 读取文件
         let source = {}
@@ -185,7 +178,7 @@ export default class SettingService {
     /**
      * 初始化服务器设置
      */
-    async initSyncRemote(): Promise<void> {
+    private async initSyncRemote(): Promise<void> {
         let path = await Constant.FILE.SETTING_SYNC_REMOTE();
         // 读取文件
         let source = {}

@@ -42,6 +42,10 @@ export default class QiNiuImageStrategyImpl implements ImageStrategy {
      */
     private deprecatedPolicyFields: Array<string> = ["asyncOps"];
 
+    init(): Promise<void> {
+        return Promise.resolve();
+    }
+
     upload(): Promise<string> {
         return Promise.reject("暂不支持")
         // 获取七牛云配置信息

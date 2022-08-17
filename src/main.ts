@@ -5,9 +5,6 @@ import 'element-plus/dist/index.css'
 import { createPinia } from 'pinia';
 
 import router from '@/plugins/router';
-import * as monaco from "monaco-editor";
-import markdown from "@/plugins/language/markdown";
-import yaml from "@/plugins/language/yaml";
 import i18n from '@/i18n';
 
 import './main.less';
@@ -39,15 +36,6 @@ self.MonacoEnvironment = {
         return new editorWorker()
     }
 }
-
-// 启动时注册语言服务
-monaco.languages.register({ id: 'markdown' });
-monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
-monaco.languages.setLanguageConfiguration('markdown', markdown.config);
-monaco.languages.registerCompletionItemProvider('markdown', markdown.provider);
-monaco.languages.register({ id: 'yaml' });
-monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
-monaco.languages.setLanguageConfiguration('yaml', yaml.config);
 
 
 createApp(App)

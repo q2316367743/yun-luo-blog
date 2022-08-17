@@ -3,23 +3,48 @@ import ArrayUtil from "@/utils/ArrayUtil";
 
 export default class Database<T> {
 
+    records: Array<T>;
     path: string;
 
     constructor(path: string) {
         this.path = path;
+        this.records = new Array<T>();
+    }
+
+    async init(): Promise<void> {
+        this.records = new Array<T>();
+        try {
+            let content = await FileApi.readFile(this.path);
+            let items = JSON.parse(content) as any[]
+            for (let item of items) {
+                this.records.push(item);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    private async save(): Promise<void> {
+        return FileApi.writeFile(this.path, JSON.stringify(this.records));
     }
 
     /**
      * 返回全部数据
      */
-    async list(): Promise<Array<T>> {
+    async list<K extends keyof T>(where?: Record<K, any>): Promise<Array<T>> {
         let result = new Array<T>();
-        let content = ""
         try {
-            content = await FileApi.readFile(this.path);
-            let items = JSON.parse(content) as any[];
-            for (let item of items) {
-                result.push(item)
+            for (let item of this.records) {
+                if (where) {
+                    for (let key of Object.keys(where)) {
+                        // @ts-ignore
+                        if (T[key] == where[key]) {
+                            result.push(item)
+                        }
+                    }
+                }else {
+                    result.push(item)
+                }
             }
         } catch (e) {
             console.error(e);
@@ -38,6 +63,17 @@ export default class Database<T> {
         return Promise.resolve(count);
     }
 
+    async info(id: number): Promise<T | void> {
+        let items = await this.list();
+        for (let item of items) {
+            // @ts-ignore
+            if (item.id && item.id === id) {
+                return Promise.resolve(item);
+            }
+        }
+        return Promise.resolve();
+    }
+
     /**
      * 插入一条记录
      * @param record 记录
@@ -47,9 +83,8 @@ export default class Database<T> {
         let id = new Date().getTime();
         // @ts-ignore
         record.id = id;
-        let items = await this.list();
-        items.push(record);
-        await FileApi.writeFile(this.path, JSON.stringify(items));
+        this.records.push(record);
+        await this.save();
         return Promise.resolve(id);
     }
 
@@ -76,8 +111,7 @@ export default class Database<T> {
             return Promise.reject('ID不存在，无法更新');
         }
         let records = new Array<T>();
-        let items = await this.list();
-        for (let item of items) {
+        for (let item of this.records) {
             // @ts-ignore
             if (item.id === id) {
                 records.push(record);
@@ -85,7 +119,8 @@ export default class Database<T> {
                 records.push(item);
             }
         }
-        return FileApi.writeFile(this.path, JSON.stringify(items));
+        this.records = records;
+        return this.save();
     }
 
     /**
@@ -102,7 +137,8 @@ export default class Database<T> {
                 records.push(item);
             }
         }
-        return FileApi.writeFile(this.path, JSON.stringify(items));
+        this.records = records;
+        return this.save();
     }
 
 }

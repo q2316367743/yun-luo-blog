@@ -23,6 +23,10 @@ interface PicGoResult {
 
 export default class PicGoImageStrategyImpl implements ImageStrategy {
 
+    init(): Promise<void> {
+        return Promise.resolve();
+    }
+
     async upload(): Promise<string> {
         const selected = await DialogApi.open({
             title: '请选择图片',

@@ -1,4 +1,8 @@
 import FileApi from "@/api/FileApi";
+import router from '@/plugins/router';
+import {ElMessage} from "element-plus";
+import Entry from "@/global/Entry";
+import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
 // 文件
 
@@ -44,21 +48,48 @@ const CONTENT_GITIGNORE = `dist
 hexo/public
 hexo/node_modules`;
 
+// localStorage
+const LS_WORKSPACE = 'workspace';
+const LS_WORKSPACE_HISTORY = 'workspace-history';
+const LS_SITE = 'site';
+const LS_SITE_HISTORY = 'site-history';
+
 /**
- * 获取项目基础目录
+ * 获取工作空间目录
  */
-async function basicDir(): Promise<string> {
-    let basePath = localStorage.getItem('basePath');
-    if (!basePath) {
-        basePath = await FileApi.defaultDir();
-        localStorage.setItem('basePath', basePath);
+function workspaceDir(): string {
+    let workspace = localStorage.getItem(LS_WORKSPACE);
+    if (!workspace) {
+        router.push('/loading').then(() => {
+            ElMessage({
+                showClose: true,
+                type: 'error',
+                message: '工作空间获取错误'
+            })
+        });
     }
-    return Promise.resolve(basePath);
+    return workspace!;
+}
+
+/**
+ * 获取站点目录
+ */
+function siteDir(): Entry {
+    let siteDir = LocalStorageUtil.get(LS_SITE);
+    if (!siteDir) {
+        router.push('/loading').then(() => {
+            ElMessage({
+                showClose: true,
+                type: 'error',
+                message: '站点目录获取错误'
+            })
+        });
+    }
+    return siteDir;
 }
 
 export default {
-    BASE: BASE,
-    POST: POST,
+    POST_IMAGES: POST_IMAGES,
     SETTING: {
         SERVER: SETTING_SERVER,
         BASIC: SETTING_BASIC,
@@ -77,98 +108,85 @@ export default {
         DEPLOY: "deploy",
         SERVER: "server"
     },
-    POST_IMAGES: POST_IMAGES,
-    HEXO_THEME: HEXO_THEME,
+    LOCALSTORAGE: {
+        WORKSPACE: LS_WORKSPACE,
+        WORKSPACE_HISTORY: LS_WORKSPACE_HISTORY,
+        SITE: LS_SITE,
+        SITE_HISTORY: LS_SITE_HISTORY
+    },
     FILE: {
         GITIGNORE: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, GITIGNORE);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, GITIGNORE);
         },
         SETTING_SERVER: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, SETTING_SERVER);
+            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_SERVER);
         },
         SETTING_BASIC: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, SETTING_BASIC);
+            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_BASIC);
         },
         SETTING_IMAGE: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, SETTING_IMAGE);
+            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_IMAGE);
         },
         SETTING_ENVIRONMENT: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, SETTING_ENVIRONMENT);
+            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_ENVIRONMENT);
         },
         SETTING_SYNC_REMOTE: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, SETTING_SYNC_REMOTE);
+            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_SYNC_REMOTE);
         },
         SETTING_SYNC_LOCAL: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, SETTING_SYNC_LOCAL);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG, SETTING_SYNC_LOCAL);
         },
         DB_TAG: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, DB_TAG);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG, DB_TAG);
         },
         DB_CATEGORY: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, DB_CATEGORY);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG, DB_CATEGORY);
         },
         DB_POST: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, DB_POST);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG, DB_POST);
         },
         DB_POST_TAG: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, DB_POST_TAG);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG, DB_POST_TAG);
         },
         DB_POST_CATEGORY: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG, DB_POST_CATEGORY);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG, DB_POST_CATEGORY);
         }
     },
     FOLDER: {
+        workspaceDir,
+        siteDir,
+        CONFIG: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, CONFIG);
+        },
         BASE: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value);
         },
         POST: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, POST);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, POST);
         },
-        CONFIG: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, CONFIG);
+        SITE_CONFIG: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG);
         },
         POST_IMAGES: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, POST_IMAGES);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, POST_IMAGES);
         },
         DIST: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, DIST);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, DIST);
         },
         HEXO: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, HEXO);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, HEXO);
         },
         HEXO_CONFIG: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, HEXO, HEXO_CONFIG);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, HEXO, HEXO_CONFIG);
         },
         HEXO_THEME: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, HEXO, HEXO_THEME);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, HEXO, HEXO_THEME);
         },
         HEXO_PUBLIC: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, HEXO, HEXO_PUBLIC);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, HEXO, HEXO_PUBLIC);
         },
         HEXO_PACKAGE_JSON: async (): Promise<string> => {
-            let document = await basicDir();
-            return FileApi.resolve(document, BASE, HEXO, HEXO_PACKAGE_JSON);
+            return FileApi.resolve(workspaceDir(), BASE, siteDir().value, HEXO, HEXO_PACKAGE_JSON);
         }
     },
 }
