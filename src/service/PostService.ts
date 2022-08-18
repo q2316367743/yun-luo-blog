@@ -76,9 +76,7 @@ export default class TagService {
         let oldPost = this.postDb.one({id: post.id});
         console.log('旧文章', oldPost)
         if (!oldPost) {
-            return new Promise<void>((resolve, reject) => {
-                reject('文章不存在，请刷新后重试');
-            })
+            return Promise.reject('文章不存在，请刷新后重试');
         }
         // 先修改文章
         console.log('先修改文章', post)
@@ -206,32 +204,30 @@ export default class TagService {
         let categoryMap = ArrayUtil.map(categories, 'id');
         let postTagMap = ArrayUtil.group(postTag, 'postId');
         let tagMap = ArrayUtil.map(tags, 'id');
-        return new Promise<Array<PostView>>((resolve) => {
-            resolve(posts.map(e => {
-                let view = Object.assign({} as PostView, e);
-                // 处理标签
-                let postTags = postTagMap.get(e.id);
-                let tagList = Array<string>();
-                if (postTags) {
-                    for (let postTag of postTags) {
-                        let tag = tagMap.get(postTag.tagId);
-                        if (tag) {
-                            tagList.push(tag.name);
-                        }
+        return Promise.resolve(posts.map(e => {
+            let view = Object.assign({} as PostView, e);
+            // 处理标签
+            let postTags = postTagMap.get(e.id);
+            let tagList = Array<string>();
+            if (postTags) {
+                for (let item of postTags) {
+                    let tag = tagMap.get(item.tagId);
+                    if (tag) {
+                        tagList.push(tag.name);
                     }
                 }
-                view.tags = tagList;
-                view.categories = new Array<string>();
-                // 查询分类
-                let postCategory = postCategoryMap.get(e.id);
-                if (postCategory) {
-                    // 存在分类
-                    this.renderCategoryName(categoryMap, view.categories, postCategory.categoryId);
-                    view.categories = view.categories.reverse();
-                }
-                return view;
-            }));
-        })
+            }
+            view.tags = tagList;
+            view.categories = new Array<string>();
+            // 查询分类
+            let postCategory = postCategoryMap.get(e.id);
+            if (postCategory) {
+                // 存在分类
+                this.renderCategoryName(categoryMap, view.categories, postCategory.categoryId);
+                view.categories = view.categories.reverse();
+            }
+            return view;
+        }));
     }
 
     private renderCategoryName(

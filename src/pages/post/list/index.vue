@@ -241,15 +241,6 @@ export default defineComponent({
                 }
             });
         },
-        refreshPost() {
-            // 强制刷新
-            postService.refresh().then(() => {
-                postService.list().then(posts => {
-                    this.posts = posts;
-                    this.searchPost();
-                })
-            })
-        },
         deleteById(id?: number) {
             ElMessageBox.confirm(
                 this.$t('post.list.deletePostHint'),
@@ -296,8 +287,8 @@ export default defineComponent({
             postService.info(id!).then(post => {
                 if (post) {
                     // 存在文章，查询文章详情
-                    parsePost(post.path, post.fileName, true).then(post => {
-                        this.post = post!;
+                    parsePost(post.path, post.fileName, true).then(renderPost => {
+                        this.post = renderPost!;
                         // 重新对post.id赋值
                         this.post.id = id;
                     });

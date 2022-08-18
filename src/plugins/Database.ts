@@ -40,11 +40,16 @@ export default class Database<T> {
         try {
             for (let item of this.records) {
                 if (where) {
+                    let flag = true;
                     for (let key of Object.keys(where)) {
                         // @ts-ignore
-                        if (item[key] == where[key]) {
-                            result.push(item)
+                        if (item[key] !== where[key]) {
+                            flag = false;
+                            break;
                         }
+                    }
+                    if (flag) {
+                        result.push(item)
                     }
                 } else {
                     result.push(item)

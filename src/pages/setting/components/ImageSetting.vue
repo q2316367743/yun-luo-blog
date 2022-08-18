@@ -63,8 +63,6 @@ export default defineComponent({
         imageSetting: settingService.getImage(),
         storageAreaSelect: true
     }),
-    created() {
-    },
     methods: {
         save() {
             settingService.saveImage(this.imageSetting).then(() => {

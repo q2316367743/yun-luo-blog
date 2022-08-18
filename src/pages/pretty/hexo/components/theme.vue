@@ -64,6 +64,7 @@ import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import DialogApi from "@/api/DialogApi";
 import {settingService} from "@/global/BeanFactory";
+import constant from "@/global/Constant";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -168,6 +169,15 @@ export default defineComponent({
                         type: "success",
                         message: "clone成功"
                     });
+                    // 需要将配置文件拿出来
+                    let currPath: string;
+                    if (this.themeInfo.name.trim() !== "") {
+                        currPath = this.themeInfo.name.trim()
+                    }else {
+                        let items = this.themeInfo.url.trim().split('/');
+                        currPath = items[items.length - 1];
+                    }
+                    this.configFileTransfer(currPath);
                     this.listTheme();
                     loading.close();
                     this.themeAddDialog = false;
@@ -220,13 +230,16 @@ export default defineComponent({
                 return;
             }
             options.source = this.themeInfo.compressionPath;
+            let themeFolderName: string;
             if (this.themeInfo.name && this.themeInfo.name !== '') {
+                themeFolderName = this.themeInfo.name;
                 options.target = await FileApi.resolve(await Constant.FOLDER.HEXO_THEME(), this.themeInfo.name);
             } else {
                 let tempPath = this.themeInfo.compressionPath;
                 tempPath = tempPath.replaceAll("\\", "/");
                 let name = tempPath.substring(tempPath.lastIndexOf("/") + 1);
                 name = name.substring(0, name.lastIndexOf("."));
+                themeFolderName = name;
                 options.target = await FileApi.resolve(await Constant.FOLDER.HEXO_THEME(), name);
             }
             const loading = ElLoading.service({
@@ -235,6 +248,8 @@ export default defineComponent({
                 background: 'rgba(0, 0, 0, 0.7)',
             });
             NativeApi.compressing(options).then(() => {
+                // 文件复制
+                this.configFileTransfer(themeFolderName);
                 this.listTheme();
                 this.themeAddDialog = false;
                 loading.close();
@@ -352,6 +367,21 @@ export default defineComponent({
                     showClose: true,
                     type: 'error',
                     message: '选择文件失败，' + e
+                })
+            })
+        },
+        configFileTransfer(name: string) {
+            Constant.FOLDER.HEXO_THEME().then(hexoTheme => {
+                FileApi.resolve(hexoTheme, name, Constant.HEXO.FILE.CONFIG).then(themeConfigPath => {
+                    FileApi.exist(themeConfigPath).then(themeConfigExist => {
+                        if (themeConfigExist) {
+                            Constant.FOLDER.HEXO().then(hexoPath => {
+                                FileApi.resolve(hexoPath, Constant.HEXO.FILE.THEME_CONFIG(name)).then(hexoThemeConfigPath =>{
+                                    FileApi.copyFile(themeConfigPath, hexoThemeConfigPath);
+                                })
+                            })
+                        }
+                    })
                 })
             })
         }

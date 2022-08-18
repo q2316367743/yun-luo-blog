@@ -107,7 +107,13 @@ export default {
         INSTALL: "install",
         CLEAN: "clean",
         DEPLOY: "deploy",
-        SERVER: "server"
+        SERVER: "server",
+        FILE: {
+            CONFIG: HEXO_CONFIG,
+            THEME_CONFIG: (name: string) => {
+                return `_config.${name}.yml`
+            }
+        },
     },
     LOCALSTORAGE: {
         WORKSPACE: LS_WORKSPACE,
