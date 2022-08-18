@@ -3,7 +3,7 @@
         <el-form-item label="图片类型:">
             <el-radio-group v-model="imageSetting.type">
                 <el-radio :label="1">本地</el-radio>
-                <el-radio :label="2">七牛云</el-radio>
+                <el-radio :label="2" disabled>七牛云</el-radio>
                 <el-radio :label="3">PigGo</el-radio>
             </el-radio-group>
         </el-form-item>

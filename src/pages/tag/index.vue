@@ -50,7 +50,7 @@ export default defineComponent({
             });
         },
         tagAdd() {
-            ElMessageBox.prompt(this.$t('tag.addTagHint'), this.$t('tag.addTag'), {
+            ElMessageBox.prompt(this.$t('tag.add_tag_hint'), this.$t('tag.add_tag'), {
                 confirmButtonText: this.$t('common.add'),
                 cancelButtonText: this.$t('common.cancel'),
             }).then(({value}) => {
@@ -58,11 +58,10 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: this.$t('hint.addSuccess'),
+                        message: this.$t('hint.add_success'),
                     });
                     this.tagListAll();
                 });
-            }).catch(() => {
             });
         },
         tagUpdate(tag: TagView) {
@@ -70,7 +69,7 @@ export default defineComponent({
                 // 文章数量不为0，不允许修改
                 return;
             }
-            ElMessageBox.prompt(this.$t('tag.updateTagHint'), this.$t('tag.updateTag'), {
+            ElMessageBox.prompt(this.$t('tag.update_tag_hint'), this.$t('tag.update_tag'), {
                 confirmButtonText: this.$t('common.update'),
                 cancelButtonText: this.$t('common.cancel'),
                 inputValue: tag.name
@@ -79,14 +78,14 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: this.$t('hint.updateSuccess'),
+                        message: this.$t('hint.update_success'),
                     });
                     this.tagListAll();
                 }).catch((e) => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: this.$t('hint.updateFail') + ',' + e,
+                        message: this.$t('hint.update_fail') + ',' + e,
                     });
                 });
             });
@@ -97,7 +96,7 @@ export default defineComponent({
                 return;
             }
             ElMessageBox.confirm(
-                `此操作将永久删除改标签. 是否继续?`,
+                this.$t('tag.delete_hint'),
                 this.$t('common.warning'),
                 {
                     confirmButtonText: this.$t('common.delete'),
@@ -109,14 +108,14 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: this.$t('hint.deleteSuccess'),
+                        message: this.$t('hint.delete_success'),
                     });
                     this.tagListAll();
                 }).catch(e => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: this.$t('hint.deleteFail') + ',' + e,
+                        message: this.$t('hint.delete_fail') + ',' + e,
                     });
                 })
             }).catch(() => {

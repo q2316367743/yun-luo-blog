@@ -13,7 +13,7 @@
                         </div>
                         <div>
                             <el-button type="primary" link @click.stop="categoryAdd(data.id)">
-                                {{ $t('category.addSubCategory') }}
+                                {{ $t('category.add_sub_category') }}
                             </el-button>
                             <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0"
                                        @click="categoryRemove(data.id)">{{ $t('common.delete') }}
@@ -62,7 +62,7 @@ export default defineComponent({
             })
         },
         categoryAdd(id: number) {
-            ElMessageBox.prompt(this.$t('category.addCategoryHint'), this.$t('category.addCategory'), {
+            ElMessageBox.prompt(this.$t('category.add_category_hint'), this.$t('category.add_category'), {
                 confirmButtonText: this.$t('common.add'),
                 cancelButtonText: this.$t('common.cancel'),
             }).then(({value}) => {
@@ -73,7 +73,7 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: this.$t('hint.addSuccess'),
+                        message: this.$t('hint.add_success'),
                     });
                     this.categoryList();
                 });
@@ -81,13 +81,13 @@ export default defineComponent({
                 ElMessage({
                     showClose: true,
                     type: 'error',
-                    message: this.$t('hint.addFail') + ',' + e,
+                    message: this.$t('hint.add_fail') + ',' + e,
                 });
             });
         },
         categoryRemove(id: number) {
             ElMessageBox.confirm(
-                this.$t('category.deleteCategoryHint'),
+                this.$t('category.delete_category_hint'),
                 this.$t('common.warning'),
                 {
                     confirmButtonText: this.$t('common.delete'),
@@ -99,17 +99,16 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'success',
-                        message: this.$t('hint.deleteSuccess'),
+                        message: this.$t('hint.delete_success'),
                     });
                     this.categoryList();
                 }).catch((e) => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: this.$t('hint.deleteFail') + ',' + e,
+                        message: this.$t('hint.delete_fail') + ',' + e,
                     });
                 })
-            }).catch(() => {
             })
         }
     }

@@ -265,7 +265,7 @@ export default defineComponent({
                     // 删除成功，准备删除源文件
                     ElMessage({
                         type: 'success',
-                        message: this.$t('hint.deleteSuccess'),
+                        message: this.$t('hint.delete_success'),
                     });
 
                     postService.list().then(posts => {
@@ -275,13 +275,13 @@ export default defineComponent({
                 }).catch((e) => {
                     ElMessage({
                         type: 'error',
-                        message: this.$t('hint.deleteFail') + ',' + e,
+                        message: this.$t('hint.delete_fail') + ',' + e,
                     })
                 });
             }).catch(() => {
                 ElMessage({
                     type: 'info',
-                    message: this.$t('hint.deleteCancel'),
+                    message: this.$t('hint.delete_cancel'),
                 })
             })
         },
@@ -333,7 +333,7 @@ export default defineComponent({
                 ElMessage({
                     showClose: true,
                     type: 'success',
-                    message: this.$t('hint.saveSuccess')
+                    message: this.$t('hint.save_success')
                 });
                 // 更新列表
             }).catch(e => {
@@ -342,7 +342,7 @@ export default defineComponent({
                 ElMessage({
                     showClose: true,
                     type: 'error',
-                    message: this.$t('hint.saveFail') + "," + e
+                    message: this.$t('hint.save_fail') + "," + e
                 });
             });
         }

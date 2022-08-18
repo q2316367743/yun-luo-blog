@@ -41,7 +41,7 @@
                     <el-icon>
                         <Menu/>
                     </el-icon>
-                    <span>{{ $t('menu.blogSetting') }}</span>
+                    <span>{{ $t('menu.blog_setting') }}</span>
                 </el-menu-item>
                 <el-menu-item index="/tool">
                     <el-icon>
@@ -63,9 +63,7 @@
                             placement="bottom"
                         >
                             <div class="nav-item" @click="sync">
-                                <el-icon>
-                                    <refresh/>
-                                </el-icon>
+                                <el-icon><Upload /></el-icon>
                             </div>
                         </el-tooltip>
                         <el-tooltip
@@ -123,14 +121,14 @@
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <el-dropdown-item command="start" v-if="server === 3">
-                                            {{ $t('app.serverStart') }}
+                                            {{ $t('app.server_start') }}
                                         </el-dropdown-item>
                                         <el-dropdown-item command="stop" v-if="server === 1">
-                                            {{ $t('app.serverStop') }}
+                                            {{ $t('app.server_stop') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item command="dist">{{ $t('app.openDist') }}</el-dropdown-item>
+                                        <el-dropdown-item command="dist">{{ $t('app.open_dist') }}</el-dropdown-item>
                                         <el-dropdown-item command="browser" v-if="server === 1 || server === 2">
-                                            {{ $t('app.openBrowser') }}
+                                            {{ $t('app.open_browser') }}
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
@@ -145,12 +143,12 @@
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item command="projectDir">
-                                        {{ $t('app.openProjectDir') }}
+                                        {{ $t('app.open_project_dir') }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                                 <el-dropdown-menu>
                                     <el-dropdown-item command="devtools">
-                                        {{ $t('app.openDevTools') }}
+                                        {{ $t('app.open_dev_tools') }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -185,7 +183,7 @@ import {
     Folder,
     Menu,
     PriceTag,
-    Refresh,
+    Upload,
     Setting,
     ShoppingCartFull,
     Suitcase
@@ -217,7 +215,7 @@ import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
 export default defineComponent({
     components: {
-        Document, ArrowDown, Setting, Refresh, PriceTag, Menu, CollectionTag,
+        Document, ArrowDown, Setting, Upload, PriceTag, Menu, CollectionTag,
         ShoppingCartFull, SettingPage, Expand, Fold, Suitcase, Tools,
         Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run,
         Loader
@@ -284,7 +282,7 @@ export default defineComponent({
             // APP启动，重新获取站点名称
             this.site = LocalStorageUtil.getOrDefault(Constant.LOCALSTORAGE.SITE, {
                 id: 0,
-                key: this.$t('app.projectName'),
+                key: this.$t('app.project_name'),
                 value: ''
             });
         })
@@ -293,13 +291,13 @@ export default defineComponent({
     computed: {
         serverStatus(): string {
             if (ServerStatusEnum.RUN === this.server) {
-                return this.$t('app.serverRun')
+                return this.$t('app.server_run')
             } else if (this.server === ServerStatusEnum.UPDATE) {
-                return this.$t('app.serverUpdate');
+                return this.$t('app.server_update');
             } else if (this.server === ServerStatusEnum.STOP) {
-                return this.$t('app.serverStandby');
+                return this.$t('app.server_standby');
             } else {
-                return this.$t('app.serverUnknown');
+                return this.$t('app.server_unknown');
             }
         }
     },
@@ -309,10 +307,10 @@ export default defineComponent({
                 ElMessage({
                     showClose: true,
                     type: 'success',
-                    message: this.$t('app.syncSuccess')
+                    message: this.$t('app.sync_success')
                 });
             }).catch(e => {
-                ElMessageBox.alert(e, this.$t('app.syncFail'), {
+                ElMessageBox.alert(e, this.$t('app.sync_fail'), {
                     confirmButtonText: this.$t('common.confirm'),
                     type: "error",
                     draggable: true

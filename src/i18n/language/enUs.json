@@ -2,25 +2,25 @@
     "app": {
         "chinese": "中文",
         "english": "English",
-        "openBrowser": "Open a browser",
-        "openDevTools": "Open Developer Tools",
-        "openDist": "Open the deployment directory.",
-        "openProjectDir": "Open the project directory",
-        "projectName": "云落blog",
-        "serverRun": "Service running",
-        "serverStandby": "Service not started",
-        "serverStart": "Starting the Server",
-        "serverStop": "Stopping the Server",
-        "serverUnknown": "Service status unknown",
-        "serverUpdate": "Service update in progress",
-        "syncFail": "synchronization failure",
-        "syncSuccess": "synchronous success"
+        "open_browser": "Open a browser",
+        "open_dev_tools": "Open Developer Tools",
+        "open_dist": "Open the deployment directory.",
+        "open_project_dir": "Open the project directory",
+        "project_name": "云落blog",
+        "server_run": "Service running",
+        "server_standby": "Service not started",
+        "server_start": "Starting the Server",
+        "server_stop": "Stopping the Server",
+        "server_unknown": "Service status unknown",
+        "server_update": "Service update in progress",
+        "sync_fail": "synchronization failure",
+        "sync_success": "synchronous success"
     },
     "category": {
-        "addCategory": "The new classification",
-        "addCategoryHint": "Please enter a category name",
-        "addSubCategory": "Adding subcategories",
-        "deleteCategoryHint": "This operation will delete this category forever. Do you want to continue?",
+        "add_category": "The new classification",
+        "add_category_hint": "Please enter a category name",
+        "add_sub_category": "Adding subcategories",
+        "delete_category_hint": "This operation will delete this category forever. Do you want to continue?",
         "title": "一曲新词酒一杯，去年天气旧亭台。"
     },
     "common": {
@@ -43,19 +43,120 @@
         "update": "update",
         "warning": "warning"
     },
+    "config": {
+        "hexo": {
+            "code": {
+                "title": "code"
+            },
+            "directory": {
+                "archive_dir": "archive_dir",
+                "category_dir": "category_dir",
+                "code_dir": "code_dir",
+                "i18n_dir": "i18n_dir",
+                "public_dir": "public_dir",
+                "skip_render": "skip_render",
+                "source_dir": "source_dir",
+                "tag_dir": "tag_dir",
+                "title": "directory"
+            },
+            "extensions": {
+                "theme": "theme",
+                "title": "extensions"
+            },
+            "misc": {
+                "category_and_tag": {
+                    "category_map": "category_map",
+                    "default_category": "default category",
+                    "tag_map": "tag_map",
+                    "title": "category & tag"
+                },
+                "date_format": {
+                    "date_format": "date_format",
+                    "time_format": "time_format",
+                    "title": "Date/time format",
+                    "updated_option": {
+                        "date": "date",
+                        "empty": "empty",
+                        "mtime": "mtime",
+                        "title": "updated_option"
+                    }
+                },
+                "title": "misc"
+            },
+            "pagination": {
+                "pagination_dir": "pagination_dir",
+                "per_page": "per_page",
+                "title": "pagination"
+            },
+            "site": {
+                "author": "author",
+                "description": "description",
+                "keywords": "keywords",
+                "language": "language",
+                "new_keyword": "The new keyword",
+                "subtitle": "subtitle",
+                "timezone": "timezone",
+                "title": "site"
+            },
+            "theme": {
+                "title": "theme"
+            },
+            "url": {
+                "permalink": "permalink",
+                "permalink_defaults": "permalink defaults",
+                "placeholder": {
+                    "permalink": "Permalink format for articles",
+                    "permalink_defaults": "Default values for each part of the permalink",
+                    "root": "Site root Directory",
+                    "url": "The web address must begin with http:// or https://"
+                },
+                "root": "root",
+                "title": "url",
+                "trailing_html": "Retention index.html",
+                "trailing_index": "Retention .html",
+                "url": "URL"
+            },
+            "writing": {
+                "auto_spacing": "auto_spacing",
+                "default_layout": "default_layout",
+                "external_link": {
+                    "enable": "The new TAB opens the link",
+                    "field": "Effective range",
+                    "post": "post",
+                    "site": "site"
+                },
+                "filename_case": {
+                    "lowercase": "lowercase",
+                    "no": "Don't convert",
+                    "title": "File name conversion",
+                    "uppercase": "uppercase"
+                },
+                "future": "Displays future articles",
+                "new_post_name": "new_post_name",
+                "post_asset_folder": "Enable the Asset folder",
+                "relative_link": "Relative address",
+                "render_drafts": "According to the draft",
+                "title": "writing",
+                "titlecase": "titlecase"
+            }
+        }
+    },
     "hint": {
-        "addFail": "The new failure",
-        "addSuccess": "New success",
-        "deleteCancel": "Delete the cancelled",
-        "deleteFail": "Delete failed",
-        "deleteSuccess": "Delete the success",
-        "saveFail": "Save failed",
-        "saveSuccess": "Save success",
-        "updateFail": "Modify the failure",
-        "updateSuccess": "Modify the success"
+        "add_fail": "The new failure",
+        "add_success": "New success",
+        "blog_not_init": "The blog has not been initialized. Please initialize and try again",
+        "delete_cancel": "Delete the cancelled",
+        "delete_fail": "Delete failed",
+        "delete_success": "Delete the success",
+        "save_fail": "Save failed",
+        "save_success": "Save success",
+        "theme_save_fail": "Failed to save the theme",
+        "theme_save_success": "Theme saved successfully",
+        "update_fail": "Modify the failure",
+        "update_success": "Modify the success"
     },
     "menu": {
-        "blogSetting": "blog setting",
+        "blog_setting": "blog setting",
         "category": "category",
         "post": "post",
         "pretty": "pretty",
@@ -91,11 +192,11 @@
         }
     },
     "tag": {
-        "addTag": "The new labels",
-        "addTagHint": "Please enter the label name",
-        "deleteHint": "This action will permanently remove the change label. Do you want to continue?",
+        "add_tag": "The new labels",
+        "add_tag_hint": "Please enter the label name",
+        "delete_hint": "This action will permanently remove the change label. Do you want to continue?",
         "title": "独在异乡为异客，每逢佳节倍思亲。",
-        "updateTag": "Modify the label",
-        "updateTagHint": "Please enter a new label name"
+        "update_tag": "Modify the label",
+        "update_tag_hint": "Please enter a new label name"
     }
 }

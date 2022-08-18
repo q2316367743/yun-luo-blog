@@ -18,7 +18,7 @@
                 </el-col>
             </el-row>
         </el-scrollbar>
-        <el-empty v-else description="博客尚未初始化，请先初始化后重试"/>
+        <el-empty v-else :description="$t('hint.blog_not_init')"/>
         <div class="plugin-add" v-if="blogIsInit">
             <el-button type="primary" circle :icon="plus" @click="openPluginAddDialog"></el-button>
         </div>

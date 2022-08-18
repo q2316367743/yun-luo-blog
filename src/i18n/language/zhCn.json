@@ -2,25 +2,25 @@
     "app": {
         "chinese": "中文",
         "english": "English",
-        "openBrowser": "打开浏览器",
-        "openDevTools": "打开开发者工具",
-        "openDist": "打开部署目录",
-        "openProjectDir": "打开项目目录",
-        "projectName": "云落博客",
-        "serverRun": "服务运行中",
-        "serverStandby": "服务未启动",
-        "serverStart": "启动服务器",
-        "serverStop": "停止服务器",
-        "serverUnknown": "服务状态未知",
-        "serverUpdate": "服务更新中",
-        "syncFail": "同步失败",
-        "syncSuccess": "同步成功"
+        "open_browser": "打开浏览器",
+        "open_dev_tools": "打开开发者工具",
+        "open_dist": "打开部署目录",
+        "open_project_dir": "打开项目目录",
+        "project_name": "云落博客",
+        "server_run": "服务运行中",
+        "server_standby": "服务未启动",
+        "server_start": "启动服务器",
+        "server_stop": "停止服务器",
+        "server_unknown": "服务状态未知",
+        "server_update": "服务更新中",
+        "sync_fail": "同步失败",
+        "sync_success": "同步成功"
     },
     "category": {
-        "addCategory": "新增分类",
-        "addCategoryHint": "请输入分类名称",
-        "addSubCategory": "新增子分类",
-        "deleteCategoryHint": "此操作将永远删除此分类，是否继续？",
+        "add_category": "新增分类",
+        "add_category_hint": "请输入分类名称",
+        "add_sub_category": "新增子分类",
+        "delete_category_hint": "此操作将永远删除此分类，是否继续？",
         "title": "一曲新词酒一杯，去年天气旧亭台。"
     },
     "common": {
@@ -43,19 +43,120 @@
         "update": "修改",
         "warning": "警告"
     },
+    "config": {
+        "hexo": {
+            "code": {
+                "title": "源码"
+            },
+            "directory": {
+                "archive_dir": "归档文件夹",
+                "category_dir": "分类文件夹",
+                "code_dir": "Include code 文件夹",
+                "i18n_dir": "国际化（i18n）文件夹",
+                "public_dir": "公共文件夹",
+                "skip_render": "跳过指定文件的渲染",
+                "source_dir": "资源文件夹",
+                "tag_dir": "标签文件夹",
+                "title": "目录"
+            },
+            "extensions": {
+                "theme": "主题",
+                "title": "拓展"
+            },
+            "misc": {
+                "category_and_tag": {
+                    "category_map": "分类别名",
+                    "default_category": "默认分类",
+                    "tag_map": "标签别名",
+                    "title": "分类 & 标签"
+                },
+                "date_format": {
+                    "date_format": "日期格式",
+                    "time_format": "时间格式",
+                    "title": "日期 / 时间格式",
+                    "updated_option": {
+                        "date": "date",
+                        "empty": "empty",
+                        "mtime": "mtime",
+                        "title": "默认更新时间"
+                    }
+                },
+                "title": "杂项"
+            },
+            "pagination": {
+                "pagination_dir": "分页目录",
+                "per_page": "每页数量",
+                "title": "分页"
+            },
+            "site": {
+                "author": "作者",
+                "description": "描述",
+                "keywords": "关键字",
+                "language": "语言",
+                "new_keyword": "新关键字",
+                "subtitle": "副标题",
+                "timezone": "时区",
+                "title": "网站"
+            },
+            "theme": {
+                "title": "主题配置"
+            },
+            "url": {
+                "permalink": "永久链接",
+                "permalink_defaults": "永久链接默认值",
+                "placeholder": {
+                    "permalink": "文章的 永久链接 格式",
+                    "permalink_defaults": "永久链接中各部分的默认值",
+                    "root": "网站根目录",
+                    "url": "网址, 必须以 http:// 或 https:// 开头"
+                },
+                "root": "根目录",
+                "title": "网址",
+                "trailing_html": "保留index.html",
+                "trailing_index": "保留.html",
+                "url": "URL"
+            },
+            "writing": {
+                "auto_spacing": "中英文之间加入空格",
+                "default_layout": "默认布局",
+                "external_link": {
+                    "enable": "新标签打开链接",
+                    "field": "生效范围",
+                    "post": "文章",
+                    "site": "整个网站"
+                },
+                "filename_case": {
+                    "lowercase": "小写",
+                    "no": "不转换",
+                    "title": "文件名称转换",
+                    "uppercase": "大写"
+                },
+                "future": "显示未来的文章",
+                "new_post_name": "新文章的文件名称",
+                "post_asset_folder": "启用 Asset 文件夹",
+                "relative_link": "相对地址",
+                "render_drafts": "显示草稿",
+                "title": "写作",
+                "titlecase": "把标题转换为title case"
+            }
+        }
+    },
     "hint": {
-        "addFail": "新增失败",
-        "addSuccess": "新增成功",
-        "deleteCancel": "删除取消",
-        "deleteFail": "删除失败",
-        "deleteSuccess": "删除成功",
-        "saveFail": "保存失败",
-        "saveSuccess": "保存成功",
-        "updateFail": "修改失败",
-        "updateSuccess": "修改成功"
+        "add_fail": "新增失败",
+        "add_success": "新增成功",
+        "blog_not_init": "博客尚未初始化，请先初始化后重试",
+        "delete_cancel": "删除取消",
+        "delete_fail": "删除失败",
+        "delete_success": "删除成功",
+        "save_fail": "保存失败",
+        "save_success": "保存成功",
+        "theme_save_fail": "主题保存失败",
+        "theme_save_success": "主题保存成功",
+        "update_fail": "修改失败",
+        "update_success": "修改成功"
     },
     "menu": {
-        "blogSetting": "博客设置",
+        "blog_setting": "博客设置",
         "category": "分类",
         "post": "文章",
         "pretty": "美化",
@@ -91,11 +192,11 @@
         }
     },
     "tag": {
-        "addTag": "新增标签",
-        "addTagHint": "请输入标签名称",
-        "deleteHint": "此操作将永久删除改标签. 是否继续?",
+        "add_tag": "新增标签",
+        "add_tag_hint": "请输入标签名称",
+        "delete_hint": "此操作将永久删除改标签. 是否继续?",
         "title": "独在异乡为异客，每逢佳节倍思亲。",
-        "updateTag": "修改标签",
-        "updateTagHint": "请输入新标签名称"
+        "update_tag": "修改标签",
+        "update_tag_hint": "请输入新标签名称"
     }
 }
