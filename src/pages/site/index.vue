@@ -1,12 +1,23 @@
 <template>
     <div id="site">
-        <div class="title">站点管理</div>
+        <div class="title">站点管理
+            <el-button type="primary" link @click="refreshSite">
+                <el-icon :size="30">
+                    <refresh/>
+                </el-icon>
+            </el-button>
+        </div>
         <div class="selector">
             <el-scrollbar>
                 <el-card class="item" v-for="item of sites"
                          :class="item.id === id ? 'active' : ''"
                          @click="this.id !== item.id ? this.id = item.id : this.id = 0">
-                    <div class="path">{{ item.key }}</div>
+                    <div class="path">
+                        <span>{{ item.key }}</span>
+                        <el-icon style="vertical-align: -2px;margin-left: 4px" @click.stop="editorSite(item.id)">
+                            <edit/>
+                        </el-icon>
+                    </div>
                     <div class="close" @click.stop="remove(item.id)">
                         <el-icon>
                             <close/>
@@ -23,19 +34,21 @@
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-import {Close} from '@element-plus/icons-vue';
+import {Close, Edit, Refresh} from '@element-plus/icons-vue';
 import Entry from "@/global/Entry";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 import Constant from "@/global/Constant";
-import {ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import ArrayUtil from "@/utils/ArrayUtil";
+import {settingService} from "@/global/BeanFactory";
+import FileApi from "@/api/FileApi";
 
 export default defineComponent({
     name: 'site',
-    components: {Close},
+    components: {Close, Refresh, Edit},
     data: () => ({
         id: 0,
-        sites: new Array<Entry>()
+        sites: new Array<Entry>(),
     }),
     created() {
         // 获取站点
@@ -44,7 +57,7 @@ export default defineComponent({
             key: '',
             value: ''
         }).id;
-        this.sites = LocalStorageUtil.getOrDefault(Constant.LOCALSTORAGE.SITE_HISTORY, []);
+        this.sites = settingService.getSite().history;
     },
     methods: {
         addSite() {
@@ -67,12 +80,56 @@ export default defineComponent({
             if (!site) {
                 throw new Error('站点错误')
             }
-            LocalStorageUtil.set(Constant.LOCALSTORAGE.SITE, site);
-            LocalStorageUtil.set(Constant.LOCALSTORAGE.SITE_HISTORY, this.sites);
+            settingService.saveSite({
+                active: site,
+                history: this.sites
+            })
             this.$router.push('/loading');
         },
         remove(id: number) {
             this.sites.splice(this.sites.findIndex(e => e.id === id), 1);
+        },
+        refreshSite() {
+            Constant.FOLDER.WORKSPACE().then(path => {
+                FileApi.listDir(path).then(folders => {
+                    this.sites = settingService.getSite().history;
+                    let start = new Date().getTime();
+                    for (let folder of folders) {
+                        if (folder.children) {
+                            // 目录
+                            if (folder.name !== Constant.NAME.CONFIG) {
+                                // 跳过配置文件
+                                start += 1;
+                                this.sites.push({
+                                    id: start,
+                                    key: folder.name!,
+                                    value: folder.name!
+                                })
+                            }
+                        }
+                    }
+                })
+            })
+        },
+        editorSite(id: number) {
+            let siteIndex = this.sites.findIndex(site => site.id === id);
+            if (siteIndex === -1) {
+                ElMessage({
+                    showClose: false,
+                    type: 'error',
+                    message: '站点选择错误'
+                });
+                return;
+            }
+            let tempSite = this.sites[siteIndex];
+            ElMessageBox.prompt('请输入新的站点名称', '提示', {
+                type: 'info',
+                confirmButtonText: '修改',
+                cancelButtonText: '取消',
+                inputValue: tempSite.key
+            }).then(({value}) => {
+                this.sites[siteIndex].key = value;
+            });
         }
     }
 });

@@ -9,6 +9,7 @@ import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import {ElNotification} from "element-plus";
 import EnvironmentSetting from "@/entities/setting/EnvironmentSetting";
 import SyncRemoteSetting from "@/entities/setting/SyncRemoteSetting";
+import SiteSetting from "@/entities/setting/SiteSetting";
 
 let basicSetting = {
     blogType: 'hexo',
@@ -66,6 +67,15 @@ let syncRemoteSetting = {
     }
 } as SyncRemoteSetting;
 
+let siteSetting = {
+    active: {
+        id: 0,
+        key: '',
+        value: ''
+    },
+    history: []
+} as SiteSetting
+
 /**
  * 服务器设置服务
  */
@@ -76,6 +86,7 @@ export default class SettingService {
     private image: ImageSetting = imageSetting;
     private environment: EnvironmentSetting = environmentSetting;
     private syncRemote: SyncRemoteSetting = syncRemoteSetting;
+    private site: SiteSetting = siteSetting;
 
     constructor() {
     }
@@ -194,6 +205,24 @@ export default class SettingService {
     }
 
     /**
+     * 初始化站点设置
+     */
+    async initSite(): Promise<void> {
+        let path = await Constant.FILE.SETTING_SITE();
+        // 读取文件
+        let source = {}
+        if (await FileApi.exist(path)) {
+            try {
+                let content = await FileApi.readFile(path);
+                source = JSON.parse(content);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        this.site = ObjectUtil.assignWithTarget(source, siteSetting);
+    }
+
+    /**
      * 获取服务器设置
      */
     getServer(): ServerSetting {
@@ -226,6 +255,13 @@ export default class SettingService {
      */
     getEnvironment(): EnvironmentSetting {
         return JSON.parse(JSON.stringify(this.environment));
+    }
+
+    /**
+     * 获取站点设置
+     */
+    getSite(): SiteSetting {
+        return JSON.parse(JSON.stringify(this.site));
     }
 
     /**
@@ -293,6 +329,20 @@ export default class SettingService {
         return new Promise<void>(resolve => {
             FileApi.writeFile(path, JSON.stringify(syncRemote)).then(() => {
                 this.syncRemote = syncRemote;
+                resolve();
+            })
+        });
+    }
+
+    /**
+     * 保存服站点设置
+     * @param site 站点设置
+     */
+    async saveSite(site: SiteSetting): Promise<void> {
+        let path = await Constant.FILE.SETTING_SITE();
+        return new Promise<void>(resolve => {
+            FileApi.writeFile(path, JSON.stringify(site)).then(() => {
+                this.site = site;
                 resolve();
             })
         });

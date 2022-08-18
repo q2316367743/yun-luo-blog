@@ -126,7 +126,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             loading.setText("复制本地图片到目标文件夹");
         }
         // 将图片资源复制
-        let targetDirPath = await FileApi.resolve(await Constant.FOLDER.HEXO_PUBLIC(), Constant.POST_IMAGES);
+        let targetDirPath = await FileApi.resolve(await Constant.FOLDER.HEXO_PUBLIC(), Constant.NAME.POST_IMAGES);
         await FileApi.createDir(targetDirPath);
         let postImage = await Constant.FOLDER.POST_IMAGES();
         let postImages = await FileApi.listDir(postImage, true);

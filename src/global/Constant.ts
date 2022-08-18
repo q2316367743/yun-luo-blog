@@ -13,6 +13,7 @@ const SETTING_IMAGE = 'setting-image.json';
 const SETTING_ENVIRONMENT = 'setting-environment.json';
 const SETTING_SYNC_REMOTE = 'setting-sync-remote.json';
 const SETTING_SYNC_LOCAL = 'setting-sync-local.json';
+const SETTING_SITE = 'setting-site.json';
 
 // 数据相关
 const DB_TAG = 'db-tag.json';
@@ -20,6 +21,11 @@ const DB_CATEGORY = 'db-category.json';
 const DB_POST = 'db-post.json';
 const DB_POST_TAG = 'db-post-tag.json';
 const DB_POST_CATEGORY = 'db-post-category.json';
+
+// localStorage
+const LS_WORKSPACE = 'workspace';
+const LS_WORKSPACE_HISTORY = 'workspace-history';
+const LS_SITE = 'site';
 
 // 文件夹
 
@@ -47,12 +53,6 @@ const HEXO_PACKAGE_JSON = 'package.json';
 const CONTENT_GITIGNORE = `dist
 hexo/public
 hexo/node_modules`;
-
-// localStorage
-const LS_WORKSPACE = 'workspace';
-const LS_WORKSPACE_HISTORY = 'workspace-history';
-const LS_SITE = 'site';
-const LS_SITE_HISTORY = 'site-history';
 
 /**
  * 获取工作空间目录
@@ -89,14 +89,18 @@ function siteDir(): Entry {
 }
 
 export default {
-    POST_IMAGES: POST_IMAGES,
+    NAME: {
+        POST_IMAGES: POST_IMAGES,
+        CONFIG: CONFIG
+    },
     SETTING: {
         SERVER: SETTING_SERVER,
         BASIC: SETTING_BASIC,
         IMAGE: SETTING_IMAGE,
         SYNC_REMOTE: SETTING_SYNC_REMOTE,
         SYNC_LOCAL: SETTING_SYNC_LOCAL,
-        ENVIRONMENT: SETTING_ENVIRONMENT
+        ENVIRONMENT: SETTING_ENVIRONMENT,
+        SITE: SETTING_SITE
     },
     CONTENT: {
         GITIGNORE: CONTENT_GITIGNORE
@@ -119,7 +123,6 @@ export default {
         WORKSPACE: LS_WORKSPACE,
         WORKSPACE_HISTORY: LS_WORKSPACE_HISTORY,
         SITE: LS_SITE,
-        SITE_HISTORY: LS_SITE_HISTORY
     },
     FILE: {
         GITIGNORE: async (): Promise<string> => {
@@ -139,6 +142,9 @@ export default {
         },
         SETTING_SYNC_REMOTE: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_SYNC_REMOTE);
+        },
+        SETTING_SITE: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_SITE);
         },
         SETTING_SYNC_LOCAL: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, siteDir().value, CONFIG, SETTING_SYNC_LOCAL);
@@ -162,6 +168,9 @@ export default {
     FOLDER: {
         workspaceDir,
         siteDir,
+        WORKSPACE: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE);
+        },
         CONFIG: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, CONFIG);
         },

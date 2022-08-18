@@ -2,7 +2,11 @@
     <section id="app">
         <aside id="side" :style="{width: isCollapse ? '64px' : '200px'}">
             <div id="logo" :style="{display: isCollapse ? 'block' : 'flex'}">
-                <div v-if="!isCollapse">{{ site.key }}</div>
+                <div v-if="!isCollapse">
+                    <el-icon style="cursor:pointer;" @click="updateSite">
+                        <CaretBottom/>
+                    </el-icon>
+                    <span>{{ site.key }}</span></div>
                 <div style="text-align: center;padding: 3px;cursor: pointer" @click="isCollapse = !isCollapse">
                     <el-icon v-if="isCollapse">
                         <Expand/>
@@ -63,7 +67,9 @@
                             placement="bottom"
                         >
                             <div class="nav-item" @click="sync">
-                                <el-icon><Upload /></el-icon>
+                                <el-icon>
+                                    <Upload/>
+                                </el-icon>
                             </div>
                         </el-tooltip>
                         <el-tooltip
@@ -176,6 +182,7 @@
 import {defineComponent, markRaw} from 'vue'
 import {
     ArrowDown,
+    CaretBottom,
     CollectionTag,
     Document,
     Expand,
@@ -183,10 +190,10 @@ import {
     Folder,
     Menu,
     PriceTag,
-    Upload,
     Setting,
     ShoppingCartFull,
-    Suitcase
+    Suitcase,
+    Upload
 } from '@element-plus/icons-vue';
 import {ElMessage, ElMessageBox} from "element-plus";
 import {useDark} from '@vueuse/core'
@@ -218,7 +225,7 @@ export default defineComponent({
         Document, ArrowDown, Setting, Upload, PriceTag, Menu, CollectionTag,
         ShoppingCartFull, SettingPage, Expand, Fold, Suitcase, Tools,
         Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run,
-        Loader
+        Loader, CaretBottom
     },
     setup() {
         const setting = markRaw(Setting);
@@ -392,7 +399,7 @@ export default defineComponent({
                     })
                     break;
                 case "browser":
-                    NativeApi.openUrl("http://localhost:8888");
+                    NativeApi.openUrl(`http://localhost:${settingService.getServer().port}`);
                     break;
             }
         },
@@ -408,11 +415,14 @@ export default defineComponent({
                         ElMessage({
                             showClose: true,
                             type: "success",
-                            message: "打开成功"
+                            message: this.$t('hint.open_success')
                         })
                     });
                     break;
             }
+        },
+        updateSite() {
+            this.$router.push('/site');
         }
     }
 })

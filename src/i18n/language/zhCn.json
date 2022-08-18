@@ -148,6 +148,7 @@
         "delete_cancel": "删除取消",
         "delete_fail": "删除失败",
         "delete_success": "删除成功",
+        "open_success": "打开成功",
         "save_fail": "保存失败",
         "save_success": "保存成功",
         "theme_save_fail": "主题保存失败",

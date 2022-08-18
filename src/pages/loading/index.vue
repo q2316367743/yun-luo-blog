@@ -58,13 +58,18 @@ export default defineComponent({
             }
             // 2. 处理站点
             console.log('2. 处理站点', workspace);
-            let site = LocalStorageUtil.get(Constant.LOCALSTORAGE.SITE);
-            if (!site) {
+            // 2.1 站点初始化
+            await settingService.initSite();
+            let siteSetting = settingService.getSite();
+            if (siteSetting.active.id === 0) {
+                // 没有选择站点
                 this.$router.push('/site');
                 return;
             }
+            // 将站点保存到localStorage进行缓存
+            LocalStorageUtil.set(Constant.LOCALSTORAGE.SITE, siteSetting.active);
             // 3. 处理相关目录
-            console.log('3. 处理相关目录',  site);
+            console.log('3. 处理相关目录', siteSetting);
             await this.dirHandle();
             // 4. 部分数据初始化
             console.log('4. 部分数据初始化');

@@ -148,6 +148,7 @@
         "delete_cancel": "Delete the cancelled",
         "delete_fail": "Delete failed",
         "delete_success": "Delete the success",
+        "open_success": "Open the success",
         "save_fail": "Save failed",
         "save_success": "Save success",
         "theme_save_fail": "Failed to save the theme",
