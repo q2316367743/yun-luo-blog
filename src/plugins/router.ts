@@ -65,7 +65,7 @@ const routes: Array<RouteRecordRaw> = [
         component: CategoryPage
     },
     {
-        path: '/pretty.md/hexo',
+        path: '/pretty/hexo',
         name: 'pretty-hexo',
         component: PrettyHexoPage
     },
