@@ -15,7 +15,7 @@ import syncRemoteStrategyContext from "@/strategy/syncRemote/SyncRemoteStrategyC
 export default class HexoStrategyImpl implements BlogStrategy {
 
     async isInit(): Promise<boolean> {
-        let items = await FileApi.listDir(await Constant.FOLDER.HEXO());
+        let items = await FileApi.listDir(await Constant.FOLDER.HEXO.BASE());
         return Promise.resolve(items.length > 0);
     }
 
@@ -72,8 +72,8 @@ export default class HexoStrategyImpl implements BlogStrategy {
             loading.setText("将文章复制到目标文件夹");
         }
         // 获取配置
-        let hexoPath = await Constant.FOLDER.HEXO();
-        let hexoConfig = await Constant.FOLDER.HEXO_CONFIG();
+        let hexoPath = await Constant.FOLDER.HEXO.BASE();
+        let hexoConfig = await Constant.FOLDER.HEXO.CONFIG();
         let hexoConfigContent = "";
         try {
             hexoConfigContent = await FileApi.readFile(hexoConfig)
@@ -126,7 +126,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             loading.setText("复制本地图片到目标文件夹");
         }
         // 将图片资源复制
-        let targetDirPath = await FileApi.resolve(await Constant.FOLDER.HEXO_PUBLIC(), Constant.NAME.POST_IMAGES);
+        let targetDirPath = await FileApi.resolve(await Constant.FOLDER.HEXO.PUBLIC(), Constant.NAME.POST_IMAGES);
         await FileApi.createDir(targetDirPath);
         let postImage = await Constant.FOLDER.POST_IMAGES();
         let postImages = await FileApi.listDir(postImage, true);
@@ -145,7 +145,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         if (loading) {
             loading.setText("迁移文件到dist目录");
         }
-        await FileApi.copyDir(await Constant.FOLDER.DIST(), await Constant.FOLDER.HEXO_PUBLIC())
+        await FileApi.copyDir(await Constant.FOLDER.DIST(), await Constant.FOLDER.HEXO.PUBLIC())
     }
 
     async invokeCommand(command: string): Promise<void> {
@@ -159,7 +159,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 reject("请配置hexo命令路径");
             })
         }
-        let hexoPath = await Constant.FOLDER.HEXO();
+        let hexoPath = await Constant.FOLDER.HEXO.BASE();
         await NativeApi.invokeSync(hexoCommandPath, hexoPath, command);
         return new Promise<void>((resolve) => {
             resolve();
@@ -177,7 +177,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 reject("请配置hexo命令路径");
             })
         }
-        let hexoPath = await Constant.FOLDER.HEXO();
+        let hexoPath = await Constant.FOLDER.HEXO.BASE();
         await NativeApi.invokeAsync({
             command: hexoCommandPath,
             args: Constant.HEXO.CLEAN,

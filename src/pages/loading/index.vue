@@ -125,7 +125,7 @@ export default defineComponent({
                 await FileApi.writeFile(gitignoreForSite, Constant.CONTENT.GITIGNORE_SITE)
             }
             // Hexo目录
-            await this.createDir(await Constant.FOLDER.HEXO());
+            await this.createDir(await Constant.FOLDER.HEXO.BASE());
         },
         async createDir(dir: string) {
             let exist = await FileApi.exist(dir);

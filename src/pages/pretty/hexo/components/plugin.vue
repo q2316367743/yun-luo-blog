@@ -92,7 +92,7 @@ export default defineComponent({
     },
     methods: {
         listPlugin() {
-            Constant.FOLDER.HEXO_PACKAGE_JSON().then(path => {
+            Constant.FOLDER.HEXO.PACKAGE_JSON().then(path => {
                 FileApi.readFile(path).then(content => {
                     let packageJson = JSON.parse(content);
                     this.dependencies = [];
@@ -134,7 +134,7 @@ export default defineComponent({
                 });
                 return;
             }
-            Constant.FOLDER.HEXO().then(path => {
+            Constant.FOLDER.HEXO.BASE().then(path => {
                 let command = `install --save ${this.plugin.name}`;
                 if (this.plugin.version !== "") {
                     command = command + "@" + this.plugin.version
@@ -191,7 +191,7 @@ export default defineComponent({
                     });
                     return;
                 }
-                Constant.FOLDER.HEXO().then(path => {
+                Constant.FOLDER.HEXO.BASE().then(path => {
                     const loading = ElLoading.service({
                         lock: true,
                         text: '执行删除命令中',

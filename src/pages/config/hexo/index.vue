@@ -284,11 +284,11 @@ export default defineComponent({
     },
     methods: {
         configInit() {
-            Constant.FOLDER.HEXO_CONFIG().then(path => {
+            Constant.FOLDER.HEXO.CONFIG().then(path => {
                 FileApi.readFile(path).then(content => {
                     this.hexo.parse(content);
                     // 主题配置文件
-                    Constant.FOLDER.HEXO().then(hexoPath => {
+                    Constant.FOLDER.HEXO.BASE().then(hexoPath => {
                         // 读取文件内容
                         FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
                             FileApi.readFile(themePath).then(themeContent => {
@@ -302,7 +302,7 @@ export default defineComponent({
             });
         },
         themeInit() {
-            Constant.FOLDER.HEXO_THEME().then(path => {
+            Constant.FOLDER.HEXO.THEME().then(path => {
                 FileApi.listDir(path).then(files => {
                     for (let file of files) {
                         if (file.children) {
@@ -376,7 +376,7 @@ export default defineComponent({
             this.hexo.timezone = item;
         },
         save() {
-            Constant.FOLDER.HEXO_CONFIG().then(path => {
+            Constant.FOLDER.HEXO.CONFIG().then(path => {
                 FileApi.writeFile(path, this.hexo.render()).then(() => {
                     ElMessage({
                         showClose: true,
@@ -398,7 +398,7 @@ export default defineComponent({
             }
         },
         saveTheme() {
-            Constant.FOLDER.HEXO().then(hexoPath => {
+            Constant.FOLDER.HEXO.BASE().then(hexoPath => {
                 FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
                     FileApi.writeFile(themePath, this.theme).then(() => {
                         ElMessage({

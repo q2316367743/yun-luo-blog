@@ -11,7 +11,7 @@ export default class HexoService {
     terminalStackMap: Map<number, TerminalStack> = new Map<number, TerminalStack>();
 
     async isInit(): Promise<boolean> {
-        let items = await FileApi.listDir(await Constant.FOLDER.HEXO());
+        let items = await FileApi.listDir(await Constant.FOLDER.HEXO.BASE());
         return Promise.resolve(items.length > 0);
     }
 
@@ -51,7 +51,7 @@ export default class HexoService {
         });
         try {
             // 获取hexo目录
-            let hexoPath = await Constant.FOLDER.HEXO();
+            let hexoPath = await Constant.FOLDER.HEXO.BASE();
             loading.setText("重置目录");
             // 先删除旧的目录
             await FileApi.removeDir(hexoPath);
@@ -229,7 +229,7 @@ export default class HexoService {
 
     async runCommand(terminalStack: TerminalStack, command?: string): Promise<void> {
         this.getTerminalStackMap().set(terminalStack.id, terminalStack);
-        let hexoPath = await Constant.FOLDER.HEXO();
+        let hexoPath = await Constant.FOLDER.HEXO.BASE();
         let hexoCommandPath = command ? command : await this.getHexoCommandPath();
         let temp = terminalStack;
         return NativeApi.invokeSpawn({

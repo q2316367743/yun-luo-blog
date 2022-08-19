@@ -200,20 +200,22 @@ export default {
         DIST: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, DIST);
         },
-        HEXO: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, HEXO);
+        HEXO: {
+            BASE: async (): Promise<string> => {
+                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO);
+            },
+            CONFIG: async (): Promise<string> => {
+                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_CONFIG);
+            },
+            THEME: async (): Promise<string> => {
+                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_THEME);
+            },
+            PUBLIC: async (): Promise<string> => {
+                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_PUBLIC);
+            },
+            PACKAGE_JSON: async (): Promise<string> => {
+                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_PACKAGE_JSON);
+            }
         },
-        HEXO_CONFIG: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, HEXO, HEXO_CONFIG);
-        },
-        HEXO_THEME: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, HEXO, HEXO_THEME);
-        },
-        HEXO_PUBLIC: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, HEXO, HEXO_PUBLIC);
-        },
-        HEXO_PACKAGE_JSON: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, HEXO, HEXO_PACKAGE_JSON);
-        }
     },
 }
