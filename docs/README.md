@@ -34,7 +34,7 @@
 
 ## 技术选型
 
-- [Tauri]([Tauri](https://tauri.studio/))
+- [Electron](https://github.com/electron/electron)
 - [Element Plus](https://element-plus.gitee.io/zh-CN/)
 - [Vue3](https://v3.cn.vuejs.org/)
 - [Vite2](https://vitejs.cn/)

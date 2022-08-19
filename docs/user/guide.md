@@ -8,7 +8,7 @@
 由于 云落博客 是一个桌面应用程序，而不是服务器端 CMS，因此安装非常简单。首先，你需要下载这个应用程序，这里有 云落博客 的 Windows，Mac 和 Linux 版本的下载。
 选择你的操作系统，然后点击下载按钮！下载完成后，双击下载的文件以运行安装程序。
 
-- [Github Release](https://github.com/q2316367743/yun-luo-blog/releases)
+- [GitHub Release](https://github.com/q2316367743/yun-luo-blog/releases)
 - [Gitee Release](https://gitee.com/qiaoshengda/yun-luo-blog/releases)
 - [百度云盘](https://pan.baidu.com)
 
@@ -23,4 +23,6 @@
 当我们选择完`工作空间`后，就需要我们选择`站点`了。
 
 所谓的站点就是一个网站，我们可以会有多个网站进行管理，这些站点间，设置是相互共享的，如果您的网站之间一些设置不一样，那就只能建立两个`工作空间`了
+
+站点间共享的设置：图床设置、环境设置
 
