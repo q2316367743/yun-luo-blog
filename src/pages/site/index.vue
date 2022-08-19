@@ -11,7 +11,7 @@
             <el-scrollbar>
                 <el-card class="item" v-for="item of sites"
                          :class="item.id === id ? 'active' : ''"
-                         @click="this.id !== item.id ? this.id = item.id : this.id = 0">
+                         @click="id !== item.id ? id = item.id : id = 0">
                     <div class="path">
                         <span>{{ item.key }}</span>
                         <el-icon style="vertical-align: -2px;margin-left: 4px" @click.stop="editorSite(item.id)">

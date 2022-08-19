@@ -14,7 +14,8 @@
         "electron:dev": "concurrently -k \"cross-env BROWSER=none pnpm dev\" \"pnpm electron\"",
         "electron:build.win": "pnpm build && electron-builder --win --dir",
         "electron:build.linux": "pnpm build && electron-builder --linux appImage",
-        "electron:build.test": "pnpm build && electron-builder --dir"
+        "electron:build.test": "pnpm build && electron-builder --dir",
+        "electron:generate-icons": "electron-icon-builder --input=./public/Blog.png --output=./ --flatten"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.0.6",
@@ -43,18 +44,11 @@
         "@types/markdown-it": "^12.2.3",
         "@types/node": "^18.0.5",
         "@vitejs/plugin-vue": "^3.0.0",
-        "asynckit": "^0.4.0",
-        "combined-stream": "^1.0.8",
         "concurrently": "^7.3.0",
         "cross-env": "^7.0.3",
-        "delayed-stream": "^1.0.0",
         "electron": "^20.0.0",
         "electron-builder": "^23.3.3",
         "electron-packager": "^15.5.1",
-        "follow-redirects": "^1.15.1",
-        "form-data": "^4.0.0",
-        "mime-db": "^1.52.0",
-        "mime-types": "^2.1.35",
         "typescript": "^4.6.4",
         "vite": "^3.0.0",
         "vue-tsc": "^0.38.4",
@@ -76,11 +70,37 @@
         "productName": "云落博客",
         "copyright": "Copyright © 2022 esion.xyz",
         "mac": {
-            "category": "public.app-category.utilities"
+            "category": "public.app-category.utilities",
+            "icon": "./electron/assets/ico/256.ico"
+        },
+        "win": {
+            "icon": "/electron/assets/ico/256.ico",
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64",
+                        "ia32"
+                    ]
+                }
+            ]
+        },
+        "linux": {
+            "icon": "./electron/assets/ico/256.ico"
         },
         "nsis": {
             "oneClick": false,
-            "allowToChangeInstallationDirectory": true
+            "guid": "xyz.esion.blog",
+            "language": "zh-CN",
+            "perMachine": true,
+            "allowElevation": true,
+            "allowToChangeInstallationDirectory": true,
+            "installerIcon": "./electron/assets/ico/256.ico",
+            "uninstallerIcon": "./electron/assets/ico/256.ico",
+            "installerHeaderIcon": "./electron/assets/ico/256.ico",
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "云落博客"
         },
         "files": [
             "dist/**/*",

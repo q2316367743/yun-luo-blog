@@ -17,6 +17,7 @@ function createWindow() {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         title: '云落博客',
+        icon: path.join(__dirname, 'assets', 'ico', '128.ico'),
         width: 1210,
         height: 710,
         minWidth: 1210,

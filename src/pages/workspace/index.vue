@@ -5,7 +5,7 @@
             <el-scrollbar>
                 <el-card class="item" v-for="history of histories"
                      :class="historyActive === history ? 'active' : ''"
-                     @click="this.historyActive !== history ? this.historyActive = history : this.historyActive = ''">
+                     @click="historyActive !== history ? historyActive = history : historyActive = ''">
                     <div class="path">{{ history }}</div>
                     <div class="close" @click.stop="remove(history)">
                         <el-icon>
