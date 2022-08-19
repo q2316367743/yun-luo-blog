@@ -3,17 +3,17 @@
 
 #define MyAppName "ÔÆÂä²©¿Í"
 #define MyAppVersion "0.1.0"
-#define MyAppPublisher "Esion"
-#define MyAppURL "https://gitee.com/qiaoshengda/yun-luo-blog"
+#define MyAppPublisher "ÂäÓê²»»Ú"
+#define MyAppURL "https://q2316367743.github.io/yun-luo-blog"
 #define MyAppExeName "ÔÆÂä²©¿Í.exe"
-#define MyAppAssocName "²©¿Í,±à¼­Æ÷"
+#define MyAppAssocName "²©¿Í"
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{65559F88-6D90-4E85-A46C-2EBBC42E88B9}
+AppId={{6886682D-F0EA-4E16-AFB8-F0D6FE8455CD}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -24,10 +24,12 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
+LicenseFile=D:\Documents\workspace\yun-luo-blog\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=D:\Documents\Application
-OutputBaseFilename=ÔÆÂä²©¿Í
+OutputBaseFilename=ÔÆÂä²©¿Ív0.1.0
+SetupIconFile=D:\Documents\workspace\yun-luo-blog\electron\assets\ico\256.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
