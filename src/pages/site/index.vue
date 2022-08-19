@@ -90,7 +90,7 @@ export default defineComponent({
             this.sites.splice(this.sites.findIndex(e => e.id === id), 1);
         },
         refreshSite() {
-            Constant.FOLDER.WORKSPACE().then(path => {
+            Constant.FOLDER.SITE().then(path => {
                 FileApi.listDir(path).then(folders => {
                     this.sites = settingService.getSite().history;
                     let start = new Date().getTime();

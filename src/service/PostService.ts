@@ -68,18 +68,20 @@ export default class TagService {
             // 此处保存内容
             savePost(post).then();
         }
+        // 发布新增事件
+        emitter.emit(MessageEventEnum.POST_ADD);
     }
 
     async update(post: PostView, saveContent: boolean = true): Promise<void> {
         // 先查询文章
         console.log('先查询文章', post.id);
         let oldPost = this.postDb.one({id: post.id});
-        console.log('旧文章', oldPost)
+        console.log('旧文章')
         if (!oldPost) {
             return Promise.reject('文章不存在，请刷新后重试');
         }
         // 先修改文章
-        console.log('先修改文章', post)
+        console.log('先修改文章')
         let postId = post.id!;
         let tempPost = this.viewToPost(post);
         tempPost.id = post.id!
@@ -106,6 +108,8 @@ export default class TagService {
             console.log('此处保存内容')
             savePost(post).then();
         }
+        // 发送更新2022年8月19日09:44:00
+        emitter.emit(MessageEventEnum.POST_UPDATE);
     }
 
     private async insertTag(

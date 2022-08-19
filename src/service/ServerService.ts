@@ -6,7 +6,7 @@ import Constant from "@/global/Constant";
 import ServerApi from "@/api/ServerApi";
 import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
-import {serverService, settingService} from "@/global/BeanFactory";
+import {settingService} from "@/global/BeanFactory";
 
 /**
  * 服务器 - 服务
@@ -25,12 +25,15 @@ export default class ServerService {
     constructor() {
         // 构造函数时注册事件
         emitter.on(MessageEventEnum.POST_ADD, () => {
+            console.log('文章新增事件');
             this.serverUpdate();
         });
         emitter.on(MessageEventEnum.POST_UPDATE, () => {
+            console.log('文章修改事件');
             this.serverUpdate();
         });
         emitter.on(MessageEventEnum.POST_DELETE, () => {
+            console.log('文章删除事件');
             this.serverUpdate();
         });
     }
@@ -41,6 +44,7 @@ export default class ServerService {
     private serverUpdate(): void {
         // 只有在运行中才会重新部署
         if (this.status === ServerStatusEnum.RUN) {
+            console.log('服务器运行中，开始更新')
             // 服务器状态变为更新中
             this.status = ServerStatusEnum.UPDATE;
             // 发布服务器更新开始事件
@@ -81,6 +85,7 @@ export default class ServerService {
                 }
             });
         } else if (this.status === ServerStatusEnum.UPDATE) {
+            console.log('服务器正在更新中，加入待办')
             // 更新中无法直接更新，，增加一个待办
             this.todo = true;
         }

@@ -15,14 +15,7 @@
 import {defineComponent} from "vue";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
-import {
-    categoryDb,
-    postCategoryDb,
-    postDb,
-    postTagDb,
-    settingService,
-    tagDb,
-} from "@/global/BeanFactory";
+import {categoryDb, postCategoryDb, postDb, postTagDb, settingService, tagDb,} from "@/global/BeanFactory";
 import {ElMessageBox} from "element-plus";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
@@ -50,15 +43,25 @@ export default defineComponent({
     methods: {
         async init() {
             // 1。 处理工作空间
-            console.log('1。 处理工作空间');
+            console.log('1. 处理工作空间');
             let workspace = LocalStorageUtil.get(Constant.LOCALSTORAGE.WORKSPACE);
             if (!workspace) {
                 this.$router.push('/workspace');
                 return;
             }
+            // 1.1 处理工作空间文件夹
+            console.log('1.1 处理工作空间文件夹');
+            await this.createDir(await Constant.FOLDER.WORKSPACE());
             // 2. 处理站点
             console.log('2. 处理站点', workspace);
-            // 2.1 站点初始化
+            // 2.1 处理站点文件夹
+            console.log('2.1 处理站点文件夹')
+            await this.createDir(await Constant.FOLDER.SITE());
+            // 2.2 处理站点文件夹
+            console.log('2.2 处理配置文件夹')
+            await this.createDir(await Constant.FOLDER.CONFIG());
+            // 2.2 站点初始化
+            console.log('2.2 站点初始化');
             await settingService.initSite();
             let siteSetting = settingService.getSite();
             if (siteSetting.active.id === 0) {
@@ -67,6 +70,7 @@ export default defineComponent({
                 return;
             }
             // 将站点保存到localStorage进行缓存
+            console.log('将站点保存到localStorage进行缓存');
             LocalStorageUtil.set(Constant.LOCALSTORAGE.SITE, siteSetting.active);
             // 3. 处理相关目录
             console.log('3. 处理相关目录', siteSetting);
@@ -94,10 +98,12 @@ export default defineComponent({
             this.$router.push('/post/list');
         },
         async dirHandle() {
-            // 创建基础文件夹
-            await this.createDir(await Constant.FOLDER.BASE());
-            // 创建配置文件夹
+            // 创建基础配置文件夹
             await this.createDir(await Constant.FOLDER.CONFIG());
+            // 创建基础站点文件夹
+            await this.createDir(await Constant.FOLDER.SITE());
+            // 创建站点基础文件夹
+            await this.createDir(await Constant.FOLDER.BASE());
             // 创建项目配置文件夹
             await this.createDir(await Constant.FOLDER.SITE_CONFIG());
             // 文章目录
@@ -106,11 +112,17 @@ export default defineComponent({
             await this.createDir(await Constant.FOLDER.POST_IMAGES());
             // 部署目录
             await this.createDir(await Constant.FOLDER.DIST());
-            // git忽略文件
-            let gitignore = await Constant.FILE.GITIGNORE();
-            if (!await FileApi.exist(gitignore)) {
+            // 工作空间git忽略文件
+            let gitignoreForWorkspace = await Constant.FILE.GITIGNORE_WORKSPACE();
+            if (!await FileApi.exist(gitignoreForWorkspace)) {
                 // 不存在则创建
-                await FileApi.writeFile(gitignore, Constant.CONTENT.GITIGNORE)
+                await FileApi.writeFile(gitignoreForWorkspace, Constant.CONTENT.GITIGNORE_WORKSPACE)
+            }
+            // 站点git忽略文件
+            let gitignoreForSite = await Constant.FILE.GITIGNORE_SITE();
+            if (!await FileApi.exist(gitignoreForSite)) {
+                // 不存在则创建
+                await FileApi.writeFile(gitignoreForSite, Constant.CONTENT.GITIGNORE_SITE)
             }
             // Hexo目录
             await this.createDir(await Constant.FOLDER.HEXO());
