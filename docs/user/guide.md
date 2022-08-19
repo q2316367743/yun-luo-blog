@@ -10,7 +10,7 @@
 
 - [GitHub Release](https://github.com/q2316367743/yun-luo-blog/releases)
 - [Gitee Release](https://gitee.com/qiaoshengda/yun-luo-blog/releases)
-- [百度云盘](https://pan.baidu.com)
+- [百度云盘](https://pan.baidu.com/s/1URbwsRhLeJZDeRvspW0n9g?pwd=fx4v)
 
 ## 工作空间
 

@@ -5,7 +5,7 @@
 - 底层使用hexo等博客构建器
 
 [Gitee](https://github.com/q2316367743/yun-luo-blog)
-[Get Started](#云落博客)
+[Get Started](/user/guide)
 
 <!-- 背景图片 -->
 
