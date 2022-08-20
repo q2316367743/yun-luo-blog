@@ -26,7 +26,7 @@ enum MessageEventEnum {
     POST_DELETE = "post:delete",
 
     /**
-     * 佩服之更新
+     * hexo更新
      */
     CONFIG_UPDATE = 'config:update',
 

@@ -64,7 +64,8 @@ import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import DialogApi from "@/api/DialogApi";
 import {settingService} from "@/global/BeanFactory";
-import constant from "@/global/Constant";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -94,8 +95,8 @@ export default defineComponent({
         blogStrategyContext.getStrategy().isInit().then(isInit => {
             this.blogIsInit = isInit;
             if (isInit) {
-                // 初始化后在进行查询
-                Constant.FILE.HEXO.CONFIG().then(async path => {
+                // 初始化后在进行基础配置查询
+                Constant.FILE.HEXO_CONFIG_BASE().then(async path => {
                     this.hexo.parse(await FileApi.readFile(path));
                 });
                 this.listTheme();
@@ -173,7 +174,7 @@ export default defineComponent({
                     let currPath: string;
                     if (this.themeInfo.name.trim() !== "") {
                         currPath = this.themeInfo.name.trim()
-                    }else {
+                    } else {
                         let items = this.themeInfo.url.trim().split('/');
                         currPath = items[items.length - 1];
                     }
@@ -266,22 +267,8 @@ export default defineComponent({
         },
         chooseTheme(theme: string) {
             this.hexo.theme = theme;
-            Constant.FILE.HEXO.CONFIG().then(path => {
-                FileApi.writeFile(path, this.hexo.render()).then(() => {
-                    ElMessage({
-                        showClose: true,
-                        message: '主题已切换',
-                        type: 'success',
-                    });
-                    this.listTheme();
-                }).catch((e) => {
-                    ElMessage({
-                        showClose: true,
-                        message: "主题切换失败，" + e,
-                        type: 'error',
-                    })
-                });
-            })
+            // 写入基础配置
+            this.updateHexoConfig();
         },
         themeRename(theme: string) {
             ElMessageBox.prompt('新输入新的主要名字', '主题重命名', {
@@ -334,7 +321,8 @@ export default defineComponent({
                     }
                     let configPath = await Constant.FILE.HEXO.CONFIG();
                     this.hexo.theme = value.trim();
-                    await FileApi.writeFile(configPath, this.hexo.render());
+                    // 修改配置文件
+                    this.updateHexoConfig()
                 }
                 // 3. 重新查询主题
                 console.log("3. 重新查询主题")
@@ -376,13 +364,69 @@ export default defineComponent({
                     FileApi.exist(themeConfigPath).then(themeConfigExist => {
                         if (themeConfigExist) {
                             Constant.FOLDER.HEXO.BASE().then(hexoPath => {
-                                FileApi.resolve(hexoPath, Constant.HEXO.FILE.THEME_CONFIG(name)).then(hexoThemeConfigPath =>{
+                                FileApi.resolve(hexoPath, Constant.HEXO.FILE.THEME_CONFIG(name)).then(hexoThemeConfigPath => {
                                     FileApi.copyFile(themeConfigPath, hexoThemeConfigPath);
                                 })
                             })
                         }
                     })
                 })
+            })
+        },
+        updateHexoConfig() {
+            Constant.FILE.HEXO_CONFIG_BASE().then(path => {
+                FileApi.writeFile(path, this.hexo.render()).then(() => {
+                    // 读取拓展配置
+                    Constant.FILE.HEXO_CONFIG_EXTRA().then(extraPath => {
+                        FileApi.readFile(extraPath).then(extraContent => {
+                            // 将新配置 + 额外配置写入 真正的配置文件
+                            Constant.FILE.HEXO.CONFIG().then(hexoConfigPath => {
+                                FileApi.writeFile(hexoConfigPath, "# 基础属性\n\n" +
+                                    this.hexo.render() +
+                                    '\n# 拓展属性\n\n' +
+                                    extraContent).then(() => {
+                                    emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                                    this.listTheme();
+                                    ElMessage({
+                                        showClose: true,
+                                        message: "主题设置成功",
+                                        type: 'success',
+                                    })
+                                }).catch((e) => {
+                                    ElMessage({
+                                        showClose: true,
+                                        message: "主题设置失败，" + e,
+                                        type: 'error',
+                                    })
+                                });
+                            }).catch((e) => {
+                                ElMessage({
+                                    showClose: true,
+                                    message: "主题设置失败4，" + e,
+                                    type: 'error',
+                                })
+                            });
+                        }).catch((e) => {
+                            ElMessage({
+                                showClose: true,
+                                message: "主题设置失败3，" + e,
+                                type: 'error',
+                            })
+                        });
+                    }).catch((e) => {
+                        ElMessage({
+                            showClose: true,
+                            message: "主题设置失败2，" + e,
+                            type: 'error',
+                        })
+                    });
+                }).catch((e) => {
+                    ElMessage({
+                        showClose: true,
+                        message: "主题设置失败1，" + e,
+                        type: 'error',
+                    })
+                });
             })
         }
     }

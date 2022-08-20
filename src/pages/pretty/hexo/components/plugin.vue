@@ -47,6 +47,8 @@ import FileApi from "@/api/FileApi";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import NativeApi from "@/api/NativeApi";
 import {settingService} from "@/global/BeanFactory";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 /**
  * 依赖
@@ -178,6 +180,7 @@ export default defineComponent({
                     path,
                     command
                 ).then(() => {
+                    emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                     this.listPlugin();
                     ElMessage({
                         showClose: true,
@@ -228,6 +231,7 @@ export default defineComponent({
                         path,
                         `remove ${plugin}`
                     ).then(() => {
+                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                         this.listPlugin();
                         ElMessage({
                             showClose: true,

@@ -88,6 +88,8 @@ export default class HexoStrategyImpl implements BlogStrategy {
         let hexo = new Hexo(hexoConfigContent);
         let source_dir = await FileApi.resolve(hexoPath, hexo.source_dir);
         let _posts = await FileApi.resolve(source_dir, "_posts");
+        // 删除旧的文件夹
+        await FileApi.removeDir(_posts, true);
         // _posts文件夹可能不存在
         await FileApi.createDir(_posts, true);
         // 复制发布的文章

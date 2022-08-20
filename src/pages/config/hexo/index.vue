@@ -254,6 +254,8 @@ import languages from './components/languages';
 import timezones from './components/timezones';
 import ArrayUtil from "@/utils/ArrayUtil";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 export default defineComponent({
     components: {ContainerMain, ContainerHeader, HexoConfigEditor, ThemeConfigEditor},
@@ -406,6 +408,7 @@ export default defineComponent({
                     message: this.$t('hint.save_success'),
                     type: 'success',
                 })
+                emitter.emit(MessageEventEnum.CONFIG_UPDATE);
             } catch (e) {
                 ElMessage({
                     showClose: true,
@@ -423,6 +426,7 @@ export default defineComponent({
                             message: this.$t('hint.theme_save_success'),
                             type: 'success',
                         })
+                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                     }).catch((e) => {
                         ElMessage({
                             showClose: true,

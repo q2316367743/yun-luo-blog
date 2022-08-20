@@ -175,6 +175,7 @@ export default {
         DB_POST_CATEGORY: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_POST_CATEGORY);
         },
+        // HEXO配置文件
         HEXO_CONFIG_BASE: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, HEXO_CONFIG_BASE);
         },
