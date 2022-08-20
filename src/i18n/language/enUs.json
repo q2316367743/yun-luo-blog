@@ -13,6 +13,7 @@
         "server_stop": "Stopping the Server",
         "server_unknown": "Service status unknown",
         "server_update": "Service update in progress",
+        "server_update_now": "Update now",
         "sync_fail": "synchronization failure",
         "sync_success": "synchronous success"
     },

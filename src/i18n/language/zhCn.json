@@ -13,6 +13,7 @@
         "server_stop": "停止服务器",
         "server_unknown": "服务状态未知",
         "server_update": "服务更新中",
+        "server_update_now": "立即更新",
         "sync_fail": "同步失败",
         "sync_success": "同步成功"
     },

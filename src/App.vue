@@ -132,10 +132,13 @@
                                         <el-dropdown-item command="stop" v-if="server === 1">
                                             {{ $t('app.server_stop') }}
                                         </el-dropdown-item>
-                                        <el-dropdown-item command="dist">{{ $t('app.open_dist') }}</el-dropdown-item>
+                                        <el-dropdown-item command="update" v-if="server === 1">
+                                            {{ $t('app.server_update_now') }}
+                                        </el-dropdown-item>
                                         <el-dropdown-item command="browser" v-if="server === 1 || server === 2">
                                             {{ $t('app.open_browser') }}
                                         </el-dropdown-item>
+                                        <el-dropdown-item command="dist">{{ $t('app.open_dist') }}</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -392,6 +395,9 @@ export default defineComponent({
                     break;
                 case "stop":
                     this.stopServer();
+                    break;
+                case "update":
+                    serverService.serverUpdate();
                     break;
                 case "dist":
                     Constant.FOLDER.DIST().then(path => {

@@ -36,12 +36,16 @@ export default class ServerService {
             console.log('文章删除事件');
             this.serverUpdate();
         });
+        emitter.on(MessageEventEnum.CONFIG_UPDATE, () => {
+            console.log('配置更新事件');
+            this.serverUpdate();
+        });
     }
 
     /**
      * 服务器资源更新
      */
-    private serverUpdate(): void {
+    serverUpdate(): void {
         // 只有在运行中才会重新部署
         if (this.status === ServerStatusEnum.RUN) {
             console.log('服务器运行中，开始更新')
