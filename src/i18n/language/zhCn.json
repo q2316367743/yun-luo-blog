@@ -111,6 +111,7 @@
                     "root": "网站根目录",
                     "url": "网址, 必须以 http:// 或 https:// 开头"
                 },
+                "require": "网址 => URL是必填项",
                 "root": "根目录",
                 "title": "网址",
                 "trailing_html": "保留index.html",

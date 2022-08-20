@@ -18,15 +18,26 @@ ipcMain.handle('native:invoke:sync', (_event, args) => {
 
 // 异步命令，直接监听
 ipcMain.on('native:invoke:async', (event, args) => {
-    console.log('native:invoke:async');
+    console.log(`native:invoke:async:${args.id}`);
     // 每一个都同步执行
     child_process.exec(`"${args.command}" ${args.arg}`, {
         encoding: "utf-8",
         cwd: args.currentDir
-    }, () => {
-        // 全部执行结束，发送完成事件
-        console.log(`native:invoke:async:${args.id}`);
-        event.sender.send(`native:invoke:async:${args.id}`);
+    }, (error, stdout, stderr) => {
+        if (error) {
+            console.error(error);
+            // 全部执行结束，发送完成事件
+            console.log(`native:invoke:async:error:${args.id} - ${args.arg}`, error);
+            event.sender.send(`native:invoke:async:error:${args.id}`, error);
+        }
+        if (stdout) {
+            console.log(`native:invoke:async:success:${args.id} - ${args.arg}`, stdout);
+            event.sender.send(`native:invoke:async:success:${args.id}`, stdout);
+        }
+        if (stderr) {
+            console.log(`native:invoke:async:warning:${args.id} - ${args.arg}`, stderr);
+            event.sender.send(`native:invoke:async:warning:${args.id}`, stderr);
+        }
     });
 });
 

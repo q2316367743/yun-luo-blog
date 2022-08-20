@@ -111,6 +111,7 @@
                     "root": "Site root Directory",
                     "url": "The web address must begin with http:// or https://"
                 },
+                "require": "url => URL is require",
                 "root": "root",
                 "title": "url",
                 "trailing_html": "Retention index.html",

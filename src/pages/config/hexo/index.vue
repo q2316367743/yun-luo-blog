@@ -392,6 +392,15 @@ export default defineComponent({
             this.hexo.timezone = item;
         },
         async save() {
+            let hexoUrl = this.hexo.url;
+            if (!hexoUrl || hexoUrl === '') {
+                ElMessage({
+                    showClose: false,
+                    type: 'warning',
+                    message: this.$t('config.hexo.url.require')
+                });
+                return;
+            }
             // 读取相关目录与内容
             let hexoConfigBase = await Constant.FILE.HEXO_CONFIG_BASE();
             let hexoConfigExtra = await Constant.FILE.HEXO_CONFIG_EXTRA();
@@ -399,6 +408,7 @@ export default defineComponent({
             let baseConfig = this.hexo.render();
             let extraConfig = this.extra;
             try {
+                console.log(extraConfig)
                 // 在写入文件
                 await FileApi.writeFile(hexoConfigBase, baseConfig);
                 await FileApi.writeFile(hexoConfigExtra, extraConfig);

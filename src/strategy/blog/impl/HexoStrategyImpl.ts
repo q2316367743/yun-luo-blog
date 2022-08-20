@@ -61,7 +61,18 @@ export default class HexoStrategyImpl implements BlogStrategy {
         await this.invokeAsync(() => {
             // 执行后置命令
             console.log('执行后置命令', new Date().getTime());
-            this.copyPostImage().then(() => this.copyToDist().then(callback));
+            this.copyPostImage().then(() => this.copyToDist().then(callback))
+                .catch(e => {
+                    console.error(e);
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '拷贝图片错误，' + e
+                    });
+                });
+        }, () => {
+            // 报错了也要回调
+            callback();
         });
         console.log('命令已执行', new Date().getTime());
         return Promise.resolve();
@@ -151,16 +162,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
     }
 
     async invokeCommand(command: string): Promise<void> {
-        if (!(await this.isInit())) {
-            return Promise.reject("博客未初始化，请初始化后重试")
-        }
-        // 获取hexo命令目录
-        let hexoCommandPath = settingService.getEnvironment().hexoPath;
-        if (!hexoCommandPath || hexoCommandPath === "") {
-            return new Promise<void>((_resolve, reject) => {
-                reject("请配置hexo命令路径");
-            })
-        }
+        let hexoCommandPath = await this.getHexoCommandPath();
         let hexoPath = await Constant.FOLDER.HEXO.BASE();
         await NativeApi.invokeSync(hexoCommandPath, hexoPath, command);
         return new Promise<void>((resolve) => {
@@ -168,31 +170,71 @@ export default class HexoStrategyImpl implements BlogStrategy {
         });
     }
 
-    async invokeAsync(callback: () => void) {
+    async invokeAsync(callback: () => void, error: () => void) {
+        let hexoCommandPath = await this.getHexoCommandPath();
+        let hexoPath = await Constant.FOLDER.HEXO.BASE();
+        await NativeApi.invokeAsync({
+            command: hexoCommandPath,
+            args: Constant.HEXO.CLEAN,
+            currentDir: hexoPath,
+            success: () => {
+                console.log('clean执行完成，开始执行deploy');
+                NativeApi.invokeAsync({
+                    command: hexoCommandPath,
+                    args: Constant.HEXO.DEPLOY,
+                    currentDir: hexoPath,
+                    success: callback,
+                    warning: message => {
+                        console.error(message);
+                        ElMessage({
+                            showClose: true,
+                            type: 'warning',
+                            message: message
+                        });
+                        error();
+                    },
+                    error: e => {
+                        console.error(e);
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '' + e
+                        });
+                        error();
+                    }
+                })
+            },
+            warning: message => {
+                console.error(message);
+                ElMessage({
+                    showClose: true,
+                    type: 'warning',
+                    message: message
+                });
+                error();
+            },
+            error: e => {
+                console.error(e);
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '' + e
+                });
+                error();
+            }
+        })
+    }
+
+    async getHexoCommandPath(): Promise<string> {
         if (!(await this.isInit())) {
             return Promise.reject("博客未初始化，请初始化后重试")
         }
         // 获取hexo命令目录
         let hexoCommandPath = settingService.getEnvironment().hexoPath;
         if (!hexoCommandPath || hexoCommandPath === "") {
-            return new Promise<void>((_resolve, reject) => {
-                reject("请配置hexo命令路径");
-            })
+            return Promise.reject("请配置hexo命令路径");
         }
-        let hexoPath = await Constant.FOLDER.HEXO.BASE();
-        await NativeApi.invokeAsync({
-            command: hexoCommandPath,
-            args: Constant.HEXO.CLEAN,
-            currentDir: hexoPath,
-            callback: () => {
-                NativeApi.invokeAsync({
-                    command: hexoCommandPath,
-                    args: Constant.HEXO.DEPLOY,
-                    currentDir: hexoPath,
-                    callback: callback
-                })
-            }
-        })
+        return Promise.resolve(hexoCommandPath);
     }
 
 }

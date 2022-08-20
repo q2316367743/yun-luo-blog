@@ -21,6 +21,10 @@ export default interface CommandAsyncOptions {
     /**
      * 完成回调
      */
-    callback: () => void;
+    error: (e: Error) => void;
+
+    success: () => void;
+
+    warning: (message: string) => void;
 
 }

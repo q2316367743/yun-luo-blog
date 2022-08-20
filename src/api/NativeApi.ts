@@ -44,8 +44,14 @@ export default {
             currentDir: options.currentDir
         });
         // 监听完成事件
-        ipcRenderer.on(`native:invoke:async:${id}`, () => {
-            options.callback()
+        ipcRenderer.on(`native:invoke:async:error:${id}`, (e: Error) => {
+            options.error(e)
+        });
+        ipcRenderer.on(`native:invoke:async:warning:${id}`, (_event: any, message: string) => {
+            options.warning(message)
+        });
+        ipcRenderer.on(`native:invoke:async:success:${id}`, () => {
+            options.success()
         });
         return Promise.resolve();
     },
