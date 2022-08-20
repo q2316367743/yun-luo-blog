@@ -96,13 +96,40 @@ export default defineComponent({
                 FileApi.readFile(path).then(content => {
                     let packageJson = JSON.parse(content);
                     this.dependencies = [];
-                    if (packageJson.dependencies) {
-                        for (let dependency of Object.keys(packageJson.dependencies)) {
-                            this.dependencies.push({
-                                name: dependency,
-                                version: packageJson.dependencies[dependency]
-                            });
+                    // 解析dependencies
+                    try {
+                        if (packageJson.dependencies) {
+                            for (let dependency of Object.keys(packageJson.dependencies)) {
+                                this.dependencies.push({
+                                    name: dependency,
+                                    version: packageJson.dependencies[dependency]
+                                });
+                            }
                         }
+                    } catch (e) {
+                        console.log(e);
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '解析dependencies失败,' + e
+                        });
+                    }
+                    try {
+                        if (packageJson.devDependencies) {
+                            for (let dependency of Object.keys(packageJson.devDependencies)) {
+                                this.dependencies.push({
+                                    name: dependency,
+                                    version: packageJson.dependencies[dependency]
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        console.log(e);
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '解析devDependencies失败,' + e
+                        });
                     }
                 })
             })
