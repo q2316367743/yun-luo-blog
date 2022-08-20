@@ -239,7 +239,7 @@
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-import {ElMessage, TabsPaneContext} from "element-plus";
+import {ElMessage} from "element-plus";
 
 import Hexo from "@/global/config/Hexo";
 import FileApi from "@/api/FileApi";
