@@ -215,7 +215,7 @@
                     </el-form-item>
                 </el-form>
                 <el-form label-width="120px" v-else-if="activeName === 'other'">
-                    <el-form-item :label="$t('config.hexo.extensions.theme')">
+                    <el-form-item :label="$t('config.hexo.other.theme')">
                         <el-select v-model="hexo.theme">
                             <el-option v-for="theme of themeList" :key="theme" :label="theme" :value="theme"/>
                         </el-select>
