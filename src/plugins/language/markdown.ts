@@ -469,9 +469,9 @@ const provider = {
                 // 对于![]()的图片提供语法提示功能
                 for (let imageName of imageNames) {
                     suggestions.push({
-                        label: `/${imageName}`,
+                        label: `/post-images/${imageName}`,
                         kind: monaco.languages.CompletionItemKind.Snippet,
-                        insertText: `/${imageName}`,
+                        insertText: `/post-images/${imageName}`,
                         insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                         detail: imageName,
                         range: {

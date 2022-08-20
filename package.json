@@ -3,6 +3,7 @@
     "private": true,
     "version": "0.1.0",
     "description": "云落博客",
+    "homepage": "https://q2316367743.github.io/yun-luo-blog/",
     "main": "electron/electron.js",
     "scripts": {
         "dev": "vite",
@@ -13,9 +14,8 @@
         "electron": "wait-on tcp:5173 && cross-env IS_DEV=true electron electron/electron.js",
         "electron:dev": "concurrently -k \"cross-env BROWSER=none pnpm dev\" \"pnpm electron\"",
         "electron:build.win": "pnpm build && electron-builder --win --dir",
-        "electron:build.linux": "pnpm build && electron-builder --linux appImage",
-        "electron:build.test": "pnpm build && electron-builder --dir",
-        "electron:generate-icons": "electron-icon-builder --input=./public/Blog.png --output=./ --flatten"
+        "electron:build.linux": "pnpm build && electron-builder --linux tar.xz",
+        "electron:build.mac": "pnpm build && electron-builder -mwl --dir"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.0.6",
