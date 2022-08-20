@@ -1,7 +1,7 @@
 <template>
     <!-- 面板 -->
     <container-header>
-        <el-tabs v-model="activeName" @tab-click="tabClick">
+        <el-tabs v-model="activeName">
             <el-tab-pane :label="$t('config.hexo.site.title')" name="site">
             </el-tab-pane>
             <el-tab-pane :label="$t('config.hexo.url.title')" name="url">
@@ -12,9 +12,9 @@
             </el-tab-pane>
             <el-tab-pane :label="$t('config.hexo.misc.title')" name="misc">
             </el-tab-pane>
-            <el-tab-pane :label="$t('config.hexo.extensions.title')" name="extensions">
+            <el-tab-pane :label="$t('config.hexo.other.title')" name="other">
             </el-tab-pane>
-            <el-tab-pane :label="$t('config.hexo.code.title')" name="code">
+            <el-tab-pane :label="$t('config.hexo.extra.title')" name="extra">
             </el-tab-pane>
             <el-tab-pane :label="$t('config.hexo.theme.title')" name="theme">
             </el-tab-pane>
@@ -214,7 +214,7 @@
                         </el-input>
                     </el-form-item>
                 </el-form>
-                <el-form label-width="120px" v-else-if="activeName === 'extensions'">
+                <el-form label-width="120px" v-else-if="activeName === 'other'">
                     <el-form-item :label="$t('config.hexo.extensions.theme')">
                         <el-select v-model="hexo.theme">
                             <el-option v-for="theme of themeList" :key="theme" :label="theme" :value="theme"/>
@@ -223,8 +223,8 @@
                 </el-form>
             </div>
             <el-empty style="margin-top: 20vh;" v-else :description="$t('hint.blog_not_init')"/>
-            <div id="code" v-if="activeName === 'code' && blogIsInit" style="height: calc(100vh - 190px);">
-                <hexo-config-editor v-model="hexo.content"></hexo-config-editor>
+            <div id="extra" v-if="activeName === 'extra' && blogIsInit" style="height: calc(100vh - 190px);">
+                <hexo-config-editor v-model="extra"></hexo-config-editor>
             </div>
             <div id="theme" v-if="activeName === 'theme' && blogIsInit" style="height: calc(100vh - 190px);">
                 <theme-config-editor v-model="theme"></theme-config-editor>
@@ -258,7 +258,11 @@ import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 export default defineComponent({
     components: {ContainerMain, ContainerHeader, HexoConfigEditor, ThemeConfigEditor},
     data: () => ({
+        // 基础配置
         hexo: new Hexo(),
+        // 额外配置
+        extra: '',
+        // 主题配置
         theme: "",
         activeName: 'site',
         themeList: new Array<string>(),
@@ -284,12 +288,12 @@ export default defineComponent({
     },
     methods: {
         configInit() {
-            Constant.FOLDER.HEXO.CONFIG().then(path => {
+            // 主配置
+            Constant.FILE.HEXO_CONFIG_BASE().then(path => {
                 FileApi.readFile(path).then(content => {
                     this.hexo.parse(content);
-                    // 主题配置文件
                     Constant.FOLDER.HEXO.BASE().then(hexoPath => {
-                        // 读取文件内容
+                        // 主题配置
                         FileApi.resolve(hexoPath, `_config.${this.hexo.theme}.yml`).then(themePath => {
                             FileApi.readFile(themePath).then(themeContent => {
                                 this.theme = themeContent;
@@ -300,6 +304,16 @@ export default defineComponent({
                     });
                 });
             });
+            // 额外配置
+            Constant.FILE.HEXO_CONFIG_EXTRA().then(path => {
+                FileApi.readFile(path).then(content => {
+                    if (content) {
+                        this.extra = content;
+                    }
+                }).catch((e) => {
+                    console.error('不存在目录', e);
+                })
+            })
         },
         themeInit() {
             Constant.FOLDER.HEXO.THEME().then(path => {
@@ -375,26 +389,29 @@ export default defineComponent({
         timezoneSelect(item: string) {
             this.hexo.timezone = item;
         },
-        save() {
-            Constant.FOLDER.HEXO.CONFIG().then(path => {
-                FileApi.writeFile(path, this.hexo.render()).then(() => {
-                    ElMessage({
-                        showClose: true,
-                        message: this.$t('hint.save_success'),
-                        type: 'success',
-                    })
-                }).catch((e) => {
-                    ElMessage({
-                        showClose: true,
-                        message: this.$t('hint.save_fail') + ',' + e,
-                        type: 'error',
-                    })
-                });
-            })
-        },
-        tabClick(tab: TabsPaneContext) {
-            if (tab.paneName === 'code') {
-                this.hexo.render();
+        async save() {
+            // 读取相关目录与内容
+            let hexoConfigBase = await Constant.FILE.HEXO_CONFIG_BASE();
+            let hexoConfigExtra = await Constant.FILE.HEXO_CONFIG_EXTRA();
+            let hexoConfig = await Constant.FILE.HEXO.CONFIG();
+            let baseConfig = this.hexo.render();
+            let extraConfig = this.extra;
+            try {
+                // 在写入文件
+                await FileApi.writeFile(hexoConfigBase, baseConfig);
+                await FileApi.writeFile(hexoConfigExtra, extraConfig);
+                await FileApi.writeFile(hexoConfig, "# 基础属性\n\n" + baseConfig + '\n# 拓展属性\n\n' + extraConfig);
+                ElMessage({
+                    showClose: true,
+                    message: this.$t('hint.save_success'),
+                    type: 'success',
+                })
+            } catch (e) {
+                ElMessage({
+                    showClose: true,
+                    message: this.$t('hint.save_fail') + ',' + e,
+                    type: 'error',
+                })
             }
         },
         saveTheme() {

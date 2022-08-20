@@ -95,7 +95,7 @@ export default defineComponent({
             this.blogIsInit = isInit;
             if (isInit) {
                 // 初始化后在进行查询
-                Constant.FOLDER.HEXO.CONFIG().then(async path => {
+                Constant.FILE.HEXO.CONFIG().then(async path => {
                     this.hexo.parse(await FileApi.readFile(path));
                 });
                 this.listTheme();
@@ -266,7 +266,7 @@ export default defineComponent({
         },
         chooseTheme(theme: string) {
             this.hexo.theme = theme;
-            Constant.FOLDER.HEXO.CONFIG().then(path => {
+            Constant.FILE.HEXO.CONFIG().then(path => {
                 FileApi.writeFile(path, this.hexo.render()).then(() => {
                     ElMessage({
                         showClose: true,
@@ -332,7 +332,7 @@ export default defineComponent({
                         // 不存在，则创建
                         await FileApi.createDir(newConfigPath);
                     }
-                    let configPath = await Constant.FOLDER.HEXO.CONFIG();
+                    let configPath = await Constant.FILE.HEXO.CONFIG();
                     this.hexo.theme = value.trim();
                     await FileApi.writeFile(configPath, this.hexo.render());
                 }

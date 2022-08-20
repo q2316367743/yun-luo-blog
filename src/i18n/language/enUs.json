@@ -46,9 +46,6 @@
     },
     "config": {
         "hexo": {
-            "code": {
-                "title": "code"
-            },
             "directory": {
                 "archive_dir": "archive_dir",
                 "category_dir": "category_dir",
@@ -60,9 +57,8 @@
                 "tag_dir": "tag_dir",
                 "title": "directory"
             },
-            "extensions": {
-                "theme": "theme",
-                "title": "extensions"
+            "extra": {
+                "title": "codeextra"
             },
             "misc": {
                 "category_and_tag": {
@@ -84,6 +80,10 @@
                 },
                 "title": "misc"
             },
+            "other": {
+                "theme": "theme",
+                "title": "other"
+            },
             "pagination": {
                 "pagination_dir": "pagination_dir",
                 "per_page": "per_page",
@@ -97,7 +97,7 @@
                 "new_keyword": "The new keyword",
                 "subtitle": "subtitle",
                 "timezone": "timezone",
-                "title": "site"
+                "title": "title"
             },
             "theme": {
                 "title": "theme"

@@ -46,9 +46,6 @@
     },
     "config": {
         "hexo": {
-            "code": {
-                "title": "源码"
-            },
             "directory": {
                 "archive_dir": "归档文件夹",
                 "category_dir": "分类文件夹",
@@ -60,8 +57,7 @@
                 "tag_dir": "标签文件夹",
                 "title": "目录"
             },
-            "extensions": {
-                "theme": "主题",
+            "extra": {
                 "title": "拓展"
             },
             "misc": {
@@ -84,6 +80,10 @@
                 },
                 "title": "杂项"
             },
+            "other": {
+                "theme": "主题",
+                "title": "其他"
+            },
             "pagination": {
                 "pagination_dir": "分页目录",
                 "per_page": "每页数量",
@@ -97,7 +97,7 @@
                 "new_keyword": "新关键字",
                 "subtitle": "副标题",
                 "timezone": "时区",
-                "title": "网站"
+                "title": "标题"
             },
             "theme": {
                 "title": "主题配置"

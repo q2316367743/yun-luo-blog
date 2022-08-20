@@ -5,11 +5,6 @@ import jsYaml from 'js-yaml';
 // ## Source: https://github.com/hexojs/hexo/
 export default class Hexo {
 
-    /**
-     * 实际内容
-     */
-    content: string = "";
-
     // 网站
 
     /**
@@ -328,20 +323,15 @@ export default class Hexo {
     parse(fileContent: string) {
         let yaml = jsYaml.load(fileContent);
         Object.assign(this, yaml);
-        this.content = fileContent;
     }
 
     /**
      * 渲染内容
      */
     render(): string {
-        let target = Object.assign({}, jsYaml.load(this.content), this);
-        // @ts-ignore
-        delete target.content;
-        this.content = jsYaml.dump(target, {
+        return jsYaml.dump(this, {
             indent: 2
         });
-        return this.content;
     }
 
 }

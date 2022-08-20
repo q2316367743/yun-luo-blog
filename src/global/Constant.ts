@@ -4,7 +4,7 @@ import {ElMessage} from "element-plus";
 import Entry from "@/global/Entry";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
-// 文件
+// ===== 配置文件 =====
 
 // 设置相关
 const SETTING_SERVER = 'setting-server.json';
@@ -21,6 +21,10 @@ const DB_CATEGORY = 'db-category.json';
 const DB_POST = 'db-post.json';
 const DB_POST_TAG = 'db-post-tag.json';
 const DB_POST_CATEGORY = 'db-post-category.json';
+
+// hexo配置
+const HEXO_CONFIG_BASE = '_config.base.yml';
+const HEXO_CONFIG_EXTRA = '_config.extra.yml';
 
 // localStorage
 const LS_WORKSPACE = 'workspace';
@@ -170,6 +174,18 @@ export default {
         },
         DB_POST_CATEGORY: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_POST_CATEGORY);
+        },
+        HEXO_CONFIG_BASE: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, HEXO_CONFIG_BASE);
+        },
+
+        HEXO_CONFIG_EXTRA: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, HEXO_CONFIG_EXTRA);
+        },
+        HEXO: {
+            CONFIG: async (): Promise<string> => {
+                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_CONFIG);
+            },
         }
     },
     FOLDER: {
@@ -203,9 +219,6 @@ export default {
         HEXO: {
             BASE: async (): Promise<string> => {
                 return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO);
-            },
-            CONFIG: async (): Promise<string> => {
-                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_CONFIG);
             },
             THEME: async (): Promise<string> => {
                 return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_THEME);

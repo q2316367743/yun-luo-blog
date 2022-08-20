@@ -73,7 +73,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         }
         // 获取配置
         let hexoPath = await Constant.FOLDER.HEXO.BASE();
-        let hexoConfig = await Constant.FOLDER.HEXO.CONFIG();
+        let hexoConfig = await Constant.FILE.HEXO.CONFIG();
         let hexoConfigContent = "";
         try {
             hexoConfigContent = await FileApi.readFile(hexoConfig)
