@@ -321,7 +321,7 @@ export default defineComponent({
             Constant.FOLDER.HEXO.THEME().then(path => {
                 FileApi.listDir(path).then(files => {
                     for (let file of files) {
-                        if (file.children) {
+                        if (file.isDirectory) {
                             this.themeList.push(file.name!);
                         }
                     }

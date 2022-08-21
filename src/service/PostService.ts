@@ -262,7 +262,7 @@ export default class TagService {
         try {
             // 获取文件
             let postPath = await Constant.FOLDER.POST()
-            let files = await FileApi.listDir(postPath, true);
+            let files = await FileApi.listDir(postPath);
             // 获取全部文章目录
             let posts = this.postDb.list();
             // 删除全部文章
@@ -285,7 +285,7 @@ export default class TagService {
                 if (loading) {
                     loading.setText(`开始处理${index} / ${files.length}`);
                 }
-                if (file.children) {
+                if (file.isDirectory) {
                     // 跳过文件夹
                     continue;
                 }

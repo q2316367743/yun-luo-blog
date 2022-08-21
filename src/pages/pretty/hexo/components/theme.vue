@@ -106,11 +106,11 @@ export default defineComponent({
     methods: {
         listTheme() {
             Constant.FOLDER.HEXO.THEME().then(path => {
-                FileApi.listDir(path, false).then(files => {
+                FileApi.listDir(path).then(files => {
                     this.themes = new Array<string>();
                     let themes = new Array<string>();
                     for (let file of files) {
-                        if (file.children && file.name && file.name !== "") {
+                        if (file.isDirectory && file.name && file.name !== "") {
                             themes.push(file.name)
                         }
                     }

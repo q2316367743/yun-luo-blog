@@ -161,6 +161,21 @@ async function copyFile(source: string, target: string, recursive: boolean = fal
     }
 }
 
+async function copyFileToDir(files: Array<FileEntry>, target: string, sourceFileLength: number) {
+    for (let file of files) {
+        let fileName = file.path.substring(sourceFileLength + 1);
+        let targetPath = await resolve(target, fileName ? fileName : (new Date().getTime() + ""));
+        if (file.isDirectory) {
+            // 文件夹的话先新建文件夹
+            await createDir(targetPath, true);
+            await copyFileToDir(file.children!, target, sourceFileLength);
+        } else {
+            // 只复制文件
+            await copyFile(file.path, targetPath);
+        }
+    }
+}
+
 export default {
 
     /**
@@ -257,17 +272,7 @@ export default {
             // 获取源文件夹内容
             let files = await listDir(source, true);
             // 拷贝源文件夹内容到目标文件夹
-            for (let file of files) {
-                let fileName = file.path.substring(source.length + 1);
-                let targetPath = await resolve(target, fileName ? fileName : (new Date().getTime() + ""));
-                if (file.children) {
-                    // 文件夹的话先新建文件夹
-                    await createDir(targetPath, true);
-                }else {
-                    // 只复制文件
-                    await copyFile(file.path, targetPath);
-                }
-            }
+            await copyFileToDir(files, target, source.length);
         }
         return new Promise<void>((resolve) => {
             resolve();

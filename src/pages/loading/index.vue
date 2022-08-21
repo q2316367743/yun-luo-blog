@@ -22,10 +22,21 @@ import LocalStorageUtil from "@/utils/LocalStorageUtil";
 import './loading.less';
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 import * as monaco from "monaco-editor";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
+
+// 语言
 import markdown from "@/plugins/language/markdown";
 import yaml from "@/plugins/language/yaml";
+import css from "@/plugins/language/css";
+import less from "@/plugins/language/less";
+import scss from "@/plugins/language/scss";
+import pug from "@/plugins/language/pug";
+import javascript from "@/plugins/language/javascript";
+import typescript from "@/plugins/language/typescript";
+
+
 import emitter from "@/plugins/mitt";
-import MessageEventEnum from "@/enumeration/MessageEventEnum";
+
 
 export default defineComponent({
     name: 'loading',
@@ -90,6 +101,24 @@ export default defineComponent({
             monaco.languages.register({id: 'yaml'});
             monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
             monaco.languages.setLanguageConfiguration('yaml', yaml.config);
+            monaco.languages.register({id: 'css'});
+            monaco.languages.setMonarchTokensProvider('css', css.token);
+            monaco.languages.setLanguageConfiguration('css', css.conf);
+            monaco.languages.register({id: 'less'});
+            monaco.languages.setMonarchTokensProvider('less', less.token);
+            monaco.languages.setLanguageConfiguration('less', less.conf);
+            monaco.languages.register({id: 'scss'});
+            monaco.languages.setMonarchTokensProvider('scss', scss.token);
+            monaco.languages.setLanguageConfiguration('scss', scss.conf);
+            monaco.languages.register({id: 'pug'});
+            monaco.languages.setMonarchTokensProvider('pug', pug.token);
+            monaco.languages.setLanguageConfiguration('pug', pug.conf);
+            monaco.languages.register({id: 'js'});
+            monaco.languages.setMonarchTokensProvider('js', javascript.token);
+            monaco.languages.setLanguageConfiguration('js', javascript.config);
+            monaco.languages.register({id: 'ts'});
+            monaco.languages.setMonarchTokensProvider('ts', typescript.token);
+            monaco.languages.setLanguageConfiguration('ts', typescript.config);
             // 5. 发送消息
             console.log('5. 发送消息');
             emitter.emit(MessageEventEnum.APP_LAUNCH);

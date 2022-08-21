@@ -61,20 +61,23 @@ function handleDir(path, arr) {
     });
     for (let name of names) {
         let $path = [path, name].join(sep);
-        let children = fs.statSync($path).isDirectory();
-        arr.push({
+        let isDirectory = fs.statSync($path).isDirectory();
+        let item = {
             name: name,
             path: $path,
-            children: children
-        })
-        if (children) {
+            isDirectory: isDirectory
+        };
+        arr.push(item)
+        if (isDirectory) {
             // 文件夹，递归
-            handleDir($path, arr);
+            item.children = [];
+            handleDir($path, item.children);
         }
     }
 }
 
 ipcMain.handle('file:listDir', (event, args) => {
+    console.log('file:listDir', args.path, args.recursive)
     let targetPath = args.path;
     let recursive = args.recursive;
     let fileName = fs.readdirSync(targetPath, {
@@ -91,7 +94,7 @@ ipcMain.handle('file:listDir', (event, args) => {
             return {
                 name: name,
                 path: $path,
-                children: fs.statSync($path).isDirectory()
+                isDirectory: fs.statSync($path).isDirectory()
             }
         });
     }

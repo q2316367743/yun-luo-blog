@@ -7,6 +7,11 @@ export default interface FileEntry {
      */
     name?: string;
     /** Children of this entry if it's a directory; null otherwise */
-    children?: boolean;
+    isDirectory?: boolean;
+
+    /**
+     * 子文件夹
+     */
+    children?: Array<FileEntry>;
     
 }

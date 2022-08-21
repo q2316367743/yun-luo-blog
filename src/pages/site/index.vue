@@ -95,7 +95,7 @@ export default defineComponent({
                     this.sites = settingService.getSite().history;
                     let start = new Date().getTime();
                     for (let folder of folders) {
-                        if (folder.children) {
+                        if (folder.isDirectory) {
                             // 目录
                             if (folder.name !== Constant.NAME.CONFIG) {
                                 // 跳过配置文件

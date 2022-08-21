@@ -142,12 +142,11 @@ export default class HexoStrategyImpl implements BlogStrategy {
         let targetDirPath = await FileApi.resolve(await Constant.FOLDER.HEXO.PUBLIC(), Constant.NAME.POST_IMAGES);
         await FileApi.createDir(targetDirPath);
         let postImage = await Constant.FOLDER.POST_IMAGES();
-        let postImages = await FileApi.listDir(postImage, true);
+        let postImages = await FileApi.listDir(postImage);
         for (let item of postImages) {
             let targetPath = await FileApi.resolve(targetDirPath, item.name!);
-            if (item.children) {
-                await FileApi.createDir(targetPath);
-            } else {
+            if (!item.isDirectory) {
+                // 只会处理在文件内的文件
                 await FileApi.copyFile(item.path, targetPath);
             }
         }
