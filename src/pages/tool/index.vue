@@ -17,7 +17,7 @@
                 <el-card shadow="hover" class="item">项目同步</el-card>
             </el-col>
             <el-col :span="8">
-                <el-card shadow="hover" class="item" @click="toRouter('/tool/about')">关于</el-card>
+                <el-card shadow="hover" class="item" @click="toRouter('/tool/about/self')">关于</el-card>
             </el-col>
         </el-row>
     </container-main>

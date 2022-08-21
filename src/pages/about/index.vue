@@ -5,71 +5,29 @@
     <container-main>
         <el-scrollbar>
             <article class="markdown-section">
-                <h1 id="云落博客">云落博客</h1>
-                <p>️一个静态博客写作客户端 (A static blog writing client)</p>
-                <h2 id="简介">简介</h2>
-                <p>一个静态博客写作客户端，可以搭配多种博客生成器（hexo、vuepress。。。），可视化配置</p>
-                <h2 id="特性">特性</h2>
-                <ul>
-                    <li>📝 你可以使用最酷的&nbsp;<strong>Markdown</strong>&nbsp;语法，进行快速创作</li>
-                    <li>🌉 你可以给文章配上精美的封面图和在文章任意位置插入图片</li>
-                    <li>🏷️ 你可以对文章进行标签分组</li>
-                    <li>💻
-                        你可以在&nbsp;<strong>𝖶𝗂𝗇𝖽𝗈𝗐𝗌</strong>&nbsp;或&nbsp;<strong>𝖬𝖺𝖼𝖮𝖲</strong>&nbsp;或&nbsp;<strong>Linux</strong>&nbsp;设备上使用此客户端
-                    </li>
-                    <li>🌎 你可以使用&nbsp;<strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong>&nbsp;或&nbsp;<strong>Coding Pages</strong>&nbsp;向世界展示，未来将支持更多平台
-                    </li>
-                    <li>🇬🇧 你可以使用<strong>中文简体</strong>、<strong>中文繁体</strong>、<strong>英语</strong></li>
-                    <li>🌁 你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</li>
-                    <li>🖥 你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</li>
-                </ul>
-                <p>未来，它一定会成为你离不开的伙伴</p>
-                <p>尽情发挥你的才华吧！</p>
-                <p>😘 Enjoy~</p>
-                <h2 id="亮点">亮点</h2>
-                <ol>
-                    <li>更好用的markdown编辑器，基于Monaco Editor编辑器，语法提示，本地图片提示</li>
-                    <li>分类管理，标签管理，可以更快速的选择标签</li>
-                    <li>可视化配置，免去查询配置文档的麻烦</li>
-                    <li>图片存储可选择<code>本地</code>、<code>七牛云</code>、<code>PicGo</code></li>
-                    <li>一键执行相关命令：<strong>打包</strong>、<strong>运行</strong>、<strong>编译</strong></li>
-                    <li>一键发布到<code>GitHub Pages</code>、<code>Gitee Pages</code>、<code>FTP</code>、<code>SFTP</code>
-                    </li>
-                </ol>
-                <h2 id="技术选型">技术选型</h2>
-                <ul>
-                    <li>
-                        <el-link href="https://tauri.studio/" target="_blank">Tauri</el-link>
-                    </li>
-                    <li>
-                        <el-link href="https://element-plus.gitee.io/zh-CN/" target="_blank">Element Plus
-                        </el-link>
-                    </li>
-                    <li>
-                        <el-link href="https://v3.cn.vuejs.org/" target="_blank">Vue3</el-link>
-                    </li>
-                    <li>
-                        <el-link href="https://vitejs.cn/" target="_blank">Vite2</el-link>
-                    </li>
-                    <li>
-                        <el-link href="https://www.tslang.cn/" target="_blank">TypeScript</el-link>
-                    </li>
-                </ul>
-                <h2 id="站在巨人的肩膀上">站在巨人的肩膀上</h2>
-                <ul>
-                    <li>
-                        <el-link href="https://gitee.com/fehey/gridea" target="_blank">Gridea</el-link>
-                    </li>
-                    <li>
-                        <el-link href="https://gitee.com/cwxyz007/vscode-hexo-utils" target="_blank">
-                            vscode-hexo-utils
-                        </el-link>
-                    </li>
-                    <li>
-                        <el-link href="https://github.com/GetPublii/Publii" target="_blank">Publii
-                        </el-link>
-                    </li>
-                </ul>
+                <h1 id="云落博客">关于 云落博客</h1>
+                <p>版本：0.1.1</p>
+                <p>
+                    <span>Copyright 2022 </span>
+                    <el-link  type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
+                    <span>。 版权所有。</span>
+                </p>
+                <p><span>云落博客 由</span>
+                    <el-link  type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
+                    <span>开发并由</span>
+                    <el-link  type="primary" @click="openUrl('https://electronjs.org/')">Electron</el-link>
+                    <span>和</span>
+                    <el-link  type="primary">其他开源项目</el-link>
+                    <span>制作的开源软件.</span>
+                </p>
+                <p>
+                    <span>我们不会在您使用 云落博客 应用时</span>
+                    <strong>收集任何</strong>
+                    <span>个人数据；我们不会存储、跟踪或允许第三方收集有关您的个人身份信息。</span>
+                </p>
+                <p>
+                    <el-link  type="primary" @click="toLicense">开源许可证</el-link>
+                </p>
             </article>
         </el-scrollbar>
     </container-main>
@@ -78,15 +36,21 @@
 import {defineComponent} from "vue";
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
+import NativeApi from "@/api/NativeApi";
 
 export default defineComponent({
     name: 'about',
     components: {ContainerMain, ContainerHeader},
-    data: () => ({}),
+    data: () => ({
+    }),
     methods: {
         goBack() {
             this.$router.push('/tool');
         },
+        openUrl: NativeApi.openUrl,
+        toLicense() {
+            this.$router.push('/tool/about/license')
+        }
     }
 });
 </script>
@@ -153,6 +117,16 @@ export default defineComponent({
 
 .markdown-section tr:nth-child(2n) {
     background-color: #f8f8f8
+}
+
+.markdown-section p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #606266;
+}
+
+.markdown-section p .el-link {
+    vertical-align: top;
 }
 
 .markdown-section p.tip {

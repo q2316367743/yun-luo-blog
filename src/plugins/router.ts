@@ -13,7 +13,8 @@ import ToolPage from '@/pages/tool/index.vue';
 import ToolImportPage from '@/pages/tool/pages/import.vue';
 import ToolBackupPage from '@/pages/tool/pages/backup.vue';
 import ToolSyncRemotePage from '@/pages/tool/pages/sync-remote.vue';
-import ToolAboutPage from '@/pages/about/index.vue';
+import ToolAboutSelfPage from '@/pages/about/index.vue';
+import ToolAboutLicensePage from '@/pages/about/license.vue';
 
 /**
  * 定义路由模块
@@ -95,9 +96,14 @@ const routes: Array<RouteRecordRaw> = [
         component: ToolSyncRemotePage
     },
     {
-        path: '/tool/about',
-        name: 'tool-about',
-        component: ToolAboutPage
+        path: '/tool/about/self',
+        name: 'tool-about-self',
+        component: ToolAboutSelfPage
+    },
+    {
+        path: '/tool/about/license',
+        name: 'tool-about-license',
+        component: ToolAboutLicensePage
     }
 ]
 
