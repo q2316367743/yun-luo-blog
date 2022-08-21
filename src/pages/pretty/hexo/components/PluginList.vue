@@ -71,7 +71,7 @@ interface Dependency {
 }
 
 export default defineComponent({
-    name: 'pretty-plugin',
+    name: 'pretty-hexo-plugin-list',
     setup() {
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);
@@ -99,7 +99,7 @@ export default defineComponent({
     },
     methods: {
         listPlugin() {
-            Constant.FOLDER.HEXO.PACKAGE_JSON().then(path => {
+            Constant.FILE.HEXO.PACKAGE_JSON().then(path => {
                 FileApi.readFile(path).then(content => {
                     let packageJson = JSON.parse(content);
                     this.dependencies = [];
@@ -215,7 +215,7 @@ export default defineComponent({
             })
         },
         uninstall(plugin: string) {
-            ElMessageBox.confirm(`确认删除插件【${plugin}】？`, "确认删除", {
+            ElMessageBox.confirm(`确认删除插件【${Plugin}】？`, "确认删除", {
                 type: "warning",
                 cancelButtonText: "取消",
                 confirmButtonText: "删除"
@@ -238,7 +238,7 @@ export default defineComponent({
                     });
                     NativeApi.invokeSync(environment.npmPath,
                         path,
-                        `remove ${plugin}`
+                        `remove ${Plugin}`
                     ).then(() => {
                         emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                         this.listPlugin();

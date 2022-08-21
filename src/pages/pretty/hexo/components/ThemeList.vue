@@ -74,7 +74,7 @@ import MessageEventEnum from "@/enumeration/MessageEventEnum";
  * 查询两个东西：1.主题文件夹，2.package.json主题
  */
 export default defineComponent({
-    name: 'pretty-theme',
+    name: 'pretty-hexo-theme-list',
     setup() {
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);

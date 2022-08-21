@@ -187,6 +187,9 @@ export default {
             CONFIG: async (): Promise<string> => {
                 return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_CONFIG);
             },
+            PACKAGE_JSON: async (): Promise<string> => {
+                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_PACKAGE_JSON);
+            }
         }
     },
     FOLDER: {
@@ -226,9 +229,6 @@ export default {
             },
             PUBLIC: async (): Promise<string> => {
                 return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_PUBLIC);
-            },
-            PACKAGE_JSON: async (): Promise<string> => {
-                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_PACKAGE_JSON);
             }
         },
     },

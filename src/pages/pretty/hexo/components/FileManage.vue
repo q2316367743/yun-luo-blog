@@ -39,7 +39,7 @@ interface File {
 }
 
 export default defineComponent({
-    name: 'file-manage',
+    name: 'pretty-hexo-file-manage',
     components: {ThemeFileEditor},
     data: () => ({
         themeName: '',

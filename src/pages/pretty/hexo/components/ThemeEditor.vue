@@ -17,7 +17,7 @@ import Hexo from "@/global/config/Hexo";
 import {ElMessage} from "element-plus";
 
 export default defineComponent({
-    name: 'theme-editor',
+    name: 'pretty-hexo-theme-editor',
     components: {ThemeConfigEditor},
     data: () => ({
         theme: '',
