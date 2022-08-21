@@ -1,8 +1,11 @@
 <template>
     <div id="pretty-plugin">
-        <el-scrollbar v-if="blogIsInit">
+        <div class="option">
+            <el-input v-model="keyword" clearable style="width: 400px" @input="search"></el-input>
+        </div>
+        <el-scrollbar v-if="blogIsInit" class="view">
             <el-row>
-                <el-col :span="24" style="margin-bottom: 10px" v-for="dependency in dependencies"
+                <el-col :span="24" style="margin-bottom: 10px" v-for="dependency in dependenciesTemp"
                         :key="dependency.name">
                     <el-card shadow="hover">
                         <div class="plugin-card">
@@ -78,10 +81,12 @@ export default defineComponent({
         blogIsInit: false,
         pluginAddDialog: false,
         dependencies: new Array<Dependency>(),
+        dependenciesTemp: new Array<Dependency>(),
         plugin: {
             name: "",
             version: ""
-        }
+        },
+        keyword: ''
     }),
     created() {
         blogStrategyContext.getStrategy().isInit().then(isInit => {
@@ -133,8 +138,12 @@ export default defineComponent({
                             message: '解析devDependencies失败,' + e
                         });
                     }
+                    this.search();
                 })
             })
+        },
+        search() {
+            this.dependenciesTemp = this.dependencies.filter(e => e.name.includes(this.keyword));
         },
         openPluginAddDialog() {
             this.plugin = {
@@ -268,6 +277,23 @@ export default defineComponent({
     left: 0;
     right: 0;
     bottom: 0;
+
+    .option {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 48px;
+        padding-bottom: 8px;
+    }
+
+    .view {
+        position: absolute;
+        top: 48px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 
     .plugin-add {
         position: fixed;

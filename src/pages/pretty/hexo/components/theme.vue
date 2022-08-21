@@ -1,8 +1,11 @@
 <template>
     <div id="pretty-theme">
-        <el-scrollbar v-if="blogIsInit">
+        <div class="option">
+            <el-input v-model="keyword" clearable style="width: 400px" @input="search"></el-input>
+        </div>
+        <el-scrollbar v-if="blogIsInit" class="view">
             <el-row>
-                <el-col :span="24" style="margin-bottom: 10px" v-for="theme in themes" :key="theme">
+                <el-col :span="24" style="margin-bottom: 10px" v-for="theme in themesTemp" :key="theme">
                     <el-card shadow="hover">
                         <div class="theme-card">
                             <div>
@@ -86,10 +89,12 @@ export default defineComponent({
             url: '',
             compressionPath: ''
         },
+        themesTemp: new Array<string>(),
         themes: new Array<string>(),
         themeActive: '',
         hexo: new Hexo(),
-        blogIsInit: false
+        blogIsInit: false,
+        keyword: ''
     }),
     created() {
         blogStrategyContext.getStrategy().isInit().then(isInit => {
@@ -115,8 +120,12 @@ export default defineComponent({
                         }
                     }
                     this.themes = themes;
+                    this.search();
                 })
             })
+        },
+        search() {
+            this.themesTemp = this.themes.filter(e => e.includes(this.keyword))
         },
         openThemeAddDialog() {
             this.themeInfo = {
@@ -319,7 +328,6 @@ export default defineComponent({
                         // 不存在，则创建
                         await FileApi.createDir(newConfigPath);
                     }
-                    let configPath = await Constant.FILE.HEXO.CONFIG();
                     this.hexo.theme = value.trim();
                     // 修改配置文件
                     this.updateHexoConfig()
@@ -439,6 +447,23 @@ export default defineComponent({
     left: 0;
     right: 0;
     bottom: 0;
+
+    .option {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 48px;
+        padding-bottom: 8px;
+    }
+
+    .view {
+        position: absolute;
+        top: 48px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 
     .theme-add {
         position: fixed;
