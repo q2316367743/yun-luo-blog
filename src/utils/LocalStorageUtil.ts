@@ -21,8 +21,7 @@ export default {
             try {
                 return JSON.parse(value);
             }catch (e) {
-                console.error(e);
-                return defaultValue;
+                return value as any;
             }
         }
     },

@@ -4,8 +4,8 @@
         <div class="selector">
             <el-scrollbar>
                 <el-card class="item" v-for="history of histories"
-                     :class="historyActive === history ? 'active' : ''"
-                     @click="historyActive !== history ? historyActive = history : historyActive = ''">
+                         :class="historyActive === history ? 'active' : ''"
+                         @click="historyActive !== history ? historyActive = history : historyActive = ''">
                     <div class="path">{{ history }}</div>
                     <div class="close" @click.stop="remove(history)">
                         <el-icon>
@@ -28,6 +28,7 @@ import Constant from "@/global/Constant";
 import {Close} from "@element-plus/icons-vue";
 import FileApi from "@/api/FileApi";
 import DialogApi from "@/api/DialogApi";
+import ArrayUtil from "@/utils/ArrayUtil";
 
 export default defineComponent({
     name: 'workspace',
@@ -41,12 +42,10 @@ export default defineComponent({
     created() {
         this.historyActive = LocalStorageUtil.getOrDefault(Constant.LOCALSTORAGE.WORKSPACE, "");
         this.histories = LocalStorageUtil.getOrDefault(Constant.LOCALSTORAGE.WORKSPACE_HISTORY, []);
-        if (this.historyActive === '') {
+        if (this.historyActive === '' || this.histories.length === 0) {
             FileApi.defaultDir().then(path => {
                 this.historyActive = path;
-                if (this.histories.length === 0) {
-                    this.histories.push(this.historyActive)
-                }
+                this.histories.push(this.historyActive)
             })
         }
     },
@@ -60,16 +59,21 @@ export default defineComponent({
             });
             if (typeof selected === 'object' && selected) {
                 this.historyActive = (selected as string[])[0];
-                this.histories.push(this.historyActive)
+                if (!ArrayUtil.contains(this.histories, this.historyActive)) {
+                    this.histories.push(this.historyActive)
+                }
             }
         },
         chooseWorkspace() {
             // 0. 设置当前工作空间
             LocalStorageUtil.set(Constant.LOCALSTORAGE.WORKSPACE, this.historyActive);
-            // 1. 加入历史中
-            let workspaceHistory = LocalStorageUtil.getOrDefault(Constant.LOCALSTORAGE.WORKSPACE_HISTORY, new Array<string>());
-            workspaceHistory.push(this.historyActive)
-            LocalStorageUtil.set(Constant.LOCALSTORAGE.WORKSPACE_HISTORY, workspaceHistory);
+            let histories = new Array<string>();
+            for (let history of this.histories) {
+                if (!ArrayUtil.contains(histories, history)) {
+                    histories.push(history);
+                }
+            }
+            LocalStorageUtil.set(Constant.LOCALSTORAGE.WORKSPACE_HISTORY, histories);
             // 2. 重新跳转加载页面
             this.$router.push("/loading");
         },
@@ -78,7 +82,8 @@ export default defineComponent({
                 this.historyActive = '';
             }
             this.histories.splice(this.histories.indexOf(path), 1);
-        }
+        },
+
     }
 });
 </script>

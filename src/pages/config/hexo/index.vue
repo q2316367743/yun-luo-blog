@@ -408,7 +408,6 @@ export default defineComponent({
             let baseConfig = this.hexo.render();
             let extraConfig = this.extra;
             try {
-                console.log(extraConfig)
                 // 在写入文件
                 await FileApi.writeFile(hexoConfigBase, baseConfig);
                 await FileApi.writeFile(hexoConfigExtra, extraConfig);

@@ -160,6 +160,11 @@
                                         {{ $t('app.open_dev_tools') }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="workspace">
+                                        {{ $t('app.switch_workspace') }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
                             </template>
                         </el-dropdown>
                     </div>
@@ -424,6 +429,9 @@ export default defineComponent({
                             message: this.$t('hint.open_success')
                         })
                     });
+                    break;
+                case "workspace":
+                    this.$router.push('/workspace');
                     break;
             }
         },
