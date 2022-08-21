@@ -13,7 +13,7 @@ import ToolPage from '@/pages/tool/index.vue';
 import ToolImportPage from '@/pages/tool/pages/import.vue';
 import ToolBackupPage from '@/pages/tool/pages/backup.vue';
 import ToolSyncRemotePage from '@/pages/tool/pages/sync-remote.vue';
-import ToolAboutPage from '@/pages/tool/pages/about.vue';
+import ToolAboutPage from '@/pages/about/index.vue';
 
 /**
  * 定义路由模块

@@ -80,7 +80,7 @@ import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 
 export default defineComponent({
-    name: '',
+    name: 'about',
     components: {ContainerMain, ContainerHeader},
     data: () => ({}),
     methods: {
