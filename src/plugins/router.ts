@@ -15,6 +15,7 @@ import ToolBackupPage from '@/pages/tool/pages/backup.vue';
 import ToolSyncRemotePage from '@/pages/tool/pages/sync-remote.vue';
 import ToolAboutSelfPage from '@/pages/about/index.vue';
 import ToolAboutLicensePage from '@/pages/about/license.vue';
+import ToolAboutOpenSourcePage from '@/pages/about/openSource.vue';
 
 /**
  * 定义路由模块
@@ -104,6 +105,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/tool/about/license',
         name: 'tool-about-license',
         component: ToolAboutLicensePage
+    },
+    {
+        path: '/tool/about/openSource',
+        name: 'tool-about-openSource',
+        component: ToolAboutOpenSourcePage
     }
 ]
 

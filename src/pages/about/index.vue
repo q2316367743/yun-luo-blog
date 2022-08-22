@@ -6,19 +6,25 @@
         <el-scrollbar>
             <article class="markdown-section">
                 <h1 id="云落博客">关于 云落博客</h1>
-                <p>版本：0.1.1</p>
+                <p>
+                    <span>版本：</span>
+                    <el-tag type="primary">0.1.1</el-tag>
+                </p>
                 <p>
                     <span>Copyright 2022 </span>
-                    <el-link  type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
+                    <el-link type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
                     <span>。 版权所有。</span>
                 </p>
-                <p><span>云落博客 由</span>
-                    <el-link  type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
+                <p>
+                    <span>云落博客 由</span>
+                    <el-link type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
                     <span>开发并由</span>
-                    <el-link  type="primary" @click="openUrl('https://electronjs.org/')">Electron</el-link>
+                    <el-link type="primary" @click="openUrl('https://electronjs.org/')">Electron</el-link>
                     <span>和</span>
-                    <el-link  type="primary">其他开源项目</el-link>
-                    <span>制作的开源软件.</span>
+                    <el-link type="primary" @click="toOpenSource">其他开源项目</el-link>
+                    <span>制作的</span>
+                    <el-link type="primary" @click="openUrl('https://github.com/q2316367743/yun-luo-blog')">开源软件</el-link>
+                    <span>。</span>
                 </p>
                 <p>
                     <span>我们不会在您使用 云落博客 应用时</span>
@@ -26,7 +32,20 @@
                     <span>个人数据；我们不会存储、跟踪或允许第三方收集有关您的个人身份信息。</span>
                 </p>
                 <p>
-                    <el-link  type="primary" @click="toLicense">开源许可证</el-link>
+                    <el-link type="primary" @click="toLicense">开源许可证</el-link>
+                </p>
+                <h2>其他资源</h2>
+                <p>
+                    <strong>仓库：</strong>
+                    <el-link type="primary" @click="openUrl('https://github.com/q2316367743/yun-luo-blog')">GitHub</el-link>
+                    <span> | </span>
+                    <el-link type="primary" @click="openUrl('https://gitee.com/qiaoshengda/yun-luo-blog')">Gitee</el-link>
+                </p>
+                <p>
+                    <strong>文档：</strong>
+                    <el-link type="primary" @click="openUrl('https://q2316367743.github.io/yun-luo-blog')">GitHub Pages</el-link>
+                    <span> | </span>
+                    <el-link type="primary" @click="openUrl('https://docs.esion.xyz/yun-luo-blog')">国内访问</el-link>
                 </p>
             </article>
         </el-scrollbar>
@@ -41,8 +60,7 @@ import NativeApi from "@/api/NativeApi";
 export default defineComponent({
     name: 'about',
     components: {ContainerMain, ContainerHeader},
-    data: () => ({
-    }),
+    data: () => ({}),
     methods: {
         goBack() {
             this.$router.push('/tool');
@@ -50,6 +68,9 @@ export default defineComponent({
         openUrl: NativeApi.openUrl,
         toLicense() {
             this.$router.push('/tool/about/license')
+        },
+        toOpenSource() {
+            this.$router.push('/tool/about/openSource')
         }
     }
 });
