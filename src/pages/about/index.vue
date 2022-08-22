@@ -12,12 +12,12 @@
                 </p>
                 <p>
                     <span>Copyright 2022 </span>
-                    <el-link type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
+                    <el-link type="primary" @click="openUrl('https://blog.esion.xyz')">落雨不悔</el-link>
                     <span>。 版权所有。</span>
                 </p>
                 <p>
                     <span>云落博客 由</span>
-                    <el-link type="primary" @click="open('https://blog.esion.xyz')">落雨不悔</el-link>
+                    <el-link type="primary" @click="openUrl('https://blog.esion.xyz')">落雨不悔</el-link>
                     <span>开发并由</span>
                     <el-link type="primary" @click="openUrl('https://electronjs.org/')">Electron</el-link>
                     <span>和</span>
