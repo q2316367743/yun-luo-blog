@@ -1,7 +1,13 @@
 <template>
     <div id="pretty-plugin">
-        <div class="option">
-            <el-input v-model="keyword" clearable style="width: 400px" @input="search"></el-input>
+        <div class="option" v-if="blogIsInit">
+            <div>
+                <el-button type="info" :icon="refresh" @click="listPlugin"></el-button>
+                <el-button type="primary" @click="openPluginAddDialog">{{ $t('common.install') }}</el-button>
+            </div>
+            <div>
+                <el-input v-model="keyword" clearable style="width: 300px" @input="search"></el-input>
+            </div>
         </div>
         <el-scrollbar v-if="blogIsInit" class="view">
             <el-row>
@@ -14,7 +20,9 @@
                                 <el-tag style="margin-left: 10px;">{{ dependency.version }}</el-tag>
                             </div>
                             <div>
-                                <el-button type="danger" link @click="uninstall(dependency.name)">删除</el-button>
+                                <el-button type="danger" link @click="uninstall(dependency.name)">
+                                    {{ $t('common.delete') }}
+                                </el-button>
                             </div>
                         </div>
                     </el-card>
@@ -22,10 +30,7 @@
             </el-row>
         </el-scrollbar>
         <el-empty v-else :description="$t('hint.blog_not_init')"/>
-        <div class="plugin-add" v-if="blogIsInit">
-            <el-button type="primary" circle :icon="plus" @click="openPluginAddDialog"></el-button>
-        </div>
-        <el-dialog v-model="pluginAddDialog" title="新增插件" draggable top="25vh">
+        <el-dialog v-model="pluginAddDialog" title="安装插件" draggable top="25vh">
             <el-form v-model="plugin" label-width="80px">
                 <el-form-item label="名称">
                     <el-input v-model="plugin.name"></el-input>
@@ -35,15 +40,15 @@
                 </el-form-item>
             </el-form>
             <template #footer>
-                <el-button @click="pluginAddDialog = false">取消</el-button>
-                <el-button type="primary" @click="install">安装</el-button>
+                <el-button @click="pluginAddDialog = false">{{ $t('common.cancel') }}</el-button>
+                <el-button type="primary" @click="install">{{ $t('common.install') }}</el-button>
             </template>
         </el-dialog>
     </div>
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Edit, Plus} from "@element-plus/icons-vue";
+import {Edit, Plus, Refresh} from "@element-plus/icons-vue";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
@@ -75,7 +80,8 @@ export default defineComponent({
     setup() {
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);
-        return {plus, edit}
+        const refresh = markRaw(Refresh);
+        return {plus, edit, refresh}
     },
     data: () => ({
         blogIsInit: false,
@@ -215,7 +221,7 @@ export default defineComponent({
             })
         },
         uninstall(plugin: string) {
-            ElMessageBox.confirm(`确认删除插件【${Plugin}】？`, "确认删除", {
+            ElMessageBox.confirm(`确认删除插件【${plugin}】？`, "确认删除", {
                 type: "warning",
                 cancelButtonText: "取消",
                 confirmButtonText: "删除"
@@ -238,7 +244,7 @@ export default defineComponent({
                     });
                     NativeApi.invokeSync(environment.npmPath,
                         path,
-                        `remove ${Plugin}`
+                        `remove ${plugin}`
                     ).then(() => {
                         emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                         this.listPlugin();
@@ -285,6 +291,8 @@ export default defineComponent({
         right: 0;
         height: 48px;
         padding-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
     }
 
     .view {
@@ -293,12 +301,6 @@ export default defineComponent({
         left: 0;
         right: 0;
         bottom: 0;
-    }
-
-    .plugin-add {
-        position: fixed;
-        right: 120px;
-        bottom: 42px;
     }
 
     .plugin-card {

@@ -1,7 +1,13 @@
 <template>
     <div id="pretty-theme">
-        <div class="option">
-            <el-input v-model="keyword" clearable style="width: 400px" @input="search"></el-input>
+        <div class="option" v-if="blogIsInit">
+            <div>
+                <el-button type="info" :icon="refresh" @click="listTheme"></el-button>
+                <el-button type="primary" @click="openThemeAddDialog">新增</el-button>
+            </div>
+            <div>
+                <el-input v-model="keyword" clearable style="width: 300px" @input="search"></el-input>
+            </div>
         </div>
         <el-scrollbar v-if="blogIsInit" class="view">
             <el-row>
@@ -24,9 +30,6 @@
             </el-row>
         </el-scrollbar>
         <el-empty v-else :description="$t('hint.blog_not_init')"/>
-        <div class="theme-add" v-if="blogIsInit">
-            <el-button type="primary" circle :icon="plus" @click="openThemeAddDialog"></el-button>
-        </div>
         <el-dialog v-model="themeAddDialog" title="新增主题" draggable top="25vh">
             <el-form label-width="100px">
                 <el-form-item label="方式">
@@ -58,7 +61,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Edit, Folder, Plus} from "@element-plus/icons-vue";
+import {Edit, Folder, Plus, Refresh} from "@element-plus/icons-vue";
 import Hexo from "@/global/config/Hexo";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
@@ -79,7 +82,8 @@ export default defineComponent({
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);
         const folder = markRaw(Folder);
-        return {plus, edit, folder}
+        const refresh = markRaw(Refresh);
+        return {plus, edit, folder, refresh}
     },
     data: () => ({
         themeAddDialog: false,
@@ -455,6 +459,8 @@ export default defineComponent({
         right: 0;
         height: 48px;
         padding-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
     }
 
     .view {
@@ -465,11 +471,6 @@ export default defineComponent({
         bottom: 0;
     }
 
-    .theme-add {
-        position: fixed;
-        right: 120px;
-        bottom: 42px;
-    }
 }
 
 .theme-card {

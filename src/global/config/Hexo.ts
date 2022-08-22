@@ -36,7 +36,7 @@ export default class Hexo {
      * 网站使用的语言。
      * 对于简体中文用户来说，使用不同的主题可能需要设置成不同的值，请参考你的主题的文档自行设置，常见的有 zh-Hans和 zh-CN。
      */
-    language: string = "";
+    language: string = "zh-CN";
 
     /**
      * 网站时区。Hexo 默认使用您电脑的时区。
@@ -44,14 +44,14 @@ export default class Hexo {
      * 如 America/New_York, Japan, 和 UTC 。
      * 一般的，对于中国大陆地区可以使用 Asia/Shanghai。
      */
-    timezone: string = "";
+    timezone: string = "Asia/Shanghai";
 
     // 网址
 
     /**
      * 网址, 必须以 http:// 或 https:// 开头
      */
-    url: string = "";
+    url: string = "http://localhost";
 
     /**
      * 网站根目录
@@ -321,8 +321,10 @@ export default class Hexo {
      * @param fileContent 文件内容
      */
     parse(fileContent: string) {
-        let yaml = jsYaml.load(fileContent);
-        Object.assign(this, yaml);
+        if (fileContent && fileContent !== '') {
+            let yaml = jsYaml.load(fileContent);
+            Object.assign(this, yaml);
+        }
     }
 
     /**

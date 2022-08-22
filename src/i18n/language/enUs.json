@@ -32,6 +32,7 @@
         "dark": "dark",
         "delete": "delete",
         "fail": "fail",
+        "install": "install",
         "light": "light",
         "refresh": "refresh",
         "save": "save",
