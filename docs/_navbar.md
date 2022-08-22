@@ -6,6 +6,7 @@
     - [如何配置hexo环境](/problem/如何配置hexo环境)
     - [hexo基本用法](/problem/hexo基本用法)
     - [hexo进阶用法](/problem/hexo进阶用法)
-- [版本](/version/0.1.1)
+- [版本](/version/0.1.2)
+    - [0.1.0](/version/0.1.2)
     - [0.1.0](/version/0.1.1)
     - [0.1.0](/version/0.1.0)
