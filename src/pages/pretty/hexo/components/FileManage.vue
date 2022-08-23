@@ -20,6 +20,8 @@ import FileApi from "@/api/FileApi";
 import ThemeFileEditor from "@/components/ThemeFileEditor/index.vue";
 import {ElMessage} from "element-plus";
 import ArrayUtil from "@/utils/ArrayUtil";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 interface File {
 
@@ -111,6 +113,7 @@ export default defineComponent({
                         type: 'success',
                         message: this.$t('hint.save_success')
                     });
+                    emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                 }).catch(e => {
                     ElMessage({
                         showClose: true,

@@ -15,6 +15,8 @@ import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
 import {ElMessage} from "element-plus";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 export default defineComponent({
     name: 'pretty-hexo-theme-editor',
@@ -66,6 +68,7 @@ export default defineComponent({
                             type: 'success',
                             message: this.$t('hint.save_success')
                         });
+                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                     }).catch((e) => {
                         console.error(e);
                         ElMessage({
