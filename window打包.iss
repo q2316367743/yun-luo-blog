@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "ÔÆÂä²©¿Í"
-#define MyAppVersion "0.1.2"
+#define MyAppVersion "0.2.0"
 #define MyAppPublisher "ÂäÓê²»»Ú"
 #define MyAppURL "https://q2316367743.github.io/yun-luo-blog"
 #define MyAppExeName "ÔÆÂä²©¿Í.exe"
@@ -28,7 +28,7 @@ LicenseFile=D:\Documents\workspace\yun-luo-blog\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=D:\Documents\Application
-OutputBaseFilename=ÔÆÂä²©¿Ív0.1.2
+OutputBaseFilename=ÔÆÂä²©¿Ív0.2.0
 SetupIconFile=D:\Documents\workspace\yun-luo-blog\electron\assets\ico\256.ico
 Compression=lzma
 SolidCompression=yes
