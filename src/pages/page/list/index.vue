@@ -21,7 +21,7 @@
             <el-option :label="$t('post.list.sortCreateAsc')" :value="5"/>
             <el-option :label="$t('post.list.sortCreateDesc')" :value="6"/>
         </el-select>
-        <el-button type="primary" @click="searchPage('/post/new')">{{ $t('common.add') }}</el-button>
+        <el-button type="primary" @click="openAddDialog">{{ $t('common.add') }}</el-button>
     </container-header>
     <container-main class="main">
         <el-scrollbar v-if="pages.length > 0">
@@ -40,6 +40,7 @@ import ContainerMain from "@/components/Container/ContainerMain.vue";
 import PostListItem from "@/components/PostListItem/index.vue";
 import PostView from "@/views/PostView";
 import {pageService} from "@/global/BeanFactory";
+import {ElMessageBox} from "element-plus";
 
 export default defineComponent({
     name: '',
@@ -83,6 +84,19 @@ export default defineComponent({
                         return e1.title.localeCompare(e2.title);
                     }
                 });
+        },
+        openAddDialog() {
+            ElMessageBox.prompt('请输入页面链接地址，不能包含特殊符号', '新建页面', {
+                type: 'info',
+                confirmButtonText: '新建',
+                cancelButtonText: '取消',
+                inputPattern: /^(?:(http|https|ftp):\/\/)?((|[\w-]+\.)+[a-z0-9]+)(?:(\/[^/?#]+)*)?(\?[^#]+)?(#.+)?$/,
+                inputErrorMessage: '请输入正确的页面链接地址'
+            }).then(({value}) => {
+                alert(value)
+            }).catch(() => {
+                console.error('取消新建地址');
+            })
         },
         editPage(id: number) {
 

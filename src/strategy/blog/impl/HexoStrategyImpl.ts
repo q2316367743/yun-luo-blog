@@ -3,7 +3,7 @@ import {ElLoading, ElMessage} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
-import {postService, settingService} from "@/global/BeanFactory";
+import {pageService, postService, settingService} from "@/global/BeanFactory";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
@@ -36,6 +36,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             background: 'rgba(0, 0, 0, 0.7)',
         });
         try {
+            await this.copyPage(loading);
             await this.copyPost(loading);
             await this.clean(loading);
             await this.deploy(loading);
@@ -55,6 +56,8 @@ export default class HexoStrategyImpl implements BlogStrategy {
     async build(callback: () => void): Promise<void> {
         // 基础
         console.log('开始构建', new Date().getTime());
+        console.log('拷贝页面', new Date().getTime());
+        await this.copyPage();
         console.log('拷贝文章', new Date().getTime());
         await this.copyPost();
         console.log('执行命令', new Date().getTime());
@@ -78,13 +81,9 @@ export default class HexoStrategyImpl implements BlogStrategy {
         return Promise.resolve();
     }
 
-    private async copyPost(loading?: { setText: (message: string) => void }): Promise<void> {
-        if (loading) {
-            loading.setText("将文章复制到目标文件夹");
-        }
-        // 获取配置
+    private async getSourcePath(): Promise<string> {
         let hexoPath = await Constant.FOLDER.HEXO.BASE();
-        let hexoConfig = await Constant.FILE.HEXO.CONFIG();
+        let hexoConfig = await Constant.FILE.HEXO_CONFIG_BASE();
         let hexoConfigContent = "";
         try {
             hexoConfigContent = await FileApi.readFile(hexoConfig)
@@ -97,8 +96,17 @@ export default class HexoStrategyImpl implements BlogStrategy {
             console.error(e);
         }
         let hexo = new Hexo(hexoConfigContent);
-        let source_dir = await FileApi.resolve(hexoPath, hexo.source_dir);
-        let _posts = await FileApi.resolve(source_dir, "_posts");
+        return await FileApi.resolve(hexoPath, hexo.source_dir)
+    }
+
+    private async  copyPost(loading?: { setText: (message: string) => void }): Promise<void> {
+        if (loading) {
+            loading.setText("将文章复制到目标文件夹");
+        }
+        // 获取配置
+        let sourceDir = await this.getSourcePath();
+        let _posts = await FileApi.resolve(sourceDir, "_posts");
+        let _drafts = await FileApi.resolve(sourceDir, "_drafts");
         // 删除旧的文件夹
         await FileApi.removeDir(_posts, true);
         // _posts文件夹可能不存在
@@ -113,7 +121,41 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 path: e.path
             } as FileEntry
         }));
+        // 复制草稿的文章
+        let drafts = await postService.list({
+            status: PostStatusEnum.DRAFT
+        });
+        await FileApi.copyFileToDir(_drafts, false, drafts.map(e => {
+            return {
+                name: e.fileName,
+                path: e.path
+            } as FileEntry
+        }));
         return Promise.resolve();
+    }
+
+    private async  copyPage(loading?: { setText: (message: string) => void }): Promise<void> {
+        if (loading) {
+            loading.setText("将页面复制到目标文件夹");
+        }
+        // 获取配置
+        let sourceDir = await this.getSourcePath();
+        // 删除旧的资源文件夹
+        await FileApi.removeDir(sourceDir, true);
+        // 创建新的的资源文件夹
+        await FileApi.createDir(sourceDir, true);
+        // 获取上架的页面
+        let pages = await pageService.list({
+            status: PostStatusEnum.RELEASE
+        });
+        let timestamp = new Date().getTime();
+        for (let page of pages) {
+            timestamp += 1;
+            let pageInfoPath = await FileApi.resolve(sourceDir, timestamp + "");
+            await FileApi.createDir(pageInfoPath);
+            let path = await FileApi.resolve(pageInfoPath, 'index.md');
+            await FileApi.copyFile(page.path, path);
+        }
     }
 
     private async clean(loading?: { setText: (message: string) => void }): Promise<void> {
