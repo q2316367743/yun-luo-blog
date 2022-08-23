@@ -39,12 +39,11 @@ export default class PostService {
         this.postCategoryDb = postCategoryDb;
     }
 
-    async insert(post: PostView, saveContent: boolean = true): Promise<void> {
+    async insert(post: PostView, folder: string, saveContent: boolean = true): Promise<void> {
         // 如果没有路径，先生成目录和文件名
         console.log('如果没有路径，先生成目录和文件名')
         if (!post.path || post.path === '') {
-            let postPath = await Constant.FOLDER.POST();
-            post.path = await FileApi.resolve(postPath, post.title + ".md");
+            post.path = await FileApi.resolve(folder, post.title + ".md");
             post.fileName = post.title + ".md";
             console.log('先生成目录和文件名', post.path, post.fileName);
         }
@@ -258,7 +257,7 @@ export default class PostService {
         return Promise.resolve(this.postDb.one({id: id}));
     }
 
-    async refresh(): Promise<void> {
+    async refresh(path: string): Promise<void> {
         const loading = ElLoading.service({
             lock: true,
             text: '获取目录中',
@@ -298,7 +297,7 @@ export default class PostService {
                 if (postView) {
                     // 处理逻辑，此处会报错，
                     try {
-                        await this.insert(postView, false);
+                        await this.insert(postView, path, false);
                     } catch (e) {
                         ElMessage({
                             showClose: true,

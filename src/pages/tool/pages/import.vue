@@ -30,6 +30,7 @@ import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 import {postService} from "@/global/BeanFactory";
 import {ElMessageBox} from "element-plus";
+import Constant from "@/global/Constant";
 
 export default defineComponent({
     name: 'tool-import',
@@ -40,15 +41,17 @@ export default defineComponent({
             this.$router.push('/tool');
         },
         projectDirRefresh() {
-            postService.refresh().then(() => {
-                ElMessageBox.confirm("项目刷新完毕，是否立即前往文章页面？", "提示", {
-                    type: 'success',
-                    confirmButtonText: "前往",
-                    cancelButtonText: "取消"
-                }).then(() => {
-                    this.$router.push('/post/list');
-                }).catch(() => {
-                });
+            Constant.FOLDER.POST().then(path => {
+                postService.refresh(path).then(() => {
+                    ElMessageBox.confirm("项目刷新完毕，是否立即前往文章页面？", "提示", {
+                        type: 'success',
+                        confirmButtonText: "前往",
+                        cancelButtonText: "取消"
+                    }).then(() => {
+                        this.$router.push('/post/list');
+                    }).catch(() => {
+                    });
+                })
             })
         }
     }

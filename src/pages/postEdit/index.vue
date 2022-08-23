@@ -8,8 +8,16 @@
             <div class="post-new-title">
                 <el-input v-model="post.title" placeholder="Please input"/>
                 <div class="option">
-                    <el-button class="promotion" type="primary" @click="saveOrPublish">{{ flag ? '发布' : '保存' }}
-                    </el-button>
+                    <el-dropdown class="promotion" split-button type="primary" @click="saveOrPublish" @command="saveOrPublishSwitch">
+                        {{ flag ? '发布' : '保存' }}
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item command="saveOrPublish">保存并返回</el-dropdown-item>
+                                <el-dropdown-item command="saveOrPublishForDraft">保存为草稿并返回</el-dropdown-item>
+                                <el-dropdown-item command="saveOrPublishForRelease">保存为发布并返回</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </div>
             </div>
             <div class="post-new-body">
@@ -131,6 +139,8 @@ import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 import '@/less/post.css'
 import Entry from "@/global/Entry";
 import CategoryView from "@/views/CategoryView";
+import PostStatusEnum from "@/enumeration/PostStatusEnum";
+import Constant from "@/global/Constant";
 
 export default defineComponent({
     name: 'post-edit',
@@ -155,7 +165,7 @@ export default defineComponent({
             title: '',
             fileName: '',
             path: '',
-            status: 1,
+            status: PostStatusEnum.RELEASE,
             date: new Date(),
             updated: new Date(),
             comments: false,
@@ -190,6 +200,15 @@ export default defineComponent({
                 return "页面"
             } else {
                 return "";
+            }
+        },
+        listPage() {
+            if (this.source === 1) {
+                return "/post/list";
+            } else if (this.source === 2) {
+                return "/page/list"
+            } else {
+                return "/post/list";
             }
         }
     },
@@ -227,7 +246,7 @@ export default defineComponent({
             if (this.source === 1) {
                 this.post.title = '新文章';
             } else if (this.source === 2) {
-                this.post.title = '新页面';
+                this.post.title = this.post.permalink;
             }
         }
         document.onkeydown = (e) => {
@@ -294,15 +313,7 @@ export default defineComponent({
             });
         },
         toRouteLink() {
-            let link = '/post/list';
-            if (this.source === 1) {
-                link = '/post/list';
-            } else if (this.source === 2) {
-                link = '/page/list';
-            } else {
-                ElMessageBox.alert('来源未知')
-            }
-            this.$router.push(link);
+            this.$router.push(this.listPage);
         },
         async insertImage() {
             // 复制图片
@@ -364,6 +375,20 @@ export default defineComponent({
                 })
             })
         },
+        saveOrPublishSwitch(command: string) {
+            switch (command) {
+                case "saveOrPublish":
+                    break;
+                case "saveOrPublishForDraft":
+                    this.post.status = PostStatusEnum.DRAFT;
+                    break;
+                case "saveOrPublishForRelease":
+                    this.post.status = PostStatusEnum.RELEASE;
+                    break;
+            }
+            this.saveOrPublish();
+            this.$router.push(this.listPage)
+        },
         saveOrPublish() {
             this.flag ? this.publish() : this.save();
         },
@@ -413,9 +438,13 @@ export default defineComponent({
         },
         publishBySource(): Promise<void> {
             if (this.source === 1) {
-                return postService.insert(this.post);
+                return Constant.FOLDER.PAGE().then(postPage => {
+                    postService.insert(this.post, postPage);
+                })
             } else if (this.source === 2) {
-                return pageService.insert(this.post);
+                return Constant.FOLDER.PAGE().then(pagePath => {
+                    pageService.insert(this.post, pagePath)
+                });
             } else {
                 return Promise.reject('来源未知');
             }

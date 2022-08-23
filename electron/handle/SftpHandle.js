@@ -40,8 +40,25 @@ ipcMain.handle('sftp:test', async (_event, args) => {
 ipcMain.handle('sftp:upload', async (_event, args) => {
     console.log('sftp:upload');
     let sftp = new Client();
+    // 连接
+    console.log('连接');
     await sftp.connect(renderConfig(args));
+    try {
+        // 删除远程目录
+        console.log('删除远程目录');
+        await sftp.rmdir(args.remoteDir, true);
+    }catch (e) {
+        // 删除失败无所谓
+        console.error(e);
+    }
+    // 创建远程目录
+    console.log('创建远程目录');
+    await sftp.mkdir(args.remoteDir, true);
+    // 将本地文件上传
+    console.log('将本地文件上传');
     await sftp.uploadDir(args.localDir, args.remoteDir);
+    // 结束
+    console.log('结束');
     await sftp.end();
     return {
         code: true,

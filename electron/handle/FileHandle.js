@@ -18,7 +18,7 @@ ipcMain.handle('file:readFile', (event, args) => {
 });
 
 ipcMain.handle('file:writeFile', (event, args) => {
-    console.log('file:writeFile');
+    console.log('file:writeFile', args.path);
     fs.writeFileSync(args.path, args.content, {
         encoding: "utf-8",
     })

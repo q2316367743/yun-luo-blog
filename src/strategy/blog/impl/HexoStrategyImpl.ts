@@ -107,8 +107,10 @@ export default class HexoStrategyImpl implements BlogStrategy {
         let sourceDir = await this.getSourcePath();
         let _posts = await FileApi.resolve(sourceDir, "_posts");
         let _drafts = await FileApi.resolve(sourceDir, "_drafts");
-        // 删除旧的文件夹
-        await FileApi.removeDir(_posts, true);
+        if (await FileApi.exist(_posts)) {
+            // 删除旧的文件夹
+            await FileApi.removeDir(_posts, true);
+        }
         // _posts文件夹可能不存在
         await FileApi.createDir(_posts, true);
         // 复制发布的文章
@@ -121,6 +123,12 @@ export default class HexoStrategyImpl implements BlogStrategy {
                 path: e.path
             } as FileEntry
         }));
+        if (await FileApi.exist(_drafts)) {
+            // 删除旧的文件夹
+            await FileApi.removeDir(_drafts, true);
+        }
+        // _posts文件夹可能不存在
+        await FileApi.createDir(_drafts, true);
         // 复制草稿的文章
         let drafts = await postService.list({
             status: PostStatusEnum.DRAFT

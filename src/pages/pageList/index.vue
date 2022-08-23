@@ -90,7 +90,7 @@ export default defineComponent({
                 type: 'info',
                 confirmButtonText: '新建',
                 cancelButtonText: '取消',
-                inputPattern: /^(?:(http|https|ftp):\/\/)?((|[\w-]+\.)+[a-z0-9]+)(?:(\/[^/?#]+)*)?(\?[^#]+)?(#.+)?$/,
+                inputPattern: /^(?:\/?)?((|[\w-]+\.)+[a-z0-9]+)(?:(\/[^/?#]+)*)?(\?[^#]+)?(#.+)?(?:\/?)?$/,
                 inputErrorMessage: '请输入正确的页面链接地址'
             }).then(({value}) => {
                 this.$router.push({
