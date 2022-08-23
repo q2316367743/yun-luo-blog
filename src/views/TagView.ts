@@ -17,4 +17,9 @@ export default interface TagView {
      */
     postCount: number;
 
+    /**
+     * 页面数量
+     */
+    pageCount: number;
+
 }

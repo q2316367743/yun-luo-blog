@@ -9,13 +9,24 @@
                     <div style="display: flex;justify-content: space-between;width: 100%;">
                         <div>
                             <span>{{ node.label }}</span>
-                            <span v-if="data.postCount > 0" v-text="'(' + data.postCount + ')'"></span>
+                            <span v-if="data.postCount > 0">
+                                <span>(</span>
+                                <el-icon style="vertical-align: -2px;"><document/></el-icon>
+                                <span>{{ data.postCount }}</span>
+                                <span>)</span>
+                            </span>
+                            <span v-if="data.pageCount > 0">
+                                <span>(</span>
+                                <el-icon style="vertical-align: -2px;"><memo/></el-icon>
+                                <span>{{ data.pageCount }}</span>
+                                <span>)</span>
+                            </span>
                         </div>
                         <div>
                             <el-button type="primary" link @click.stop="categoryAdd(data.id)">
                                 {{ $t('category.add_sub_category') }}
                             </el-button>
-                            <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0"
+                            <el-button type="danger" link :disabled="data.children.length > 0 || data.postCount > 0 || data.pageCount > 0"
                                        @click="categoryRemove(data.id)">{{ $t('common.delete') }}
                             </el-button>
                         </div>
@@ -30,7 +41,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Plus} from '@element-plus/icons-vue';
+import {Document, Memo, Plus} from '@element-plus/icons-vue';
 
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
@@ -41,7 +52,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 
 export default defineComponent({
     name: 'category',
-    components: {ContainerMain, ContainerHeader},
+    components: {ContainerMain, ContainerHeader, Document, Memo},
     setup() {
         const plus = markRaw(Plus);
         return {plus}

@@ -21,6 +21,9 @@ const DB_CATEGORY = 'db-category.json';
 const DB_POST = 'db-post.json';
 const DB_POST_TAG = 'db-post-tag.json';
 const DB_POST_CATEGORY = 'db-post-category.json';
+const DB_PAGE = 'db-page.json';
+const DB_PAGE_TAG = 'db-page-tag.json';
+const DB_PAGE_CATEGORY = 'db-page-category.json';
 
 // hexo配置
 const HEXO_CONFIG_BASE = '_config.base.yml';
@@ -40,6 +43,8 @@ const SITE = 'site';
 // =====站点所有=====
 // 文章
 const POST = 'posts';
+// 页面
+const PAGE = 'pages';
 // 图片
 const POST_IMAGES = 'post-images';
 // 打包后的资源
@@ -56,7 +61,7 @@ const HEXO_PACKAGE_JSON = 'package.json';
 // 文件内容
 
 const CONTENT_WORKSPACE_GITIGNORE = 'dist';
-const CONTENT_SITE_GITIGNORE = 'hexo/public\nhexo/node_modules';
+const CONTENT_SITE_GITIGNORE = 'hexo/public\nhexo/node_modules\nsource';
 
 /**
  * 获取工作空间目录
@@ -175,6 +180,15 @@ export default {
         DB_POST_CATEGORY: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_POST_CATEGORY);
         },
+        DB_PAGE: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_PAGE);
+        },
+        DB_PAGE_TAG: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_PAGE_TAG);
+        },
+        DB_PAGE_CATEGORY: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_PAGE_CATEGORY);
+        },
         // HEXO配置文件
         HEXO_CONFIG_BASE: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, HEXO_CONFIG_BASE);
@@ -208,11 +222,14 @@ export default {
         BASE: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value);
         },
+        SITE_CONFIG: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG);
+        },
         POST: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, POST);
         },
-        SITE_CONFIG: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG);
+        PAGE: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, PAGE);
         },
         POST_IMAGES: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, POST_IMAGES);

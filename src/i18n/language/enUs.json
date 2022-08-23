@@ -163,6 +163,7 @@
     "menu": {
         "blog_setting": "blog setting",
         "category": "category",
+        "page": "page",
         "post": "post",
         "pretty": "pretty",
         "tag": "tag",
@@ -186,6 +187,7 @@
             "postUrl": "post url",
             "recycle": "recycle",
             "release": "release",
+            "searchPage": "search page",
             "searchPost": "search post",
             "senior": "senior",
             "sortCreateAsc": "create(new-old)",

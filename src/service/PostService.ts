@@ -20,7 +20,7 @@ import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import Database from "@/plugins/Database";
 import {postDb} from "@/global/BeanFactory";
 
-export default class TagService {
+export default class PostService {
 
     tagDb: Database<Tag>;
     categoryDb: Database<Category>;
@@ -194,7 +194,7 @@ export default class TagService {
     }
 
     async list(condition?: Partial<Post>): Promise<Array<PostView>> {
-        let posts = postDb.list(condition);
+        let posts = this.postDb.list(condition);
         if (posts.length === 0) {
             return Promise.resolve([]);
         }

@@ -25,50 +25,10 @@
     </container-header>
     <container-main class="main">
         <el-scrollbar>
-            <div v-for="(post, index) in showPosts" :key="index" class="post">
-                <div class="board" @click="toPostInfo(post)">
-                    <div class="title">{{ post.title }}</div>
-                    <div class="description">
-                        <div class="status" v-if="post.status === 1">
-                            <span class="badge draft"></span>
-                            <span>{{ $t('post.list.draft') }}</span>
-                        </div>
-                        <div class="status" v-else-if="post.status === 2">
-                            <span class="badge release"></span>
-                            <span>{{ $t('post.list.release') }}</span>
-                        </div>
-                        <div class="status" v-else-if="post.status === 3">
-                            <span class="badge recycle"></span>
-                            <span>{{ $t('post.list.recycle') }}</span>
-                        </div>
-                        <div class="update-time">
-                            <el-icon>
-                                <Calendar/>
-                            </el-icon>
-                            <span>{{ format(post.updated) }}</span>
-                        </div>
-                        <div class="tag" v-if="post.tags.length > 0">
-                            <el-icon>
-                                <price-tag/>
-                            </el-icon>
-                            <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
-                        </div>
-                        <div class="category" v-if="post.categories.length > 0">
-                            <el-icon>
-                                <collection-tag/>
-                            </el-icon>
-                            <span v-for="category in post.categories" class="category-item">{{
-                                    category
-                                }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="option">
-                    <el-button type="primary" link @click="openSettingDialog(post.id)">{{ $t('common.setting') }}
-                    </el-button>
-                    <el-button type="danger" link @click="deleteById(post.id)">{{ $t('common.delete') }}</el-button>
-                </div>
-            </div>
+            <post-list-item v-for="(post, index) in showPosts" :key="index" :post="post"
+                            @item-click="toPostInfo(post)" @option-info="openSettingDialog(post.id)"
+                            @option-remove="deleteById(post.id)">
+            </post-list-item>
             <el-empty v-if="showPosts.length === 0" description="暂无文章" style="margin-top: 110px;"/>
         </el-scrollbar>
     </container-main>
@@ -144,16 +104,16 @@ import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 
 import PostView from '@/views/PostView';
-import DateUtil from '@/utils/DateUtil';
 import {categoryService, postService, tagService} from '@/global/BeanFactory';
 import Entry from "@/global/Entry";
 import TagView from "@/views/TagView";
 import CategoryView from "@/views/CategoryView";
 import {parsePost} from "@/utils/PostUtil";
+import PostListItem from "@/components/PostListItem/index.vue";
 
 export default defineComponent({
     name: 'post',
-    components: {ContainerMain, ContainerHeader, Calendar, PriceTag, CollectionTag, Delete},
+    components: {PostListItem, ContainerMain, ContainerHeader, Calendar, PriceTag, CollectionTag, Delete},
     setup() {
         const search = markRaw(Search);
         const plus = markRaw(Plus);
@@ -207,7 +167,6 @@ export default defineComponent({
         });
     },
     methods: {
-        format: DateUtil.formatDateTime,
         searchPost() {
             this.showPosts = this.posts.filter(e => this.keyword == '' || e.title.indexOf(this.keyword) > -1)
                 .filter(e => !this.status || this.status === 0 || e.status === this.status)
@@ -341,7 +300,6 @@ export default defineComponent({
 });
 </script>
 <style lang="less" scoped>
-
 .header {
     display: flex;
 
@@ -362,116 +320,5 @@ export default defineComponent({
 .main {
     overflow: auto;
     padding: 10px;
-
-    .post {
-        border-radius: 5px;
-        border: #f2f2f2 solid 1px;
-        padding: 10px;
-        display: flex;
-        font-size: 14px;
-        margin-top: 10px;
-        position: relative;
-
-        &:hover {
-            background-color: #fafafa;
-            cursor: pointer;
-
-            .option {
-                display: block;
-            }
-        }
-
-        .board {
-            width: 100%;
-
-            .title {
-                font-size: 1.5em;
-                line-height: 28px;
-            }
-
-            .description {
-                font-size: 1em;
-                display: flex;
-                margin-top: 15px;
-                color: #999999;
-                height: 20px;
-
-                .el-icon {
-                    vertical-align: -2px;
-                }
-
-                .status {
-                    .badge {
-                        display: inline-block;
-                        height: 6px;
-                        width: 6px;
-                        border-radius: 3px;
-                        margin: 0 4px 2px;
-                    }
-
-                    .draft {
-                        background-color: #909399;
-                    }
-
-                    .release {
-                        background-color: #67C23A;
-                    }
-
-                    .recycle {
-                        background-color: #F56C6C;
-                    }
-                }
-
-                .update-time {
-                    margin-left: 10px;
-
-                    i {
-                        margin: 0 4px;
-                    }
-                }
-
-                .tag {
-                    margin-left: 10px;
-
-                    i {
-                        margin: 0 4px;
-                    }
-
-                    .tag-item {
-                        padding: 0 6px;
-                        border-right: #999999 solid 1px;
-
-                        &:last-child {
-                            border-right: #ffffff;
-                        }
-                    }
-                }
-
-                .category {
-                    margin-left: 10px;
-
-                    i {
-                        margin: 0 4px;
-                    }
-
-                    .category-item {
-                        padding: 0 6px;
-                        border-right: #999999 solid 1px;
-
-                        &:last-child {
-                            border-right: #ffffff;
-                        }
-                    }
-                }
-            }
-        }
-
-        .option {
-            position: absolute;
-            right: 42px;
-            top: 32px;
-            display: none;
-        }
-    }
 }
 </style>

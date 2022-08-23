@@ -15,7 +15,7 @@
 import {defineComponent} from "vue";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
-import {categoryDb, postCategoryDb, postDb, postTagDb, settingService, tagDb,} from "@/global/BeanFactory";
+import {categoryDb, pageCategoryDb, pageDb, pageTagDb, postCategoryDb, postDb, postTagDb, settingService, tagDb,} from "@/global/BeanFactory";
 import {ElMessageBox} from "element-plus";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
@@ -137,6 +137,8 @@ export default defineComponent({
             await this.createDir(await Constant.FOLDER.SITE_CONFIG());
             // 文章目录
             await this.createDir(await Constant.FOLDER.POST());
+            // 页面目录
+            await this.createDir(await Constant.FOLDER.PAGE());
             // 图片目录
             await this.createDir(await Constant.FOLDER.POST_IMAGES());
             // 部署目录
@@ -177,6 +179,12 @@ export default defineComponent({
             await postTagDb.init();
             postCategoryDb.setPath(await Constant.FILE.DB_POST_CATEGORY());
             await postCategoryDb.init();
+            pageDb.setPath(await Constant.FILE.DB_PAGE());
+            await pageDb.init();
+            pageTagDb.setPath(await Constant.FILE.DB_PAGE_TAG());
+            await pageTagDb.init();
+            pageCategoryDb.setPath(await Constant.FILE.DB_PAGE_CATEGORY());
+            await pageCategoryDb.init();
         }
     }
 });

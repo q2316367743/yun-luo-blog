@@ -8,7 +8,7 @@
                 <div class="main">
                     <div class="name">
                         <span>{{ openSource.name }}</span>
-                        <el-tag type="primary">{{ openSource.version }}</el-tag>
+                        <el-tag style="margin-left: 16px">{{ openSource.version }}</el-tag>
                     </div>
                     <div class="option">
                         <el-button type="primary" link @click="openUrl(openSource.homepage)">主页</el-button>

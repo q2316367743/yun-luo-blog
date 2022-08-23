@@ -30,4 +30,9 @@ export default interface CategoryView {
      */
     postCount: number;
 
+    /**
+     * 页面数量
+     */
+    pageCount: number;
+
 }

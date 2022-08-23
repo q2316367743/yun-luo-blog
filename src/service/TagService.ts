@@ -10,42 +10,29 @@ export default class TagService {
 
     tagDb: Database<Tag>;
     postTagDb: Database<PostTag>;
+    pageTagDb: Database<PostTag>;
 
-    constructor(tagDb: Database<Tag>, postTagDb: Database<PostTag>) {
+    constructor(tagDb: Database<Tag>, postTagDb: Database<PostTag>, pageTagDb: Database<PostTag>) {
         this.tagDb = tagDb;
         this.postTagDb = postTagDb;
+        this.pageTagDb = pageTagDb;
     }
 
-    async insert(tagName: string, fromPostId: number | void): Promise<void> {
+    async insert(tagName: string): Promise<void> {
         if (tagName === "") {
             return Promise.reject('标签名称不能为空');
         }
         let tags = await this.tagDb?.list({name: tagName});
         let tag = (tags && tags.length > 0) ? tags[0] : undefined;
         if (tag) {
-            if (fromPostId) {
-                this.postTagDb?.insert({
-                    postId: fromPostId,
-                    tagId: tag.id
-                } as PostTag);
-            } else {
-                return Promise.reject('分类已存在，无法插入');
-            }
+            return Promise.reject('分类已存在，无法插入');
         } else {
             // 没有标签，先新增标签
-            let tagId = await this.tagDb?.insert({
+            await this.tagDb?.insert({
                 name: tagName,
                 createTime: new Date(),
                 updateTime: new Date()
             } as Tag);
-            // 存在这个标签，插入一个记录
-            if (fromPostId) {
-                // 只有根据文章来的才插入记录
-                this.postTagDb?.insert({
-                    postId: fromPostId,
-                    tagId: tagId
-                } as PostTag);
-            }
         }
         return Promise.resolve();
     }
@@ -70,13 +57,15 @@ export default class TagService {
     async list(): Promise<TagView[]> {
         let tags = this.tagDb?.list()!;
         let postTags = this.postTagDb?.list()!;
+        let pageTags = this.pageTagDb?.list()!;
         let tagViews = new Array<TagView>();
         for (let tag of tags) {
             let tagView = {
                 id: tag.id,
                 name: tag.name,
                 createTime: tag.createTime,
-                postCount: ArrayUtil.size(postTags, 'tagId', tag.id)
+                postCount: ArrayUtil.size(postTags, 'tagId', tag.id),
+                pageCount: ArrayUtil.size(pageTags, 'tagId', tag.id)
             } as TagView;
             tagViews.push(tagView);
         }

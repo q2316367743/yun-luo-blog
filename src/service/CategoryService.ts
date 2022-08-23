@@ -9,7 +9,7 @@ import Database from "@/plugins/Database";
  * @param list 列表
  * @param categoryCountMap 文章分类映射
  */
-function tree(list: Array<Category>, categoryCountMap: Map<any, number>): Array<CategoryView> {
+function tree(list: Array<Category>, categoryPostCountMap: Map<any, number>, categoryPageCountMap: Map<any, number>): Array<CategoryView> {
     let views = new Array<CategoryView>();
     for (let category of list) {
         if (category.parentId === 0) {
@@ -19,14 +19,15 @@ function tree(list: Array<Category>, categoryCountMap: Map<any, number>): Array<
                 createTime: category.createTime,
                 updateTime: category.updateTime,
                 children: [],
-                postCount: categoryCountMap.has(category.id) ? categoryCountMap.get(category.id)! : 0
-            }, list, categoryCountMap));
+                postCount: categoryPostCountMap.has(category.id) ? categoryPostCountMap.get(category.id)! : 0,
+                pageCount: categoryPageCountMap.has(category.id) ? categoryPageCountMap.get(category.id)! : 0
+            }, list, categoryPostCountMap, categoryPageCountMap));
         }
     }
     return views;
 }
 
-function getChildren(categoryView: CategoryView, list: Array<Category>, categoryCountMap: Map<any, number>): CategoryView {
+function getChildren(categoryView: CategoryView, list: Array<Category>, categoryPostCountMap: Map<any, number>, categoryPageCountMap: Map<any, number>): CategoryView {
     for (let category of list) {
         if (category.parentId === categoryView.id) {
             categoryView.children.push(getChildren({
@@ -35,8 +36,9 @@ function getChildren(categoryView: CategoryView, list: Array<Category>, category
                 createTime: category.createTime,
                 updateTime: category.updateTime,
                 children: [],
-                postCount: categoryCountMap.has(category.id) ? categoryCountMap.get(category.id)! : 0
-            }, list, categoryCountMap));
+                postCount: categoryPostCountMap.has(category.id) ? categoryPostCountMap.get(category.id)! : 0,
+                pageCount: categoryPageCountMap.has(category.id) ? categoryPageCountMap.get(category.id)! : 0
+            }, list, categoryPostCountMap, categoryPageCountMap));
         }
     }
     return categoryView;
@@ -46,10 +48,12 @@ export default class CategoryService {
 
     categoryMapper: Database<Category>;
     postCategoryMapper: Database<PostCategory>;
+    pageCategoryMapper: Database<PostCategory>;
 
-    constructor(categoryMapper: Database<Category>, postCategoryMapper: Database<PostCategory>) {
+    constructor(categoryMapper: Database<Category>, postCategoryMapper: Database<PostCategory>, pageCategoryMapper: Database<PostCategory>) {
         this.categoryMapper = categoryMapper;
         this.postCategoryMapper = postCategoryMapper;
+        this.pageCategoryMapper = pageCategoryMapper;
     }
 
     /**
@@ -57,9 +61,11 @@ export default class CategoryService {
      */
     async list(): Promise<Array<CategoryView>> {
         let postCategories = this.postCategoryMapper!.list();
-        let categoryCountMap = ArrayUtil.count(postCategories, 'categoryId');
+        let categoryPostCountMap = ArrayUtil.count(postCategories, 'categoryId');
+        let pageCategories = this.pageCategoryMapper!.list();
+        let categoryPageCountMap = ArrayUtil.count(pageCategories, 'categoryId');
         let categories = this.categoryMapper?.list()!;
-        return Promise.resolve(tree(categories, categoryCountMap))
+        return Promise.resolve(tree(categories, categoryPostCountMap, categoryPageCountMap))
     }
 
     /**

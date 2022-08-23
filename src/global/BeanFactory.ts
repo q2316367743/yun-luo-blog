@@ -17,10 +17,14 @@ export const categoryDb = new Database<Category>('');
 export const postDb = new Database<Post>('');
 export const postTagDb = new Database<PostTag>('');
 export const postCategoryDb = new Database<PostCategory>('');
+export const pageDb = new Database<Post>('');
+export const pageTagDb = new Database<PostTag>('');
+export const pageCategoryDb = new Database<PostCategory>('');
 
-export const tagService = new TagService(tagDb, postTagDb);
+export const tagService = new TagService(tagDb, postTagDb, pageTagDb);
+export const categoryService = new CategoryService(categoryDb, postCategoryDb, pageCategoryDb);
 export const postService = new PostService(tagDb, categoryDb, postDb, postTagDb, postCategoryDb);
-export const categoryService = new CategoryService(categoryDb, postCategoryDb);
+export const pageService = new PostService(tagDb, categoryDb, pageDb, pageTagDb, pageCategoryDb);
 
 export const hexoService = new HexoService();
 export const serverService = new ServerService();

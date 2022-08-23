@@ -163,6 +163,7 @@
     "menu": {
         "blog_setting": "博客设置",
         "category": "分类",
+        "page": "页面",
         "post": "文章",
         "pretty": "美化",
         "tag": "标签",
@@ -186,6 +187,7 @@
             "postUrl": "文章网址",
             "recycle": "回收站",
             "release": "发布",
+            "searchPage": "搜索页面",
             "searchPost": "搜索文章",
             "senior": "高级",
             "sortCreateAsc": "创建时间(新-旧)",

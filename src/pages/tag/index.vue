@@ -5,8 +5,19 @@
             <div class="content">
                 <div class="tag" v-for="(tag, index) in tagList" :key="index">
                     <div class="content">{{ tag.name }}</div>
-                    <div class="count" v-if="tag.postCount > 0">{{ tag.postCount }}</div>
-                    <div class="option" v-else>
+                    <div class="count" v-if="tag.postCount > 0">
+                        <el-icon style="vertical-align: -2px;">
+                            <document/>
+                        </el-icon>
+                        <span style="margin-left: 8px;">{{ tag.postCount }}</span>
+                    </div>
+                    <div class="count" v-if="tag.pageCount > 0">
+                        <el-icon style="vertical-align: -2px;">
+                            <memo/>
+                        </el-icon>
+                        <span style="margin-left: 8px;">{{ tag.pageCount }}</span>
+                    </div>
+                    <div class="option" v-if="tag.postCount === 0">
                         <el-button type="primary" link :icon="edit" @click="tagUpdate(tag)"></el-button>
                         <el-button type="danger" link :icon="deleted" @click="tagDelete(tag)"></el-button>
                     </div>
@@ -20,7 +31,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Delete, Edit, Plus, PriceTag} from '@element-plus/icons-vue';
+import {Delete, Document, Edit, Memo, Plus, PriceTag} from '@element-plus/icons-vue';
 
 import {tagService} from "@/global/BeanFactory";
 import TagView from '@/views/TagView';
@@ -30,7 +41,7 @@ import ContainerMain from "@/components/Container/ContainerMain.vue";
 
 export default defineComponent({
     name: 'tag',
-    components: {ContainerMain, ContainerHeader, PriceTag},
+    components: {ContainerMain, ContainerHeader, PriceTag, Document, Memo},
     setup() {
         const plus = markRaw(Plus);
         const edit = markRaw(Edit);

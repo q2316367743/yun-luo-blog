@@ -5,6 +5,7 @@ import WorkspacePage from "@/pages/workspace/index.vue";
 import SitePage from '@/pages/site/index.vue';
 import PostListPage from '@/pages/post/list/index.vue';
 import PostNewPage from '@/pages/post/new/index.vue';
+import PageListPage from '@/pages/page/list/index.vue';
 import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
 import PrettyHexoPage from '@/pages/pretty/hexo/index.vue';
@@ -54,6 +55,17 @@ const routes: Array<RouteRecordRaw> = [
                 name: 'post-new',
                 component: PostNewPage
             },
+        ]
+    },
+    {
+        path: '/page',
+        name: 'page',
+        children: [
+            {
+                path: '/page/list',
+                name: 'page-list',
+                component: PageListPage
+            }
         ]
     },
     {

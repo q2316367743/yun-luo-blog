@@ -23,6 +23,12 @@
                     </el-icon>
                     <span>{{ $t('menu.post') }}</span>
                 </el-menu-item>
+                <el-menu-item index="/page/list">
+                    <el-icon>
+                        <Memo/>
+                    </el-icon>
+                    <span>{{ $t('menu.page') }}</span>
+                </el-menu-item>
                 <el-menu-item index="/tag">
                     <el-icon>
                         <price-tag/>
@@ -196,6 +202,7 @@ import {
     Expand,
     Fold,
     Folder,
+    Memo,
     Menu,
     PriceTag,
     Setting,
@@ -233,7 +240,7 @@ export default defineComponent({
         Document, ArrowDown, Setting, Upload, PriceTag, Menu, CollectionTag,
         ShoppingCartFull, SettingPage, Expand, Fold, Suitcase, Tools,
         Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run,
-        Loader, CaretBottom
+        Loader, CaretBottom, Memo
     },
     setup() {
         const setting = markRaw(Setting);
