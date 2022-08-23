@@ -21,7 +21,7 @@
             <el-option :label="$t('post.list.sortCreateAsc')" :value="5"/>
             <el-option :label="$t('post.list.sortCreateDesc')" :value="6"/>
         </el-select>
-        <el-button type="primary" @click="toRouteLink('/post/new')">{{ $t('common.add') }}</el-button>
+        <el-button type="primary" @click="toRouteLink">{{ $t('common.add') }}</el-button>
     </container-header>
     <container-main class="main">
         <el-scrollbar>
@@ -112,7 +112,7 @@ import {parsePost} from "@/utils/PostUtil";
 import PostListItem from "@/components/PostListItem/index.vue";
 
 export default defineComponent({
-    name: 'post',
+    name: 'post-list',
     components: {PostListItem, ContainerMain, ContainerHeader, Calendar, PriceTag, CollectionTag, Delete},
     setup() {
         const search = markRaw(Search);
@@ -189,14 +189,20 @@ export default defineComponent({
                     }
                 });
         },
-        toRouteLink(link: string) {
-            this.$router.push(link);
+        toRouteLink() {
+            this.$router.push({
+                path: '/post/edit',
+                query: {
+                    source: 1
+                }
+            });
         },
         toPostInfo(postView: PostView) {
             this.$router.push({
-                path: '/post/new',
+                path: '/post/edit',
                 query: {
-                    id: postView.id
+                    id: postView.id,
+                    source: 1,
                 }
             });
         },

@@ -1,7 +1,7 @@
 <template>
     <div id="new-post">
         <div class="header">
-            <el-page-header title="列表" :content="post.title" @back="toRouteLink('/post/list')"/>
+            <el-page-header title="列表" :content="post.title" @back="toRouteLink"/>
         </div>
         <!-- 页面内容 -->
         <div class="post-new-main">
@@ -27,7 +27,7 @@
                 <el-tooltip class="box-item" effect="light" content="插入图片" placement="left">
                     <el-button link :icon="pictureFilled" @click="insertImage"></el-button>
                 </el-tooltip>
-                <el-tooltip class="box-item" effect="light" content="文章设置" placement="left">
+                <el-tooltip class="box-item" effect="light" :content="`${sourceType}设置`" placement="left">
                     <el-button link :icon="tools" @click="openSetting"></el-button>
                 </el-tooltip>
                 <el-tooltip class="box-item" effect="light" content="预览（具体以主题为准）" placement="left">
@@ -38,12 +38,12 @@
         <!-- 文章设置 -->
         <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false">
             <template #header>
-                <h2>文章设置</h2>
+                <h2>{{ sourceType }}设置</h2>
             </template>
             <el-tabs v-model="activeName">
                 <el-tab-pane label="常规" name="basic">
                     <el-form v-model="post" label-position="top">
-                        <el-form-item label="文章网址">
+                        <el-form-item :label="`${sourceType}网址`">
                             <el-input v-model="post.permalink"></el-input>
                         </el-form-item>
                         <el-form-item label="标签">
@@ -104,30 +104,36 @@
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
 import {
-    Check, InfoFilled, MoreFilled, PictureFilled,
-    Promotion, StarFilled, Tools, Close
+    Check,
+    Close,
+    InfoFilled,
+    MoreFilled,
+    PictureFilled,
+    Promotion,
+    StarFilled,
+    Tools
 } from '@element-plus/icons-vue';
 import highlight from 'highlight.js';
 import 'highlight.js/styles/docco.css'
 import * as monaco from 'monaco-editor';
-import {ElLoading, ElMessage} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 
 import markdownIt from '@/plugins/markdownIt';
 
 import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
 import {parsePost} from "@/utils/PostUtil";
-import {postService, tagService, categoryService} from '@/global/BeanFactory';
+import {categoryService, pageService, postService, tagService} from '@/global/BeanFactory';
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
 
-import './post.css'
+import '@/less/post.css'
 import Entry from "@/global/Entry";
 import CategoryView from "@/views/CategoryView";
 
 export default defineComponent({
-    name: 'new-post',
+    name: 'post-edit',
     components: {MarkdownEditor},
     setup() {
         const check = markRaw(Check);
@@ -141,10 +147,12 @@ export default defineComponent({
         return {check, promotion, infoFilled, pictureFilled, moreFilled, tools, starFilled, close}
     },
     data: () => ({
+        // 来源，1：文章，2：页面
+        source: 0,
         activeName: 'basic',
         post: {
             id: 0,
-            title: '新文章',
+            title: '',
             fileName: '',
             path: '',
             status: 1,
@@ -174,7 +182,24 @@ export default defineComponent({
         flag: true,
         categoryTree: new Array<CategoryView>()
     }),
-    created() {
+    computed: {
+        sourceType() {
+            if (this.source === 1) {
+                return "文章";
+            } else if (this.source === 2) {
+                return "页面"
+            } else {
+                return "";
+            }
+        }
+    },
+    mounted() {
+        if (!this.$route.query.source) {
+            this.$router.push('/post/list');
+            ElMessageBox.alert('异常，来源不存在');
+            return
+        }
+        this.source = parseInt(this.$route.query.source as string);
         tagService.list().then(tags => {
             this.tags = tags;
         })
@@ -183,34 +208,32 @@ export default defineComponent({
         })
         if (this.$route.query.id) {
             let postId = parseInt(this.$route.query.id as string);
-            postService.info(postId).then(post => {
-                if (post) {
-                    // 存在文章，查询文章详情
-                    parsePost(post.path, post.fileName, true).then(post => {
-                        this.post = post!;
-                        // 重新对post.id赋值
-                        this.post.id = postId;
-                    });
-                } else {
-                    ElMessage({
-                        showClose: true,
-                        type: 'error',
-                        message: '文章不存在，请刷新后重试'
-                    });
-                    this.$router.push('/post/list');
-                }
-            });
+            if (this.source === 1) {
+                this.postInfo(postId);
+            } else if (this.source === 2) {
+                this.pageInfo(postId);
+            } else {
+                this.$router.push('/post/list');
+                ElMessageBox.alert('异常，来源不存在');
+                return
+            }
             this.flag = false;
         } else {
-            this.flag = true;
             // 新增文章
+            this.flag = true;
+            if (this.$route.query.permalink) {
+                this.post.permalink = this.$route.query.permalink as string;
+            }
+            if (this.source === 1) {
+                this.post.title = '新文章';
+            } else if (this.source === 2) {
+                this.post.title = '新页面';
+            }
         }
-    },
-    mounted() {
         document.onkeydown = (e) => {
             // 名字插入
-            let monacoEditor = this.$refs.monacoEditor as any;
-            let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;
+            // let monacoEditor = this.$refs.monacoEditor as any;
+            // let instance = monacoEditor.getInstance() as monaco.editor.IStandaloneCodeEditor;
             // 各种快捷键
             if (e.ctrlKey) {
                 if (e.code == 'KeyS') {
@@ -232,7 +255,53 @@ export default defineComponent({
         document.onkeydown = null;
     },
     methods: {
-        toRouteLink(link: string) {
+        postInfo(postId: number) {
+            postService.info(postId).then(post => {
+                if (post) {
+                    // 存在文章，查询文章详情
+                    parsePost(post.path, post.fileName, true).then(post => {
+                        this.post = post!;
+                        // 重新对post.id赋值
+                        this.post.id = postId;
+                    });
+                } else {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: this.sourceType + '不存在，请刷新后重试'
+                    });
+                    this.$router.push('/post/list');
+                }
+            });
+        },
+        pageInfo(postId: number) {
+            pageService.info(postId).then(page => {
+                if (page) {
+                    // 存在文章，查询文章详情
+                    parsePost(page.path, page.fileName, true).then(post => {
+                        this.post = post!;
+                        // 重新对post.id赋值
+                        this.post.id = postId;
+                    });
+                } else {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '页面不存在，请刷新后重试'
+                    });
+                    this.$router.push('/post/list');
+                }
+            });
+        },
+        toRouteLink() {
+            let link = '/post/list';
+            if (this.source === 1) {
+                link = '/post/list';
+            } else if (this.source === 2) {
+                link = '/page/list';
+            } else {
+                ElMessageBox.alert('来源未知')
+            }
             this.$router.push(link);
         },
         async insertImage() {
@@ -299,15 +368,14 @@ export default defineComponent({
             this.flag ? this.publish() : this.save();
         },
         save() {
-            postService.update(this.post)
-                .then(() => {
-                    ElMessage({
-                        showClose: true,
-                        type: 'success',
-                        message: '保存成功'
-                    });
-                    // 更新列表
-                }).catch(e => {
+            this.saveBySource().then(() => {
+                ElMessage({
+                    showClose: true,
+                    type: 'success',
+                    message: '保存成功'
+                });
+                // 更新列表
+            }).catch(e => {
                 console.error(e);
                 ElMessage({
                     showClose: true,
@@ -316,8 +384,17 @@ export default defineComponent({
                 });
             });
         },
+        saveBySource(): Promise<void> {
+            if (this.source === 1) {
+                return postService.update(this.post);
+            } else if (this.source === 2) {
+                return pageService.update(this.post);
+            } else {
+                return Promise.reject('来源未知');
+            }
+        },
         publish() {
-            postService.insert(this.post).then(() => {
+            this.publishBySource().then(() => {
                 ElMessage({
                     showClose: true,
                     type: 'success',
@@ -333,6 +410,15 @@ export default defineComponent({
                     message: '发布失败，' + e
                 });
             });
+        },
+        publishBySource(): Promise<void> {
+            if (this.source === 1) {
+                return postService.insert(this.post);
+            } else if (this.source === 2) {
+                return pageService.insert(this.post);
+            } else {
+                return Promise.reject('来源未知');
+            }
         },
         extraAdd() {
             this.post.extra.push({

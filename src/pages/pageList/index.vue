@@ -43,7 +43,7 @@ import {pageService} from "@/global/BeanFactory";
 import {ElMessageBox} from "element-plus";
 
 export default defineComponent({
-    name: '',
+    name: 'page-list',
     components: {PostListItem, ContainerMain, ContainerHeader},
     data: () => ({
         search: markRaw(Search),
@@ -93,13 +93,25 @@ export default defineComponent({
                 inputPattern: /^(?:(http|https|ftp):\/\/)?((|[\w-]+\.)+[a-z0-9]+)(?:(\/[^/?#]+)*)?(\?[^#]+)?(#.+)?$/,
                 inputErrorMessage: '请输入正确的页面链接地址'
             }).then(({value}) => {
-                alert(value)
+                this.$router.push({
+                    path: '/page/edit',
+                    query: {
+                        source: 2,
+                        permalink: value
+                    }
+                });
             }).catch(() => {
                 console.error('取消新建地址');
             })
         },
         editPage(id: number) {
-
+            this.$router.push({
+                path: '/page/edit',
+                query: {
+                    id: id,
+                    source: 2
+                }
+            });
         },
         openPageSettingDialog(id: number) {
 

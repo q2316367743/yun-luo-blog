@@ -7,9 +7,9 @@ import { createPinia } from 'pinia';
 import router from '@/plugins/router';
 import i18n from '@/i18n';
 
-import './main.less';
-import './theme/light.less';
-import './theme/dark.less';
+import '@/main.less';
+import '@/less/light.less';
+import '@/less/dark.less';
 
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'

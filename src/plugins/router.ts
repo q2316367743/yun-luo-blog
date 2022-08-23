@@ -3,9 +3,9 @@ import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 import LoadingPage from '@/pages/loading/index.vue';
 import WorkspacePage from "@/pages/workspace/index.vue";
 import SitePage from '@/pages/site/index.vue';
-import PostListPage from '@/pages/post/list/index.vue';
-import PostNewPage from '@/pages/post/new/index.vue';
-import PageListPage from '@/pages/page/list/index.vue';
+import PostListPage from '@/pages/postList/index.vue';
+import PostEditPage from '@/pages/postEdit/index.vue';
+import PageListPage from '@/pages/pageList/index.vue';
 import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
 import PrettyHexoPage from '@/pages/pretty/hexo/index.vue';
@@ -42,31 +42,24 @@ const routes: Array<RouteRecordRaw> = [
         component: SitePage
     },
     {
-        path: '/post',
-        name: 'post',
-        children: [
-            {
-                path: '/post/list',
-                name: 'post-list',
-                component: PostListPage
-            },
-            {
-                path: '/post/new',
-                name: 'post-new',
-                component: PostNewPage
-            },
-        ]
+        path: '/post/list',
+        name: 'post-list',
+        component: PostListPage
     },
     {
-        path: '/page',
-        name: 'page',
-        children: [
-            {
-                path: '/page/list',
-                name: 'page-list',
-                component: PageListPage
-            }
-        ]
+        path: '/post/edit',
+        name: 'post-edit',
+        component: PostEditPage
+    },
+    {
+        path: '/page/list',
+        name: 'page-list',
+        component: PageListPage
+    },
+    {
+        path: '/page/edit',
+        name: 'page-edit',
+        component: PostEditPage
     },
     {
         path: '/tag',
