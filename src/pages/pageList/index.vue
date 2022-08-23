@@ -96,7 +96,7 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Search} from '@element-plus/icons-vue';
+import {Close, Search} from '@element-plus/icons-vue';
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 import PostListItem from "@/components/PostListItem/index.vue";
@@ -113,6 +113,7 @@ export default defineComponent({
     components: {PostListItem, ContainerMain, ContainerHeader},
     data: () => ({
         search: markRaw(Search),
+        close: markRaw(Close),
         keyword: '',
         status: null,
         type: 1,
@@ -197,7 +198,7 @@ export default defineComponent({
                 console.error('取消新建地址');
             })
         },
-        editPage(id: number) {
+        editPage(id?: number) {
             this.$router.push({
                 path: '/page/edit',
                 query: {
@@ -206,7 +207,7 @@ export default defineComponent({
                 }
             });
         },
-        deletePageById(id: number) {
+        deletePageById(id?: number) {
             ElMessageBox.confirm(
                 this.$t('post.list.deletePageHint'),
                 this.$t('common.warning'),

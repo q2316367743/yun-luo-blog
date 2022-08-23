@@ -2,19 +2,19 @@
     <div class="post">
         <div class="board" @click="itemClick">
             <div class="title">
-                <span>{{ post.title }}</span>
-                <el-tag v-if="post.permalink && post.permalink !== ''" style="margin-left: 16px">{{ post.permalink }}</el-tag>
+                <span>{{ post?.title }}</span>
+                <el-tag v-if="post?.permalink && post?.permalink !== ''" style="margin-left: 16px">{{ post?.permalink }}</el-tag>
             </div>
             <div class="description">
-                <div class="status" v-if="post.status === 1">
+                <div class="status" v-if="post?.status === 1">
                     <span class="badge draft"></span>
                     <span>{{ $t('post.list.draft') }}</span>
                 </div>
-                <div class="status" v-else-if="post.status === 2">
+                <div class="status" v-else-if="post?.status === 2">
                     <span class="badge release"></span>
                     <span>{{ $t('post.list.release') }}</span>
                 </div>
-                <div class="status" v-else-if="post.status === 3">
+                <div class="status" v-else-if="post?.status === 3">
                     <span class="badge recycle"></span>
                     <span>{{ $t('post.list.recycle') }}</span>
                 </div>
@@ -22,19 +22,19 @@
                     <el-icon>
                         <Calendar/>
                     </el-icon>
-                    <span>{{ format(post.updated) }}</span>
+                    <span>{{ format(post?.updated) }}</span>
                 </div>
-                <div class="tag" v-if="post.tags.length > 0">
+                <div class="tag" v-if="post?.tags && post?.tags.length > 0">
                     <el-icon>
                         <price-tag/>
                     </el-icon>
-                    <span v-for="tag in post.tags" class="tag-item">{{ tag }}</span>
+                    <span v-for="tag in post?.tags" class="tag-item">{{ tag }}</span>
                 </div>
-                <div class="category" v-if="post.categories.length > 0">
+                <div class="category" v-if="post?.categories && post?.categories.length > 0">
                     <el-icon>
                         <collection-tag/>
                     </el-icon>
-                    <span v-for="category in post.categories" class="category-item">{{
+                    <span v-for="category in post?.categories" class="category-item">{{
                             category
                         }}</span>
                 </div>
