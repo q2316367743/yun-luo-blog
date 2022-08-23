@@ -177,6 +177,7 @@
         "list": {
             "basic": "basic",
             "createTime": "Creation time",
+            "deletePageHint": "Confirm to delete this page. It cannot be restored after being deleted",
             "deletePostHint": "Confirm to delete this article. It cannot be restored",
             "draft": "draft",
             "extraAttr": "Additional attributes",

@@ -239,7 +239,7 @@ export default defineComponent({
                     type: 'info',
                     message: this.$t('hint.delete_cancel'),
                 })
-            })
+            });
         },
         openSettingDialog(id?: number) {
             // 获取数据

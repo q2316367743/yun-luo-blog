@@ -177,6 +177,7 @@
         "list": {
             "basic": "基础",
             "createTime": "创建时间",
+            "deletePageHint": "确认删除此页面，删除后将无法恢复",
             "deletePostHint": "确定删除此文章，删除后将无法恢复",
             "draft": "草稿",
             "extraAttr": "额外属性",
