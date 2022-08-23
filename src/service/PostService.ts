@@ -18,7 +18,6 @@ import Category from "@/entities/Category";
 import PostView from '@/views/PostView';
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import Database from "@/plugins/Database";
-import {postDb} from "@/global/BeanFactory";
 
 export default class PostService {
 
@@ -115,6 +114,9 @@ export default class PostService {
     private async insertTag(
         postId: number,
         tags: Array<string>) {
+        if (!tags) {
+            return;
+        }
         for (let tagName of tags) {
             if (tagName === "") {
                 // 标签为空，跳过
@@ -148,6 +150,9 @@ export default class PostService {
     private async insertCategory(
         postId: number,
         categories: Array<string>): Promise<void> {
+        if (!categories) {
+            return;
+        }
         // 先删除旧的分类关系
         console.log('先删除旧的分类关系');
         let oldPostCategory = this.postCategoryDb.one({postId: postId});

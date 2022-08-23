@@ -80,8 +80,11 @@ export async function parsePost(path: string, name: string, renderContent: boole
         }
         if (ArrayUtil.contains(knownKey, key)) {
             // 这是个已知的key
-            // @ts-ignore
-            post[key] = temp[key];
+            if (temp[key]) {
+                // 只有值存在的时候才会保存
+                // @ts-ignore
+                post[key] = temp[key];
+            }
         } else {
             // 这是个未知的key
             post.extra.push({
