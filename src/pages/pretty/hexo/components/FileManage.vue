@@ -232,23 +232,21 @@ export default defineComponent({
                 inputValue: this.contextMenu.name,
                 inputPattern: /[A-Za-z0-9\u4e00-\u9fa5]+/
             }).then(({value}) => {
-                FileApi.resolve(this.contextMenu.path, value).then((path => {
-                    FileApi.rename(parentPath + this.contextMenu.name, parentPath + value).then(() => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'success',
-                            message: this.$t('hint.new_success')
-                        });
-                        this.mapFiles();
-                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
-                    }).catch(e => {
-                        ElMessage({
-                            showClose: true,
-                            type: 'error',
-                            message: this.$t('hint.new_fail') + ',' + e
-                        });
+                FileApi.rename(parentPath + this.contextMenu.name, parentPath + value).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: this.$t('hint.new_success')
                     });
-                }))
+                    this.mapFiles();
+                    emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                }).catch(e => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: this.$t('hint.new_fail') + ',' + e
+                    });
+                });
             }).catch(() => {
                 console.error('取消重命名文件')
             });
@@ -336,7 +334,7 @@ export default defineComponent({
                 }
             })
         },
-        nodeContextMenu(event: PointerEvent, data: FileEntry, node: Node, self: any) {
+        nodeContextMenu(event: PointerEvent, data: FileEntry) {
             this.contextMenu = {
                 x: event.clientX - 216,
                 y: event.clientY - 86,
