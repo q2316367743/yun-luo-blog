@@ -4,6 +4,9 @@ displayName: windows打包
 triggers:
   trigger: auto
   push:
+    branches:
+      prefix:
+        - ''
     tags:
       prefix:
         - ''
