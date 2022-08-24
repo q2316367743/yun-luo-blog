@@ -1,10 +1,11 @@
 import MarkdownIt from 'markdown-it';
+
 import Token from "markdown-it/lib/token";
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 
-
 const markdownIt = new MarkdownIt();
+// 插件
 
 function imageRenderer(tokens: Token[]): string {
     let token = tokens[0];
@@ -34,5 +35,14 @@ function imageRenderer(tokens: Token[]): string {
 }
 
 markdownIt.renderer.rules.image = imageRenderer;
+markdownIt.use(require('markdown-it-abbr'));
+markdownIt.use(require('markdown-it-emoji'));
+markdownIt.use(require('markdown-it-footnote'));
+markdownIt.use(require('markdown-it-image-lazy-loading'));
+markdownIt.use(require('markdown-it-implicit-figures'));
+markdownIt.use(require('markdown-it-imsize'));
+markdownIt.use(require('markdown-it-mark'));
+markdownIt.use(require('markdown-it-sub'));
+markdownIt.use(require('markdown-it-sup'));
 
 export default markdownIt;
