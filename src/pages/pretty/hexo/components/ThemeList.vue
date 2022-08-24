@@ -40,7 +40,7 @@
                         <el-radio :label="2">压缩包</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="主题重命名">
+                <el-form-item label="主题重命名" v-if="themeInfo.mode === 1">
                     <el-input v-model="themeInfo.name" placeholder="请输入新的主题重命名（非必填）"></el-input>
                 </el-form-item>
                 <el-form-item label="地址" v-if="themeInfo.mode === 1">
@@ -52,6 +52,9 @@
                             <el-button :icon="folder" @click="openThemeDialog"/>
                         </template>
                     </el-input>
+                </el-form-item>
+                <el-form-item v-if="themeInfo.mode === 2">
+                    注意：此方法将无法自动获取主题配置信息，需要手动复制
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -246,18 +249,11 @@ export default defineComponent({
                 return;
             }
             options.source = this.themeInfo.compressionPath;
-            let themeFolderName: string;
-            if (this.themeInfo.name && this.themeInfo.name !== '') {
-                themeFolderName = this.themeInfo.name;
-                options.target = await FileApi.resolve(await Constant.FOLDER.HEXO.THEME(), this.themeInfo.name);
-            } else {
-                let tempPath = this.themeInfo.compressionPath;
-                tempPath = tempPath.replaceAll("\\", "/");
-                let name = tempPath.substring(tempPath.lastIndexOf("/") + 1);
-                name = name.substring(0, name.lastIndexOf("."));
-                themeFolderName = name;
-                options.target = await FileApi.resolve(await Constant.FOLDER.HEXO.THEME(), name);
-            }
+            let tempPath = this.themeInfo.compressionPath;
+            tempPath = tempPath.replaceAll("\\", "/");
+            let name = tempPath.substring(tempPath.lastIndexOf("/") + 1);
+            name = name.substring(0, name.lastIndexOf("."));
+            options.target = await Constant.FOLDER.HEXO.THEME();
             const loading = ElLoading.service({
                 lock: true,
                 text: '主题解压中',
@@ -265,7 +261,6 @@ export default defineComponent({
             });
             NativeApi.compressing(options).then(() => {
                 // 文件复制
-                this.configFileTransfer(themeFolderName);
                 this.listTheme();
                 this.themeAddDialog = false;
                 loading.close();
