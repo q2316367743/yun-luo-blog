@@ -1,5 +1,6 @@
 const {ipcMain} = require('electron');
 const fs = require('fs');
+const path = require('path')
 const {sep} = require('path');
 
 // 文件操作

@@ -1,48 +1,55 @@
 <template>
     <div id="file-manage">
-        <div class="file-menu" @click="fileMenuClick">
+        <div class="file-menu" @click="fileMenuClick" @contextmenu="fileContextClick">
             <el-scrollbar>
-                <el-tree :data="files" :props="fileProps" @node-click="nodeClick" empty-text="暂无文件"/>
+                <el-tree :data="files" :props="fileProps" @node-click="nodeClick" empty-text="暂无文件" draggable
+                         @node-contextmenu="nodeContextMenu">
+                    <template #default="{ node, data }">
+                        <el-icon>
+                            <folder-opened v-if="data.isDirectory && node.expanded"/>
+                            <Folder v-if="data.isDirectory && !node.expanded"/>
+                            <Document v-if="!data.isDirectory"/>
+                        </el-icon>
+                        <span>{{ node.label }}</span>
+                    </template>
+                </el-tree>
             </el-scrollbar>
         </div>
         <div class="file-editor">
-            <theme-file-editor v-model="fileContent" v-model:language="language" v-show="fileContent !== ''"></theme-file-editor>
+            <theme-file-editor v-model="fileContent" v-model:language="language"
+                               v-show="fileContent !== ''"></theme-file-editor>
             <el-empty description="请选择文件" v-if="fileContent === ''" style="margin-top: 15vh"></el-empty>
+        </div>
+        <div class="context-menu" v-show="contextMenu.show" :style="`left: ${contextMenu.x}px;top: ${contextMenu.y}px`">
+            <div class="context-menu-item" @click="newFile" v-if="contextMenu.isRoot || contextMenu.isDirectory">
+                新建文件
+            </div>
+            <div class="context-menu-item" @click="newFolder" v-if="contextMenu.isRoot || contextMenu.isDirectory">
+                新建文件夹
+            </div>
+            <div class="context-menu-item" @click="mapFiles">刷新</div>
+            <div class="context-menu-item" @click="rename" v-if="!contextMenu.isRoot">重命名</div>
+            <div class="context-menu-item" @click="remove" v-if="!contextMenu.isRoot">删除</div>
         </div>
     </div>
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
+import {Document, Folder, FolderOpened} from '@element-plus/icons-vue';
+import type Node from 'element-plus/es/components/tree/src/model/node'
 import FileEntry from "@/api/entities/FileEntry";
 import Constant from "@/global/Constant";
 import Hexo from "@/global/config/Hexo";
 import FileApi from "@/api/FileApi";
 import ThemeFileEditor from "@/components/ThemeFileEditor/index.vue";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import ArrayUtil from "@/utils/ArrayUtil";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
-interface File {
-
-    /**
-     * 文件名字
-     */
-    name: string;
-    /**
-     * 文件路径
-     */
-    path: string;
-    /**
-     * 子文件夹，如果是文件，为没有null
-     */
-    children?: Array<File>;
-
-}
-
 export default defineComponent({
     name: 'pretty-hexo-file-manage',
-    components: {ThemeFileEditor},
+    components: {ThemeFileEditor, Document, Folder, FolderOpened},
     data: () => ({
         themeName: '',
         files: new Array<FileEntry>(),
@@ -53,13 +60,27 @@ export default defineComponent({
         // 当前主题
         file: {} as FileEntry | undefined,
         fileContent: '',
-        language: ''
+        language: '',
+        currentThemeDir: '',
+        contextMenu: {
+            x: 0,
+            y: 0,
+            show: false,
+            isDirectory: false,
+            isRoot: false,
+            name: '',
+            path: ''
+        }
     }),
     async created() {
         // 初始化主题名
         let hexoConfigBase = await Constant.FILE.HEXO_CONFIG_BASE();
         let hexo = new Hexo(await FileApi.readFile(hexoConfigBase));
         this.themeName = hexo.theme;
+        // 获取主题目录
+        let hexoThemePath = await Constant.FOLDER.HEXO.THEME();
+        // 获取当前主题目录
+        this.currentThemeDir = await FileApi.resolve(hexoThemePath, this.themeName);
         // 获取主题目录下文件
         await this.mapFiles();
         // 增加快捷键
@@ -78,14 +99,12 @@ export default defineComponent({
     },
     methods: {
         async mapFiles() {
-            // 获取主题目录
-            let hexoThemePath = await Constant.FOLDER.HEXO.THEME();
-            // 获取当前主题目录
-            let currentThemeDir = await FileApi.resolve(hexoThemePath, this.themeName);
+            this.contextMenu.show = false;
             // 目录下全部文件
-            this.files = await FileApi.listDir(currentThemeDir, true);
+            this.files = await FileApi.listDir(this.currentThemeDir, true);
         },
         nodeClick(data: FileEntry) {
+            this.contextMenu.show = false;
             if (!data.isDirectory) {
                 this.file = data;
                 this.language = data.path.substring(data.path.lastIndexOf('.') + 1);
@@ -121,7 +140,7 @@ export default defineComponent({
                         message: this.$t('hint.save_fail') + ',' + e
                     });
                 })
-            }else {
+            } else {
                 ElMessage({
                     showClose: true,
                     type: 'warning',
@@ -132,6 +151,202 @@ export default defineComponent({
         fileMenuClick() {
             this.file = undefined;
             this.fileContent = ''
+            this.contextMenu.show = false;
+        },
+        fileContextClick(event: PointerEvent) {
+            this.contextMenu = {
+                x: event.offsetX,
+                y: event.offsetY,
+                show: true,
+                isDirectory: false,
+                isRoot: true,
+                name: '',
+                path: this.currentThemeDir
+            }
+        },
+        newFile() {
+            this.contextMenu.show = false;
+            ElMessageBox.prompt('请输入新文件名称', '新建文件', {
+                type: 'info',
+                confirmButtonText: this.$t('common.new'),
+                cancelButtonText: this.$t('common.cancel'),
+                inputPattern: /.+/
+            }).then(({value}) => {
+                FileApi.resolve(this.contextMenu.path, value).then((path => {
+                    FileApi.writeFile(path, "").then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: this.$t('hint.new_success')
+                        });
+                        this.mapFiles();
+                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: this.$t('hint.new_fail') + ',' + e
+                        });
+                    })
+                }))
+            }).catch(() => {
+                console.error('取消新建文件')
+            });
+        },
+        newFolder() {
+            this.contextMenu.show = false;
+            ElMessageBox.prompt('请输入新文件夹名称', '新建文件', {
+                type: 'info',
+                confirmButtonText: this.$t('common.new'),
+                cancelButtonText: this.$t('common.cancel'),
+                inputPattern: /.+/
+            }).then(({value}) => {
+                FileApi.resolve(this.contextMenu.path, value).then((path => {
+                    FileApi.createDir(path).then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: this.$t('hint.new_success')
+                        });
+                        this.mapFiles();
+                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: this.$t('hint.new_fail') + ',' + e
+                        });
+                    })
+                }))
+            }).catch(() => {
+                console.error('取消新建文件夹')
+            });
+        },
+        rename() {
+            this.contextMenu.show = false;
+            let parentPath = this.contextMenu.path.substring(0, this.contextMenu.path.indexOf(this.contextMenu.name));
+            ElMessageBox.prompt(`请输入新文件${this.contextMenu.isDirectory ? '夹' : ''}名称`, '新建文件', {
+                type: 'info',
+                confirmButtonText: this.$t('common.new'),
+                cancelButtonText: this.$t('common.cancel'),
+                inputValue: this.contextMenu.name,
+                inputPattern: /[A-Za-z0-9\u4e00-\u9fa5]+/
+            }).then(({value}) => {
+                FileApi.resolve(this.contextMenu.path, value).then((path => {
+                    FileApi.rename(parentPath + this.contextMenu.name, parentPath + value).then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: this.$t('hint.new_success')
+                        });
+                        this.mapFiles();
+                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: this.$t('hint.new_fail') + ',' + e
+                        });
+                    });
+                }))
+            }).catch(() => {
+                console.error('取消重命名文件')
+            });
+        },
+        remove() {
+            this.contextMenu.show = false;
+            ElMessageBox.confirm(
+                `是否要删除文件${this.contextMenu.isDirectory ? '夹' : ''}【${this.contextMenu.name}】，删除后将无法恢复`,
+                `删除文件${this.contextMenu.isDirectory ? '夹' : ''}`,
+                {
+                    type: 'warning',
+                    confirmButtonText: '删除',
+                    cancelButtonText: '取消'
+                }
+            ).then(() => {
+                // 删除
+                if (this.contextMenu.isDirectory) {
+                    FileApi.listDir(this.contextMenu.path, false).then(files => {
+                        if (files.length > 0) {
+                            ElMessageBox.confirm(
+                                '此文件夹中存在其他文件及文件夹，是否强制删除',
+                                '警告',
+                                {
+                                    type: 'warning',
+                                    confirmButtonText: '删除',
+                                    cancelButtonText: '取消'
+                                }
+                            ).then(() => {
+                                FileApi.removeDir(this.contextMenu.path, true).then(() => {
+                                    ElMessage({
+                                        showClose: true,
+                                        type: 'success',
+                                        message: this.$t('hint.delete_success')
+                                    });
+                                    this.mapFiles();
+                                    emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                                }).catch(e => {
+                                    ElMessage({
+                                        showClose: true,
+                                        type: 'error',
+                                        message: this.$t('hint.delete_fail') + ',' + e
+                                    });
+                                });
+                            })
+                        } else {
+                            FileApi.removeDir(this.contextMenu.path, true).then(() => {
+                                ElMessage({
+                                    showClose: true,
+                                    type: 'success',
+                                    message: this.$t('hint.delete_success')
+                                });
+                                this.mapFiles();
+                                emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                            }).catch(e => {
+                                ElMessage({
+                                    showClose: true,
+                                    type: 'error',
+                                    message: this.$t('hint.delete_fail') + ',' + e
+                                });
+                            });
+                        }
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: this.$t('hint.delete_fail') + ',' + e
+                        });
+                    });
+                } else {
+                    FileApi.removeFile(this.contextMenu.path).then(() => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'success',
+                            message: this.$t('hint.delete_success')
+                        });
+                        this.mapFiles();
+                        emitter.emit(MessageEventEnum.CONFIG_UPDATE);
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: this.$t('hint.delete_fail') + ',' + e
+                        });
+                    });
+                }
+            })
+        },
+        nodeContextMenu(event: PointerEvent, data: FileEntry, node: Node, self: any) {
+            this.contextMenu = {
+                x: event.clientX - 216,
+                y: event.clientY - 86,
+                show: true,
+                isDirectory: data.isDirectory!,
+                isRoot: false,
+                name: data.name!,
+                path: data.path
+            }
+
         }
     }
 });
@@ -159,6 +374,29 @@ export default defineComponent({
         left: 200px;
         right: 0;
         bottom: 0;
+    }
+
+    .context-menu {
+        position: absolute;
+        width: 100px;
+        background: #f2f2f2;
+        padding: 4px 4px;
+        box-shadow: 1px 1px #f2f2f2;
+        border-radius: 4px;
+
+        .context-menu-item {
+            margin-top: 4px;
+            cursor: pointer;
+            padding: 0 4px;
+
+            &:hover {
+                background-color: #ffffff;
+            }
+
+            &:nth-child(1) {
+                margin-top: 0;
+            }
+        }
     }
 }
 </style>
