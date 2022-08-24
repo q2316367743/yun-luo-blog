@@ -22,7 +22,9 @@
                                 <el-button type="success" link :disabled="theme === hexo.theme"
                                            @click="chooseTheme(theme)">选中
                                 </el-button>
-                                <el-button type="danger" link>删除</el-button>
+                                <el-button type="danger" link @click="themeRemove(theme)"
+                                           :disabled="theme === hexo.theme">删除
+                                </el-button>
                             </div>
                         </div>
                     </el-card>
@@ -439,6 +441,47 @@ export default defineComponent({
                         type: 'error',
                     })
                 });
+            })
+        },
+        themeRemove(theme: string) {
+            // 删除主题文件夹
+            ElMessageBox.confirm(`确认要删除主题【${theme}】，删除后将无法恢复`, '删除主题', {
+                type: 'warning',
+                confirmButtonText: '删除',
+                cancelButtonText: '取消'
+            }).then(() => {
+                Constant.FOLDER.HEXO.THEME().then(path => {
+                    FileApi.resolve(path, theme).then(themePath => {
+                        FileApi.removeDir(themePath, true).then(() => {
+                            ElMessage({
+                                showClose: true,
+                                type: 'success',
+                                message: '删除成功'
+                            });
+                            this.listTheme();
+                        }).catch(e => {
+                            ElMessage({
+                                showClose: true,
+                                type: 'error',
+                                message: '删除失败1，' + e
+                            });
+                        });
+                    }).catch(e => {
+                        ElMessage({
+                            showClose: true,
+                            type: 'error',
+                            message: '删除失败2，' + e
+                        });
+                    });
+                }).catch(e => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '删除失败3，' + e
+                    });
+                });
+            }).catch(() => {
+                console.log('取消删除')
             })
         }
     }
