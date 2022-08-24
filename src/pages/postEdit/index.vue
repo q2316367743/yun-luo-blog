@@ -6,9 +6,10 @@
         <!-- 页面内容 -->
         <div class="post-new-main">
             <div class="post-new-title">
-                <el-input v-model="post.title" placeholder="Please input"/>
+                <el-input v-model="post.title" placeholder="文章标题"/>
                 <div class="option">
-                    <el-dropdown class="promotion" split-button type="primary" @click="saveOrPublish" @command="saveOrPublishSwitch">
+                    <el-dropdown class="promotion" split-button type="primary" @click="saveOrPublish"
+                                 @command="saveOrPublishSwitch">
                         {{ flag ? '发布' : '保存' }}
                         <template #dropdown>
                             <el-dropdown-menu>
@@ -44,16 +45,13 @@
             </div>
         </div>
         <!-- 文章设置 -->
-        <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false">
+        <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false" top="15vh">
             <template #header>
                 <h2>{{ sourceType }}设置</h2>
             </template>
             <el-tabs v-model="activeName">
                 <el-tab-pane label="常规" name="basic">
                     <el-form v-model="post" label-position="top">
-                        <el-form-item :label="`${sourceType}网址`">
-                            <el-input v-model="post.permalink"></el-input>
-                        </el-form-item>
                         <el-form-item label="标签">
                             <el-select v-model="post.tags" multiple filterable allow-create default-first-option
                                        :reserve-keyword="false" style="width: 314px" placeholder="请选择标签">
@@ -64,13 +62,6 @@
                             <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
                                          clearable placeholder="请选择分类"/>
                         </el-form-item>
-                    </el-form>
-                </el-tab-pane>
-                <el-tab-pane label="高级" name="senior">
-                    <el-form v-model="post" label-position="top">
-                        <el-form-item label="创建时间">
-                            <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
-                        </el-form-item>
                         <el-form-item label="状态">
                             <el-select v-model="post.status">
                                 <el-option :value="1" label="草稿"/>
@@ -80,7 +71,19 @@
                         </el-form-item>
                     </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="SEO" name="seo">Role</el-tab-pane>
+                <el-tab-pane label="高级" name="senior">
+                    <el-form v-model="post" label-position="top">
+                        <el-form-item :label="`${sourceType}网址`">
+                            <el-input v-model="post.permalink"></el-input>
+                        </el-form-item>
+                        <el-form-item label="布局">
+                            <el-input v-model="post.layout" placeholder="请输入布局"/>
+                        </el-form-item>
+                        <el-form-item label="创建时间">
+                            <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
                 <el-tab-pane label="额外属性" name="extra">
                     <!-- 其他属性 -->
                     <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
@@ -164,6 +167,7 @@ export default defineComponent({
             id: 0,
             title: '',
             fileName: '',
+            layout: '',
             path: '',
             status: PostStatusEnum.RELEASE,
             date: new Date(),
@@ -242,6 +246,9 @@ export default defineComponent({
             this.flag = true;
             if (this.$route.query.permalink) {
                 this.post.permalink = this.$route.query.permalink as string;
+            }
+            if (this.$route.query.layout) {
+                this.post.layout = this.$route.query.layout as string;
             }
             if (this.source === 1) {
                 this.post.title = '新文章';

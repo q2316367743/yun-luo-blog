@@ -23,10 +23,11 @@
         "add_category_hint": "请输入分类名称",
         "add_sub_category": "新增子分类",
         "delete_category_hint": "此操作将永远删除此分类，是否继续？",
-        "title": "一曲新词酒一杯，去年天气旧亭台。"
+        "title": "分类"
     },
     "common": {
         "add": "新增",
+        "add_by_layout": "根据布局新增",
         "cancel": "取消",
         "confirm": "确认",
         "dark": "黑夜",
@@ -203,7 +204,7 @@
         "add_tag": "新增标签",
         "add_tag_hint": "请输入标签名称",
         "delete_hint": "此操作将永久删除改标签. 是否继续?",
-        "title": "独在异乡为异客，每逢佳节倍思亲。",
+        "title": "标签",
         "update_tag": "修改标签",
         "update_tag_hint": "请输入新标签名称"
     }

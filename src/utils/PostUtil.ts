@@ -4,7 +4,7 @@ import Entry from "@/global/Entry";
 import jsYaml from "js-yaml";
 import ArrayUtil from "@/utils/ArrayUtil";
 
-const knownKey = ['title', 'status', 'date', 'updated', 'comments', 'tags',
+const knownKey = ['title', 'layout', 'status', 'date', 'updated', 'comments', 'tags',
     'categories', 'permalink', 'excerpt', 'disableNunjucks', 'lang'];
 const excludeKey = ['extra', 'content', 'fileName', 'path'];
 
@@ -23,6 +23,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
         title: name,
         fileName: name,
         path: path,
+        layout: '',
         status: 1,
         date: date,
         updated: date,
@@ -81,7 +82,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
         if (ArrayUtil.contains(knownKey, key)) {
             // 这是个已知的key
             if (temp[key]) {
-                // 只有值存在的时候才会保存
+                // 只有值存在的时候才会替换
                 // @ts-ignore
                 post[key] = temp[key];
             }

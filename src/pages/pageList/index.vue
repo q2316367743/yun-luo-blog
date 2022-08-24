@@ -21,7 +21,15 @@
             <el-option :label="$t('post.list.sortCreateAsc')" :value="5"/>
             <el-option :label="$t('post.list.sortCreateDesc')" :value="6"/>
         </el-select>
-        <el-button type="primary" @click="openAddDialog">{{ $t('common.add') }}</el-button>
+        <el-dropdown split-button type="primary" @click="openAddDialog('')" @command="openAddDialog"
+                     style="margin-top: 5px;">
+            {{ $t('common.add') }}
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item command="layout">{{ $t('common.add_by_layout') }}</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
     </container-header>
     <container-main class="main">
         <el-scrollbar v-if="pages.length > 0">
@@ -32,7 +40,7 @@
         <el-empty v-else description="暂无页面" style="margin-top: 15vh"/>
     </container-main>
     <!-- 文章设置 -->
-    <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false">
+    <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false" top="9vh">
         <template #header>
             <h2>{{ $t('post.list.postSetting') }}</h2>
         </template>
@@ -52,16 +60,6 @@
                         <el-cascader v-model="page.categories" :options="categoryTree" :props="categoryProps"
                                      clearable :placeholder="$t('placeholder.category')"/>
                     </el-form-item>
-                </el-form>
-            </el-tab-pane>
-            <el-tab-pane :label="$t('post.list.senior')" name="senior">
-                <el-form v-model="page" label-position="top">
-                    <el-form-item :label="$t('post.list.postUrl')">
-                        <el-input v-model="page.permalink"></el-input>
-                    </el-form-item>
-                    <el-form-item :label="$t('post.list.createTime')">
-                        <el-date-picker v-model="page.date" type="datetime" :default-time="new Date()"/>
-                    </el-form-item>
                     <el-form-item :label="$t('common.status')">
                         <el-select v-model="page.status">
                             <el-option :value="1" :label="$t('post.list.draft')"/>
@@ -71,7 +69,19 @@
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
-            <el-tab-pane label="SEO" name="seo"></el-tab-pane>
+            <el-tab-pane :label="$t('post.list.senior')" name="senior">
+                <el-form v-model="page" label-position="top">
+                    <el-form-item :label="$t('post.list.postUrl')">
+                        <el-input v-model="page.permalink"></el-input>
+                    </el-form-item>
+                    <el-form-item label="布局">
+                        <el-input v-model="page.layout" placeholder="请输入布局"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('post.list.createTime')">
+                        <el-date-picker v-model="page.date" type="datetime" :default-time="new Date()"/>
+                    </el-form-item>
+                </el-form>
+            </el-tab-pane>
             <el-tab-pane :label="$t('post.list.extraAttr')" name="extra">
                 <!-- 其他属性 -->
                 <div v-for="(item, index) in page.extra" :key="index" style="display: flex">
@@ -124,6 +134,7 @@ export default defineComponent({
             title: '',
             fileName: '',
             path: '',
+            layout: '',
             status: 1,
             date: new Date(),
             updated: new Date(),
@@ -179,24 +190,35 @@ export default defineComponent({
                     }
                 });
         },
-        openAddDialog() {
-            ElMessageBox.prompt('请输入页面链接地址，不能包含特殊符号', '新建页面', {
-                type: 'info',
-                confirmButtonText: '新建',
-                cancelButtonText: '取消',
-                inputPattern: /^(?:\/?)?((|[\w-]+\.)+[a-z0-9]+)(?:(\/[^/?#]+)*)?(\?[^#]+)?(#.+)?(?:\/?)?$/,
-                inputErrorMessage: '请输入正确的页面链接地址'
-            }).then(({value}) => {
+        async openAddDialog(command: string) {
+            try {
+                let layout;
+                if (command === 'layout') {
+                    const layoutPrompt: { value: string } = await ElMessageBox.prompt('请输入页面布局名称', '新建页面', {
+                        type: 'info',
+                        confirmButtonText: '继续',
+                        cancelButtonText: '取消',
+                    });
+                    layout = layoutPrompt.value;
+                }
+                const {value} = await ElMessageBox.prompt('请输入页面链接地址，不能包含特殊符号', '新建页面', {
+                    type: 'info',
+                    confirmButtonText: '新建',
+                    cancelButtonText: '取消',
+                    inputPattern: /^(?:\/?)?((|[\w-]+\.)+[a-z0-9]+)(?:(\/[^/?#]+)*)?(\?[^#]+)?(#.+)?(?:\/?)?$/,
+                    inputErrorMessage: '请输入正确的页面链接地址'
+                });
                 this.$router.push({
                     path: '/page/edit',
                     query: {
                         source: 2,
-                        permalink: value
+                        permalink: value,
+                        layout: layout
                     }
                 });
-            }).catch(() => {
-                console.error('取消新建地址');
-            })
+            } catch (e) {
+                console.log('取消新增')
+            }
         },
         editPage(id?: number) {
             this.$router.push({

@@ -21,7 +21,15 @@
             <el-option :label="$t('post.list.sortCreateAsc')" :value="5"/>
             <el-option :label="$t('post.list.sortCreateDesc')" :value="6"/>
         </el-select>
-        <el-button type="primary" @click="toRouteLink">{{ $t('common.add') }}</el-button>
+        <el-dropdown split-button type="primary" @click="toRouteLink('')" @command="toRouteLink"
+                     style="margin-top: 5px;">
+            {{ $t('common.add') }}
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item command="layout">{{ $t('common.add_by_layout') }}</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
     </container-header>
     <container-main class="main">
         <el-scrollbar>
@@ -33,7 +41,7 @@
         </el-scrollbar>
     </container-main>
     <!-- 文章设置 -->
-    <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false">
+    <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false" top="9vh">
         <template #header>
             <h2>{{ $t('post.list.postSetting') }}</h2>
         </template>
@@ -53,6 +61,13 @@
                         <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
                                      clearable :placeholder="$t('placeholder.category')"/>
                     </el-form-item>
+                    <el-form-item :label="$t('common.status')">
+                        <el-select v-model="post.status">
+                            <el-option :value="1" :label="$t('post.list.draft')"/>
+                            <el-option :value="2" :label="$t('post.list.release')"/>
+                            <el-option :value="3" :label="$t('post.list.recycle')"/>
+                        </el-select>
+                    </el-form-item>
                 </el-form>
             </el-tab-pane>
             <el-tab-pane :label="$t('post.list.senior')" name="senior">
@@ -60,15 +75,11 @@
                     <el-form-item :label="$t('post.list.postUrl')">
                         <el-input v-model="post.permalink"></el-input>
                     </el-form-item>
+                    <el-form-item label="布局">
+                        <el-input v-model="post.layout" placeholder="请输入布局"/>
+                    </el-form-item>
                     <el-form-item :label="$t('post.list.createTime')">
                         <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
-                    </el-form-item>
-                    <el-form-item :label="$t('common.status')">
-                        <el-select v-model="post.status">
-                            <el-option :value="1" :label="$t('post.list.draft')"/>
-                            <el-option :value="2" :label="$t('post.list.release')"/>
-                            <el-option :value="3" :label="$t('post.list.recycle')"/>
-                        </el-select>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -138,6 +149,7 @@ export default defineComponent({
             fileName: '',
             path: '',
             status: 1,
+            layout: '',
             date: new Date(),
             updated: new Date(),
             comments: false,
@@ -189,13 +201,27 @@ export default defineComponent({
                     }
                 });
         },
-        toRouteLink() {
-            this.$router.push({
-                path: '/post/edit',
-                query: {
-                    source: 1
+        async toRouteLink(command: string) {
+            try {
+                let layout;
+                if (command === 'layout') {
+                    const layoutPrompt: { value: string } = await ElMessageBox.prompt('请输入文章布局名称', '新建文章', {
+                        type: 'info',
+                        confirmButtonText: this.$t('common.add'),
+                        cancelButtonText: this.$t('common.cancel'),
+                    });
+                    layout = layoutPrompt.value;
                 }
-            });
+                this.$router.push({
+                    path: '/post/edit',
+                    query: {
+                        source: 1,
+                        layout: layout
+                    }
+                });
+            } catch (e) {
+                console.log('取消跳转')
+            }
         },
         toPostInfo(postView: PostView) {
             this.$router.push({

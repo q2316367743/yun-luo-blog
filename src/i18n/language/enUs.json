@@ -23,10 +23,11 @@
         "add_category_hint": "Please enter a category name",
         "add_sub_category": "Adding subcategories",
         "delete_category_hint": "This operation will delete this category forever. Do you want to continue?",
-        "title": "一曲新词酒一杯，去年天气旧亭台。"
+        "title": "category"
     },
     "common": {
         "add": "add",
+        "add_by_layout": "Add according to the layout",
         "cancel": "cancel",
         "confirm": "confirm",
         "dark": "dark",
@@ -203,7 +204,7 @@
         "add_tag": "The new labels",
         "add_tag_hint": "Please enter the label name",
         "delete_hint": "This action will permanently remove the change label. Do you want to continue?",
-        "title": "独在异乡为异客，每逢佳节倍思亲。",
+        "title": "tag",
         "update_tag": "Modify the label",
         "update_tag_hint": "Please enter a new label name"
     }

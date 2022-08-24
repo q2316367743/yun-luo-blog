@@ -23,6 +23,11 @@ export default interface PostView {
     path: string;
 
     /**
+     * 布局
+     */
+    layout: string,
+
+    /**
      * 文章状态
      */
     status: number;

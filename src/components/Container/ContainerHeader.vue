@@ -23,7 +23,7 @@ export default defineComponent({
     border-radius: 4px;
     max-width: calc(100% - 282px - 16px - 16px - 8px - 16px);
     line-height: 40px;
-    padding: 0 20px;
+    padding: 0 12px;
 
     & > .el-button {
         margin: 5px;
