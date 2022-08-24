@@ -48,7 +48,7 @@ export default defineComponent({
             // 各种快捷键
             if (e.ctrlKey) {
                 if (e.code == 'KeyS') {
-                        this.save();
+                    this.save();
                 }
             }
         }
