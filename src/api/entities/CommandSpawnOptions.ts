@@ -1,22 +1,9 @@
+import CommandSyncOptions from "@/api/entities/CommandSyncOptions";
+
 /**
  * 异步命令执行参数
  */
-export default interface CommandSpawnOptions {
-
-    /**
-     * 命令
-     */
-    command: string;
-
-    /**
-     * 参数
-     */
-    args: string;
-
-    /**
-     * 云销目录
-     */
-    currentDir: string;
+export default interface CommandSpawnOptions extends CommandSyncOptions{
 
     /**
      * 输出流

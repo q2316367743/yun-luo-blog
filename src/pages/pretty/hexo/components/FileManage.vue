@@ -382,8 +382,14 @@ export default defineComponent({
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: '移动失败' + ',' + e
+                        message: '移动失败' + '1,' + e
                     });
+                });
+            }).catch((e) => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '移动失败' + '2,' + e
                 });
             });
         },

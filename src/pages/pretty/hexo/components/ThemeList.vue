@@ -77,6 +77,7 @@ import DialogApi from "@/api/DialogApi";
 import {settingService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
+import StrUtil from "@/utils/StrUtil";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -177,29 +178,61 @@ export default defineComponent({
                 text: '主题clone中',
                 background: 'rgba(0, 0, 0, 0.7)',
             });
+            let complete = false;
+            let error = false
             Constant.FOLDER.HEXO.THEME().then(path => {
-                NativeApi.invokeSync(
-                    gitPath,
-                    path,
-                    `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`
-                ).then(() => {
-                    ElMessage({
-                        showClose: true,
-                        type: "success",
-                        message: "clone成功"
-                    });
-                    // 需要将配置文件拿出来
-                    let currPath: string;
-                    if (this.themeInfo.name.trim() !== "") {
-                        currPath = this.themeInfo.name.trim()
-                    } else {
-                        let items = this.themeInfo.url.trim().split('/');
-                        currPath = items[items.length - 1];
+                NativeApi.invokeSpawn({
+                    command: gitPath,
+                    currentDir: path,
+                    args: `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`,
+                    exit: () => {
+                        if (error) {
+                            // 异常退出
+                            return;
+                        }
+                        ElMessage({
+                            showClose: true,
+                            type: "success",
+                            message: "clone成功"
+                        });
+                        // 需要将配置文件拿出来
+                        let currPath: string;
+                        if (this.themeInfo.name.trim() !== "") {
+                            currPath = this.themeInfo.name.trim()
+                        } else {
+                            let items = this.themeInfo.url.trim().split('/');
+                            currPath = items[items.length - 1];
+                        }
+                        this.configFileTransfer(currPath);
+                        this.listTheme();
+                        loading.close();
+                        this.themeAddDialog = false;
+                        complete = true;
+                    },
+                    out: (_event, data) => {
+                        loading.setText(StrUtil.uint8ArrayToString(data));
+                    },
+                    err: (_event, data) => {
+                        loading.setText(StrUtil.uint8ArrayToString(data));
                     }
-                    this.configFileTransfer(currPath);
-                    this.listTheme();
-                    loading.close();
-                    this.themeAddDialog = false;
+                }).then((id: number) => {
+                    console.log("命令执行成功");
+                    setTimeout(() => {
+                        if (!complete) {
+                            NativeApi.kill(id).then(() => {
+                                ElMessage({
+                                    showClose: true,
+                                    type: 'error',
+                                    message: '命令执行超时，克隆失败'
+                                });
+                                error = true;
+                            }).catch(() => {
+                                console.error('进程kill失败', id);
+                            }).finally(() => {
+                                loading.close();
+                            })
+                        }
+                    }, 60 * 1000);
                 }).catch(e => {
                     console.error(e);
                     this.themeAddDialog = false;

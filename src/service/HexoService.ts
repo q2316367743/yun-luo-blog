@@ -227,12 +227,11 @@ export default class HexoService {
         }
     }
 
-    async runCommand(terminalStack: TerminalStack, command?: string): Promise<void> {
-        this.getTerminalStackMap().set(terminalStack.id, terminalStack);
+    async runCommand(terminalStack: TerminalStack, command?: string): Promise<number> {
         let hexoPath = await Constant.FOLDER.HEXO.BASE();
         let hexoCommandPath = command ? command : await this.getHexoCommandPath();
         let temp = terminalStack;
-        return NativeApi.invokeSpawn({
+        let id = await NativeApi.invokeSpawn({
             command: hexoCommandPath,
             currentDir: hexoPath,
             args: terminalStack.command,
@@ -252,6 +251,10 @@ export default class HexoService {
                 terminalStack.contents.push(this.replaceLog(StrUtil.uint8ArrayToString(data)));
             }
         });
+        // 重新复制
+        terminalStack.id = id;
+        this.getTerminalStackMap().set(id, terminalStack);
+        return Promise.resolve(id);
     }
 
     private replaceLog(log: string): string {

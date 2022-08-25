@@ -44,7 +44,7 @@ ipcMain.on('native:invoke:async', (event, args) => {
 ipcMain.handle('native:invoke:spawn', (event, args) => {
     console.log('native:invoke:async');
     console.log(`在目录【${args.currentDir}】下【异步】执行命令【${args.command}】【${args.arg}】`)
-    let childProcessWithoutNullStreams = child_process.spawn(args.command, [args.arg], {
+    let childProcessWithoutNullStreams = child_process.spawn(args.command, args.arg.split(' '), {
         encoding: "utf-8",
         cwd: args.currentDir
     });
