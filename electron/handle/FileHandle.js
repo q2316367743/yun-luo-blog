@@ -54,6 +54,18 @@ ipcMain.handle('file:copyFile', (event, message) => {
     }
 });
 
+ipcMain.handle('file:mv', (event, message) => {
+    console.log('file:mv');
+    // 拷贝文件
+    let source = message.source;
+    let target = message.target;
+    fs.renameSync(source, target);
+    return {
+        code: true,
+        message: '成功'
+    }
+});
+
 // 文件夹操作
 
 function handleDir(path, arr) {
