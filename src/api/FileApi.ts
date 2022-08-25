@@ -161,6 +161,30 @@ async function copyFile(source: string, target: string, recursive: boolean = fal
     }
 }
 
+/**
+ * 将一个路径，移动到新路径
+ *
+ * @param source 原始路径
+ * @param target 新路径
+ * @param recursive 是否递归移动（移动文件夹时有效）
+ */
+async function mv(source: string, target: string, recursive: boolean = false): Promise<void> {
+    let result = (await ipcRenderer.invoke('file:mv', {
+        source,
+        target,
+        recursive
+    })) as Result<any>;
+    if (result.code) {
+        return new Promise<void>(resolve => {
+            resolve(result.data);
+        });
+    } else {
+        return new Promise<void>((resolve1, reject) => {
+            reject(result.message)
+        })
+    }
+}
+
 async function copyFileToDir(files: Array<FileEntry>, target: string, sourceFileLength: number) {
     for (let file of files) {
         let fileName = file.path.substring(sourceFileLength + 1);
@@ -244,6 +268,8 @@ export default {
     },
 
     copyFile,
+
+    mv,
 
     exist,
 

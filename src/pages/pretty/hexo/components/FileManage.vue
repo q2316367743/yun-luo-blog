@@ -2,8 +2,8 @@
     <div id="file-manage">
         <div class="file-menu" @click="fileMenuClick" @contextmenu="fileContextClick">
             <el-scrollbar>
-                <el-tree :data="files" :props="fileProps" @node-click="nodeClick" empty-text="暂无文件" draggable
-                         @node-contextmenu="nodeContextMenu">
+                <el-tree :data="files" :props="fileProps" empty-text="暂无文件" draggable :allow-drop="allowDrag"
+                         @node-click="nodeClick" @node-contextmenu="nodeContextMenu" @node-drop="nodeDrag">
                     <template #default="{ node, data }">
                         <el-icon>
                             <folder-opened v-if="data.isDirectory && node.expanded"/>
@@ -36,7 +36,6 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import {Document, Folder, FolderOpened} from '@element-plus/icons-vue';
-import type Node from 'element-plus/es/components/tree/src/model/node'
 import FileEntry from "@/api/entities/FileEntry";
 import Constant from "@/global/Constant";
 import Hexo from "@/global/config/Hexo";
@@ -46,6 +45,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import ArrayUtil from "@/utils/ArrayUtil";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
+import Node from "element-plus/es/components/tree/src/model/node";
 
 export default defineComponent({
     name: 'pretty-hexo-file-manage',
@@ -344,7 +344,29 @@ export default defineComponent({
                 name: data.name!,
                 path: data.path
             }
-
+        },
+        allowDrag(_draggingNode: Node, dropNode: Node) {
+            return dropNode.data.isDirectory;
+        },
+        nodeDrag(startNode: Node, endNode: Node) {
+            let startPath = startNode.data.path;
+            let startName = startNode.data.name;
+            let endPath = endNode.data.path;
+            FileApi.resolve(endPath, startName).then(targetPath => {
+                FileApi.mv(startPath, targetPath).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: '移动成功'
+                    });
+                }).catch((e) => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '移动失败' + ',' + e
+                    });
+                });
+            })
         }
     }
 });
