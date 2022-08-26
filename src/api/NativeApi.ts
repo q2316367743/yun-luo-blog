@@ -62,26 +62,25 @@ export default {
      *
      * @param options 命令参数
      */
-    async invokeSpawn(options: CommandSpawnOptions): Promise<number> {
-        let id = new Date().getTime();
+    async invokeSpawn(options: CommandSpawnOptions): Promise<void> {
         let result = (await ipcRenderer.invoke('native:invoke:spawn', {
-            id: id,
+            id: options.id,
             command: options.command,
             arg: options.args,
             currentDir: options.currentDir
         })) as Result<any>;
         // 监听
-        ipcRenderer.on(`native:invoke:spawn:stdout:${id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:stdout:${options.id}`, (event: any, args: Uint8Array) => {
             options.out(event, args);
         });
-        ipcRenderer.on(`native:invoke:spawn:stderr:${id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:stderr:${options.id}`, (event: any, args: Uint8Array) => {
             options.err(event, args);
         });
-        ipcRenderer.on(`native:invoke:spawn:exit:${id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:exit:${options.id}`, (event: any, args: Uint8Array) => {
             options.exit(event, args);
         });
         if (result.code) {
-            return Promise.resolve(id);
+            return Promise.resolve();
         } else {
             return Promise.reject(result.message);
         }

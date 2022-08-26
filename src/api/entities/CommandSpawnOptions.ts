@@ -6,6 +6,11 @@ import CommandSyncOptions from "@/api/entities/CommandSyncOptions";
 export default interface CommandSpawnOptions extends CommandSyncOptions{
 
     /**
+     * ID
+     */
+    id: number;
+
+    /**
      * 输出流
      * @param event 事件
      * @param data 数据
