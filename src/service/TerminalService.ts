@@ -7,11 +7,18 @@ export default class TerminalService {
 
     terminalStackMap: Map<number, TerminalStack> = new Map<number, TerminalStack>();
 
-    getTerminalStackMap(): Map<number, TerminalStack>{
+    getTerminalStackMap(): Map<number, TerminalStack> {
         return this.terminalStackMap;
     }
 
-    async add(name: string, options: CommandSyncOptions): Promise<number> {
+    /**
+     * 终端终端任务
+     *
+     * @param name 任务名称
+     * @param options 参数
+     * @param success 成功时回调
+     */
+    async add(name: string, options: CommandSyncOptions, success?: () => void): Promise<number> {
         let id = new Date().getTime();
         NativeApi.invokeSpawn({
             id: id,
@@ -32,6 +39,9 @@ export default class TerminalService {
                 let terminalStack = this.terminalStackMap.get(id)!;
                 terminalStack.run = false;
                 terminalStack.contents.push(this.replaceLog(StrUtil.uint8ArrayToString(data)));
+                if (success) {
+                    success();
+                }
             }
         }).then(() => {
             console.log('运行成功')
@@ -52,7 +62,7 @@ export default class TerminalService {
     }
 
     async kill(id: number): Promise<void> {
-        return  NativeApi.kill(id);
+        return NativeApi.kill(id);
     }
 
     clean(): void {
