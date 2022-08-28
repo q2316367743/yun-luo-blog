@@ -160,7 +160,7 @@ export default defineComponent({
             this.contextMenu.show = false;
             this.showInfo = false;
         },
-        fileContextClick(event: PointerEvent) {
+        fileContextClick(event: MouseEvent) {
             this.contextMenu = {
                 x: event.offsetX,
                 y: event.offsetY,
