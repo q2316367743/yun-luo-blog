@@ -103,22 +103,42 @@ ipcMain.handle('native:http', async (_event, args) => {
 ipcMain.handle('native:compressing', async (_event, args) => {
     console.log('native:compressing');
     let type = args.type;
-    if (type === 1) {
-        await compressing.tar.uncompress(args.source, args.target, {
-            zipFileNameEncoding: 'GBK'
-        });
-    } else if (type === 2) {
-        await compressing.gzip.uncompress(args.source, args.target, {
-            zipFileNameEncoding: 'GBK'
-        });
-    } else if (type === 3) {
-        await compressing.tgz.uncompress(args.source, args.target, {
-            zipFileNameEncoding: 'GBK'
-        });
-    } else if (type === 4) {
-        await compressing.zip.uncompress(args.source, args.target, {
-            zipFileNameEncoding: 'GBK'
-        });
+    if (args.compressing) {
+        if (type === 1) {
+            await compressing.tar.compressDir(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        } else if (type === 2) {
+            await compressing.gzip.compressDir(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        } else if (type === 3) {
+            await compressing.tgz.compressDir(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        } else if (type === 4) {
+            await compressing.zip.compressDir(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        }
+    } else {
+        if (type === 1) {
+            await compressing.tar.uncompress(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        } else if (type === 2) {
+            await compressing.gzip.uncompress(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        } else if (type === 3) {
+            await compressing.tgz.uncompress(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        } else if (type === 4) {
+            await compressing.zip.uncompress(args.source, args.target, {
+                zipFileNameEncoding: 'GBK'
+            });
+        }
     }
     return {
         code: true,

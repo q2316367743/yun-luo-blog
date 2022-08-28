@@ -12,6 +12,13 @@ export default interface CompressingOptions {
     type: number;
 
     /**
+     * 是否压缩<br />
+     * true: 压缩<br />
+     * false: 解压
+     */
+    compressing: boolean;
+
+    /**
      * 压缩包路径
      */
     source: string;

@@ -8,7 +8,12 @@ enum PlatformTypeEnum {
     /**
      * Sftp
      */
-    SFTP = 2
+    SFTP = 2,
+
+    /**
+     * ZIP压缩包
+     */
+    ZIP = 3
 
 }
 

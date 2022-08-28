@@ -85,6 +85,7 @@ import {settingService, terminalService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import StrUtil from "@/utils/StrUtil";
+import CompressingOptions from "@/api/entities/CompressingOptions";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -231,9 +232,10 @@ export default defineComponent({
             // 解压
             const options = {
                 type: 1,
+                compressing: false,
                 source: "",
                 target: "",
-            }
+            } as CompressingOptions
             // 判断类型
             if (this.themeInfo.compressionPath.toLowerCase().endsWith("tar")) {
                 options.type = 1;

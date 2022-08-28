@@ -64,6 +64,9 @@ let syncRemoteSetting = {
         password: '',
         privateKey: '',
         remoteDir: ''
+    },
+    zip: {
+        dir: ''
     }
 } as SyncRemoteSetting;
 
