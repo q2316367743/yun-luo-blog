@@ -308,6 +308,10 @@ export default defineComponent({
                 value: ''
             });
         })
+        emitter.on(MessageEventEnum.TERMINAL_OPEN, () => {
+            // 终端对话框启动
+            this.terminalDialog = true;
+        })
         this.$router.push('/loading');
     },
     computed: {

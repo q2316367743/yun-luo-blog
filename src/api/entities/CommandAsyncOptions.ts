@@ -1,22 +1,10 @@
+import CommandSyncOptions from "@/api/entities/CommandSyncOptions";
+
 /**
  * 异步命令执行参数
  */
-export default interface CommandAsyncOptions {
+export default interface CommandAsyncOptions extends CommandSyncOptions{
 
-    /**
-     * 命令
-     */
-    command: string;
-
-    /**
-     * 参数
-     */
-    args: string;
-
-    /**
-     * 云销目录
-     */
-    currentDir: string;
 
     /**
      * 完成回调

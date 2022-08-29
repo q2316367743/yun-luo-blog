@@ -50,7 +50,14 @@ enum MessageEventEnum {
     /**
      * 服务器停止运行
      */
-    SERVER_STOP = "server:stop"
+    SERVER_STOP = "server:stop",
+
+    // 终端
+
+    /**
+     * 终端页面打开
+     */
+    TERMINAL_OPEN = "terminal:open"
 
 }
 

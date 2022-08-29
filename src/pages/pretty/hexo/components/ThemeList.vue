@@ -12,22 +12,29 @@
         <el-scrollbar v-if="blogIsInit" class="view">
             <el-row>
                 <el-col :span="24" style="margin-bottom: 10px" v-for="theme in themesTemp" :key="theme">
-                    <el-card shadow="hover">
-                        <div class="theme-card">
-                            <div>
-                                <span>{{ theme }}</span>
-                                <el-button type="primary" link :icon="edit" @click="themeRename(theme)"></el-button>
+                    <el-dropdown trigger="contextmenu" style="width: 100%" @command="openByExplorer">
+                        <el-card shadow="hover" style="width: 100%">
+                            <div class="theme-card">
+                                <div>
+                                    <span>{{ theme }}</span>
+                                    <el-button type="primary" link :icon="edit" @click="themeRename(theme)"></el-button>
+                                </div>
+                                <div>
+                                    <el-button type="success" link :disabled="theme === hexo.theme"
+                                               @click="chooseTheme(theme)">选中
+                                    </el-button>
+                                    <el-button type="danger" link @click="themeRemove(theme)"
+                                               :disabled="theme === hexo.theme">删除
+                                    </el-button>
+                                </div>
                             </div>
-                            <div>
-                                <el-button type="success" link :disabled="theme === hexo.theme"
-                                           @click="chooseTheme(theme)">选中
-                                </el-button>
-                                <el-button type="danger" link @click="themeRemove(theme)"
-                                           :disabled="theme === hexo.theme">删除
-                                </el-button>
-                            </div>
-                        </div>
-                    </el-card>
+                        </el-card>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item :command="theme">在资源浏览器中打开</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </el-col>
             </el-row>
         </el-scrollbar>
@@ -70,13 +77,15 @@ import {Edit, Folder, Plus, Refresh} from "@element-plus/icons-vue";
 import Hexo from "@/global/config/Hexo";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
-import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import DialogApi from "@/api/DialogApi";
-import {settingService} from "@/global/BeanFactory";
+import {settingService, terminalService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
+import StrUtil from "@/utils/StrUtil";
+import CompressingOptions from "@/api/entities/CompressingOptions";
 
 /**
  * 查询两个东西：1.主题文件夹，2.package.json主题
@@ -172,39 +181,35 @@ export default defineComponent({
                 return;
             }
             // 执行命令
-            const loading = ElLoading.service({
-                lock: true,
-                text: '主题clone中',
-                background: 'rgba(0, 0, 0, 0.7)',
-            });
+            // 需要将配置文件拿出来
+            let currPath: string;
+            if (this.themeInfo.name.trim() !== "") {
+                currPath = this.themeInfo.name.trim()
+            } else {
+                let items = this.themeInfo.url.trim().split('/');
+                currPath = items[items.length - 1];
+            }
             Constant.FOLDER.HEXO.THEME().then(path => {
-                NativeApi.invokeSync(
-                    gitPath,
-                    path,
-                    `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`
-                ).then(() => {
-                    ElMessage({
+                terminalService.add('主题安装', {
+                    command: gitPath,
+                    currentDir: path,
+                    args: `clone ${this.themeInfo.url.trim()} ${this.themeInfo.name.trim()}`,
+                }, () => {
+                    ElNotification({
                         showClose: true,
                         type: "success",
-                        message: "clone成功"
+                        message: "clone成功，开始处理主题设置"
                     });
-                    // 需要将配置文件拿出来
-                    let currPath: string;
-                    if (this.themeInfo.name.trim() !== "") {
-                        currPath = this.themeInfo.name.trim()
-                    } else {
-                        let items = this.themeInfo.url.trim().split('/');
-                        currPath = items[items.length - 1];
-                    }
                     this.configFileTransfer(currPath);
                     this.listTheme();
-                    loading.close();
+                }).then(() => {
                     this.themeAddDialog = false;
-                }).catch(e => {
-                    console.error(e);
-                    this.themeAddDialog = false;
-                    loading.close();
-                });
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: '正在后台安装主题，刻在终端中查看进度'
+                    });
+                })
             }).catch(e => {
                 console.error(e);
                 ElMessage({
@@ -213,7 +218,6 @@ export default defineComponent({
                     message: "clone错误，" + e
                 });
                 this.themeAddDialog = false;
-                loading.close();
             });
         },
         async themeForCompression() {
@@ -228,9 +232,10 @@ export default defineComponent({
             // 解压
             const options = {
                 type: 1,
+                compressing: false,
                 source: "",
                 target: "",
-            }
+            } as CompressingOptions
             // 判断类型
             if (this.themeInfo.compressionPath.toLowerCase().endsWith("tar")) {
                 options.type = 1;
@@ -477,6 +482,13 @@ export default defineComponent({
                 });
             }).catch(() => {
                 console.log('取消删除')
+            })
+        },
+        openByExplorer(theme: string) {
+            Constant.FOLDER.HEXO.THEME().then(themePath => {
+                FileApi.resolve(themePath, theme).then(path => {
+                    NativeApi.openFolder(path);
+                })
             })
         }
     }

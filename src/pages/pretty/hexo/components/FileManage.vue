@@ -17,8 +17,8 @@
         </div>
         <div class="file-editor">
             <theme-file-editor v-model="fileContent" v-model:language="language"
-                               v-show="fileContent !== ''"></theme-file-editor>
-            <el-empty description="请选择文件" v-if="fileContent === ''" style="margin-top: 15vh"></el-empty>
+                               v-show="showInfo"></theme-file-editor>
+            <el-empty description="请选择文件" v-if="!showInfo" style="margin-top: 15vh"></el-empty>
         </div>
         <div class="context-menu" v-show="contextMenu.show" :style="`left: ${contextMenu.x}px;top: ${contextMenu.y}px`">
             <div class="context-menu-item" @click="newFile" v-if="contextMenu.isRoot || contextMenu.isDirectory">
@@ -28,6 +28,7 @@
                 新建文件夹
             </div>
             <div class="context-menu-item" @click="mapFiles">刷新</div>
+            <div class="context-menu-item" @click="openWithExplorer">打开于</div>
             <div class="context-menu-item" @click="rename" v-if="!contextMenu.isRoot">重命名</div>
             <div class="context-menu-item" @click="remove" v-if="!contextMenu.isRoot">删除</div>
         </div>
@@ -46,6 +47,7 @@ import ArrayUtil from "@/utils/ArrayUtil";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import Node from "element-plus/es/components/tree/src/model/node";
+import NativeApi from "@/api/NativeApi";
 
 export default defineComponent({
     name: 'pretty-hexo-file-manage',
@@ -60,6 +62,7 @@ export default defineComponent({
         // 当前主题
         file: {} as FileEntry | undefined,
         fileContent: '',
+        showInfo: false,
         language: '',
         currentThemeDir: '',
         contextMenu: {
@@ -120,7 +123,10 @@ export default defineComponent({
                 FileApi.readFile(data.path).then(content => {
                     // 读取这里文件内容
                     this.fileContent = content;
+                    this.showInfo = true;
                 })
+            } else {
+                this.showInfo = false;
             }
         },
         save() {
@@ -152,8 +158,9 @@ export default defineComponent({
             this.file = undefined;
             this.fileContent = ''
             this.contextMenu.show = false;
+            this.showInfo = false;
         },
-        fileContextClick(event: PointerEvent) {
+        fileContextClick(event: MouseEvent) {
             this.contextMenu = {
                 x: event.offsetX,
                 y: event.offsetY,
@@ -166,6 +173,7 @@ export default defineComponent({
         },
         newFile() {
             this.contextMenu.show = false;
+            this.showInfo = false;
             ElMessageBox.prompt('请输入新文件名称', '新建文件', {
                 type: 'info',
                 confirmButtonText: this.$t('common.new'),
@@ -195,6 +203,7 @@ export default defineComponent({
         },
         newFolder() {
             this.contextMenu.show = false;
+            this.showInfo = false;
             ElMessageBox.prompt('请输入新文件夹名称', '新建文件', {
                 type: 'info',
                 confirmButtonText: this.$t('common.new'),
@@ -224,6 +233,7 @@ export default defineComponent({
         },
         rename() {
             this.contextMenu.show = false;
+            this.showInfo = false;
             let parentPath = this.contextMenu.path.substring(0, this.contextMenu.path.indexOf(this.contextMenu.name));
             ElMessageBox.prompt(`请输入新文件${this.contextMenu.isDirectory ? '夹' : ''}名称`, '新建文件', {
                 type: 'info',
@@ -253,6 +263,7 @@ export default defineComponent({
         },
         remove() {
             this.contextMenu.show = false;
+            this.showInfo = false;
             ElMessageBox.confirm(
                 `是否要删除文件${this.contextMenu.isDirectory ? '夹' : ''}【${this.contextMenu.name}】，删除后将无法恢复`,
                 `删除文件${this.contextMenu.isDirectory ? '夹' : ''}`,
@@ -344,14 +355,20 @@ export default defineComponent({
                 name: data.name!,
                 path: data.path
             }
+            this.showInfo = false;
         },
         allowDrag(_draggingNode: Node, dropNode: Node) {
             return dropNode.data.isDirectory;
         },
-        nodeDrag(startNode: Node, endNode: Node) {
+        nodeDrag(startNode: Node, endNode: Node, type: string) {
             let startPath = startNode.data.path;
             let startName = startNode.data.name;
-            let endPath = endNode.data.path;
+            let endPath = endNode.data.path as string;
+            if (type !== 'inner') {
+                // 如果不是移入，则需要处理目标路径
+                let endName = endNode.data.name;
+                endPath = endPath.substring(0, endPath.indexOf(endName));
+            }
             FileApi.resolve(endPath, startName).then(targetPath => {
                 FileApi.mv(startPath, targetPath).then(() => {
                     ElMessage({
@@ -359,14 +376,26 @@ export default defineComponent({
                         type: 'success',
                         message: '移动成功'
                     });
+                    this.showInfo = false;
+                    this.mapFiles();
                 }).catch((e) => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
-                        message: '移动失败' + ',' + e
+                        message: '移动失败' + '1,' + e
                     });
                 });
-            })
+            }).catch((e) => {
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '移动失败' + '2,' + e
+                });
+            });
+        },
+        openWithExplorer() {
+            this.contextMenu.show = false;
+            NativeApi.openFolder(this.contextMenu.path);
         }
     }
 });

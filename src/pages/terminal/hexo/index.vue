@@ -54,18 +54,17 @@
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-import {hexoService} from "@/global/BeanFactory";
 import DateUtil from "@/utils/DateUtil";
-import NativeApi from "@/api/NativeApi";
 import {ElMessage} from "element-plus";
 import TerminalStack from "@/entities/TerminalStack";
 import Constant from "@/global/Constant";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
+import {settingService, terminalService} from "@/global/BeanFactory";
 
 export default defineComponent({
     name: 'terminal-hexo',
     data: () => ({
-        hexoService: hexoService,
+        terminalService: terminalService,
         blogIsInit: true,
         initDisable: false,
         serverDisable: false,
@@ -75,7 +74,7 @@ export default defineComponent({
     }),
     computed: {
         terminalStacks(): Array<TerminalStack> {
-            let terminalStackValues = this.hexoService.getTerminalStackMap().values();
+            let terminalStackValues = this.terminalService.getTerminalStackMap().values();
             let terminalStacks = new Array<TerminalStack>();
             for (let item of terminalStackValues) {
                 terminalStacks.push(item);
@@ -155,98 +154,45 @@ export default defineComponent({
     methods: {
         formatDateTime: DateUtil.formatDateTime,
         kill(id: number) {
-            NativeApi.kill(id).then(() => {
-                ElMessage({
-                    showClose: true,
-                    type: "success",
-                    message: "停止成功"
-                });
-            }).catch(e => {
-                ElMessage({
-                    showClose: true,
-                    type: "error",
-                    message: "停止失败，" + e
-                });
-            });
+            this.terminalService.kill(id);
         },
         init() {
-            this.hexoService.init().then(() => {
-                ElMessage({
-                    showClose: true,
-                    type: "success",
-                    message: "运行成功"
-                });
-            }).catch(e => {
-                ElMessage({
-                    showClose: true,
-                    type: "error",
-                    message: e
-                });
-            });
+            this.runCommand('初始化', Constant.HEXO.INIT);
         },
         server() {
-            this.hexoService.server().then(() => {
-                ElMessage({
-                    showClose: true,
-                    type: "success",
-                    message: "运行成功"
-                });
-            }).catch(e => {
-                ElMessage({
-                    showClose: true,
-                    type: "error",
-                    message: e
-                });
-            });
+            this.runCommand('运行', Constant.HEXO.SERVER);
         },
         deploy() {
-            this.hexoService.deploy().then(() => {
-                ElMessage({
-                    showClose: true,
-                    type: "success",
-                    message: "运行成功"
-                });
-            }).catch(e => {
-                ElMessage({
-                    showClose: true,
-                    type: "error",
-                    message: e
-                });
-            });
+            this.runCommand('部署', Constant.HEXO.DEPLOY);
         },
         clean() {
-            this.hexoService.clean().then(() => {
-                ElMessage({
-                    showClose: true,
-                    type: "success",
-                    message: "运行成功"
-                });
-            }).catch(e => {
-                ElMessage({
-                    showClose: true,
-                    type: "error",
-                    message: e
-                });
-            });
+            this.runCommand('清理', Constant.HEXO.CLEAN);
         },
         install() {
-            this.hexoService.install().then(() => {
+            this.runCommand('安装', Constant.HEXO.INSTALL);
+        },
+        clearStack() {
+            this.terminalService.clean();
+        },
+        async runCommand(name: string, args: string) {
+            this.terminalService.add(name, {
+                command: settingService.getEnvironment().hexoPath,
+                currentDir: await Constant.FOLDER.HEXO.BASE(),
+                args: args
+            }).then(() => {
                 ElMessage({
                     showClose: true,
-                    type: "success",
-                    message: "安装成功"
+                    type: 'success',
+                    message: '命令执行成功'
                 });
             }).catch(e => {
                 ElMessage({
                     showClose: true,
-                    type: "error",
-                    message: e
+                    type: 'error',
+                    message: '命令执行失败' + ',' + e
                 });
-            });
-        },
-        clearStack() {
-            this.hexoService.clearTerminalStack();
-        },
+            })
+        }
     },
 });
 </script>

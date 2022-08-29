@@ -8,6 +8,7 @@
                 <el-radio-group v-model="syncRemoteSetting.type">
                     <el-radio :label="1">未设置</el-radio>
                     <el-radio :label="2">sftp</el-radio>
+                    <el-radio :label="3">ZIP</el-radio>
                 </el-radio-group>
             </el-form-item>
         </el-form>
@@ -43,8 +44,14 @@
                 <el-input v-model="syncRemoteSetting.sftp.remoteDir"/>
             </el-form-item>
         </el-form>
+        <el-form :model="syncRemoteSetting.zip" label-width="80px" v-if="syncRemoteSetting.type === 3"
+                 :rules="zipRules" status-icon ref="zipForm">
+            <el-form-item label="压缩包存放位置" prop="dir">
+                <el-input v-model="syncRemoteSetting.zip.dir" placeholder="请选择压缩包存放位置"></el-input>
+            </el-form-item>
+        </el-form>
         <div class="footer">
-            <el-button @click="validation">测试</el-button>
+            <el-button @click="validation" v-if="syncRemoteSetting.type === 2">测试</el-button>
             <el-button type="primary" @click="save">保存</el-button>
         </div>
     </container-main>
@@ -80,6 +87,9 @@ export default defineComponent({
                 password: '',
                 privateKey: '',
                 remoteDir: ''
+            },
+            zip: {
+                dir: ''
             }
         },
         sftpRules: {
@@ -102,7 +112,12 @@ export default defineComponent({
             remoteDir: [
                 {required: true, message: '请输入远程地址', trigger: 'blur'},
             ],
-        } as FormRules
+        } as FormRules,
+        zipRules: {
+            dir: [
+                {required: true, message: '请输入压缩包存放位置', trigger: 'blur'},
+            ],
+        }
     }),
     created() {
         this.syncRemoteSetting = settingService.getSyncRemote();
@@ -126,8 +141,30 @@ export default defineComponent({
                 this.syncRemoteSetting.sftp.privateKey = (selected)[0];
             }
         },
-        validation() {
-            this.test().then(() => {
+        async testForSftp() {
+            let sftpForm = this.$refs.sftpForm as FormInstance;
+            if (!sftpForm) return
+            await sftpForm.validate((valid) => {
+                if (valid) {
+                    return Promise.resolve();
+                } else {
+                    return Promise.reject('字段验证错误');
+                }
+            })
+        },
+        async testForZip() {
+            let zipForm = this.$refs.zipForm as FormInstance;
+            if (!zipForm) return
+            await zipForm.validate((valid) => {
+                if (valid) {
+                    return Promise.resolve();
+                } else {
+                    return Promise.reject('字段验证错误');
+                }
+            })
+        },
+        validationForSftp() {
+            this.testForSftp().then(() => {
                 SftpApi.test(this.syncRemoteSetting.sftp).then(() => {
                     ElMessage({
                         showClose: true,
@@ -146,19 +183,8 @@ export default defineComponent({
                 console.log(e)
             })
         },
-        async test() {
-            let sftpForm = this.$refs.sftpForm as FormInstance;
-            if (!sftpForm) return
-            await sftpForm.validate((valid) => {
-                if (valid) {
-                    return Promise.resolve();
-                } else {
-                    return Promise.reject('字段验证错误');
-                }
-            })
-        },
-        save() {
-            this.test().then(() => {
+        saveForSftp() {
+            this.testForSftp().then(() => {
                 SftpApi.test(this.syncRemoteSetting.sftp).then(() => {
                     settingService.saveSyncRemote(this.syncRemoteSetting).then(() => {
                         ElMessage({
@@ -172,17 +198,53 @@ export default defineComponent({
                             type: 'error',
                             message: '数据保存失败，' + e
                         })
-                    })
+                    });
                 }).catch(e => {
                     ElMessage({
                         showClose: true,
                         type: 'error',
                         message: '测试连接失败，' + e
-                    })
+                    });
                 })
             }).catch(() => {
                 console.log('验证失败')
             })
+        },
+        saveForZip() {
+            this.testForZip().then(() => {
+                settingService.saveSyncRemote(this.syncRemoteSetting).then(() => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'success',
+                        message: '数据保存成功'
+                    })
+                }).catch(e => {
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '数据保存失败，' + e
+                    })
+                });
+            }).catch(() => {
+                console.log('验证失败')
+            });
+        },
+        validation() {
+            switch (this.syncRemoteSetting.type) {
+                case 2:
+                    this.validationForSftp();
+                    break;
+            }
+        },
+        save() {
+            switch (this.syncRemoteSetting.type) {
+                case 2:
+                    this.saveForSftp();
+                    break;
+                case 3:
+                    this.saveForZip();
+                    break;
+            }
         }
     }
 });

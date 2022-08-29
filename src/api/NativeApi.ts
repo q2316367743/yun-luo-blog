@@ -4,6 +4,7 @@ import CompressingOptions from "@/api/entities/CompressingOptions";
 import FileApi from "@/api/FileApi";
 import CommandAsyncOptions from "@/api/entities/CommandAsyncOptions";
 import CommandSpawnOptions from "@/api/entities/CommandSpawnOptions";
+import CommandSyncOptions from "@/api/entities/CommandSyncOptions";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -13,11 +14,11 @@ const {ipcRenderer} = window.require('electron');
  */
 export default {
 
-    async invokeSync(cmd: string, currentDir: string, arg?: string): Promise<void> {
+    async invokeSync(options: CommandSyncOptions): Promise<void> {
         let result = (await ipcRenderer.invoke('native:invoke:sync', {
-            command: cmd,
-            arg: arg,
-            currentDir: currentDir
+            command: options.command,
+            arg: options.args,
+            currentDir: options.currentDir
         })) as Result<any>;
         if (result.code) {
             return new Promise<void>(resolve => {
@@ -62,37 +63,32 @@ export default {
      * @param options 命令参数
      */
     async invokeSpawn(options: CommandSpawnOptions): Promise<void> {
-        let id = new Date().getTime();
         let result = (await ipcRenderer.invoke('native:invoke:spawn', {
-            id: id,
+            id: options.id,
             command: options.command,
             arg: options.args,
             currentDir: options.currentDir
         })) as Result<any>;
         // 监听
-        ipcRenderer.on(`native:invoke:spawn:stdout:${id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:stdout:${options.id}`, (event: any, args: Uint8Array) => {
             options.out(event, args);
         });
-        ipcRenderer.on(`native:invoke:spawn:stderr:${id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:stderr:${options.id}`, (event: any, args: Uint8Array) => {
             options.err(event, args);
         });
-        ipcRenderer.on(`native:invoke:spawn:exit:${id}`, (event: any, args: Uint8Array) => {
+        ipcRenderer.on(`native:invoke:spawn:exit:${options.id}`, (event: any, args: Uint8Array) => {
             options.exit(event, args);
         });
         if (result.code) {
-            return new Promise<void>(resolve => {
-                resolve(result.data);
-            });
+            return Promise.resolve();
         } else {
-            return new Promise<void>((resolve, reject) => {
-                reject(result.message)
-            })
+            return Promise.reject(result.message);
         }
     },
 
     async kill(id: number): Promise<void> {
-        console.log(`native:invoke:async:kill:${id}`)
-        ipcRenderer.send(`native:invoke:async:kill:${id}`);
+        console.log(`native:invoke:spawn:kill:${id}`)
+        ipcRenderer.send(`native:invoke:spawn:kill:${id}`);
         return Promise.resolve();
     },
 

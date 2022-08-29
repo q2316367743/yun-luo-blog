@@ -2,7 +2,6 @@ import Database from "@/plugins/Database";
 import TagService from '@/service/TagService';
 import PostService from '@/service/PostService';
 import CategoryService from "@/service/CategoryService";
-import HexoService from "@/service/HexoService";
 import ServerService from "@/service/ServerService";
 import SettingService from "@/service/SettingService";
 import Tag from "@/entities/Tag";
@@ -10,6 +9,7 @@ import Category from "@/entities/Category";
 import Post from "@/entities/Post";
 import PostTag from "@/entities/PostTag";
 import PostCategory from "@/entities/PostCategory";
+import TerminalService from "@/service/TerminalService";
 
 // 数据库操作
 export const tagDb = new Database<Tag>('');
@@ -26,7 +26,7 @@ export const categoryService = new CategoryService(categoryDb, postCategoryDb, p
 export const postService = new PostService(tagDb, categoryDb, postDb, postTagDb, postCategoryDb);
 export const pageService = new PostService(tagDb, categoryDb, pageDb, pageTagDb, pageCategoryDb);
 
-export const hexoService = new HexoService();
+export const terminalService = new TerminalService();
 export const serverService = new ServerService();
 
 export const settingService = new SettingService();

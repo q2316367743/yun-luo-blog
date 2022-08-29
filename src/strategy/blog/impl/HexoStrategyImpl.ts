@@ -99,7 +99,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         return await FileApi.resolve(hexoPath, hexo.source_dir)
     }
 
-    private async  copyPost(loading?: { setText: (message: string) => void }): Promise<void> {
+    private async copyPost(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
             loading.setText("将文章复制到目标文件夹");
         }
@@ -142,7 +142,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         return Promise.resolve();
     }
 
-    private async  copyPage(loading?: { setText: (message: string) => void }): Promise<void> {
+    private async copyPage(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
             loading.setText("将页面复制到目标文件夹");
         }
@@ -213,7 +213,11 @@ export default class HexoStrategyImpl implements BlogStrategy {
     async invokeCommand(command: string): Promise<void> {
         let hexoCommandPath = await this.getHexoCommandPath();
         let hexoPath = await Constant.FOLDER.HEXO.BASE();
-        await NativeApi.invokeSync(hexoCommandPath, hexoPath, command);
+        await NativeApi.invokeSync({
+            command: hexoCommandPath,
+            currentDir: hexoPath,
+            args: command
+        });
         return new Promise<void>((resolve) => {
             resolve();
         });

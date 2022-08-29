@@ -191,10 +191,11 @@ export default defineComponent({
                     text: '执行安装命令中',
                     background: 'rgba(0, 0, 0, 0.7)',
                 });
-                NativeApi.invokeSync(environment.npmPath,
-                    path,
-                    command
-                ).then(() => {
+                NativeApi.invokeSync({
+                    command: environment.npmPath,
+                    currentDir: path,
+                    args: command
+                }).then(() => {
                     emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                     this.listPlugin();
                     ElMessage({
@@ -242,10 +243,11 @@ export default defineComponent({
                         text: '执行删除命令中',
                         background: 'rgba(0, 0, 0, 0.7)',
                     });
-                    NativeApi.invokeSync(environment.npmPath,
-                        path,
-                        `remove ${plugin}`
-                    ).then(() => {
+                    NativeApi.invokeSync({
+                        command: environment.npmPath,
+                        currentDir: path,
+                        args: `remove ${plugin}`
+                    }).then(() => {
                         emitter.emit(MessageEventEnum.CONFIG_UPDATE);
                         this.listPlugin();
                         ElMessage({
