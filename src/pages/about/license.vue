@@ -1,6 +1,6 @@
 <template>
     <container-header>
-        <el-page-header title="关于" content="其他开源项目" @back="goBack" style="margin-top: 8px;"/>
+        <el-page-header title="关于" content="开源许可证" @back="goBack" style="margin-top: 8px;"/>
     </container-header>
     <container-main>
         <apache2_0></apache2_0>
