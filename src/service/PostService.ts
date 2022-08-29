@@ -27,6 +27,8 @@ export default class PostService {
     postTagDb: Database<PostTag>;
     postCategoryDb: Database<PostCategory>;
 
+    private basePath: string = '';
+
     constructor(tagDb: Database<Tag>,
                 categoryDb: Database<Category>,
                 postDb: Database<Post>,
@@ -39,13 +41,20 @@ export default class PostService {
         this.postCategoryDb = postCategoryDb;
     }
 
+    setBasePath(basePath: string): void {
+        this.basePath = basePath;
+    }
+
+    getBasePath(): string {
+        return this.basePath;
+    }
+
     async insert(post: PostView, folder: string, saveContent: boolean = true): Promise<void> {
         // 如果没有路径，先生成目录和文件名
-        console.log('如果没有路径，先生成目录和文件名')
-        if (!post.path || post.path === '') {
-            post.path = await FileApi.resolve(folder, post.title + ".md");
+        console.log('如果没有文件名，先生成文件名')
+        if (!post.fileName || post.fileName === '') {
             post.fileName = post.title + ".md";
-            console.log('先生成目录和文件名', post.path, post.fileName);
+            console.log('先生成文件名', post.fileName);
         }
         console.log('开始插入')
         // 先插入文章
@@ -64,7 +73,7 @@ export default class PostService {
         if (saveContent) {
             console.log('此处保存内容')
             // 此处保存内容
-            savePost(post).then();
+            savePost(this.basePath, post).then();
         }
         // 发布新增事件
         emitter.emit(MessageEventEnum.POST_ADD);
@@ -104,7 +113,7 @@ export default class PostService {
         if (saveContent) {
             // 此处保存内容
             console.log('此处保存内容')
-            savePost(post).then();
+            savePost(this.basePath, post).then();
         }
         // 发送更新2022年8月19日09:44:00
         emitter.emit(MessageEventEnum.POST_UPDATE);
@@ -271,7 +280,7 @@ export default class PostService {
             let posts = this.postDb.list();
             // 删除全部文章
             for (let post of posts) {
-                await this.postDb.delete(post.id);
+                await this.postDb.delete(post.id!);
             }
             // 删除全部标签关系
             let postTags = this.postTagDb.list();
@@ -335,7 +344,7 @@ export default class PostService {
         // 删除文章
         await this.postDb.delete(id);
         // 删除内容
-        await deleteByPath(post.path)
+        await deleteByPath(this.basePath, post.fileName)
         // 删除结束
         emitter.emit(MessageEventEnum.POST_DELETE);
         return Promise.resolve();
@@ -345,7 +354,7 @@ export default class PostService {
         let post = {
             title: postView.title,
             fileName: postView.fileName,
-            path: postView.path,
+            layout: postView.layout,
             status: postView.status,
             date: postView.date,
             updated: postView.updated,
@@ -353,7 +362,8 @@ export default class PostService {
             permalink: postView.permalink,
             excerpt: postView.excerpt,
             disableNunjucks: postView.disableNunjucks,
-            lang: postView.lang
+            lang: postView.lang,
+            extra: postView.extra
         } as Post;
         if (isIncludeId) {
             post.id = postView.id!;

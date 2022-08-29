@@ -1,24 +1,6 @@
-export default interface CategoryView {
+import Category from "@/entities/Category";
 
-    /**
-     * id
-     */
-    id: number;
-
-    /**
-     * 名称
-     */
-    name: string;
-
-    /**
-     * 创建时间
-     */
-    createTime: Date;
-
-    /**
-     * 更新时间
-     */
-    updateTime: Date;
+export default interface CategoryView extends Category{
 
     /**
      * 子类

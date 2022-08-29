@@ -7,7 +7,8 @@ import Database from "@/plugins/Database";
 /**
  * 将列表转为树形
  * @param list 列表
- * @param categoryCountMap 文章分类映射
+ * @param categoryPostCountMap 文章分类映射
+ * @param categoryPageCountMap 页面分类映射
  */
 function tree(list: Array<Category>, categoryPostCountMap: Map<any, number>, categoryPageCountMap: Map<any, number>): Array<CategoryView> {
     let views = new Array<CategoryView>();
@@ -16,6 +17,7 @@ function tree(list: Array<Category>, categoryPostCountMap: Map<any, number>, cat
             views.push(getChildren({
                 id: category.id!,
                 name: category.name,
+                parentId: category.parentId,
                 createTime: category.createTime,
                 updateTime: category.updateTime,
                 children: [],
@@ -33,6 +35,7 @@ function getChildren(categoryView: CategoryView, list: Array<Category>, category
             categoryView.children.push(getChildren({
                 id: category.id!,
                 name: category.name,
+                parentId: category.parentId,
                 createTime: category.createTime,
                 updateTime: category.updateTime,
                 children: [],

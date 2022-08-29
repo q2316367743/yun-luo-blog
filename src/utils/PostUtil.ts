@@ -10,19 +10,18 @@ const excludeKey = ['extra', 'content', 'fileName', 'path'];
 
 /**
  * 解析文章
- * @param path 文章地址
+ * @param basePath 基础文件所在目录
  * @param name 文件名，默认文章名
  * @param renderContent 是否解析渲染内容，默认不解析
  * @return 文章详情
  */
-export async function parsePost(path: string, name: string, renderContent: boolean = false): Promise<PostView | void> {
+export async function parsePost(basePath: string, name: string, renderContent: boolean = false): Promise<PostView | void> {
     // 默认当前时间
     let date = new Date();
     // 初始数据
     let post = {
         title: name,
         fileName: name,
-        path: path,
         layout: '',
         status: 1,
         date: date,
@@ -36,7 +35,7 @@ export async function parsePost(path: string, name: string, renderContent: boole
         lang: "",
         extra: new Array<Entry>()
     } as PostView;
-    const contents = await FileApi.readFile(path);
+    const contents = await FileApi.readFile(await FileApi.resolve(basePath, name));
     let lines = contents.split('\n');
     let start = true;
     let lastIndex = 0;
@@ -108,9 +107,10 @@ export async function parsePost(path: string, name: string, renderContent: boole
 
 /**
  * 将文章保存
+ * @param basePath 基础目录
  * @param post 文章内容
  */
-export async function savePost(post: PostView): Promise<void> {
+export async function savePost(basePath: string, post: PostView): Promise<void> {
     // 内容
     let content = "";
     content += "---\n";
@@ -130,9 +130,10 @@ export async function savePost(post: PostView): Promise<void> {
     content += "\n---\n"
     content += post.content;
     console.log('处理完成，开始保存')
-    return FileApi.writeFile(post.path, content)
+    return FileApi.writeFile(await FileApi.resolve(basePath, post.fileName), content)
 }
 
-export async function deleteByPath(path: string): Promise<void> {
+export async function deleteByPath(basePath: string, name: string): Promise<void> {
+    let path = await FileApi.resolve(basePath, name);
     return FileApi.removeFile(path);
 }

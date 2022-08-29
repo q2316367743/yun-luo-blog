@@ -1,12 +1,14 @@
 /**
  * hexo文档: https://hexo.io/zh-cn/docs/front-matter
  */
+import Entry from "@/global/Entry";
+
 export default interface Post {
 
     /**
      * ID
      */
-    id: number;
+    id?: number;
 
     /**
      * 文章标题
@@ -17,11 +19,6 @@ export default interface Post {
      * 文件名
      */
     fileName: string;
-
-    /**
-     * 文件路径
-     */
-    path: string;
 
     /**
      * 布局
@@ -36,12 +33,12 @@ export default interface Post {
     /**
      * 建立日期 - 文件建立日期，时间戳
      */
-    date: number;
+    date: number | Date | string;
 
     /**
      * 更新日期 - 文件更新日期，时间戳
      */
-    updated: number;
+    updated: number | Date | string;
 
     /**
      * 开启文章的评论功能
@@ -73,6 +70,6 @@ export default interface Post {
     /**
      * 额外的
      */
-    extra: Map<string, string>;
+    extra: Array<Entry>;
 
 }

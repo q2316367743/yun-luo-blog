@@ -278,7 +278,7 @@ export default defineComponent({
             postService.info(id!).then(post => {
                 if (post) {
                     // 存在文章，查询文章详情
-                    parsePost(post.path, post.fileName, true).then(renderPost => {
+                    parsePost(postService.getBasePath(), post.fileName, true).then(renderPost => {
                         this.post = renderPost!;
                         // 重新对post.id赋值
                         this.post.id = id;

@@ -285,7 +285,7 @@ export default defineComponent({
             postService.info(postId).then(post => {
                 if (post) {
                     // 存在文章，查询文章详情
-                    parsePost(post.path, post.fileName, true).then(post => {
+                    parsePost(postService.getBasePath(), post.fileName, true).then(post => {
                         this.post = post!;
                         // 重新对post.id赋值
                         this.post.id = postId;
@@ -304,7 +304,7 @@ export default defineComponent({
             pageService.info(postId).then(page => {
                 if (page) {
                     // 存在文章，查询文章详情
-                    parsePost(page.path, page.fileName, true).then(post => {
+                    parsePost(pageService.getBasePath(), page.fileName, true).then(post => {
                         this.post = post!;
                         // 重新对post.id赋值
                         this.post.id = postId;

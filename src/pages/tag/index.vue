@@ -85,7 +85,7 @@ export default defineComponent({
                 cancelButtonText: this.$t('common.cancel'),
                 inputValue: tag.name
             }).then(({value}) => {
-                tagService.update(tag.id, value).then(() => {
+                tagService.update(tag.id!, value).then(() => {
                     ElMessage({
                         showClose: true,
                         type: 'success',

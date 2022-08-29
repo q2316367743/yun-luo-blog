@@ -15,7 +15,18 @@
 import {defineComponent} from "vue";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
-import {categoryDb, pageCategoryDb, pageDb, pageTagDb, postCategoryDb, postDb, postTagDb, settingService, tagDb,} from "@/global/BeanFactory";
+import {
+    categoryDb,
+    pageCategoryDb,
+    pageDb,
+    pageService,
+    pageTagDb,
+    postCategoryDb,
+    postDb, postService,
+    postTagDb,
+    settingService,
+    tagDb,
+} from "@/global/BeanFactory";
 import {ElMessageBox} from "element-plus";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
@@ -90,6 +101,8 @@ export default defineComponent({
             console.log('4. 部分数据初始化');
             await imageStrategyContext.init();
             await settingService.init();
+            postService.setBasePath(await Constant.FOLDER.POST());
+            pageService.setBasePath(await Constant.FOLDER.PAGE());
             console.log('4.1 数据库初始化');
             await this.dbInit();
             // 4.2 启动时注册语言服务

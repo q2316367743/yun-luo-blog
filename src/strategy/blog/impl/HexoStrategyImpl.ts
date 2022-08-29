@@ -117,12 +117,14 @@ export default class HexoStrategyImpl implements BlogStrategy {
         let posts = await postService.list({
             status: PostStatusEnum.RELEASE
         });
-        await FileApi.copyFileToDir(_posts, false, posts.map(e => {
-            return {
-                name: e.fileName,
-                path: e.path
-            } as FileEntry
-        }));
+        let postFiles = new Array<FileEntry>();
+        for (let post of posts) {
+            postFiles.push({
+                name: post.fileName,
+                path: await FileApi.resolve(postService.getBasePath(), post.fileName)
+            })
+        }
+        await FileApi.copyFileToDir(_posts, false, postFiles);
         if (await FileApi.exist(_drafts)) {
             // 删除旧的文件夹
             await FileApi.removeDir(_drafts, true);
@@ -133,12 +135,14 @@ export default class HexoStrategyImpl implements BlogStrategy {
         let drafts = await postService.list({
             status: PostStatusEnum.DRAFT
         });
-        await FileApi.copyFileToDir(_drafts, false, drafts.map(e => {
-            return {
-                name: e.fileName,
-                path: e.path
-            } as FileEntry
-        }));
+        let draftFiles = new Array<FileEntry>();
+        for (let draft of drafts) {
+            draftFiles.push({
+                name: draft.fileName,
+                path: await FileApi.resolve(postService.getBasePath(), draft.fileName)
+            })
+        }
+        await FileApi.copyFileToDir(_drafts, false, draftFiles);
         return Promise.resolve();
     }
 
@@ -162,7 +166,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             let pageInfoPath = await FileApi.resolve(sourceDir, timestamp + "");
             await FileApi.createDir(pageInfoPath);
             let path = await FileApi.resolve(pageInfoPath, 'index.md');
-            await FileApi.copyFile(page.path, path);
+            await FileApi.copyFile(await FileApi.resolve(pageService.getBasePath(), page.fileName), path);
         }
     }
 
