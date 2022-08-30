@@ -1,12 +1,13 @@
 import {ElLoading, ElMessage} from 'element-plus';
 
-
 import emitter from '@/plugins/mitt';
+import Database from "@/plugins/Database";
 
 import Constant from '@/global/Constant';
 
 import ArrayUtil from '@/utils/ArrayUtil';
 import {deleteByPath, parsePost, savePost} from '@/utils/PostUtil'
+
 import FileApi from "@/api/FileApi";
 
 import Post from '@/entities/Post';
@@ -17,7 +18,6 @@ import Category from "@/entities/Category";
 
 import PostView from '@/views/PostView';
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
-import Database from "@/plugins/Database";
 
 export default class PostService {
 
@@ -26,27 +26,22 @@ export default class PostService {
     postDb: Database<Post>;
     postTagDb: Database<PostTag>;
     postCategoryDb: Database<PostCategory>;
+    private readonly type: string;
 
-    private basePath: string = '';
-
-    constructor(tagDb: Database<Tag>,
-                categoryDb: Database<Category>,
-                postDb: Database<Post>,
-                postTagDb: Database<PostTag>,
-                postCategoryDb: Database<PostCategory>) {
+    constructor(
+        type: string,
+        tagDb: Database<Tag>,
+        categoryDb: Database<Category>,
+        postDb: Database<Post>,
+        postTagDb: Database<PostTag>,
+        postCategoryDb: Database<PostCategory>
+    ) {
+        this.type = type;
         this.tagDb = tagDb;
         this.categoryDb = categoryDb;
         this.postDb = postDb;
         this.postTagDb = postTagDb;
         this.postCategoryDb = postCategoryDb;
-    }
-
-    setBasePath(basePath: string): void {
-        this.basePath = basePath;
-    }
-
-    getBasePath(): string {
-        return this.basePath;
     }
 
     async insert(post: PostView, folder: string, saveContent: boolean = true): Promise<void> {
@@ -73,13 +68,14 @@ export default class PostService {
         if (saveContent) {
             console.log('此处保存内容')
             // 此处保存内容
-            savePost(this.basePath, post).then();
+            savePost(this.type, post).then(() => {
+                // 保存完后，发布新增事件
+                emitter.emit(MessageEventEnum.POST_ADD);
+            });
         }
-        // 发布新增事件
-        emitter.emit(MessageEventEnum.POST_ADD);
     }
 
-    async update(post: PostView, saveContent: boolean = true): Promise<void> {
+    async update(post: PostView): Promise<void> {
         // 先查询文章
         console.log('先查询文章', post.id);
         let oldPost = this.postDb.one({id: post.id});
@@ -110,13 +106,12 @@ export default class PostService {
         await this.insertTag(postId, post.tags,);
         // 插入分类
         await this.insertCategory(postId, post.categories);
-        if (saveContent) {
-            // 此处保存内容
-            console.log('此处保存内容')
-            savePost(this.basePath, post).then();
-        }
-        // 发送更新2022年8月19日09:44:00
-        emitter.emit(MessageEventEnum.POST_UPDATE);
+        // 此处保存内容
+        console.log('此处保存内容')
+        savePost(this.type, post).then(() => {
+            // 文章保存完，发送更新事件
+            emitter.emit(MessageEventEnum.POST_UPDATE);
+        });
     }
 
     private async insertTag(
@@ -214,17 +209,20 @@ export default class PostService {
         // 根据文章查询标签
         let postTag = this.postTagDb.list();
         let tags = this.tagDb.list();
+        let postTagMap = ArrayUtil.group(postTag, 'postId');
+        let tagMap = ArrayUtil.map(tags, 'id');
         // 查询全部的分类
         let postCategories = this.postCategoryDb.list();
         let postCategoryMap = ArrayUtil.map(postCategories, 'postId');
         let categories = this.categoryDb.list();
         let categoryMap = ArrayUtil.map(categories, 'id');
-        let postTagMap = ArrayUtil.group(postTag, 'postId');
-        let tagMap = ArrayUtil.map(tags, 'id');
-        return Promise.resolve(posts.map(e => {
-            let view = Object.assign({} as PostView, e);
+        return Promise.resolve(posts.map(post => {
+            let view = {
+                ...post,
+                type: this.type
+            } as PostView;
             // 处理标签
-            let postTags = postTagMap.get(e.id);
+            let postTags = postTagMap.get(post.id);
             let tagList = Array<string>();
             if (postTags) {
                 for (let item of postTags) {
@@ -237,7 +235,7 @@ export default class PostService {
             view.tags = tagList;
             view.categories = new Array<string>();
             // 查询分类
-            let postCategory = postCategoryMap.get(e.id);
+            let postCategory = postCategoryMap.get(post.id);
             if (postCategory) {
                 // 存在分类
                 this.renderCategoryName(categoryMap, view.categories, postCategory.categoryId);
@@ -262,8 +260,14 @@ export default class PostService {
         }
     }
 
-    info(id: number): Promise<Post | void> {
-        return Promise.resolve(this.postDb.one({id: id}));
+    async info(id: number): Promise<PostView | void> {
+        let post = this.postDb.one({id: id});
+        let view = await parsePost(this.type, post!.fileName);
+        if (view) {
+            view.type = this.type;
+        }
+        // 查询全部
+        return view;
     }
 
     async refresh(path: string): Promise<void> {
@@ -344,7 +348,7 @@ export default class PostService {
         // 删除文章
         await this.postDb.delete(id);
         // 删除内容
-        await deleteByPath(this.basePath, post.fileName)
+        await deleteByPath(this.type, post.fileName)
         // 删除结束
         emitter.emit(MessageEventEnum.POST_DELETE);
         return Promise.resolve();
@@ -363,7 +367,6 @@ export default class PostService {
             excerpt: postView.excerpt,
             disableNunjucks: postView.disableNunjucks,
             lang: postView.lang,
-            extra: postView.extra
         } as Post;
         if (isIncludeId) {
             post.id = postView.id!;

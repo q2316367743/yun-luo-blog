@@ -23,8 +23,8 @@ export const pageCategoryDb = new Database<PostCategory>('');
 
 export const tagService = new TagService(tagDb, postTagDb, pageTagDb);
 export const categoryService = new CategoryService(categoryDb, postCategoryDb, pageCategoryDb);
-export const postService = new PostService(tagDb, categoryDb, postDb, postTagDb, postCategoryDb);
-export const pageService = new PostService(tagDb, categoryDb, pageDb, pageTagDb, pageCategoryDb);
+export const postService = new PostService("posts", tagDb, categoryDb, postDb, postTagDb, postCategoryDb);
+export const pageService = new PostService("pages", tagDb, categoryDb, pageDb, pageTagDb, pageCategoryDb);
 
 export const terminalService = new TerminalService();
 export const serverService = new ServerService();

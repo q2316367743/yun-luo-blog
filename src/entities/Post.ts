@@ -1,8 +1,6 @@
 /**
  * hexo文档: https://hexo.io/zh-cn/docs/front-matter
  */
-import Entry from "@/global/Entry";
-
 export default interface Post {
 
     /**
@@ -66,10 +64,5 @@ export default interface Post {
      * @default Inherited from _config.yml
      */
     lang: string;
-
-    /**
-     * 额外的
-     */
-    extra: Array<Entry>;
 
 }

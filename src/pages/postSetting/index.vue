@@ -62,14 +62,15 @@ import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
 import CategoryView from "@/views/CategoryView";
 import {Close} from "@element-plus/icons-vue";
+import {categoryService, postService, tagService} from "@/global/BeanFactory";
 
 export default defineComponent({
     name: 'post-setting',
     props: {
-        post: {
-            type: Object as PropType<PostView>,
+        postId: {
+            type: Number,
             required: false,
-
+            default: 0
         }
     },
     data: () => ({
@@ -90,8 +91,9 @@ export default defineComponent({
             excerpt: "",
             disableNunjucks: "",
             lang: "",
+            type: '',
             extra: new Array<Entry>(),
-            content: ''
+            expand: '',
         } as PostView,
         categoryProps: {
             checkStrictly: true,
@@ -103,6 +105,20 @@ export default defineComponent({
         close: markRaw(Close)
     }),
     methods: {
+        init() {
+            // 文章详情
+            postService.info(this.postId).then(post => {
+                PostUtil
+            })
+            // 标签
+            tagService.list().then(tags => {
+                this.tags = tags;
+            })
+            // 分类
+            categoryService.list().then((categoryTree: Array<CategoryView>) => {
+                this.categoryTree = categoryTree;
+            })
+        },
         extraAdd() {
             this.post.extra.push({
                 id: new Date().getTime(),

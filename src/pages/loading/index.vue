@@ -19,10 +19,9 @@ import {
     categoryDb,
     pageCategoryDb,
     pageDb,
-    pageService,
     pageTagDb,
     postCategoryDb,
-    postDb, postService,
+    postDb,
     postTagDb,
     settingService,
     tagDb,
@@ -101,8 +100,6 @@ export default defineComponent({
             console.log('4. 部分数据初始化');
             await imageStrategyContext.init();
             await settingService.init();
-            postService.setBasePath(await Constant.FOLDER.POST());
-            pageService.setBasePath(await Constant.FOLDER.PAGE());
             console.log('4.1 数据库初始化');
             await this.dbInit();
             // 4.2 启动时注册语言服务

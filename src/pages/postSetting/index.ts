@@ -1,6 +1,6 @@
 import PostView from "@/views/PostView";
 
-export default interface PostSetting {
+export default interface PostSettingPage {
 
     getView: () => PostView
 

@@ -1,9 +1,16 @@
 import Post from "@/entities/Post";
+import Entry from "@/global/Entry";
 
 /**
- * hexo文档: https://hexo.io/zh-cn/docs/front-matter
+ * 文章视图对象，真正存储到数据库的
  */
 export default interface PostView extends Post{
+
+    /**
+     * 类型，posts/pages<br />
+     * 在读取的时候直接赋值
+     */
+    type: string;
 
     /**
      * 标签
@@ -14,6 +21,16 @@ export default interface PostView extends Post{
      * 分类
      */
     categories: Array<string>;
+
+    /**
+     * 额外的
+     */
+    extra: Array<Entry>;
+
+    /**
+     * 拓展属性
+     */
+    expand: string;
 
     /**
      * 内容

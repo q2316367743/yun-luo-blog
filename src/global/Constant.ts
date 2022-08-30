@@ -99,7 +99,9 @@ function siteDir(): Entry {
 
 export default {
     NAME: {
+        POST: POST,
         POST_IMAGES: POST_IMAGES,
+        PAGE: PAGE,
         CONFIG: CONFIG
     },
     SETTING: {

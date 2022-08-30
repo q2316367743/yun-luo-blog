@@ -1,21 +1,21 @@
-import PostView from '@/views/PostView';
 import FileApi from "@/api/FileApi";
 import Entry from "@/global/Entry";
 import jsYaml from "js-yaml";
 import ArrayUtil from "@/utils/ArrayUtil";
+import Constant from "@/global/Constant";
+import PostView from "@/views/PostView";
 
 const knownKey = ['title', 'layout', 'status', 'date', 'updated', 'comments', 'tags',
     'categories', 'permalink', 'excerpt', 'disableNunjucks', 'lang'];
-const excludeKey = ['extra', 'content', 'fileName', 'path'];
 
 /**
  * 解析文章
- * @param basePath 基础文件所在目录
+ * @param type 文章类型：posts/pages
  * @param name 文件名，默认文章名
  * @param renderContent 是否解析渲染内容，默认不解析
  * @return 文章详情
  */
-export async function parsePost(basePath: string, name: string, renderContent: boolean = false): Promise<PostView | void> {
+export async function parsePost(type: string, name: string, renderContent: boolean = true): Promise<PostView | void> {
     // 默认当前时间
     let date = new Date();
     // 初始数据
@@ -27,19 +27,19 @@ export async function parsePost(basePath: string, name: string, renderContent: b
         date: date,
         updated: date,
         comments: false,
-        tags: [],
-        categories: [],
         permalink: "",
         excerpt: "",
         disableNunjucks: "",
         lang: "",
-        extra: new Array<Entry>()
+        type: type,
+        extra: new Array<Entry>(),
+        expand: ''
     } as PostView;
-    const contents = await FileApi.readFile(await FileApi.resolve(basePath, name));
+    const contents = await FileApi.readFile(await FileApi.resolve(await Constant.FOLDER.BASE(), type, name));
     let lines = contents.split('\n');
     let start = true;
     let lastIndex = 0;
-    let frontMatter = "";
+    let frontMatterStr = "";
     for (let index = 0; index < lines.length; index++) {
         let line = lines[index].trim();
         if (line !== '') {
@@ -62,7 +62,7 @@ export async function parsePost(basePath: string, name: string, renderContent: b
                         break;
                     } else {
                         // 其他的，加入拓展
-                        frontMatter += (line + "\n");
+                        frontMatterStr += (line + "\n");
                     }
                 } catch (e) {
                     console.error('异常');
@@ -72,26 +72,28 @@ export async function parsePost(basePath: string, name: string, renderContent: b
         }
     }
     // 默认解析
-    let temp = Object.assign({}, jsYaml.load(frontMatter)) as any;
-    for (let key of Object.keys(temp)) {
-        if (ArrayUtil.contains(excludeKey, key)) {
-            // 如果等于拓展，跳过
-            continue;
-        }
+    let frontMatter = Object.assign({}, jsYaml.load(frontMatterStr)) as any;
+    for (let key of Object.keys(frontMatter)) {
         if (ArrayUtil.contains(knownKey, key)) {
             // 这是个已知的key
-            if (temp[key]) {
+            if (frontMatter[key]) {
                 // 只有值存在的时候才会替换
                 // @ts-ignore
-                post[key] = temp[key];
+                post[key] = frontMatter[key];
             }
         } else {
             // 这是个未知的key
-            post.extra.push({
-                id: new Date().getTime(),
-                key: key,
-                value: temp[key]
-            })
+            if (typeof frontMatter[key] === 'object') {
+                // 如果是个对象，咋加入拓展
+                post.expand = post.expand + "\n" + JSON.stringify(frontMatter[key], null, 4);
+            } else {
+                // 普通值，
+                post.extra.push({
+                    id: new Date().getTime(),
+                    key: key,
+                    value: frontMatter[key]
+                });
+            }
         }
     }
     if (renderContent) {
@@ -100,17 +102,15 @@ export async function parsePost(basePath: string, name: string, renderContent: b
         lines.slice(lastIndex).flatMap(line => post.content = post.content + line + "\n");
     }
     // 读取文章内容
-    return new Promise<PostView | void>((resolve) => {
-        resolve(post);
-    });
+    return Promise.resolve(post);
 }
 
 /**
  * 将文章保存
- * @param basePath 基础目录
+ * @param type 文章类型：posts/pages
  * @param post 文章内容
  */
-export async function savePost(basePath: string, post: PostView): Promise<void> {
+export async function savePost(type: string, post: PostView): Promise<void> {
     // 内容
     let content = "";
     content += "---\n";
@@ -127,13 +127,17 @@ export async function savePost(basePath: string, post: PostView): Promise<void> 
         target[entry.key] = entry.value;
     }
     content += jsYaml.dump(target);
+    content += '\n';
+    // 加入用户拓展属性
+    content += post.expand
     content += "\n---\n"
     content += post.content;
     console.log('处理完成，开始保存')
-    return FileApi.writeFile(await FileApi.resolve(basePath, post.fileName), content)
+    let path = await FileApi.resolve(await Constant.FOLDER.BASE(), type, post.fileName);
+    return FileApi.writeFile(path, content)
 }
 
-export async function deleteByPath(basePath: string, name: string): Promise<void> {
-    let path = await FileApi.resolve(basePath, name);
+export async function deleteByPath(type: string, name: string): Promise<void> {
+    let path = await FileApi.resolve(await Constant.FOLDER.BASE(), type, name);
     return FileApi.removeFile(path);
 }

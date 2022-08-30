@@ -49,57 +49,7 @@
             <template #header>
                 <h2>{{ sourceType }}设置</h2>
             </template>
-            <el-tabs v-model="activeName">
-                <el-tab-pane label="常规" name="basic">
-                    <el-form v-model="post" label-position="top">
-                        <el-form-item label="标签">
-                            <el-select v-model="post.tags" multiple filterable allow-create default-first-option
-                                       :reserve-keyword="false" style="width: 314px" placeholder="请选择标签">
-                                <el-option v-for="item in tags" :key="item.id" :label="item.name" :value="item.name"/>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="分类">
-                            <el-cascader v-model="post.categories" :options="categoryTree" :props="categoryProps"
-                                         clearable placeholder="请选择分类"/>
-                        </el-form-item>
-                        <el-form-item label="状态">
-                            <el-select v-model="post.status">
-                                <el-option :value="1" label="草稿"/>
-                                <el-option :value="2" label="发布"/>
-                                <el-option :value="3" label="回收站"/>
-                            </el-select>
-                        </el-form-item>
-                    </el-form>
-                </el-tab-pane>
-                <el-tab-pane label="高级" name="senior">
-                    <el-form v-model="post" label-position="top">
-                        <el-form-item :label="`${sourceType}网址`">
-                            <el-input v-model="post.permalink"></el-input>
-                        </el-form-item>
-                        <el-form-item label="布局">
-                            <el-input v-model="post.layout" placeholder="请输入布局"/>
-                        </el-form-item>
-                        <el-form-item label="创建时间">
-                            <el-date-picker v-model="post.date" type="datetime" :default-time="new Date()"/>
-                        </el-form-item>
-                    </el-form>
-                </el-tab-pane>
-                <el-tab-pane label="额外属性" name="extra">
-                    <!-- 其他属性 -->
-                    <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
-                        <el-input v-model="item.key" style="width: 50%;margin: 5px;">
-                            <template #prepend>K</template>
-                        </el-input>
-                        <el-input v-model="item.value" style="width: 50%;margin: 5px;">
-                            <template #prepend>V</template>
-                            <template #append>
-                                <el-button :icon="close" @click="extraRemove(item.id)"></el-button>
-                            </template>
-                        </el-input>
-                    </div>
-                    <el-button type="primary" @click="extraAdd">新增</el-button>
-                </el-tab-pane>
-            </el-tabs>
+            <post-setting :post-id="this.post.id" />
         </el-dialog>
         <!-- 文章预览 -->
         <el-drawer v-model="previewDialog" direction="rtl" size="800px">
@@ -133,7 +83,6 @@ import markdownIt from '@/plugins/markdownIt';
 
 import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
-import {parsePost} from "@/utils/PostUtil";
 import {categoryService, pageService, postService, tagService} from '@/global/BeanFactory';
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 
@@ -144,10 +93,11 @@ import Entry from "@/global/Entry";
 import CategoryView from "@/views/CategoryView";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import Constant from "@/global/Constant";
+import PostSetting from "@/pages/postSetting/index.vue";
 
 export default defineComponent({
     name: 'post-edit',
-    components: {MarkdownEditor},
+    components: {PostSetting, MarkdownEditor},
     setup() {
         const check = markRaw(Check);
         const promotion = markRaw(Promotion);
@@ -179,7 +129,9 @@ export default defineComponent({
             excerpt: "",
             disableNunjucks: "",
             lang: "",
+            type: '',
             extra: new Array<Entry>(),
+            expand: '',
             content: ''
         } as PostView,
         categoryProps: {
@@ -285,11 +237,9 @@ export default defineComponent({
             postService.info(postId).then(post => {
                 if (post) {
                     // 存在文章，查询文章详情
-                    parsePost(postService.getBasePath(), post.fileName, true).then(post => {
-                        this.post = post!;
-                        // 重新对post.id赋值
-                        this.post.id = postId;
-                    });
+                    this.post = post!;
+                    // 重新对post.id赋值
+                    this.post.id = postId;
                 } else {
                     ElMessage({
                         showClose: true,
@@ -304,11 +254,9 @@ export default defineComponent({
             pageService.info(postId).then(page => {
                 if (page) {
                     // 存在文章，查询文章详情
-                    parsePost(pageService.getBasePath(), page.fileName, true).then(post => {
-                        this.post = post!;
-                        // 重新对post.id赋值
-                        this.post.id = postId;
-                    });
+                    this.post = page!;
+                    // 重新对post.id赋值
+                    this.post.id = postId;
                 } else {
                     ElMessage({
                         showClose: true,
