@@ -45,7 +45,7 @@
         <template #header>
             <h2>{{ $t('post.list.postSetting') }}</h2>
         </template>
-        <post-setting :post-id="postId" ref="postSetting" />
+        <post-setting :post-view="post" ref="postSetting"/>
         <template #footer>
             <el-button @click="settingDialog = false">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="settingSave">{{ $t('common.save') }}</el-button>
@@ -89,7 +89,7 @@ export default defineComponent({
             size: 10,
             total: 0
         },
-        postId: 0,
+        post: {} as PostView,
         settingDialog: false,
         activeName: "basic",
         categoryProps: {
@@ -196,9 +196,23 @@ export default defineComponent({
             });
         },
         openSettingDialog(id?: number) {
-            this.postId = id!;
-            // 打开设置弹窗
-            this.settingDialog = true;
+            postService.info(id!).then(post => {
+                if (post) {
+                    this.post = post;
+                    // 打开设置弹窗
+                    this.settingDialog = true;
+                    this.$nextTick(() => {
+                        let postSetting = this.$refs.postSetting as PostSettingPage;
+                        postSetting.setView(post);
+                    })
+                } else {
+                    ElMessage({
+                        showClose: false,
+                        type: 'error',
+                        message: '文章未找到'
+                    })
+                }
+            })
         },
         settingSave() {
             let postSetting = this.$refs.postSetting as PostSettingPage

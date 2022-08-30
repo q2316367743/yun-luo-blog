@@ -37,7 +37,6 @@
                 </el-form-item>
             </el-form>
         </el-tab-pane>
-        <el-tab-pane label="SEO" name="seo"></el-tab-pane>
         <el-tab-pane :label="$t('post.list.extraAttr')" name="extra">
             <!-- 其他属性 -->
             <div v-for="(item, index) in post.extra" :key="index" style="display: flex">
@@ -53,6 +52,9 @@
             </div>
             <el-button type="primary" @click="extraAdd">{{ $t('common.add') }}</el-button>
         </el-tab-pane>
+        <el-tab-pane label="拓展" name="expand">
+            <el-input type="textarea" :rows="5" v-model="post.expand"></el-input>
+        </el-tab-pane>
     </el-tabs>
 </template>
 <script lang="ts">
@@ -62,15 +64,14 @@ import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
 import CategoryView from "@/views/CategoryView";
 import {Close} from "@element-plus/icons-vue";
-import {categoryService, postService, tagService} from "@/global/BeanFactory";
+import {categoryService, tagService} from "@/global/BeanFactory";
 
 export default defineComponent({
     name: 'post-setting',
     props: {
-        postId: {
-            type: Number,
+        postView: {
+            type: Object as PropType<PostView>,
             required: false,
-            default: 0
         }
     },
     data: () => ({
@@ -94,6 +95,7 @@ export default defineComponent({
             type: '',
             extra: new Array<Entry>(),
             expand: '',
+            content: ''
         } as PostView,
         categoryProps: {
             checkStrictly: true,
@@ -104,12 +106,21 @@ export default defineComponent({
         categoryTree: new Array<CategoryView>(),
         close: markRaw(Close)
     }),
+    created() {
+        this.init();
+    },
+    watch: {
+        postView() {
+            this.init();
+        }
+    },
     methods: {
         init() {
+            if (!this.postView) {
+                return;
+            }
             // 文章详情
-            postService.info(this.postId).then(post => {
-                PostUtil
-            })
+            this.post = this.postView;
             // 标签
             tagService.list().then(tags => {
                 this.tags = tags;
@@ -127,10 +138,15 @@ export default defineComponent({
             })
         },
         extraRemove(id: number) {
+            console.log(this.post.extra, id)
             this.post.extra = this.post.extra.filter(e => e.id !== id);
         },
         getView() {
             return this.post;
+        },
+        setView(view: PostView) {
+            this.post = view;
+            console.log(this.post)
         }
     }
 });

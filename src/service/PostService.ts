@@ -265,6 +265,7 @@ export default class PostService {
         let view = await parsePost(this.type, post!.fileName);
         if (view) {
             view.type = this.type;
+            view.id = id;
         }
         // 查询全部
         return view;

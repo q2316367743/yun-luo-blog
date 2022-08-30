@@ -41,7 +41,7 @@ export async function parsePost(type: string, name: string, renderContent: boole
     let lastIndex = 0;
     let frontMatterStr = "";
     for (let index = 0; index < lines.length; index++) {
-        let line = lines[index].trim();
+        let line = lines[index];
         if (line !== '') {
             // 有值
             if (start) {
@@ -73,7 +73,10 @@ export async function parsePost(type: string, name: string, renderContent: boole
     }
     // 默认解析
     let frontMatter = Object.assign({}, jsYaml.load(frontMatterStr)) as any;
+    let timestamp = new Date().getTime();
+    let index = 0;
     for (let key of Object.keys(frontMatter)) {
+        index += 1;
         if (ArrayUtil.contains(knownKey, key)) {
             // 这是个已知的key
             if (frontMatter[key]) {
@@ -89,7 +92,7 @@ export async function parsePost(type: string, name: string, renderContent: boole
             } else {
                 // 普通值，
                 post.extra.push({
-                    id: new Date().getTime(),
+                    id: timestamp + index,
                     key: key,
                     value: frontMatter[key]
                 });
@@ -127,9 +130,11 @@ export async function savePost(type: string, post: PostView): Promise<void> {
         target[entry.key] = entry.value;
     }
     content += jsYaml.dump(target);
-    content += '\n';
-    // 加入用户拓展属性
-    content += post.expand
+    if (post.expand && post.expand.trim() !== '') {
+        content += '\n';
+        // 加入用户拓展属性
+        content += post.expand
+    }
     content += "\n---\n"
     content += post.content;
     console.log('处理完成，开始保存')

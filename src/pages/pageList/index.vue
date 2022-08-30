@@ -44,7 +44,7 @@
         <template #header>
             <h2>{{ $t('post.list.postSetting') }}</h2>
         </template>
-        <post-setting :post-id="postId" ref="postSetting"></post-setting>
+        <post-setting :post-view="post" ref="postSetting"></post-setting>
         <template #footer>
             <el-button @click="settingDialog = false">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="settingSave">{{ $t('common.save') }}</el-button>
@@ -76,7 +76,7 @@ export default defineComponent({
         type: 1,
         showPages: new Array<PostView>(),
         pages: new Array<PostView>(),
-        postId: 0,
+        post: {} as PostView,
         settingDialog: false,
         activeName: "basic",
         categoryProps: {
@@ -190,12 +190,26 @@ export default defineComponent({
             });
         },
         openPageSettingDialog(id?: number) {
-            this.postId = id!;
-            // 打开设置弹窗
-            this.settingDialog = true;
+            pageService.info(id!).then(post => {
+                if (post) {
+                    this.post = post;
+                    // 打开设置弹窗
+                    this.settingDialog = true;
+                    this.$nextTick(() => {
+                        let postSetting = this.$refs.postSetting as PostSettingPage;
+                        postSetting.setView(post);
+                    })
+                }else  {
+                    ElMessage({
+                        showClose: false,
+                        type: 'error',
+                        message: '页面未找到'
+                    })
+                }
+            })
         },
         settingSave() {
-            let postSetting = this.$refs.postSetting as PostSettingPage
+            let postSetting = this.$refs.postSetting as PostSettingPage;
             pageService.update(postSetting.getView()).then(() => {
                 this.settingDialog = false;
                 this.listPage();

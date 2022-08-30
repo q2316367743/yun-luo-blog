@@ -45,11 +45,12 @@
             </div>
         </div>
         <!-- 文章设置 -->
-        <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false" top="15vh">
+        <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false"
+                   top="15vh" @close="settingDialogClose" destroy-on-close>
             <template #header>
                 <h2>{{ sourceType }}设置</h2>
             </template>
-            <post-setting :post-id="this.post.id" />
+            <post-setting :post-view="post" ref="postSetting"/>
         </el-dialog>
         <!-- 文章预览 -->
         <el-drawer v-model="previewDialog" direction="rtl" size="800px">
@@ -94,6 +95,7 @@ import CategoryView from "@/views/CategoryView";
 import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import Constant from "@/global/Constant";
 import PostSetting from "@/pages/postSetting/index.vue";
+import PostSettingPage from "@/pages/postSetting/index";
 
 export default defineComponent({
     name: 'post-edit',
@@ -404,15 +406,19 @@ export default defineComponent({
                 return Promise.reject('来源未知');
             }
         },
-        extraAdd() {
-            this.post.extra.push({
-                id: new Date().getTime(),
-                key: "",
-                value: ""
-            })
-        },
-        extraRemove(id: number) {
-            this.post.extra = this.post.extra.filter(e => e.id !== id);
+        settingDialogClose() {
+            // 先获取配置
+            let postSetting = this.$refs.postSetting as PostSettingPage;
+            if (postSetting) {
+                console.log(postSetting.getView());
+                this.post = {
+                    ...postSetting.getView(),
+                    title: this.post.title,
+                    content: this.post.content,
+                } as PostView;
+                postSetting.setView(this.post);
+                console.log(this.post);
+            }
         }
     }
 });
