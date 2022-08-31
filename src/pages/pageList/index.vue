@@ -172,18 +172,21 @@ export default defineComponent({
                 pageService.deleteById(id!).then(() => {
                     // 删除成功，准备删除源文件
                     ElMessage({
+                        showClose: true,
                         type: 'success',
                         message: this.$t('hint.delete_success'),
                     });
                     this.listPage();
                 }).catch((e) => {
                     ElMessage({
+                        showClose: true,
                         type: 'error',
                         message: this.$t('hint.delete_fail') + ',' + e,
                     })
                 });
             }).catch(() => {
                 ElMessage({
+                    showClose: true,
                     type: 'info',
                     message: this.$t('hint.delete_cancel'),
                 })

@@ -63,6 +63,11 @@ const HEXO_PACKAGE_JSON = 'package.json';
 const CONTENT_WORKSPACE_GITIGNORE = 'dist';
 const CONTENT_SITE_GITIGNORE = 'hexo/public\nhexo/node_modules\nsource';
 
+// front-matter
+const SEPARATE = '---';
+const EXTRA = '# extra';
+const EXPAND = '# expand';
+
 /**
  * 获取工作空间目录
  */
@@ -103,6 +108,11 @@ export default {
         POST_IMAGES: POST_IMAGES,
         PAGE: PAGE,
         CONFIG: CONFIG
+    },
+    FRONT_MATTER: {
+        SEPARATE: SEPARATE,
+        EXTRA: EXTRA,
+        EXPAND: EXPAND
     },
     SETTING: {
         SERVER: SETTING_SERVER,

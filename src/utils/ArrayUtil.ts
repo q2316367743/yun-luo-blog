@@ -1,3 +1,5 @@
+import Entry from "@/global/Entry";
+
 export default {
     contains(arr: any[], keyword: any): boolean {
         try {
@@ -10,6 +12,25 @@ export default {
         } catch (e) {
             console.error(e);
             return false;
+        }
+    },
+    /**
+     * 已知模板是否是以数组中任意字符串开头
+     *
+     * @param template 检测的模板
+     * @param keywords 关键字数组
+     * @param separatorLen 分隔符长度，默认为0
+     * @return 如果检测到，则返回去除关键字的数组，未检测到，返回空字符串
+     */
+    startWith(template: string, keywords: string[], separatorLen: number = 0): Entry | void{
+        for (let keyword of keywords) {
+            if (template.startsWith(keyword)) {
+                return {
+                    id: new Date().getTime(),
+                    key: keyword,
+                    value: template.substring(keyword.length + separatorLen).trim()
+                }
+            }
         }
     },
     /**

@@ -13,6 +13,6 @@ export default interface Entry {
     /**
      * 值
      */
-    value: string;
+    value: any;
 
 }

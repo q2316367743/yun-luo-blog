@@ -8,6 +8,7 @@ import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import FileEntry from "@/api/entities/FileEntry";
 import NativeApi from "@/api/NativeApi";
 import syncRemoteStrategyContext from "@/strategy/syncRemote/SyncRemoteStrategyContext";
+import {resolvePath} from "@/utils/PostUtil";
 
 /**
  * hexo策略
@@ -121,7 +122,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         for (let post of posts) {
             postFiles.push({
                 name: post.fileName,
-                path: await FileApi.resolve(postService.getBasePath(), post.fileName)
+                path: await resolvePath(post)
             })
         }
         await FileApi.copyFileToDir(_posts, false, postFiles);
@@ -139,7 +140,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
         for (let draft of drafts) {
             draftFiles.push({
                 name: draft.fileName,
-                path: await FileApi.resolve(postService.getBasePath(), draft.fileName)
+                path: await resolvePath(draft)
             })
         }
         await FileApi.copyFileToDir(_drafts, false, draftFiles);
@@ -166,7 +167,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             let pageInfoPath = await FileApi.resolve(sourceDir, timestamp + "");
             await FileApi.createDir(pageInfoPath);
             let path = await FileApi.resolve(pageInfoPath, 'index.md');
-            await FileApi.copyFile(await FileApi.resolve(pageService.getBasePath(), page.fileName), path);
+            await FileApi.copyFile(await resolvePath(page), path);
         }
     }
 
