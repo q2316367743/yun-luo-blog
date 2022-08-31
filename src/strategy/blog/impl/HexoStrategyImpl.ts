@@ -1,5 +1,5 @@
 import BlogStrategy from "@/strategy/blog/BlogStrategy";
-import {ElLoading, ElMessage} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import Hexo from "@/global/config/Hexo";
@@ -40,7 +40,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             await this.copyPage(loading);
             await this.copyPost(loading);
             await this.clean(loading);
-            await this.deploy(loading);
+            await this.generate(loading);
             await this.copyPostImage(loading);
             await this.copyToDist(loading);
             loading.setText("推送到远程");
@@ -180,12 +180,12 @@ export default class HexoStrategyImpl implements BlogStrategy {
         return Promise.resolve();
     }
 
-    private async deploy(loading?: { setText: (message: string) => void }): Promise<void> {
+    private async generate(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
             loading.setText("执行构建命令");
         }
         // 执行部署命令
-        await this.invokeCommand(Constant.HEXO.DEPLOY);
+        await this.invokeCommand(Constant.HEXO.GENERATE);
         return Promise.resolve();
     }
 
@@ -236,27 +236,23 @@ export default class HexoStrategyImpl implements BlogStrategy {
             args: Constant.HEXO.CLEAN,
             currentDir: hexoPath,
             success: () => {
-                console.log('clean执行完成，开始执行deploy');
+                console.log('clean执行完成，开始执行generate');
                 NativeApi.invokeAsync({
                     command: hexoCommandPath,
-                    args: Constant.HEXO.DEPLOY,
+                    args: Constant.HEXO.GENERATE,
                     currentDir: hexoPath,
                     success: callback,
                     warning: message => {
                         console.error(message);
-                        ElMessage({
-                            showClose: true,
+                        ElMessageBox.alert(message, '执行生成命令警告', {
                             type: 'warning',
-                            message: message
                         });
                         error();
                     },
                     error: e => {
                         console.error(e);
-                        ElMessage({
-                            showClose: true,
+                        ElMessageBox.alert(e + '', '执行生成命令异常', {
                             type: 'error',
-                            message: '' + e
                         });
                         error();
                     }
@@ -264,19 +260,15 @@ export default class HexoStrategyImpl implements BlogStrategy {
             },
             warning: message => {
                 console.error(message);
-                ElMessage({
-                    showClose: true,
+                ElMessageBox.alert(message, '执行清理命令警告', {
                     type: 'warning',
-                    message: message
                 });
                 error();
             },
             error: e => {
                 console.error(e);
-                ElMessage({
-                    showClose: true,
+                ElMessageBox.alert(e + '', '执行清理命令异常', {
                     type: 'error',
-                    message: '' + e
                 });
                 error();
             }

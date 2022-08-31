@@ -4,6 +4,7 @@
             <el-button :disabled="initDisable" @click="init">初始化</el-button>
             <el-button :disabled="installDisable || !blogIsInit" @click="install">依赖安装</el-button>
             <el-button :disabled="serverDisable || !blogIsInit" @click="server">运行</el-button>
+            <el-button :disabled="generateDisable || !blogIsInit" @click="generate">生成</el-button>
             <el-button :disabled="deployDisable || !blogIsInit" @click="deploy">部署</el-button>
             <el-button :disabled="cleanDisable || !blogIsInit" @click="clean">清理</el-button>
         </el-button-group>
@@ -69,6 +70,7 @@ export default defineComponent({
         initDisable: false,
         serverDisable: false,
         deployDisable: false,
+        generateDisable: false,
         cleanDisable: false,
         installDisable: false
     }),
@@ -87,72 +89,52 @@ export default defineComponent({
     watch: {
         terminalStacks: {
             handler(value: Array<TerminalStack>) {
-                for (let terminalStack of value) {
-                    if (terminalStack.run && terminalStack.success) {
-                        if (terminalStack.command === Constant.HEXO.INIT) {
-                            this.initDisable = true
-                        } else if (terminalStack.command === Constant.HEXO.INSTALL) {
-                            this.installDisable = true
-                        } else if (terminalStack.command === Constant.HEXO.CLEAN) {
-                            this.cleanDisable = true
-                        } else if (terminalStack.command === Constant.HEXO.SERVER) {
-                            this.serverDisable = true
-                        } else if (terminalStack.command === Constant.HEXO.DEPLOY) {
-                            this.deployDisable = true
-                        }
-                    } else {
-                        if (terminalStack.command === Constant.HEXO.INIT) {
-                            this.initDisable = false
-                            this.blogIsInit = true;
-                        } else if (terminalStack.command === Constant.HEXO.INSTALL) {
-                            this.cleanDisable = false
-                        } else if (terminalStack.command === Constant.HEXO.CLEAN) {
-                            this.cleanDisable = false
-                        } else if (terminalStack.command === Constant.HEXO.SERVER) {
-                            this.serverDisable = false
-                        } else if (terminalStack.command === Constant.HEXO.DEPLOY) {
-                            this.deployDisable = false
-                        }
-                    }
-                }
+                this.renderStatus(value);
             },
             deep: true
         }
     },
     created() {
-        for (let terminalStack of this.terminalStacks) {
-            if (terminalStack.run && terminalStack.success) {
-                if (terminalStack.command === Constant.HEXO.INIT) {
-                    this.initDisable = true
-                } else if (terminalStack.command === Constant.HEXO.INSTALL) {
-                    this.installDisable = true
-                } else if (terminalStack.command === Constant.HEXO.CLEAN) {
-                    this.cleanDisable = true
-                } else if (terminalStack.command === Constant.HEXO.SERVER) {
-                    this.serverDisable = true
-                } else if (terminalStack.command === Constant.HEXO.DEPLOY) {
-                    this.deployDisable = true
-                }
-            } else {
-                if (terminalStack.command === Constant.HEXO.INIT) {
-                    this.initDisable = false
-                } else if (terminalStack.command === Constant.HEXO.INSTALL) {
-                    this.installDisable = false
-                } else if (terminalStack.command === Constant.HEXO.CLEAN) {
-                    this.cleanDisable = false
-                } else if (terminalStack.command === Constant.HEXO.SERVER) {
-                    this.serverDisable = false
-                } else if (terminalStack.command === Constant.HEXO.DEPLOY) {
-                    this.deployDisable = false
-                }
-            }
-        }
+        this.renderStatus(this.terminalStacks)
         blogStrategyContext.getStrategy().isInit().then(isInit => {
             this.blogIsInit = isInit;
         })
     },
     methods: {
         formatDateTime: DateUtil.formatDateTime,
+        renderStatus(terminalStacks: Array<TerminalStack>) {
+            for (let terminalStack of terminalStacks) {
+                if (terminalStack.run && terminalStack.success) {
+                    if (terminalStack.command === Constant.HEXO.INIT) {
+                        this.initDisable = true
+                    } else if (terminalStack.command === Constant.HEXO.INSTALL) {
+                        this.installDisable = true
+                    } else if (terminalStack.command === Constant.HEXO.CLEAN) {
+                        this.cleanDisable = true
+                    } else if (terminalStack.command === Constant.HEXO.SERVER) {
+                        this.serverDisable = true
+                    } else if (terminalStack.command === Constant.HEXO.DEPLOY) {
+                        this.deployDisable = true
+                    } else if (terminalStack.command === Constant.HEXO.GENERATE) {
+                        this.generateDisable = true
+                    }
+                } else {
+                    if (terminalStack.command === Constant.HEXO.INIT) {
+                        this.initDisable = false
+                    } else if (terminalStack.command === Constant.HEXO.INSTALL) {
+                        this.installDisable = false
+                    } else if (terminalStack.command === Constant.HEXO.CLEAN) {
+                        this.cleanDisable = false
+                    } else if (terminalStack.command === Constant.HEXO.SERVER) {
+                        this.serverDisable = false
+                    } else if (terminalStack.command === Constant.HEXO.DEPLOY) {
+                        this.deployDisable = false
+                    } else if (terminalStack.command === Constant.HEXO.GENERATE) {
+                        this.generateDisable = false
+                    }
+                }
+            }
+        },
         kill(id: number) {
             this.terminalService.kill(id);
         },
@@ -161,6 +143,9 @@ export default defineComponent({
         },
         server() {
             this.runCommand('运行', Constant.HEXO.SERVER);
+        },
+        generate() {
+            this.runCommand('生成', Constant.HEXO.GENERATE);
         },
         deploy() {
             this.runCommand('部署', Constant.HEXO.DEPLOY);

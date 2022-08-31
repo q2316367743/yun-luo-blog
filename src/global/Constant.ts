@@ -134,6 +134,7 @@ export default {
         CLEAN: "clean",
         DEPLOY: "deploy",
         SERVER: "server",
+        GENERATE: 'generate',
         FILE: {
             CONFIG: HEXO_CONFIG,
             THEME_CONFIG: (name: string) => {
