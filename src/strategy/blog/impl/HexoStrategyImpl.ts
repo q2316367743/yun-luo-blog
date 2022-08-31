@@ -37,6 +37,7 @@ export default class HexoStrategyImpl implements BlogStrategy {
             background: 'rgba(0, 0, 0, 0.7)',
         });
         try {
+            await this.copySource();
             await this.copyPage(loading);
             await this.copyPost(loading);
             await this.clean(loading);
@@ -56,15 +57,11 @@ export default class HexoStrategyImpl implements BlogStrategy {
 
     async build(callback: () => void): Promise<void> {
         // 基础
-        console.log('开始构建', new Date().getTime());
-        console.log('拷贝页面', new Date().getTime());
+        await this.copySource();
         await this.copyPage();
-        console.log('拷贝文章', new Date().getTime());
         await this.copyPost();
-        console.log('执行命令', new Date().getTime());
         await this.invokeAsync(() => {
             // 执行后置命令
-            console.log('执行后置命令', new Date().getTime());
             this.copyPostImage().then(() => this.copyToDist().then(callback))
                 .catch(e => {
                     console.error(e);
@@ -147,9 +144,9 @@ export default class HexoStrategyImpl implements BlogStrategy {
         return Promise.resolve();
     }
 
-    private async copyPage(loading?: { setText: (message: string) => void }): Promise<void> {
+    private async copySource(loading?: { setText: (message: string) => void }): Promise<void> {
         if (loading) {
-            loading.setText("将页面复制到目标文件夹");
+            loading.setText("将资源复制到目标文件夹");
         }
         // 获取配置
         let sourceDir = await this.getSourcePath();
@@ -157,6 +154,17 @@ export default class HexoStrategyImpl implements BlogStrategy {
         await FileApi.removeDir(sourceDir, true);
         // 创建新的的资源文件夹
         await FileApi.createDir(sourceDir, true);
+        // 复制
+        let source = await Constant.FOLDER.SOURCE();
+        await FileApi.copyDir(sourceDir, source);
+    }
+
+    private async copyPage(loading?: { setText: (message: string) => void }): Promise<void> {
+        if (loading) {
+            loading.setText("将页面复制到目标文件夹");
+        }
+        // 获取配置
+        let sourceDir = await this.getSourcePath();
         // 获取上架的页面
         let pages = await pageService.list({
             status: PostStatusEnum.RELEASE

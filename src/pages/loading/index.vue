@@ -151,6 +151,8 @@ export default defineComponent({
             await this.createDir(await Constant.FOLDER.PAGE());
             // 图片目录
             await this.createDir(await Constant.FOLDER.POST_IMAGES());
+            // 资源目录
+            await this.createDir(await Constant.FOLDER.SOURCE());
             // 部署目录
             await this.createDir(await Constant.FOLDER.DIST());
             // 工作空间git忽略文件

@@ -8,8 +8,15 @@ import PostEditPage from '@/pages/postEdit/index.vue';
 import PageListPage from '@/pages/pageList/index.vue';
 import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
+
 import PrettyHexoPage from '@/pages/pretty/hexo/index.vue';
+import PrettyHexoThemeList from "@/pages/pretty/hexo/components/ThemeList.vue";
+import PrettyHexoThemeEditor from "@/pages/pretty/hexo/components/ThemeEditor.vue";
+import PrettyHexoFileManage from "@/pages/pretty/hexo/components/FileManage.vue";
+import PrettyHexoPlugin from "@/pages/pretty/hexo/components/PluginList.vue";
+
 import ConfigHexoPage from '@/pages/config/hexo/index.vue';
+
 import ToolPage from '@/pages/tool/index.vue';
 import ToolImportPage from '@/pages/tool/pages/import.vue';
 import ToolBackupPage from '@/pages/tool/pages/backup.vue';
@@ -74,7 +81,35 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/pretty/hexo',
         name: 'pretty-hexo',
-        component: PrettyHexoPage
+        component: PrettyHexoPage,
+        redirect: '/pretty/hexo/theme',
+        children: [
+            {
+                path: 'theme',
+                name: 'pretty-hexo-theme',
+                component: PrettyHexoThemeList
+            },
+            {
+                path: 'theme-editor',
+                name: 'pretty-hexo-theme-editor',
+                component: PrettyHexoThemeEditor
+            },
+            {
+                path: 'file-manage',
+                name: 'pretty-hexo-file-manage',
+                component: PrettyHexoFileManage
+            },
+            {
+                path: 'plugin',
+                name: 'pretty-hexo-plugin',
+                component: PrettyHexoPlugin
+            },
+            {
+                path: 'source-manage',
+                name: 'pretty-hexo-source-manage',
+                component: PrettyHexoFileManage
+            }
+        ]
     },
     {
         path: '/config/hexo',

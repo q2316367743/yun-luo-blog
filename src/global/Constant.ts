@@ -49,6 +49,8 @@ const PAGE = 'pages';
 const POST_IMAGES = 'post-images';
 // 打包后的资源
 const DIST = 'dist';
+// 来源
+const SOURCE = "source";
 // git忽略文件
 const GITIGNORE = ".gitignore";
 // hexo
@@ -246,6 +248,9 @@ export default {
         },
         POST_IMAGES: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, POST_IMAGES);
+        },
+        SOURCE: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, SOURCE);
         },
         DIST: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, DIST);

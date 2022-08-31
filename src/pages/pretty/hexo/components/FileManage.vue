@@ -38,8 +38,6 @@
 import {defineComponent} from "vue";
 import {Document, Folder, FolderOpened} from '@element-plus/icons-vue';
 import FileEntry from "@/api/entities/FileEntry";
-import Constant from "@/global/Constant";
-import Hexo from "@/global/config/Hexo";
 import FileApi from "@/api/FileApi";
 import ThemeFileEditor from "@/components/ThemeFileEditor/index.vue";
 import {ElMessage, ElMessageBox} from "element-plus";
@@ -53,7 +51,6 @@ export default defineComponent({
     name: 'pretty-hexo-file-manage',
     components: {ThemeFileEditor, Document, Folder, FolderOpened},
     data: () => ({
-        themeName: '',
         files: new Array<FileEntry>(),
         fileProps: {
             children: 'children',
@@ -64,7 +61,7 @@ export default defineComponent({
         fileContent: '',
         showInfo: false,
         language: '',
-        currentThemeDir: '',
+        baseFolder: '',
         contextMenu: {
             x: 0,
             y: 0,
@@ -76,14 +73,9 @@ export default defineComponent({
         }
     }),
     async created() {
-        // 初始化主题名
-        let hexoConfigBase = await Constant.FILE.HEXO_CONFIG_BASE();
-        let hexo = new Hexo(await FileApi.readFile(hexoConfigBase));
-        this.themeName = hexo.theme;
-        // 获取主题目录
-        let hexoThemePath = await Constant.FOLDER.HEXO.THEME();
+        console.log('创建文件管理器')
         // 获取当前主题目录
-        this.currentThemeDir = await FileApi.resolve(hexoThemePath, this.themeName);
+        this.baseFolder = this.$route.query.baseFolder as string;
         // 获取主题目录下文件
         await this.mapFiles();
         // 增加快捷键
@@ -104,7 +96,7 @@ export default defineComponent({
         async mapFiles() {
             this.contextMenu.show = false;
             // 目录下全部文件
-            this.files = await FileApi.listDir(this.currentThemeDir, true);
+            this.files = await FileApi.listDir(this.baseFolder, true);
         },
         nodeClick(data: FileEntry) {
             this.contextMenu.show = false;
@@ -168,7 +160,7 @@ export default defineComponent({
                 isDirectory: false,
                 isRoot: true,
                 name: '',
-                path: this.currentThemeDir
+                path: this.baseFolder
             }
         },
         newFile() {
