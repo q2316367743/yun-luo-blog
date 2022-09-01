@@ -7,7 +7,6 @@ import ArrayUtil from "@/utils/ArrayUtil";
 import ImageSetting from "@/entities/setting/ImageSetting";
 import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import {ElNotification} from "element-plus";
-import EnvironmentSetting from "@/entities/setting/EnvironmentSetting";
 import SyncRemoteSetting from "@/entities/setting/SyncRemoteSetting";
 import SiteSetting from "@/entities/setting/SiteSetting";
 
@@ -46,14 +45,6 @@ let imageSetting = {
     }
 } as ImageSetting;
 
-let environmentSetting = {
-    nodePath: '',
-    npmPath: '',
-    hexoPath: '',
-    gitPath: '',
-    npmMirror: 'https://registry.npmmirror.com'
-} as EnvironmentSetting;
-
 // 同步设置
 let syncRemoteSetting = {
     type: 1,
@@ -88,7 +79,6 @@ export default class SettingService {
     private server: ServerSetting = serverSetting;
     private basic: BasicSetting = basicSetting;
     private image: ImageSetting = imageSetting;
-    private environment: EnvironmentSetting = environmentSetting;
     private syncRemote: SyncRemoteSetting = syncRemoteSetting;
     private site: SiteSetting = siteSetting;
 
@@ -99,7 +89,6 @@ export default class SettingService {
         await this.initServer();
         await this.initBasic();
         await this.initImage();
-        await this.initEnvironment();
         await this.initSyncRemote();
     }
 
@@ -173,24 +162,6 @@ export default class SettingService {
     }
 
     /**
-     * 初始化环境设置
-     */
-    private async initEnvironment(): Promise<void> {
-        let path = await Constant.FILE.SETTING_ENVIRONMENT();
-        // 读取文件
-        let source = {}
-        if (await FileApi.exist(path)) {
-            try {
-                let content = await FileApi.readFile(path);
-                source = JSON.parse(content);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-        this.environment = ObjectUtil.assignWithTarget(source, environmentSetting);
-    }
-
-    /**
      * 初始化服务器设置
      */
     private async initSyncRemote(): Promise<void> {
@@ -255,13 +226,6 @@ export default class SettingService {
     }
 
     /**
-     * 获取环境设置
-     */
-    getEnvironment(): EnvironmentSetting {
-        return JSON.parse(JSON.stringify(this.environment));
-    }
-
-    /**
      * 获取站点设置
      */
     getSite(): SiteSetting {
@@ -305,20 +269,6 @@ export default class SettingService {
         return new Promise<void>(resolve => {
             FileApi.writeFile(path, JSON.stringify(image)).then(() => {
                 this.image = image;
-                resolve();
-            })
-        });
-    }
-
-    /**
-     * 保存环境设置
-     * @param environment 环境设置
-     */
-    async saveEnvironment(environment: EnvironmentSetting): Promise<void> {
-        let path = await Constant.FILE.SETTING_ENVIRONMENT();
-        return new Promise<void>(resolve => {
-            FileApi.writeFile(path, JSON.stringify(environment)).then(() => {
-                this.environment = environment;
                 resolve();
             })
         });

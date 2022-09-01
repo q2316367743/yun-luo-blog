@@ -1,4 +1,14 @@
-export default interface EnvironmentSetting {
+export default interface Environment {
+
+    /**
+     * 环境ID
+     */
+    id: number;
+
+    /**
+     * 环境名称
+     */
+    name: string;
 
     /**
      * node路径
@@ -21,7 +31,7 @@ export default interface EnvironmentSetting {
     gitPath: string;
 
     /**
-     * NPM镜像
+     * NPM镜像(https://registry.npmmirror.com)
      */
     npmMirror: string;
 

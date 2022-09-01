@@ -54,7 +54,7 @@ import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import NativeApi from "@/api/NativeApi";
-import {settingService} from "@/global/BeanFactory";
+import {environmentService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
@@ -169,7 +169,7 @@ export default defineComponent({
                 return;
             }
             // 检查git地址是否选择
-            let environment = settingService.getEnvironment();
+            let environment = environmentService.getCurrentEnvironment();
             if (environment.npmPath == "") {
                 ElMessage({
                     showClose: true,
@@ -228,7 +228,7 @@ export default defineComponent({
                 confirmButtonText: "删除"
             }).then(() => {
                 // 检查git地址是否选择
-                let environment = settingService.getEnvironment();
+                let environment = environmentService.getCurrentEnvironment();
                 if (environment.npmPath == "") {
                     ElMessage({
                         showClose: true,

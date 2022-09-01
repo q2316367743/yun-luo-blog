@@ -60,7 +60,7 @@ import {ElMessage} from "element-plus";
 import TerminalStack from "@/entities/TerminalStack";
 import Constant from "@/global/Constant";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
-import {settingService, terminalService} from "@/global/BeanFactory";
+import {environmentService, settingService, terminalService} from "@/global/BeanFactory";
 
 export default defineComponent({
     name: 'terminal-hexo',
@@ -160,8 +160,17 @@ export default defineComponent({
             this.terminalService.clean();
         },
         async runCommand(name: string, args: string) {
+            let hexoPath = environmentService.getCurrentEnvironment().hexoPath;
+            if (!hexoPath || hexoPath === "") {
+                ElMessage({
+                    showClose: true,
+                    type: "warning",
+                    message: "请配置hexo命令地址"
+                })
+                return;
+            }
             this.terminalService.add(name, {
-                command: settingService.getEnvironment().hexoPath,
+                command: hexoPath,
                 currentDir: await Constant.FOLDER.HEXO.BASE(),
                 args: args
             }).then(() => {

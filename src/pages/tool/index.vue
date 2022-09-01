@@ -3,19 +3,16 @@
     <container-main style="padding: 16px">
         <el-row :gutter="16">
             <el-col :span="8">
-                <el-card shadow="hover" class="item" @click="toRouter('/tool/backup')">备份</el-card>
-            </el-col>
-            <el-col :span="8">
                 <el-card shadow="hover" class="item" @click="toRouter('/tool/import')">文章导入</el-card>
             </el-col>
             <el-col :span="8">
                 <el-card shadow="hover" class="item" @click="toRouter('/tool/sync-remote')">远程同步</el-card>
             </el-col>
+            <el-col :span="8">
+                <el-card shadow="hover" class="item" @click="toRouter('/tool/environment')">环境管理</el-card>
+            </el-col>
         </el-row>
         <el-row :gutter="16" style="margin-top: 16px">
-            <el-col :span="8">
-                <el-card shadow="hover" class="item">项目同步</el-card>
-            </el-col>
             <el-col :span="8">
                 <el-card shadow="hover" class="item" @click="toRouter('/tool/about/self')">关于</el-card>
             </el-col>

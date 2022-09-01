@@ -16,7 +16,7 @@ import {defineComponent} from "vue";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import {
-    categoryDb,
+    categoryDb, environmentDb, environmentService,
     pageCategoryDb,
     pageDb,
     pageTagDb,
@@ -46,6 +46,7 @@ import typescript from "@/plugins/language/typescript";
 
 
 import emitter from "@/plugins/mitt";
+import localStorageUtil from "@/utils/LocalStorageUtil";
 
 
 export default defineComponent({
@@ -96,39 +97,19 @@ export default defineComponent({
             // 3. 处理相关目录
             console.log('3. 处理相关目录', siteSetting);
             await this.dirHandle();
-            // 4. 部分数据初始化
-            console.log('4. 部分数据初始化');
-            await imageStrategyContext.init();
-            await settingService.init();
+            // 4. 数据初始化
+            console.log('4. 数据初始化');
+            // 4.1 数据库初始化
             console.log('4.1 数据库初始化');
             await this.dbInit();
             // 4.2 启动时注册语言服务
             console.log('4.2 启动时注册语言服务')
-            monaco.languages.register({id: 'markdown'});
-            monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
-            monaco.languages.setLanguageConfiguration('markdown', markdown.config);
-            monaco.languages.registerCompletionItemProvider('markdown', markdown.provider);
-            monaco.languages.register({id: 'yaml'});
-            monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
-            monaco.languages.setLanguageConfiguration('yaml', yaml.config);
-            monaco.languages.register({id: 'css'});
-            monaco.languages.setMonarchTokensProvider('css', css.token);
-            monaco.languages.setLanguageConfiguration('css', css.conf);
-            monaco.languages.register({id: 'less'});
-            monaco.languages.setMonarchTokensProvider('less', less.token);
-            monaco.languages.setLanguageConfiguration('less', less.conf);
-            monaco.languages.register({id: 'scss'});
-            monaco.languages.setMonarchTokensProvider('scss', scss.token);
-            monaco.languages.setLanguageConfiguration('scss', scss.conf);
-            monaco.languages.register({id: 'pug'});
-            monaco.languages.setMonarchTokensProvider('pug', pug.token);
-            monaco.languages.setLanguageConfiguration('pug', pug.conf);
-            monaco.languages.register({id: 'js'});
-            monaco.languages.setMonarchTokensProvider('js', javascript.token);
-            monaco.languages.setLanguageConfiguration('js', javascript.config);
-            monaco.languages.register({id: 'ts'});
-            monaco.languages.setMonarchTokensProvider('ts', typescript.token);
-            monaco.languages.setLanguageConfiguration('ts', typescript.config);
+            this.registerLoanguageService();
+            // 4.3 服务初始化
+            console.log('4.3 服务初始化')
+            await imageStrategyContext.init();
+            await settingService.init();
+            environmentService.setId(localStorageUtil.getOrDefault(Constant.LOCALSTORAGE.ENVIRONMENT, 0) as number);
             // 5. 发送消息
             console.log('5. 发送消息');
             emitter.emit(MessageEventEnum.APP_LAUNCH);
@@ -170,6 +151,44 @@ export default defineComponent({
             // Hexo目录
             await this.createDir(await Constant.FOLDER.HEXO.BASE());
         },
+        async dbInit() {
+            await tagDb.setPath(await Constant.FILE.DB_TAG());
+            await categoryDb.setPath(await Constant.FILE.DB_CATEGORY());
+            await postDb.setPath(await Constant.FILE.DB_POST());
+            await postTagDb.setPath(await Constant.FILE.DB_POST_TAG());
+            await postCategoryDb.setPath(await Constant.FILE.DB_POST_CATEGORY());
+            await pageDb.setPath(await Constant.FILE.DB_PAGE());
+            await pageTagDb.setPath(await Constant.FILE.DB_PAGE_TAG());
+            await pageCategoryDb.setPath(await Constant.FILE.DB_PAGE_CATEGORY());
+            await environmentDb.setPath(await Constant.FILE.DB_ENVIRONMENT());
+        },
+        registerLoanguageService() {
+            monaco.languages.register({id: 'markdown'});
+            monaco.languages.setMonarchTokensProvider('markdown', markdown.token);
+            monaco.languages.setLanguageConfiguration('markdown', markdown.config);
+            monaco.languages.registerCompletionItemProvider('markdown', markdown.provider);
+            monaco.languages.register({id: 'yaml'});
+            monaco.languages.setMonarchTokensProvider('yaml', yaml.token);
+            monaco.languages.setLanguageConfiguration('yaml', yaml.config);
+            monaco.languages.register({id: 'css'});
+            monaco.languages.setMonarchTokensProvider('css', css.token);
+            monaco.languages.setLanguageConfiguration('css', css.conf);
+            monaco.languages.register({id: 'less'});
+            monaco.languages.setMonarchTokensProvider('less', less.token);
+            monaco.languages.setLanguageConfiguration('less', less.conf);
+            monaco.languages.register({id: 'scss'});
+            monaco.languages.setMonarchTokensProvider('scss', scss.token);
+            monaco.languages.setLanguageConfiguration('scss', scss.conf);
+            monaco.languages.register({id: 'pug'});
+            monaco.languages.setMonarchTokensProvider('pug', pug.token);
+            monaco.languages.setLanguageConfiguration('pug', pug.conf);
+            monaco.languages.register({id: 'js'});
+            monaco.languages.setMonarchTokensProvider('js', javascript.token);
+            monaco.languages.setLanguageConfiguration('js', javascript.config);
+            monaco.languages.register({id: 'ts'});
+            monaco.languages.setMonarchTokensProvider('ts', typescript.token);
+            monaco.languages.setLanguageConfiguration('ts', typescript.config);
+        },
         async createDir(dir: string) {
             let exist = await FileApi.exist(dir);
             if (exist) {
@@ -180,24 +199,6 @@ export default defineComponent({
                 return FileApi.createDir(dir);
             }
         },
-        async dbInit() {
-            tagDb.setPath(await Constant.FILE.DB_TAG());
-            await tagDb.init();
-            categoryDb.setPath(await Constant.FILE.DB_CATEGORY());
-            await categoryDb.init();
-            postDb.setPath(await Constant.FILE.DB_POST());
-            await postDb.init();
-            postTagDb.setPath(await Constant.FILE.DB_POST_TAG());
-            await postTagDb.init();
-            postCategoryDb.setPath(await Constant.FILE.DB_POST_CATEGORY());
-            await postCategoryDb.init();
-            pageDb.setPath(await Constant.FILE.DB_PAGE());
-            await pageDb.init();
-            pageTagDb.setPath(await Constant.FILE.DB_PAGE_TAG());
-            await pageTagDb.init();
-            pageCategoryDb.setPath(await Constant.FILE.DB_PAGE_CATEGORY());
-            await pageCategoryDb.init();
-        }
     }
 });
 </script>

@@ -22,7 +22,7 @@ import ConfigHexoPage from '@/pages/config/hexo/index.vue';
 
 import ToolPage from '@/pages/tool/index.vue';
 import ToolImportPage from '@/pages/tool/pages/import.vue';
-import ToolBackupPage from '@/pages/tool/pages/backup.vue';
+import ToolEnvironmentPage from '@/pages/tool/pages/environment.vue';
 import ToolSyncRemotePage from '@/pages/tool/pages/sync-remote.vue';
 import ToolAboutSelfPage from '@/pages/about/index.vue';
 import ToolAboutLicensePage from '@/pages/about/license.vue';
@@ -125,9 +125,9 @@ const routes: Array<RouteRecordRaw> = [
         component: ToolPage,
     },
     {
-        path: '/tool/backup',
-        name: 'tool-backup',
-        component: ToolBackupPage
+        path: '/tool/environment',
+        name: 'tool-environment',
+        component: ToolEnvironmentPage
     },
     {
         path: '/tool/import',

@@ -40,7 +40,7 @@
 import {defineComponent, markRaw} from "vue";
 import {Folder} from "@element-plus/icons-vue";
 import DialogApi from "@/api/DialogApi";
-import {settingService} from "@/global/BeanFactory";
+import {environmentService} from "@/global/BeanFactory";
 import {ElMessage} from "element-plus";
 
 export default defineComponent({
@@ -50,9 +50,9 @@ export default defineComponent({
             folder
         }
     },
-    name: 'environment-setting',
+    name: 'tool-environment',
     data: () => ({
-        environmentSetting: settingService.getEnvironment()
+        environmentSetting: environmentService.getCurrentEnvironment()
     }),
     methods: {
         async openNodeDialog() {
@@ -112,7 +112,7 @@ export default defineComponent({
             }
         },
         save() {
-            settingService.saveEnvironment(this.environmentSetting).then(() => {
+            environmentService.add(this.environmentSetting).then(() => {
                 ElMessage({
                     showClose: true,
                     type: 'success',

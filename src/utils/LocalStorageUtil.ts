@@ -13,13 +13,23 @@ export default {
         }
     },
 
-    getOrDefault<T>(name: string, defaultValue: T): T {
+    getOrDefault<T>(name: string, defaultValue: T | string | number): T | string | number {
         let value = localStorage.getItem(name);
         if (!value) {
             return defaultValue;
         }else {
             try {
-                return JSON.parse(value);
+                if (typeof defaultValue === 'object') {
+                    return JSON.parse(value);
+                }else if (typeof defaultValue === "string") {
+                    return value;
+                }else {
+                    if (value.indexOf('.') > -1) {
+                        return parseFloat(value);
+                    } else {
+                        return parseInt(value)
+                    }
+                }
             }catch (e) {
                 return value as any;
             }
@@ -27,10 +37,10 @@ export default {
     },
 
     set<T>(name: string, value: T) {
-        if (typeof value === 'string') {
-            localStorage.setItem(name, value.toString());
-        }else {
+        if (typeof value === 'object') {
             localStorage.setItem(name, JSON.stringify(value));
+        }else {
+            localStorage.setItem(name, value as any);
         }
     }
 

@@ -11,11 +11,12 @@ export default class Database<T> {
         this.records = new Array<T>();
     }
 
-    setPath(path: string) {
+    setPath(path: string): Promise<void> {
         this.path = path;
+        return  this.init()
     }
 
-    async init(): Promise<void> {
+    private async init(): Promise<void> {
         this.records = new Array<T>();
         try {
             let content = await FileApi.readFile(this.path);
@@ -76,7 +77,7 @@ export default class Database<T> {
      *
      * @param where 查询条件
      */
-    one(where?: Partial<T>): T | void {
+    one(where?: Partial<T>): T | undefined {
         let items = this.list(where);
         if (items && items.length > 0) {
             return items[0];

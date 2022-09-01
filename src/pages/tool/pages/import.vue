@@ -17,9 +17,42 @@
                 </el-tooltip>
             </el-col>
             <el-col :span="8">
-                <el-card shadow="hover" class="item">
-                    Halo导入
-                </el-card>
+                <el-tooltip
+                    class="box-item"
+                    effect="light"
+                    content="根据markdown文件打包的ZIP中导入"
+                    placement="bottom"
+                >
+                    <el-card shadow="hover" class="item">
+                        ZIP导入
+                    </el-card>
+                </el-tooltip>
+            </el-col>
+            <el-col :span="8">
+                <el-tooltip
+                    class="box-item"
+                    effect="light"
+                    content="根据markdown文件导入"
+                    placement="bottom"
+                >
+                    <el-card shadow="hover" class="item">
+                        markdown文件导入
+                    </el-card>
+                </el-tooltip>
+            </el-col>
+        </el-row>
+        <el-row :gutter="16" style="margin-top: 16px">
+            <el-col :span="8">
+                <el-tooltip
+                    class="box-item"
+                    effect="light"
+                    content="通过Halo博客API导入"
+                    placement="bottom"
+                >
+                    <el-card shadow="hover" class="item">
+                        Halo导入
+                    </el-card>
+                </el-tooltip>
             </el-col>
         </el-row>
     </container-main>

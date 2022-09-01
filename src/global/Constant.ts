@@ -10,7 +10,6 @@ import LocalStorageUtil from "@/utils/LocalStorageUtil";
 const SETTING_SERVER = 'setting-server.json';
 const SETTING_BASIC = 'setting-basic.json';
 const SETTING_IMAGE = 'setting-image.json';
-const SETTING_ENVIRONMENT = 'setting-environment.json';
 const SETTING_SYNC_REMOTE = 'setting-sync-remote.json';
 const SETTING_SYNC_LOCAL = 'setting-sync-local.json';
 const SETTING_SITE = 'setting-site.json';
@@ -24,6 +23,7 @@ const DB_POST_CATEGORY = 'db-post-category.json';
 const DB_PAGE = 'db-page.json';
 const DB_PAGE_TAG = 'db-page-tag.json';
 const DB_PAGE_CATEGORY = 'db-page-category.json';
+const DB_ENVIRONMENT = 'db-environment.json';
 
 // hexo配置
 const HEXO_CONFIG_BASE = '_config.base.yml';
@@ -33,6 +33,7 @@ const HEXO_CONFIG_EXTRA = '_config.extra.yml';
 const LS_WORKSPACE = 'workspace';
 const LS_WORKSPACE_HISTORY = 'workspace-history';
 const LS_SITE = 'site';
+const LS_ENVIRONMENT = 'environment';
 
 // =====工作空间所有=====
 // 基础文件夹
@@ -122,7 +123,6 @@ export default {
         IMAGE: SETTING_IMAGE,
         SYNC_REMOTE: SETTING_SYNC_REMOTE,
         SYNC_LOCAL: SETTING_SYNC_LOCAL,
-        ENVIRONMENT: SETTING_ENVIRONMENT,
         SITE: SETTING_SITE
     },
     CONTENT: {
@@ -148,12 +148,10 @@ export default {
         WORKSPACE: LS_WORKSPACE,
         WORKSPACE_HISTORY: LS_WORKSPACE_HISTORY,
         SITE: LS_SITE,
+        ENVIRONMENT: LS_ENVIRONMENT
     },
     FILE: {
         // 全局设置
-        SETTING_ENVIRONMENT: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_ENVIRONMENT);
-        },
         SETTING_SYNC_LOCAL: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_SYNC_LOCAL);
         },
@@ -203,6 +201,9 @@ export default {
         },
         DB_PAGE_CATEGORY: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_PAGE_CATEGORY);
+        },
+        DB_ENVIRONMENT: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_ENVIRONMENT);
         },
         // HEXO配置文件
         HEXO_CONFIG_BASE: async (): Promise<string> => {

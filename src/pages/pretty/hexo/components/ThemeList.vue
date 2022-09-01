@@ -81,10 +81,9 @@ import {ElLoading, ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
 import DialogApi from "@/api/DialogApi";
-import {settingService, terminalService} from "@/global/BeanFactory";
+import {environmentService, terminalService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
-import StrUtil from "@/utils/StrUtil";
 import CompressingOptions from "@/api/entities/CompressingOptions";
 
 /**
@@ -171,7 +170,7 @@ export default defineComponent({
                 })
                 return;
             }
-            let gitPath = settingService.getEnvironment().gitPath;
+            let gitPath = environmentService.getCurrentEnvironment().gitPath;
             if (!gitPath || gitPath === "") {
                 ElMessage({
                     showClose: true,
