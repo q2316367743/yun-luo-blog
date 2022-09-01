@@ -15,7 +15,8 @@ let basicSetting = {
     blogType: 'hexo',
     font: '微软雅黑',
     path: "",
-    language: 'zhCn'
+    language: 'zhCn',
+    showSide: false
 } as BasicSetting;
 
 let serverSetting = {

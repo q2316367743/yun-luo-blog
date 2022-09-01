@@ -93,6 +93,9 @@ export default defineComponent({
             display: block;
         }
     }
+    &:last-child {
+        margin-bottom: 10px;
+    }
 
     .board {
         width: 100%;

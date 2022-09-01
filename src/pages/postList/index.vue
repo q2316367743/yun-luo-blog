@@ -32,13 +32,46 @@
         </el-dropdown>
     </container-header>
     <container-main class="main">
-        <el-scrollbar>
-            <post-list-item v-for="(post, index) in showPosts" :key="index" :post="post"
-                            @item-click="toPostInfo(post)" @option-info="openSettingDialog(post.id)"
-                            @option-remove="deleteById(post.id)">
-            </post-list-item>
-            <el-empty v-if="showPosts.length === 0" description="暂无文章" style="margin-top: 110px;"/>
-        </el-scrollbar>
+        <div class="side" :style="{width: showSide ? '200px' : '18px'}" @click="clearSide();searchPost();">
+            <div class="side-view" :style="{width: showSide ? '182px' : '0px'}">
+                <div class="side-option">
+                    <el-button-group>
+                        <el-button :type="activeName === 'category' ? 'primary' : 'default'"
+                                   @click="switchActiveName('category')"
+                                   :disabled="activeName === 'category'">分类
+                        </el-button>
+                        <el-button :type="activeName === 'tag' ? 'primary' : 'default'" @click="switchActiveName('tag')"
+                                   :disabled="activeName === 'tag'">标签
+                        </el-button>
+                    </el-button-group>
+                </div>
+                <div class="side-list">
+                    <el-scrollbar>
+                        <el-tree :data="categoryTree" :props="categoryProps" default-expand-all
+                                 @node-click="categoryClick" v-show="activeName === 'category'"/>
+
+                        <el-checkbox-group v-model="tags" v-show="activeName === 'tag'" @change="tagChange">
+                            <el-checkbox v-for="tag in tagList" :label="tag" style="display: block;" @click.stop/>
+                        </el-checkbox-group>
+                    </el-scrollbar>
+                </div>
+            </div>
+            <div class="side-switch" @click.stop="showSide = !showSide">
+                <el-icon :size="12">
+                    <arrow-left-bold v-if="showSide"/>
+                    <arrow-right-bold v-else/>
+                </el-icon>
+            </div>
+        </div>
+        <div class="post-view">
+            <el-scrollbar>
+                <post-list-item v-for="(post, index) in showPosts" :key="index" :post="post"
+                                @item-click="toPostInfo(post)" @option-info="openSettingDialog(post.id)"
+                                @option-remove="deleteById(post.id)">
+                </post-list-item>
+                <el-empty v-if="showPosts.length === 0" description="暂无文章" style="margin-top: 110px;"/>
+            </el-scrollbar>
+        </div>
     </container-main>
     <!-- 文章设置 -->
     <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false" top="9vh">
@@ -54,23 +87,37 @@
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
-import {Calendar, Close, CollectionTag, Delete, Plus, PriceTag, Refresh, Search} from '@element-plus/icons-vue';
+import {
+    ArrowLeftBold,
+    ArrowRightBold,
+    Calendar,
+    Close,
+    CollectionTag,
+    Delete,
+    Plus,
+    PriceTag,
+    Refresh,
+    Search
+} from '@element-plus/icons-vue';
 import {ElMessage, ElMessageBox} from "element-plus";
 
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 
 import PostView from '@/views/PostView';
-import {postService} from '@/global/BeanFactory';
-import TagView from "@/views/TagView";
+import {categoryService, postService, settingService, tagService} from '@/global/BeanFactory';
 import CategoryView from "@/views/CategoryView";
 import PostListItem from "@/components/PostListItem/index.vue";
 import PostSetting from "@/pages/postSetting/index.vue";
 import PostSettingPage from "@/pages/postSetting/index";
+import ArrayUtil from "@/utils/ArrayUtil";
 
 export default defineComponent({
     name: 'post-list',
-    components: {PostSetting, PostListItem, ContainerMain, ContainerHeader, Calendar, PriceTag, CollectionTag, Delete},
+    components: {
+        PostSetting, PostListItem, ContainerMain, ContainerHeader,
+        Calendar, PriceTag, CollectionTag, Delete, ArrowLeftBold, ArrowRightBold
+    },
     setup() {
         const search = markRaw(Search);
         const plus = markRaw(Plus);
@@ -79,11 +126,13 @@ export default defineComponent({
         return {search, plus, refresh, close}
     },
     data: () => ({
-        keyword: '',
         posts: new Array<PostView>(),
         showPosts: new Array<PostView>(),
+        keyword: '',
         status: null,
         type: 1,
+        category: '',
+        tags: new Array<string>(),
         page: {
             number: 1,
             size: 10,
@@ -91,25 +140,39 @@ export default defineComponent({
         },
         post: {} as PostView,
         settingDialog: false,
-        activeName: "basic",
+        activeName: 'category',
+        showSide: false,
         categoryProps: {
             checkStrictly: true,
             value: 'name',
             label: 'name'
         },
-        tags: new Array<TagView>(),
-        categoryTree: new Array<CategoryView>()
+        categoryTree: new Array<CategoryView>(),
+        tagList: new Array<string>()
     }),
     created() {
-        postService.list().then(posts => {
-            this.posts = posts;
-            this.searchPost();
-        });
+        this.showSide = settingService.getBasic().showSide;
+        this.init();
     },
     methods: {
+        init() {
+            postService.list().then(posts => {
+                this.posts = posts;
+                this.searchPost();
+            });
+            categoryService.list().then(categoryTree => {
+                this.categoryTree = categoryTree;
+            });
+            tagService.list().then((tags) => {
+                this.tagList = tags.map(e => e.name);
+            });
+        },
         searchPost() {
-            this.showPosts = this.posts.filter(e => this.keyword == '' || e.title.indexOf(this.keyword) > -1)
+            this.showPosts = this.posts
+                .filter(e => this.keyword === '' || e.title.indexOf(this.keyword) > -1)
                 .filter(e => !this.status || this.status === 0 || e.status === this.status)
+                .filter(e => this.category === '' || ArrayUtil.contains(e.categories, this.category))
+                .filter(e => this.tags.length === 0 || ArrayUtil.containsArray(this.tags, e.tags))
                 .sort((e1, e2) => {
                     if (this.type === 1) {
                         return e1.title.localeCompare(e2.title);
@@ -178,11 +241,7 @@ export default defineComponent({
                         type: 'success',
                         message: this.$t('hint.delete_success'),
                     });
-
-                    postService.list().then(posts => {
-                        this.posts = posts;
-                        this.searchPost();
-                    })
+                    this.init();
                 }).catch((e) => {
                     ElMessage({
                         showClose: true,
@@ -221,10 +280,7 @@ export default defineComponent({
             let postSetting = this.$refs.postSetting as PostSettingPage
             postService.update(postSetting.getView()).then(() => {
                 this.settingDialog = false;
-                postService.list().then(posts => {
-                    this.posts = posts;
-                    this.searchPost();
-                });
+                this.init();
                 ElMessage({
                     showClose: true,
                     type: 'success',
@@ -240,6 +296,22 @@ export default defineComponent({
                     message: this.$t('hint.save_fail') + "," + e
                 });
             });
+        },
+        categoryClick(data: CategoryView) {
+            this.clearSide();
+            this.category = data.name;
+            this.searchPost();
+        },
+        tagChange() {
+            this.searchPost();
+        },
+        switchActiveName(name: string) {
+            this.clearSide();
+            this.activeName = name;
+        },
+        clearSide() {
+            this.category = '';
+            this.tags = new Array<string>();
         }
     }
 });
@@ -264,6 +336,55 @@ export default defineComponent({
 
 .main {
     overflow: auto;
-    padding: 10px;
+    display: flex;
+
+    .side {
+        height: 100%;
+        display: flex;
+        position: relative;
+        transition: 0.3s width ease-in-out;
+        overflow: hidden;
+
+        .side-view {
+            padding: 8px;
+            overflow: hidden;
+            transition: 0.3s width ease-in-out;
+
+            .side-option {
+                width: 140px;
+                text-align: center;
+            }
+
+            .side-list {
+                margin-top: 8px;
+                height: calc(100% - 40px);
+            }
+
+        }
+
+        .side-switch {
+            width: 12px;
+            height: 56px;
+            background-color: #e3e9ed;
+            position: absolute;
+            right: 3px;
+            top: 40%;
+            line-height: 56px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 1;
+
+            &:hover {
+                background-color: #ebf0f2;
+            }
+        }
+
+    }
+
+    .post-view {
+        height: 100%;
+        width: 100%;
+        margin-right: 9px;
+    }
 }
 </style>

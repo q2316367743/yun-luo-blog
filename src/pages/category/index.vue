@@ -70,7 +70,7 @@ export default defineComponent({
         categoryList() {
             categoryService.list().then(categoryTree => {
                 this.categoryTree = categoryTree;
-            })
+            });
         },
         categoryAdd(id: number) {
             ElMessageBox.prompt(this.$t('category.add_category_hint'), this.$t('category.add_category'), {

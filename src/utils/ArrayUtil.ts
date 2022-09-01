@@ -15,6 +15,26 @@ export default {
         }
     },
     /**
+     * 指定数组中是否包含关键字数组中任意关键字
+     * @param arr 指定数组
+     * @param keywords 关键字数组
+     */
+    containsArray<T>(arr: T[], keywords: T[]): boolean {
+        try {
+            for (let item of arr) {
+                for (let keyword of keywords) {
+                    if (item === keyword) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
+    /**
      * 已知模板是否是以数组中任意字符串开头
      *
      * @param template 检测的模板

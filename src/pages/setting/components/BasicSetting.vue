@@ -12,6 +12,9 @@
                 <el-option label="宋体" value="宋体"></el-option>
             </el-select>
         </el-form-item>
+        <el-form-item label="展示侧栏">
+            <el-switch v-model="basicSetting.showSide" active-text="true" inactive-text="false" />
+        </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="save">保存</el-button>
         </el-form-item>

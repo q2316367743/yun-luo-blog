@@ -20,4 +20,9 @@ export default interface BasicSetting {
      */
     language: string;
 
+    /**
+     * 文章列表页，是否显示侧边栏
+     */
+    showSide: boolean;
+
 }

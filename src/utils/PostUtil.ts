@@ -99,15 +99,17 @@ export async function parsePost(type: string, fileName: string, renderContent: b
                 }
             }
         }
-        // 处理额外的
-        let extra = jsYaml.load(extraArr.join("\n")) as any;
-        for (let key of Object.keys(extra)) {
-            index += 1;
-            post.extra.push({
-                id: index,
-                key: key,
-                value: extra[key]
-            })
+        if (extraArr.length > 0) {
+            // 处理额外的
+            let extra = jsYaml.load(extraArr.join("\n")) as any;
+            for (let key of Object.keys(extra)) {
+                index += 1;
+                post.extra.push({
+                    id: index,
+                    key: key,
+                    value: extra[key]
+                })
+            }
         }
     }catch (e) {
         console.error('异常');

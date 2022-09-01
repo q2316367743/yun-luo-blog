@@ -138,7 +138,6 @@ export default defineComponent({
             })
         },
         extraRemove(id: number) {
-            console.log(this.post.extra, id)
             this.post.extra = this.post.extra.filter(e => e.id !== id);
         },
         getView() {
@@ -146,7 +145,6 @@ export default defineComponent({
         },
         setView(view: PostView) {
             this.post = view;
-            console.log(this.post)
         }
     }
 });

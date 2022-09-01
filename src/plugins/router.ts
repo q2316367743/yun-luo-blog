@@ -3,16 +3,19 @@ import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 import LoadingPage from '@/pages/loading/index.vue';
 import WorkspacePage from "@/pages/workspace/index.vue";
 import SitePage from '@/pages/site/index.vue';
+
 import PostListPage from '@/pages/postList/index.vue';
 import PostEditPage from '@/pages/postEdit/index.vue';
 import PageListPage from '@/pages/pageList/index.vue';
+
 import TagPage from '@/pages/tag/index.vue';
 import CategoryPage from "@/pages/category/index.vue";
+
+import FileManage from "@/components/FileManage/index.vue";
 
 import PrettyHexoPage from '@/pages/pretty/hexo/index.vue';
 import PrettyHexoThemeList from "@/pages/pretty/hexo/components/ThemeList.vue";
 import PrettyHexoThemeEditor from "@/pages/pretty/hexo/components/ThemeEditor.vue";
-import PrettyHexoFileManage from "@/pages/pretty/hexo/components/FileManage.vue";
 import PrettyHexoPlugin from "@/pages/pretty/hexo/components/PluginList.vue";
 
 import ConfigHexoPage from '@/pages/config/hexo/index.vue';
@@ -97,7 +100,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'file-manage',
                 name: 'pretty-hexo-file-manage',
-                component: PrettyHexoFileManage
+                component: FileManage
             },
             {
                 path: 'plugin',
@@ -107,7 +110,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'source-manage',
                 name: 'pretty-hexo-source-manage',
-                component: PrettyHexoFileManage
+                component: FileManage
             }
         ]
     },
