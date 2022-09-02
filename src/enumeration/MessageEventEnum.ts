@@ -57,7 +57,12 @@ enum MessageEventEnum {
     /**
      * 终端页面打开
      */
-    TERMINAL_OPEN = "terminal:open"
+    TERMINAL_OPEN = "terminal:open",
+
+    /**
+     * 环境变更
+     */
+    ENVIRONMENT_CHANGE = "environment:change"
 
 }
 

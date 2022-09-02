@@ -13,7 +13,7 @@ export default class Database<T> {
 
     setPath(path: string): Promise<void> {
         this.path = path;
-        return  this.init()
+        return this.init()
     }
 
     private async init(): Promise<void> {

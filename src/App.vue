@@ -81,38 +81,39 @@
                         <el-tooltip
                             class="box-item"
                             effect="light"
+                            :content="environmentName"
+                            placement="bottom"
+                        >
+                            <el-dropdown trigger="click" ref="environmentDropdown">
+                                <div class="nav-item">
+                                    <el-icon :size="18">
+                                        <environment-icon/>
+                                    </el-icon>
+                                </div>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-radio-group v-model="environmentId" style="display: block"
+                                                        @change="changeEnvironment">
+                                            <el-dropdown-item v-for="environment in environments"
+                                                              :command="environment.id">
+                                                <el-radio :label="environment.id">{{ environment.name }}</el-radio>
+                                            </el-dropdown-item>
+                                        </el-radio-group>
+                                        <el-dropdown-item @click.prevent="toEnvironment" :icon="more">管理
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </el-tooltip>
+                        <el-tooltip
+                            class="box-item"
+                            effect="light"
                             :content="$t('common.terminal')"
                             placement="bottom"
                         >
                             <div class="nav-item" @click="terminalDialog = true">
                                 <el-icon :size="18">
                                     <terminal-box/>
-                                </el-icon>
-                            </div>
-                        </el-tooltip>
-                        <el-dropdown @command="changeI18n">
-                            <div class="nav-item">
-                                <el-icon :size="18">
-                                    <translate/>
-                                </el-icon>
-                            </div>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item command="zhCn">{{ $t('app.chinese') }}</el-dropdown-item>
-                                    <el-dropdown-item command="enUs">{{ $t('app.english') }}</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                        <el-tooltip
-                            class="box-item"
-                            effect="light"
-                            :content="isDark ? $t('common.dark') : $t('common.light')"
-                            placement="bottom"
-                        >
-                            <div class="nav-item">
-                                <el-icon :size="18" @click="toggleDark">
-                                    <sun v-if="!isDark"/>
-                                    <moon v-else></moon>
                                 </el-icon>
                             </div>
                         </el-tooltip>
@@ -123,8 +124,8 @@
                             placement="bottom"
                         >
                             <el-dropdown trigger="contextmenu" @command="serverOperation">
-                                <div class="nav-item">
-                                    <el-icon>
+                                <div class="nav-item" @click="serverStatusSwitch">
+                                    <el-icon :size="18">
                                         <run v-if="server === 1" style="color: #67c23a;"/>
                                         <loader v-else-if="server === 2"/>
                                         <server v-else-if="server === 3"/>
@@ -151,7 +152,7 @@
                         </el-tooltip>
                         <el-dropdown trigger="contextmenu" @command="settingOperation">
                             <div class="nav-item" @click="openSetting">
-                                <el-icon>
+                                <el-icon :size="18">
                                     <setting/>
                                 </el-icon>
                             </div>
@@ -169,6 +170,36 @@
                                 <el-dropdown-menu>
                                     <el-dropdown-item command="workspace">
                                         {{ $t('app.switch_workspace') }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                        <el-dropdown trigger="click" @command="moreCommand">
+                            <div class="nav-item">
+                                <el-icon :size="18">
+                                    <more/>
+                                </el-icon>
+                            </div>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="languageToEnglish"
+                                                      v-if="basicSetting.language === 'zhCn'">
+                                        <el-icon :size="18">
+                                            <translate/>
+                                        </el-icon>
+                                        <span>变为英语</span></el-dropdown-item>
+                                    <el-dropdown-item command="languageToChinese"
+                                                      v-if="basicSetting.language === 'enUs'">
+                                        <el-icon :size="18">
+                                            <translate/>
+                                        </el-icon>
+                                        <span>变为中文</span></el-dropdown-item>
+                                    <el-dropdown-item command="toggleDark">
+                                        <el-icon :size="18">
+                                            <sun v-if="!isDark"/>
+                                            <moon v-else></moon>
+                                        </el-icon>
+                                        <span>{{ isDark ? $t('common.dark') : $t('common.light') }}</span>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -204,6 +235,7 @@ import {
     Folder,
     Memo,
     Menu,
+    More,
     PriceTag,
     Setting,
     ShoppingCartFull,
@@ -227,32 +259,28 @@ import NativeApi from "@/api/NativeApi";
 
 import SettingPage from '@/pages/setting/index.vue';
 import TerminalHexoPage from "@/pages/terminal/hexo/index.vue";
-import {serverService, settingService} from "@/global/BeanFactory";
+import {environmentService, serverService, settingService} from "@/global/BeanFactory";
 import emitter from "@/plugins/mitt";
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 import ServerStatusEnum from "@/enumeration/ServerStatusEnum";
 import ApplicationApi from "@/api/ApplicationApi";
 import Entry from "@/global/Entry";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
+import Environment from "@/entities/Environment";
+import EnvironmentIcon from "@/icon/Environment.vue";
 
 export default defineComponent({
     components: {
         Document, ArrowDown, Setting, Upload, PriceTag, Menu, CollectionTag,
         ShoppingCartFull, SettingPage, Expand, Fold, Suitcase, Tools,
         Translate, TerminalBox, Sun, Moon, TerminalHexoPage, Server, Run,
-        Loader, CaretBottom, Memo
-    },
-    setup() {
-        const setting = markRaw(Setting);
-        const folder = markRaw(Folder);
-        return {
-            setting, folder
-        }
+        Loader, CaretBottom, Memo, More, EnvironmentIcon
     },
     data: () => {
         return {
             setting: markRaw(Setting),
             folder: markRaw(Folder),
+            more: markRaw(More),
             basicSetting: settingService.getBasic(),
             settingDialog: false,
             terminalDialog: false,
@@ -271,7 +299,10 @@ export default defineComponent({
                 id: 0,
                 key: '',
                 value: ''
-            } as Entry
+            } as Entry,
+            environmentId: 0,
+            environmentName: '未配置',
+            environments: new Array<Environment>()
         }
     },
     created() {
@@ -306,12 +337,17 @@ export default defineComponent({
                 id: 0,
                 key: this.$t('app.project_name'),
                 value: ''
-            });
-        })
+            }) as Entry;
+            this.initEnvironment();
+        });
         emitter.on(MessageEventEnum.TERMINAL_OPEN, () => {
             // 终端对话框启动
             this.terminalDialog = true;
-        })
+        });
+        emitter.on(MessageEventEnum.ENVIRONMENT_CHANGE, () => {
+            this.initEnvironment();
+        });
+        this.initEnvironment();
         this.$router.push('/loading');
     },
     computed: {
@@ -325,7 +361,7 @@ export default defineComponent({
             } else {
                 return this.$t('app.server_unknown');
             }
-        }
+        },
     },
     methods: {
         sync() {
@@ -342,6 +378,15 @@ export default defineComponent({
                     draggable: true
                 });
             })
+        },
+        initEnvironment() {
+            // 获取全部环境信息
+            this.environments = environmentService.list();
+            // 获取当前环境ID
+            this.environmentId = environmentService.getId();
+            if (this.environmentId !== 0) {
+                this.environmentName = environmentService.getCurrentEnvironment().name;
+            }
         },
         openSetting() {
             this.settingDialog = true;
@@ -448,6 +493,36 @@ export default defineComponent({
         },
         updateSite() {
             this.$router.push('/site');
+        },
+        changeEnvironment(id: number) {
+            environmentService.choose(id);
+        },
+        toEnvironment() {
+            let environmentDropdown = this.$refs.environmentDropdown as any;
+            environmentDropdown.handleClose();
+            this.$router.push('/tool/environment');
+        },
+        serverStatusSwitch() {
+            if (this.server === ServerStatusEnum.STOP) {
+                // 服务器已停止，运行
+                this.serverOperation("start")
+            } else if (this.server === ServerStatusEnum.RUN) {
+                // 服务器正在运行，停止
+                this.serverOperation("stop");
+            }
+        },
+        moreCommand(command: string) {
+            switch (command) {
+                case 'languageToEnglish':
+                    this.changeI18n('enUs');
+                    break;
+                case 'languageToChinese':
+                    this.changeI18n('zhCn');
+                    break;
+                case 'toggleDark':
+                    this.toggleDark();
+                    break;
+            }
         }
     }
 })

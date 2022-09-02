@@ -3,6 +3,8 @@ import Database from "@/plugins/Database";
 import {ElMessage} from "element-plus";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 import Constant from "@/global/Constant";
+import emitter from "@/plugins/mitt";
+import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 export default class EnvironmentService {
 
@@ -24,6 +26,10 @@ export default class EnvironmentService {
         this.environment = this.environmentDb.one({id: id});
     }
 
+    getId() {
+        return this.id;
+    }
+
     /**
      * 获取当前的环境
      */
@@ -41,6 +47,13 @@ export default class EnvironmentService {
     }
 
     /**
+     * 全部的环境
+     */
+    list(): Array<Environment> {
+        return this.environmentDb.list();
+    }
+
+    /**
      * 切换当前环境
      * @param id 环境ID
      */
@@ -48,21 +61,37 @@ export default class EnvironmentService {
         this.id = id;
         LocalStorageUtil.set(Constant.LOCALSTORAGE.ENVIRONMENT, id);
         this.environment = this.environmentDb.one({id: id});
+        emitter.emit(MessageEventEnum.ENVIRONMENT_CHANGE);
     }
 
     /**
      * 新增一个环境
      * @param environment 环境
      */
-    add(environment: Environment): Promise<void> {
+    async add(environment: Environment): Promise<void> {
+        await this.environmentDb.insert(environment);
+        emitter.emit(MessageEventEnum.ENVIRONMENT_CHANGE);
         return Promise.resolve();
     }
 
     /**
-     * 全部的环境
+     * 修改一个环境
+     * @param environment 环境
      */
-    list(): Array<Environment> {
-        return new Array<Environment>();
+    async update(environment: Environment): Promise<void> {
+        await this.environmentDb.update(environment);
+        emitter.emit(MessageEventEnum.ENVIRONMENT_CHANGE);
+        return Promise.resolve();
+    }
+
+    /**
+     * 删除一个环境
+     * @param id 环境ID
+     */
+    async remove(id: number): Promise<void> {
+        await this.environmentDb.delete(id);
+        emitter.emit(MessageEventEnum.ENVIRONMENT_CHANGE);
+        return Promise.resolve();
     }
 
 }
