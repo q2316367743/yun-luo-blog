@@ -11,6 +11,7 @@
 - [GitHub Release](https://github.com/q2316367743/yun-luo-blog/releases)
 - [Gitee Release](https://gitee.com/qiaoshengda/yun-luo-blog/releases)
 - [百度云盘](https://pan.baidu.com/s/1URbwsRhLeJZDeRvspW0n9g?pwd=fx4v)（**推荐**）
+- [阿里云盘](https://www.aliyundrive.com/s/xk3VL7tyNsv)
 
 ## 文档
 
@@ -243,16 +244,19 @@ pnpm config set ELECTRON_BUILDER_BINARIES_MIRROR "https://npm.taobao.org/mirrors
 - [x] `ElMessage`都需要`showClose`
 
 ### 0.3.0
+- [x] 文章列表 - 分类视图
+- [x] 额外数据编辑
+- [x] 环境设置可以设置多环境，进行切换。选择的环境保存到内存中
+
+### 0.3.1
 
 - [ ] 主题/插件更新功能
 - [ ] 本地同步【急切】
-- [x] 文章列表 - 分类视图
 - [ ] 增加仪表盘
+- [ ] 增强编辑器
 - [ ] 文章编辑支持多编辑器
-- [x] 额外数据编辑
 - [ ] 可以导出源文件，不仅仅导出zip，导出源文件需要增加不删除文件夹
 - [ ] 改造设置页面
-- [x] 环境设置可以设置多环境，进行切换。选择的环境保存到内存中
 
 ### 0.4.0
 

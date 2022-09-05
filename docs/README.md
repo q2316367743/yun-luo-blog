@@ -6,6 +6,13 @@
 
 一个静态博客写作客户端，可以搭配多种博客生成器（hexo、vuepress。。。），可视化配置
 
+## 下载
+
+- [GitHub Release](https://github.com/q2316367743/yun-luo-blog/releases)
+- [Gitee Release](https://gitee.com/qiaoshengda/yun-luo-blog/releases)
+- [百度云盘](https://pan.baidu.com/s/1URbwsRhLeJZDeRvspW0n9g?pwd=fx4v)（**推荐**）
+- [阿里云盘](https://www.aliyundrive.com/s/xk3VL7tyNsv)
+
 ## 特性
 
 - 📝 你可以使用最酷的**Markdown**语法，进行快速创作
