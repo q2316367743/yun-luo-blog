@@ -109,7 +109,7 @@ export default defineComponent({
             console.log('4.3 服务初始化')
             await imageStrategyContext.init();
             await settingService.init();
-            environmentService.setId(localStorageUtil.getOrDefault(Constant.LOCALSTORAGE.ENVIRONMENT, 0) as number);
+            environmentService.setId(localStorageUtil.getOrDefault(Constant.LOCALSTORAGE.ENVIRONMENT, 0));
             // 5. 发送消息
             console.log('5. 发送消息');
             emitter.emit(MessageEventEnum.APP_LAUNCH);

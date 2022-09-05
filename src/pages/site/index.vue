@@ -56,7 +56,7 @@ export default defineComponent({
             id: 0,
             key: '',
             value: ''
-        }).id;
+        }).id!;
         this.sites = settingService.getSite().history;
     },
     methods: {

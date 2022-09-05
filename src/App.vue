@@ -337,7 +337,7 @@ export default defineComponent({
                 id: 0,
                 key: this.$t('app.project_name'),
                 value: ''
-            }) as Entry;
+            });
             this.initEnvironment();
         });
         emitter.on(MessageEventEnum.TERMINAL_OPEN, () => {
