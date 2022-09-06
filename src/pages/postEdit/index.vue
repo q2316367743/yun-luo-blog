@@ -396,10 +396,12 @@ export default defineComponent({
         publishBySource(): Promise<void> {
             if (this.source === 1) {
                 return Constant.FOLDER.PAGE().then(postPage => {
+                    this.post.type = Constant.NAME.POST
                     postService.insert(this.post, postPage);
                 })
             } else if (this.source === 2) {
                 return Constant.FOLDER.PAGE().then(pagePath => {
+                    this.post.type = Constant.NAME.PAGE
                     pageService.insert(this.post, pagePath)
                 });
             } else {
