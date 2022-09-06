@@ -250,6 +250,13 @@ pnpm config set ELECTRON_BUILDER_BINARIES_MIRROR "https://npm.taobao.org/mirrors
 
 ### 0.3.1
 
+- [x] 紧急修复发布文章后立即保存文章会报错
+- [x] 修改工作空间逻辑，去除工作空间强制在选定文件夹下创建`yun-luo-blog`的逻辑
+
+> 注意，更新需要重新选择工作空间，默认工作空间在用户目录下的`yun-luo-blog`文件夹下，重新选择这个文件夹就好
+
+### 0.3.2
+
 - [ ] 主题/插件更新功能
 - [ ] 本地同步【急切】
 - [ ] 增加仪表盘

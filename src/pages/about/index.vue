@@ -8,7 +8,7 @@
                 <h1 id="云落博客">关于 云落博客</h1>
                 <p>
                     <span>版本：</span>
-                    <el-tag>0.3.0</el-tag>
+                    <el-tag>0.3.1</el-tag>
                     <el-tag type="success" style="margin-left: 8px;">build 2022年09月05日</el-tag>
                 </p>
                 <p>
