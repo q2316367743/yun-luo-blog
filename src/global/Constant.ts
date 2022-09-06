@@ -36,8 +36,6 @@ const LS_SITE = 'site';
 const LS_ENVIRONMENT = 'environment';
 
 // =====工作空间所有=====
-// 基础文件夹
-const BASE = 'yun-luo-blog';
 // 配置
 const CONFIG = '.config';
 const SITE = 'site';
@@ -153,118 +151,118 @@ export default {
     FILE: {
         // 全局设置
         SETTING_SYNC_LOCAL: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_SYNC_LOCAL);
+            return FileApi.resolve(workspaceDir(), CONFIG, SETTING_SYNC_LOCAL);
         },
         SETTING_SITE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, CONFIG, SETTING_SITE);
+            return FileApi.resolve(workspaceDir(), CONFIG, SETTING_SITE);
         },
         GITIGNORE_WORKSPACE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, GITIGNORE);
+            return FileApi.resolve(workspaceDir(), GITIGNORE);
         },
         // 站点设置
         GITIGNORE_SITE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, GITIGNORE);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, GITIGNORE);
         },
         SETTING_SERVER: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, SETTING_SERVER);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, SETTING_SERVER);
         },
         SETTING_BASIC: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, SETTING_BASIC);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, SETTING_BASIC);
         },
         SETTING_IMAGE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, SETTING_IMAGE);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, SETTING_IMAGE);
         },
         SETTING_SYNC_REMOTE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, SETTING_SYNC_REMOTE);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, SETTING_SYNC_REMOTE);
         },
         // 站点数据库存储
         DB_TAG: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_TAG);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_TAG);
         },
         DB_CATEGORY: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_CATEGORY);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_CATEGORY);
         },
         DB_POST: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_POST);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_POST);
         },
         DB_POST_TAG: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_POST_TAG);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_POST_TAG);
         },
         DB_POST_CATEGORY: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_POST_CATEGORY);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_POST_CATEGORY);
         },
         DB_PAGE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_PAGE);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_PAGE);
         },
         DB_PAGE_TAG: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_PAGE_TAG);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_PAGE_TAG);
         },
         DB_PAGE_CATEGORY: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_PAGE_CATEGORY);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_PAGE_CATEGORY);
         },
         DB_ENVIRONMENT: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, DB_ENVIRONMENT);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, DB_ENVIRONMENT);
         },
         // HEXO配置文件
         HEXO_CONFIG_BASE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, HEXO_CONFIG_BASE);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, HEXO_CONFIG_BASE);
         },
 
         HEXO_CONFIG_EXTRA: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG, HEXO_CONFIG_EXTRA);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, HEXO_CONFIG_EXTRA);
         },
         HEXO: {
             CONFIG: async (): Promise<string> => {
-                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_CONFIG);
+                return FileApi.resolve(workspaceDir(), SITE, siteDir().value, HEXO, HEXO_CONFIG);
             },
             PACKAGE_JSON: async (): Promise<string> => {
-                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_PACKAGE_JSON);
+                return FileApi.resolve(workspaceDir(), SITE, siteDir().value, HEXO, HEXO_PACKAGE_JSON);
             }
         }
     },
     FOLDER: {
         // 基础工作空间
         WORKSPACE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE);
+            return FileApi.resolve(workspaceDir());
         },
         // 全局设置目录
         CONFIG: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, CONFIG);
+            return FileApi.resolve(workspaceDir(), CONFIG);
         },
         // 站点基础设置目录
         SITE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE);
+            return FileApi.resolve(workspaceDir(), SITE);
         },
         BASE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value);
         },
         SITE_CONFIG: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, CONFIG);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG);
         },
         POST: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, POST);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, POST);
         },
         PAGE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, PAGE);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, PAGE);
         },
         POST_IMAGES: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, POST_IMAGES);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, POST_IMAGES);
         },
         SOURCE: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, SOURCE);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, SOURCE);
         },
         DIST: async (): Promise<string> => {
-            return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, DIST);
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, DIST);
         },
         HEXO: {
             BASE: async (): Promise<string> => {
-                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO);
+                return FileApi.resolve(workspaceDir(), SITE, siteDir().value, HEXO);
             },
             THEME: async (): Promise<string> => {
-                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_THEME);
+                return FileApi.resolve(workspaceDir(), SITE, siteDir().value, HEXO, HEXO_THEME);
             },
             PUBLIC: async (): Promise<string> => {
-                return FileApi.resolve(workspaceDir(), BASE, SITE, siteDir().value, HEXO, HEXO_PUBLIC);
+                return FileApi.resolve(workspaceDir(), SITE, siteDir().value, HEXO, HEXO_PUBLIC);
             }
         },
     },

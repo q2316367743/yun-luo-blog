@@ -26,7 +26,7 @@ import {
     settingService,
     tagDb,
 } from "@/global/BeanFactory";
-import {ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
 import './loading.less';
@@ -68,12 +68,30 @@ export default defineComponent({
             console.log('1. 处理工作空间');
             let workspace = LocalStorageUtil.get(Constant.LOCALSTORAGE.WORKSPACE);
             if (!workspace) {
+                console.error('1.1 为设置工作空间')
                 this.$router.push('/workspace');
                 return;
             }
-            // 1.1 处理工作空间文件夹
-            console.log('1.1 处理工作空间文件夹');
-            await this.createDir(await Constant.FOLDER.WORKSPACE());
+            try {
+                let fileEntries = await FileApi.listDir(workspace);
+                if (!fileEntries.find(e => e.name === Constant.NAME.CONFIG)) {
+                    console.error('1.2 工作空间未找到配置文件');
+                    ElMessage({
+                        showClose: true,
+                        type: 'error',
+                        message: '工作空间不存在未找到配置文件'
+                    });
+                }
+            }catch (e) {
+                console.error('1.3 工作空间不存在');
+                ElMessage({
+                    showClose: true,
+                    type: 'error',
+                    message: '工作空间不存在'
+                });
+                this.$router.push('/workspace');
+                return;
+            }
             // 2. 处理站点
             console.log('2. 处理站点', workspace);
             // 2.1 处理站点文件夹

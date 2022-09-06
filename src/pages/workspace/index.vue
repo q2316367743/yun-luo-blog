@@ -64,7 +64,7 @@ export default defineComponent({
                 }
             }
         },
-        chooseWorkspace() {
+        async chooseWorkspace() {
             // 0. 设置当前工作空间
             LocalStorageUtil.set(Constant.LOCALSTORAGE.WORKSPACE, this.historyActive);
             let histories = new Array<string>();
@@ -74,6 +74,12 @@ export default defineComponent({
                 }
             }
             LocalStorageUtil.set(Constant.LOCALSTORAGE.WORKSPACE_HISTORY, histories);
+            // 1.1 处理工作空间文件夹
+            console.log('1 处理工作空间配置文件夹');
+            if (!await FileApi.exist(await Constant.FOLDER.WORKSPACE())) {
+                console.log('2 工作空间配置文件夹不存在，创建');
+                await FileApi.createDir(await Constant.FOLDER.WORKSPACE());
+            }
             // 2. 重新跳转加载页面
             this.$router.push("/loading");
         },
