@@ -122,6 +122,11 @@ async function createDir(path: string, recursive: boolean = false): Promise<void
  * @param recursive 是否递归删除
  */
 async function removeDir(path: string, recursive: boolean = true): Promise<void> {
+    if (!await exist(path)) {
+        // 如果文件不存在，则不需要删除
+        console.error(`path:${path}不存在`)
+        return Promise.resolve();
+    }
     let result = (await ipcRenderer.invoke('file:removeDir', {
         path,
         recursive
