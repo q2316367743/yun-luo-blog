@@ -62,7 +62,7 @@ const HEXO_PACKAGE_JSON = 'package.json';
 // 文件内容
 
 const CONTENT_WORKSPACE_GITIGNORE = 'dist';
-const CONTENT_SITE_GITIGNORE = 'hexo/public\nhexo/node_modules\nsource';
+const CONTENT_SITE_GITIGNORE = 'hexo/public\nhexo/node_modules\nsource\nhexo/db.json';
 
 // front-matter
 const SEPARATE = '---';

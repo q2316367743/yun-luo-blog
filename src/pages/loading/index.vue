@@ -57,8 +57,17 @@ export default defineComponent({
             console.log('初始化完成');
         }).catch(e => {
             console.error(e);
-            ElMessageBox.alert('初始化错误', '警告', {
-                type: 'error'
+            ElMessageBox.confirm('初始化错误，是否清理缓存并重启应用', '警告', {
+                type: 'error',
+                confirmButtonText: '清理缓存',
+                cancelButtonText: '取消'
+            }).then(() => {
+                // 清理缓存
+                localStorage.removeItem(Constant.LOCALSTORAGE.SITE);
+                localStorage.removeItem(Constant.LOCALSTORAGE.WORKSPACE);
+                localStorage.removeItem(Constant.LOCALSTORAGE.WORKSPACE_HISTORY);
+                localStorage.removeItem(Constant.LOCALSTORAGE.ENVIRONMENT);
+                location.reload();
             });
         })
     },
@@ -81,6 +90,8 @@ export default defineComponent({
                         type: 'error',
                         message: '工作空间不存在未找到配置文件'
                     });
+                    this.$router.push('/workspace');
+                    return;
                 }
             }catch (e) {
                 console.error('1.3 工作空间不存在');

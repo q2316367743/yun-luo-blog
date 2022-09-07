@@ -29,6 +29,7 @@
         <div class="choose">
             <el-button type="success" @click="addSite">新增</el-button>
             <el-button type="primary" @click="chooseSite" :disabled="id === 0">选择</el-button>
+            <el-button type="danger" style="position: absolute;right: 0;top: 0" @click="resetWorkspace">重新选择工作空间</el-button>
         </div>
     </div>
 </template>
@@ -130,6 +131,9 @@ export default defineComponent({
             }).then(({value}) => {
                 this.sites[siteIndex].key = value;
             });
+        },
+        resetWorkspace() {
+            this.$router.push('/workspace')
         }
     }
 });
