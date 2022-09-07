@@ -44,6 +44,7 @@ export async function parsePost(type: string, fileName: string, renderContent: b
     let extraArr = new Array<string>();
     for (let index = 0; index < lines.length; index++) {
         let line = lines[index];
+        line = line.trim();
         if (line !== '') {
             // 有值
             try {
