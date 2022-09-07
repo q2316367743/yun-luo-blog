@@ -66,6 +66,7 @@
                 <div class="nav-bar">
                     <div class="left"></div>
                     <div class="navigation">
+                        <!-- 同步 -->
                         <el-tooltip
                             class="box-item"
                             effect="light"
@@ -78,6 +79,7 @@
                                 </el-icon>
                             </div>
                         </el-tooltip>
+                        <!-- 环境 -->
                         <el-tooltip
                             class="box-item"
                             effect="light"
@@ -105,6 +107,7 @@
                                 </template>
                             </el-dropdown>
                         </el-tooltip>
+                        <!-- 终端 -->
                         <el-tooltip
                             class="box-item"
                             effect="light"
@@ -117,6 +120,7 @@
                                 </el-icon>
                             </div>
                         </el-tooltip>
+                        <!-- 服务器 -->
                         <el-tooltip
                             class="box-item"
                             effect="light"
@@ -150,30 +154,7 @@
                                 </template>
                             </el-dropdown>
                         </el-tooltip>
-                        <el-dropdown trigger="contextmenu" @command="settingOperation">
-                            <div class="nav-item" @click="openSetting">
-                                <el-icon :size="18">
-                                    <setting/>
-                                </el-icon>
-                            </div>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item command="projectDir">
-                                        {{ $t('app.open_project_dir') }}
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item command="devtools">
-                                        {{ $t('app.open_dev_tools') }}
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item command="workspace">
-                                        {{ $t('app.switch_workspace') }}
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
+                        <!-- 更多 -->
                         <el-dropdown trigger="click" @command="moreCommand">
                             <div class="nav-item">
                                 <el-icon :size="18">
@@ -204,6 +185,31 @@
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
+                        <!-- 设置 -->
+                        <el-dropdown trigger="contextmenu" @command="settingOperation">
+                            <div class="nav-item" @click="openSetting">
+                                <el-icon :size="18">
+                                    <setting/>
+                                </el-icon>
+                            </div>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="projectDir">
+                                        {{ $t('app.open_project_dir') }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="devtools">
+                                        {{ $t('app.open_dev_tools') }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command="workspace">
+                                        {{ $t('app.switch_workspace') }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     </div>
                 </div>
             </header>
@@ -211,10 +217,8 @@
                 <router-view></router-view>
             </main>
         </section>
-        <el-drawer v-model="settingDialog" size="600px" :title="$t('common.setting')" destroy-on-close>
-            <el-scrollbar>
-                <setting-page></setting-page>
-            </el-scrollbar>
+        <el-drawer v-model="settingDialog" size="500px" destroy-on-close :with-header="false">
+            <setting-page></setting-page>
         </el-drawer>
         <el-dialog v-model="terminalDialog" destroy-on-close draggable :title="$t('common.terminal')">
             <terminal-hexo-page v-if="basicSetting.blogType === 'hexo'"></terminal-hexo-page>
