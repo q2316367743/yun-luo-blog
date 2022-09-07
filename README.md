@@ -244,6 +244,7 @@ pnpm config set ELECTRON_BUILDER_BINARIES_MIRROR "https://npm.taobao.org/mirrors
 - [x] `ElMessage`都需要`showClose`
 
 ### 0.3.0
+
 - [x] 文章列表 - 分类视图
 - [x] 额外数据编辑
 - [x] 环境设置可以设置多环境，进行切换。选择的环境保存到内存中
@@ -256,6 +257,10 @@ pnpm config set ELECTRON_BUILDER_BINARIES_MIRROR "https://npm.taobao.org/mirrors
 > 注意，更新需要重新选择工作空间，默认工作空间在用户目录下的`yun-luo-blog`文件夹下，重新选择这个文件夹就好
 
 ### 0.3.2
+
+- [x] 紧急修复v0.3.1工作空间的问题
+
+### 0.3.3
 
 - [ ] 主题/插件更新功能
 - [ ] 本地同步【急切】
