@@ -15,6 +15,12 @@ ipcMain.handle('server:start', (_event, args) => {
             url = url.replaceAll("/", sep);
         }
         let file = args.serverDir + url;
+        // 去除参数
+        let paramSplitIndex = file.indexOf("?");
+        if (paramSplitIndex > -1) {
+            // 存在问好分隔符
+            file = file.substring(0, paramSplitIndex)
+        }
         console.log(url);
         console.log(file);
         if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) {
@@ -34,8 +40,16 @@ ipcMain.handle('server:start', (_event, args) => {
                 res.end();
             } else {
                 if (file.endsWith("html")) {
-                    res.writeHeader(200, {
-                        'content-type': 'text/html;charset="utf-8"'
+                    res.writeHead(200, {
+                        'content-type': 'text/html;charset=utf-8'
+                    });
+                }else if (file.endsWith("js")) {
+                    res.writeHead(200, {
+                        'content-type': 'application/javascript; charset=utf-8'
+                    });
+                }else if (file.endsWith("css")) {
+                    res.writeHead(200, {
+                        "content-type": "text/css; charset=utf-8"
                     });
                 }
                 res.write(data);
