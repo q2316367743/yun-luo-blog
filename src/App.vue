@@ -1,5 +1,6 @@
 <template>
     <section id="app">
+        <!-- 侧边栏菜单 -->
         <aside id="side" :style="{width: isCollapse ? '64px' : '200px'}">
             <div id="logo" :style="{display: isCollapse ? 'block' : 'flex'}">
                 <div v-if="!isCollapse">
@@ -61,10 +62,14 @@
                 </el-menu-item>
             </el-menu>
         </aside>
+        <!-- 右侧body -->
         <section id="body">
+            <!-- 右侧顶部导航栏 -->
             <header id="header">
+                <!-- 顶部导航栏 -->
                 <div class="nav-bar">
                     <div class="left"></div>
+                    <!-- 右侧菜单 -->
                     <div class="navigation">
                         <!-- 同步 -->
                         <el-tooltip
@@ -121,39 +126,71 @@
                             </div>
                         </el-tooltip>
                         <!-- 服务器 -->
-                        <el-tooltip
-                            class="box-item"
-                            effect="light"
-                            :content="serverStatus"
+                        <el-popover
                             placement="bottom"
+                            trigger="click"
+                            :width="300"
                         >
-                            <el-dropdown trigger="contextmenu" @command="serverOperation">
-                                <div class="nav-item" @click="serverStatusSwitch">
-                                    <el-icon :size="18">
-                                        <run v-if="server === 1" style="color: #67c23a;"/>
-                                        <loader v-else-if="server === 2"/>
-                                        <server v-else-if="server === 3"/>
-                                    </el-icon>
+                            <template #reference>
+                                <el-dropdown trigger="contextmenu" @command="serverOperation">
+                                    <div class="nav-item">
+                                        <el-icon :size="18">
+                                            <run v-if="server === 1" style="color: #67c23a;"/>
+                                            <loader v-else-if="server === 2"/>
+                                            <server v-else-if="server === 3"/>
+                                        </el-icon>
+                                    </div>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item command="start" v-if="server === 3">
+                                                {{ $t('app.server_start') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item command="stop" v-if="server === 1">
+                                                {{ $t('app.server_stop') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item command="update" v-if="server === 1">
+                                                {{ $t('app.server_update_now') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item command="browser" v-if="server === 1 || server === 2">
+                                                {{ $t('app.open_browser') }}
+                                            </el-dropdown-item>
+                                            <el-dropdown-item command="dist">{{
+                                                    $t('app.open_dist')
+                                                }}
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </template>
+                            <template #default>
+                                <div>
+                                    <span>服务器状态：</span>
+                                    <span>{{ serverStatus }}</span>
                                 </div>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item command="start" v-if="server === 3">
-                                            {{ $t('app.server_start') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item command="stop" v-if="server === 1">
-                                            {{ $t('app.server_stop') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item command="update" v-if="server === 1">
-                                            {{ $t('app.server_update_now') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item command="browser" v-if="server === 1 || server === 2">
-                                            {{ $t('app.open_browser') }}
-                                        </el-dropdown-item>
-                                        <el-dropdown-item command="dist">{{ $t('app.open_dist') }}</el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
-                        </el-tooltip>
+                                <div style="margin-top: 8px">
+                                    <span>服务器操作：</span>
+                                    <el-button-group>
+                                        <el-button type="primary" :disabled="server === 1 || server === 2 "
+                                                   @click="serverOperation('start')">启动
+                                        </el-button>
+                                        <el-button type="primary" :disabled="server === 2 || server === 3"
+                                                   @click="serverOperation('update')">更新
+                                        </el-button>
+                                        <el-button type="primary" :disabled="server === 2 || server === 3"
+                                                   @click="serverOperation('stop')">停止
+                                        </el-button>
+                                    </el-button-group>
+                                </div>
+                                <div style="margin-top: 8px">
+                                    <span>服务器地址：</span>
+                                    <el-link @click="serverOperation('browser')" :disabled="server === 3"
+                                             type="primary">{{
+                                            serverUrl
+                                        }}
+                                    </el-link>
+                                </div>
+                            </template>
+                        </el-popover>
                         <!-- 更多 -->
                         <el-dropdown trigger="click" @command="moreCommand">
                             <div class="nav-item">
@@ -226,7 +263,6 @@
     </section>
 </template>
 
-<!--suppress JSIncompatibleTypesComparison -->
 <script lang='ts'>
 import {defineComponent, markRaw} from 'vue'
 import {
@@ -366,6 +402,9 @@ export default defineComponent({
                 return this.$t('app.server_unknown');
             }
         },
+        serverUrl(): string {
+            return `http://localhost:${settingService.getServer().port}`;
+        }
     },
     methods: {
         sync() {
@@ -457,6 +496,7 @@ export default defineComponent({
             switch (command) {
                 case "start":
                     this.runServer();
+                    serverService.serverUpdate();
                     break;
                 case "stop":
                     this.stopServer();
@@ -505,15 +545,6 @@ export default defineComponent({
             let environmentDropdown = this.$refs.environmentDropdown as any;
             environmentDropdown.handleClose();
             this.$router.push('/tool/environment');
-        },
-        serverStatusSwitch() {
-            if (this.server === ServerStatusEnum.STOP) {
-                // 服务器已停止，运行
-                this.serverOperation("start")
-            } else if (this.server === ServerStatusEnum.RUN) {
-                // 服务器正在运行，停止
-                this.serverOperation("stop");
-            }
         },
         moreCommand(command: string) {
             switch (command) {

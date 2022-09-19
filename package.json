@@ -12,10 +12,10 @@
         "start": "electron .",
         "packager": "electron-packager ./dist/ --platform=win32 --arch=x64 --overwrite",
         "electron": "wait-on tcp:5173 && cross-env IS_DEV=true electron electron/electron.js",
-        "electron:dev": "concurrently -k \"cross-env BROWSER=none pnpm dev\" \"pnpm electron\"",
-        "electron:build.win": "pnpm build && electron-builder --win --dir",
-        "electron:build.linux": "pnpm build && electron-builder --linux tar.xz",
-        "electron:build.mac": "pnpm build && electron-builder -mwl --dir"
+        "electron:dev": "concurrently -k \"cross-env BROWSER=none yarn dev\" \"yarn electron\"",
+        "electron:build.win": "yarn build && electron-builder --win --dir",
+        "electron:build.linux": "yarn build && electron-builder --linux tar.xz",
+        "electron:build.mac": "yarn build && electron-builder -mwl --dir"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.0.6",

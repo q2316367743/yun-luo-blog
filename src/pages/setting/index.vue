@@ -7,7 +7,7 @@
             <setting-item @click="settingActive = 'sync'">同步设置</setting-item>
         </el-scrollbar>
         <div class="sub-setting" :style="settingActive !== '' ? 'transform: translateX(-460px);' : ''">
-            <el-page-header title="设置" :content="currentSetting" @back="goBack" style="margin-bottom: 8px;"/>
+            <el-page-header title="设置" :content="currentSetting" @back="goBack" style="margin-bottom: 24px;"/>
             <basic-setting v-if="settingActive === 'basic'"/>
             <image-setting v-else-if="settingActive === 'image'"/>
             <server-setting v-else-if="settingActive === 'sync'"/>
@@ -62,6 +62,7 @@ export default defineComponent({
         width: 100%;
         text-align: center;
         font-size: 18px;
+        margin-bottom: 16px;
     }
 
     .el-input {
