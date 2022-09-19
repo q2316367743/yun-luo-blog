@@ -9,6 +9,7 @@ import ImageTypeEnum from "@/enumeration/ImageTypeEnum";
 import {ElNotification} from "element-plus";
 import SyncRemoteSetting from "@/entities/setting/SyncRemoteSetting";
 import SiteSetting from "@/entities/setting/SiteSetting";
+import {hintService} from "@/global/BeanFactory";
 
 let basicSetting = {
     blogType: 'hexo',
@@ -22,10 +23,6 @@ let serverSetting = {
     port: 8888,
     // 更新是否同步
     updateBySync: true,
-    // 同步成功是否通知
-    noticeBySyncWithSuccess: false,
-    // 同步错误是否通知
-    noticeBySyncWithError: true
 } as ServerSetting;
 
 let imageSetting = {
@@ -69,7 +66,7 @@ let siteSetting = {
         value: ''
     },
     history: []
-} as SiteSetting
+} as SiteSetting;
 
 /**
  * 服务器设置服务
@@ -153,11 +150,7 @@ export default class SettingService {
         this.image = ObjectUtil.assignWithTarget(source, imageSetting);
         if (this.image.type === ImageTypeEnum.LOCAL) {
             // 不建议使用本地
-            ElNotification({
-                title: '建议配置图床',
-                message: '检测到未配置图床，建议配置图床使用',
-                type: 'warning',
-            })
+            hintService.localImage();
         }
     }
 

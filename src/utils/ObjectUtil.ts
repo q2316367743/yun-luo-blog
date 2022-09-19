@@ -11,9 +11,9 @@ export default {
             source = {};
         }
         for (let key of Object.keys(target)) {
-            if (source[key]) {
+            if (typeof source[key] !== 'undefined') {
                 result[key] = source[key];
-            }else {
+            } else {
                 // @ts-ignore
                 result[key] = target[key];
             }

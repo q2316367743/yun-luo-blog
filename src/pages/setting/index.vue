@@ -4,13 +4,15 @@
             <div class="setting-header">设置</div>
             <setting-item @click="settingActive = 'basic'">基础设置</setting-item>
             <setting-item @click="settingActive = 'image'">图床设置</setting-item>
-            <setting-item @click="settingActive = 'sync'">同步设置</setting-item>
+            <setting-item @click="settingActive = 'sync'">服务器设置</setting-item>
+            <setting-item @click="settingActive = 'hint'">提示设置</setting-item>
         </el-scrollbar>
         <div class="sub-setting" :style="settingActive !== '' ? 'transform: translateX(-460px);' : ''">
             <el-page-header title="设置" :content="currentSetting" @back="goBack" style="margin-bottom: 24px;"/>
             <basic-setting v-if="settingActive === 'basic'"/>
             <image-setting v-else-if="settingActive === 'image'"/>
             <server-setting v-else-if="settingActive === 'sync'"/>
+            <hint-setting v-else-if="settingActive === 'hint'"/>
         </div>
     </div>
 </template>
@@ -22,10 +24,11 @@ import ImageSetting from "./pages/ImageSetting.vue";
 import ServerSetting from "./pages/ServerSetting.vue";
 
 import SettingItem from './components/SettingItem.vue';
+import HintSetting from "@/pages/setting/pages/HintSetting.vue";
 
 export default defineComponent({
     name: 'setting',
-    components: {BasicSetting, ServerSetting, ImageSetting, SettingItem},
+    components: {HintSetting, BasicSetting, ServerSetting, ImageSetting, SettingItem},
     data: () => ({
         settingActive: ''
     }),
@@ -38,6 +41,8 @@ export default defineComponent({
                     return "图床设置";
                 case "sync":
                     return "同步设置";
+                case "hint":
+                    return "提示设置";
                 default:
                     return ""
             }

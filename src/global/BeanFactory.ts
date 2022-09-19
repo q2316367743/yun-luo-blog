@@ -14,6 +14,7 @@ import PostTag from "@/entities/PostTag";
 import PostCategory from "@/entities/PostCategory";
 import Environment from "@/entities/Environment";
 import EnvironmentService from "@/service/EnvironmentService";
+import HintService from "@/service/HintService";
 
 // 数据库操作
 export const tagDb = new Database<Tag>('');
@@ -33,6 +34,7 @@ export const pageService = new PostService("pages", tagDb, categoryDb, pageDb, p
 
 export const terminalService = new TerminalService();
 export const serverService = new ServerService();
+export const hintService = new HintService();
 
 export const settingService = new SettingService();
 

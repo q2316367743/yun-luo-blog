@@ -16,7 +16,7 @@ import {defineComponent} from "vue";
 import Constant from "@/global/Constant";
 import FileApi from "@/api/FileApi";
 import {
-    categoryDb, environmentDb, environmentService,
+    categoryDb, environmentDb, environmentService, hintService,
     pageCategoryDb,
     pageDb,
     pageTagDb,
@@ -136,6 +136,7 @@ export default defineComponent({
             this.registerLoanguageService();
             // 4.3 服务初始化
             console.log('4.3 服务初始化')
+            await hintService.init();
             await imageStrategyContext.init();
             await settingService.init();
             environmentService.setId(localStorageUtil.getOrDefault(Constant.LOCALSTORAGE.ENVIRONMENT, 0));

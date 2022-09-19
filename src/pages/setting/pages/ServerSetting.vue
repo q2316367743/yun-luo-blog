@@ -7,14 +7,6 @@
             <el-switch v-model="serverSetting.updateBySync" active-text="true" inactive-text="false"
                        :active-value="true" :inactive-value="false"/>
         </el-form-item>
-        <el-form-item label="同步成功是否通知">
-            <el-switch v-model="serverSetting.noticeBySyncWithSuccess" active-text="true" inactive-text="false"
-                       :active-value="true" :inactive-value="false"/>
-        </el-form-item>
-        <el-form-item label="同步错误是否通知">
-            <el-switch v-model="serverSetting.noticeBySyncWithError" active-text="true" inactive-text="false"
-                       :active-value="true" :inactive-value="false"/>
-        </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="save">保存</el-button>
         </el-form-item>

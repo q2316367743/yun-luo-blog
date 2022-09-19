@@ -10,14 +10,4 @@ export default interface ServerSetting {
      */
     updateBySync: boolean;
 
-    /**
-     * 同步成功是否发送通知
-     */
-    noticeBySyncWithSuccess: boolean;
-
-    /**
-     * 同步失败是否发送通知
-     */
-    noticeBySyncWithError: boolean
-
 }

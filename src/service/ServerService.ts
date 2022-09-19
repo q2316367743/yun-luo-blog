@@ -6,7 +6,7 @@ import Constant from "@/global/Constant";
 import ServerApi from "@/api/ServerApi";
 import NativeApi from "@/api/NativeApi";
 import blogStrategyContext from "@/strategy/blog/BlogStrategyContext";
-import {settingService} from "@/global/BeanFactory";
+import {hintService, settingService} from "@/global/BeanFactory";
 
 /**
  * 服务器 - 服务
@@ -48,29 +48,27 @@ export default class ServerService {
     serverUpdate(): void {
         // 只有在运行中才会重新部署
         if (this.status === ServerStatusEnum.RUN) {
-            console.log('服务器运行中，开始更新')
+            console.log('服务器运行中，开始更新');
             // 服务器状态变为更新中
             this.status = ServerStatusEnum.UPDATE;
             // 发布服务器更新开始事件
-            emitter.emit(MessageEventEnum.SERVER_UPDATE_START)
+            emitter.emit(MessageEventEnum.SERVER_UPDATE_START);
+            // 提示
+            hintService.updateServerStart();
             // 将文件构建到dist目录
             blogStrategyContext.getStrategy().build(() => {
-                if (settingService.getServer().noticeBySyncWithSuccess) {
-                    ElNotification({
-                        title: '服务器资源同步',
-                        message: '服务器资源已更新',
-                        type: 'success',
-                    });
-                }
                 // 回调成功
-                // 部署完成。服务器状态变为运行中
-                this.status = ServerStatusEnum.RUN;
-                // 发布服务器更新完成事件
-                emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
                 if (this.todo) {
                     // 存在待办，再次部署
                     this.todo = false;
                     this.serverUpdate();
+                }else {
+                    // 直到没有更新了，才算更新完成
+                    // 部署完成。服务器状态变为运行中
+                    this.status = ServerStatusEnum.RUN;
+                    // 发布服务器更新完成事件
+                    emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
+                    hintService.updateServerComplete();
                 }
             }).then(() => {
                 // 命令发送完成，并不代表构建完成
@@ -80,13 +78,7 @@ export default class ServerService {
                 this.status = ServerStatusEnum.RUN;
                 // 发布服务器更新完成事件
                 emitter.emit(MessageEventEnum.SERVER_UPDATE_COMPLETE);
-                if (settingService.getServer().noticeBySyncWithError) {
-                    ElNotification({
-                        title: '服务器资源同步',
-                        message: '服务器资源更新错误' + ',' + e,
-                        type: 'error',
-                    });
-                }
+                hintService.updateServerError(e);
             });
         } else if (this.status === ServerStatusEnum.UPDATE) {
             console.log('服务器正在更新中，加入待办')

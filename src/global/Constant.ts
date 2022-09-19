@@ -11,6 +11,7 @@ const SETTING_SERVER = 'setting-server.json';
 const SETTING_BASIC = 'setting-basic.json';
 const SETTING_IMAGE = 'setting-image.json';
 const SETTING_SYNC_REMOTE = 'setting-sync-remote.json';
+const SETTING_HINT = 'setting-hint.json';
 const SETTING_SYNC_LOCAL = 'setting-sync-local.json';
 const SETTING_SITE = 'setting-site.json';
 
@@ -174,6 +175,9 @@ export default {
         },
         SETTING_SYNC_REMOTE: async (): Promise<string> => {
             return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, SETTING_SYNC_REMOTE);
+        },
+        SETTING_HINT: async (): Promise<string> => {
+            return FileApi.resolve(workspaceDir(), SITE, siteDir().value, CONFIG, SETTING_HINT);
         },
         // 站点数据库存储
         DB_TAG: async (): Promise<string> => {
