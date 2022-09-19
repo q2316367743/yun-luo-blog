@@ -2,6 +2,8 @@
     "app": {
         "chinese": "中文",
         "english": "English",
+        "only_build": "Only build",
+        "only_deploy": "Only the deployment",
         "open_browser": "Open a browser",
         "open_dev_tools": "Open Developer Tools",
         "open_dist": "Open the deployment directory.",

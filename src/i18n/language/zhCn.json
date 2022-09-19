@@ -2,6 +2,8 @@
     "app": {
         "chinese": "中文",
         "english": "English",
+        "only_build": "仅构建",
+        "only_deploy": "仅部署",
         "open_browser": "打开浏览器",
         "open_dev_tools": "打开开发者工具",
         "open_dist": "打开部署目录",

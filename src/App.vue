@@ -78,11 +78,21 @@
                             :content="$t('common.synchronous')"
                             placement="bottom"
                         >
-                            <div class="nav-item" @click="sync">
-                                <el-icon>
-                                    <Upload/>
-                                </el-icon>
-                            </div>
+                            <el-dropdown trigger="contextmenu" @command="syncOperation">
+                                <div class="nav-item" @click="sync">
+                                    <el-icon>
+                                        <Upload/>
+                                    </el-icon>
+                                </div>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item command="build">{{ $t('app.only_build') }}
+                                        </el-dropdown-item>
+                                        <el-dropdown-item command="deploy">{{ $t('app.only_deploy') }}
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
                         </el-tooltip>
                         <!-- 环境 -->
                         <el-tooltip
@@ -282,7 +292,7 @@ import {
     Suitcase,
     Upload
 } from '@element-plus/icons-vue';
-import {ElMessage, ElMessageBox} from "element-plus";
+import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 import {useDark} from '@vueuse/core'
 
 import Translate from "@/icon/Translate.vue";
@@ -308,6 +318,7 @@ import Entry from "@/global/Entry";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 import Environment from "@/entities/Environment";
 import EnvironmentIcon from "@/icon/Environment.vue";
+import syncRemoteStrategyContext from "@/strategy/syncRemote/SyncRemoteStrategyContext";
 
 export default defineComponent({
     components: {
@@ -511,6 +522,35 @@ export default defineComponent({
                     break;
                 case "browser":
                     NativeApi.openUrl(`http://localhost:${settingService.getServer().port}`);
+                    break;
+            }
+        },
+        syncOperation(command: string) {
+            switch (command) {
+                case "build":
+                    blogStrategyContext.getStrategy().dist();
+                    break;
+                case "deploy":
+                    const loading = ElLoading.service({
+                        lock: true,
+                        text: '推送到远程',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                    });
+                    syncRemoteStrategyContext.getStrategy().push().then(() => {
+                        ElMessage({
+                            type: 'success',
+                            message: '推送完成',
+                            showClose: true
+                        })
+                    }).catch(e => {
+                        ElMessage({
+                            type: 'success',
+                            message: '推送失败，' + e,
+                            showClose: true
+                        })
+                    }).finally(() => {
+                        loading.close();
+                    })
                     break;
             }
         },

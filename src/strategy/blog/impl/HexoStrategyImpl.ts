@@ -21,6 +21,24 @@ export default class HexoStrategyImpl implements BlogStrategy {
     }
 
     async sync(): Promise<void> {
+        await this.dist();
+        const loading = ElLoading.service({
+            lock: true,
+            text: '推送到远程',
+            background: 'rgba(0, 0, 0, 0.7)',
+        });
+        try {
+            await syncRemoteStrategyContext.getStrategy().push();
+            loading.close();
+            return Promise.resolve();
+        } catch (e) {
+            console.error(e);
+            loading.close();
+            return Promise.reject(e);
+        }
+    }
+
+    async dist(): Promise<void> {
         if (!(await this.isInit())) {
             return Promise.reject("博客未初始化，请初始化后重试")
         }
@@ -44,8 +62,6 @@ export default class HexoStrategyImpl implements BlogStrategy {
             await this.generate(loading);
             await this.copyPostImage(loading);
             await this.copyToDist(loading);
-            loading.setText("推送到远程");
-            await syncRemoteStrategyContext.getStrategy().push();
             return Promise.resolve();
         } catch (e) {
             console.error(e);
