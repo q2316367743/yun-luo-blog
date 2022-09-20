@@ -1,7 +1,7 @@
 {
     "name": "yun-luo-blog",
     "private": true,
-    "version": "0.3.2",
+    "version": "0.3.3",
     "description": "云落博客",
     "homepage": "https://q2316367743.github.io/yun-luo-blog/",
     "main": "electron/electron.js",
