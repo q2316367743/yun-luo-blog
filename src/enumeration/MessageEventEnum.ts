@@ -3,6 +3,8 @@
  */
 enum MessageEventEnum {
 
+    SYSTEM_LOGIN = "system:login",
+
     /**
      * 程序启动
      */

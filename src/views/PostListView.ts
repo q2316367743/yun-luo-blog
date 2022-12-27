@@ -4,7 +4,7 @@ import Entry from "@/global/Entry";
 /**
  * 文章视图对象，真正存储到数据库的
  */
-export default interface PostView extends Post{
+export default interface PostListView extends Post{
 
     /**
      * 类型，posts/pages<br />
@@ -31,10 +31,5 @@ export default interface PostView extends Post{
      * 拓展属性
      */
     expand: string;
-
-    /**
-     * 内容
-     */
-    content?: string;
 
 }

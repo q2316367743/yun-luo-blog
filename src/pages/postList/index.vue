@@ -74,16 +74,7 @@
         </div>
     </container-main>
     <!-- 文章设置 -->
-    <el-dialog v-model="settingDialog" draggable :close-on-click-modal="false" top="9vh">
-        <template #header>
-            <h2>{{ $t('post.list.postSetting') }}</h2>
-        </template>
-        <post-setting :post-view="post" ref="postSetting"/>
-        <template #footer>
-            <el-button @click="settingDialog = false">{{ $t('common.cancel') }}</el-button>
-            <el-button type="primary" @click="settingSave">{{ $t('common.save') }}</el-button>
-        </template>
-    </el-dialog>
+    <post-setting v-model="settingDialog" :post-id="postId" ref="postSetting"/>
 </template>
 <script lang="ts">
 import {defineComponent, markRaw} from "vue";
@@ -104,13 +95,19 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 
-import PostView from '@/views/PostView';
-import {categoryService, postService, settingService, tagService} from '@/global/BeanFactory';
+import PostListView from '@/views/PostListView';
 import CategoryView from "@/views/CategoryView";
+
 import PostListItem from "@/components/PostListItem/index.vue";
+
 import PostSetting from "@/pages/postSetting/index.vue";
-import PostSettingPage from "@/pages/postSetting/index";
+
 import ArrayUtil from "@/utils/ArrayUtil";
+
+// 导入相关API
+import PostApi from "@/api/PostApi";
+import CategoryApi from "@/api/CategoryApi";
+import TagApi from "@/api/TagApi";
 
 export default defineComponent({
     name: 'post-list',
@@ -126,8 +123,8 @@ export default defineComponent({
         return {search, plus, refresh, close}
     },
     data: () => ({
-        posts: new Array<PostView>(),
-        showPosts: new Array<PostView>(),
+        posts: new Array<PostListView>(),
+        showPosts: new Array<PostListView>(),
         keyword: '',
         status: null,
         type: 1,
@@ -138,7 +135,7 @@ export default defineComponent({
             size: 10,
             total: 0
         },
-        post: {} as PostView,
+        postId: 0,
         settingDialog: false,
         activeName: 'category',
         showSide: false,
@@ -151,19 +148,20 @@ export default defineComponent({
         tagList: new Array<string>()
     }),
     created() {
-        this.showSide = settingService.getBasic().showSide;
+        // TODO: 从设置中取值
+        this.showSide = false;
         this.init();
     },
     methods: {
         init() {
-            postService.list().then(posts => {
+            PostApi.list().then(posts => {
                 this.posts = posts;
                 this.searchPost();
             });
-            categoryService.list().then(categoryTree => {
+            CategoryApi.list().then(categoryTree => {
                 this.categoryTree = categoryTree;
             });
-            tagService.list().then((tags) => {
+            TagApi.list().then((tags) => {
                 this.tagList = tags.map(e => e.name);
             });
         },
@@ -214,7 +212,7 @@ export default defineComponent({
                 console.log('取消跳转')
             }
         },
-        toPostInfo(postView: PostView) {
+        toPostInfo(postView: PostListView) {
             this.$router.push({
                 path: '/post/edit',
                 query: {
@@ -234,7 +232,7 @@ export default defineComponent({
                 }
             ).then(() => {
                 // 先删除路径
-                postService.deleteById(id!).then(() => {
+                PostApi.deleteById(id!).then(() => {
                     // 删除成功，准备删除源文件
                     ElMessage({
                         showClose: true,
@@ -258,44 +256,9 @@ export default defineComponent({
             });
         },
         openSettingDialog(id?: number) {
-            postService.info(id!).then(post => {
-                if (post) {
-                    this.post = post;
-                    // 打开设置弹窗
-                    this.settingDialog = true;
-                    this.$nextTick(() => {
-                        let postSetting = this.$refs.postSetting as PostSettingPage;
-                        postSetting.setView(post);
-                    })
-                } else {
-                    ElMessage({
-                        showClose: false,
-                        type: 'error',
-                        message: '文章未找到'
-                    })
-                }
-            })
-        },
-        settingSave() {
-            let postSetting = this.$refs.postSetting as PostSettingPage
-            postService.update(postSetting.getView()).then(() => {
-                this.settingDialog = false;
-                this.init();
-                ElMessage({
-                    showClose: true,
-                    type: 'success',
-                    message: this.$t('hint.save_success')
-                });
-                // 更新列表
-            }).catch(e => {
-                this.settingDialog = false;
-                console.error(e);
-                ElMessage({
-                    showClose: true,
-                    type: 'error',
-                    message: this.$t('hint.save_fail') + "," + e
-                });
-            });
+            this.postId = id!;
+            // 打开设置弹窗
+            this.settingDialog = true;
         },
         categoryClick(data: CategoryView) {
             this.clearSide();

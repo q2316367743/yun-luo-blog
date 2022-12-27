@@ -6,7 +6,7 @@ export default interface Result<T> {
     /**
      * 状态
      */
-    code: boolean;
+    code: number;
 
     /**
      * 消息

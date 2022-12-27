@@ -1,8 +1,6 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 
 import LoadingPage from '@/pages/loading/index.vue';
-import WorkspacePage from "@/pages/workspace/index.vue";
-import SitePage from '@/pages/site/index.vue';
 
 import PostListPage from '@/pages/postList/index.vue';
 import PostEditPage from '@/pages/postEdit/index.vue';
@@ -42,22 +40,12 @@ const routes: Array<RouteRecordRaw> = [
         component: LoadingPage
     },
     {
-        path: '/workspace',
-        name: 'workspace',
-        component: WorkspacePage
-    },
-    {
-        path: '/site',
-        name: 'site',
-        component: SitePage
-    },
-    {
         path: '/post/list',
         name: 'post-list',
         component: PostListPage
     },
     {
-        path: '/post/edit',
+        path: '/edit/:type/:id',
         name: 'post-edit',
         component: PostEditPage
     },

@@ -57,7 +57,7 @@ import {Close, Search} from '@element-plus/icons-vue';
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
 import PostListItem from "@/components/PostListItem/index.vue";
-import PostView from "@/views/PostView";
+import PostListView from "@/views/PostListView";
 import {pageService} from "@/global/BeanFactory";
 import {ElMessage, ElMessageBox} from "element-plus";
 import TagView from "@/views/TagView";
@@ -74,9 +74,9 @@ export default defineComponent({
         keyword: '',
         status: null,
         type: 1,
-        showPages: new Array<PostView>(),
-        pages: new Array<PostView>(),
-        post: {} as PostView,
+        showPages: new Array<PostListView>(),
+        pages: new Array<PostListView>(),
+        post: {} as PostListView,
         settingDialog: false,
         activeName: "basic",
         categoryProps: {

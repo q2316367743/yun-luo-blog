@@ -49,6 +49,7 @@ import ContainerMain from "@/components/Container/ContainerMain.vue";
 import {categoryService} from "@/global/BeanFactory";
 import CategoryView from "@/views/CategoryView";
 import {ElMessage, ElMessageBox} from "element-plus";
+import CategoryApi from "@/api/CategoryApi";
 
 export default defineComponent({
     name: 'category',
@@ -68,7 +69,7 @@ export default defineComponent({
     },
     methods: {
         categoryList() {
-            categoryService.list().then(categoryTree => {
+            CategoryApi.list().then(categoryTree => {
                 this.categoryTree = categoryTree;
             });
         },
@@ -106,7 +107,7 @@ export default defineComponent({
                     type: 'warning',
                 }
             ).then(() => {
-                categoryService.removeById(id).then(() => {
+                CategoryApi.deleteById(id).then(() => {
                     ElMessage({
                         showClose: true,
                         type: 'success',

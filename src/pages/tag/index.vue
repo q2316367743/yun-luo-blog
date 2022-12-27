@@ -38,6 +38,7 @@ import TagView from '@/views/TagView';
 import {ElMessage, ElMessageBox} from "element-plus";
 import ContainerHeader from "@/components/Container/ContainerHeader.vue";
 import ContainerMain from "@/components/Container/ContainerMain.vue";
+import TagApi from "@/api/TagApi";
 
 export default defineComponent({
     name: 'tag',
@@ -56,7 +57,7 @@ export default defineComponent({
     },
     methods: {
         tagListAll() {
-            tagService.list().then((tags) => {
+            TagApi.list().then((tags) => {
                 this.tagList = tags;
             });
         },
@@ -85,7 +86,7 @@ export default defineComponent({
                 cancelButtonText: this.$t('common.cancel'),
                 inputValue: tag.name
             }).then(({value}) => {
-                tagService.update(tag.id!, value).then(() => {
+                TagApi.update(tag.id!, value).then(() => {
                     ElMessage({
                         showClose: true,
                         type: 'success',
@@ -115,7 +116,7 @@ export default defineComponent({
                     type: 'warning',
                 }
             ).then(() => {
-                tagService.removeById(tag.id!).then(() => {
+                TagApi.deleteById(tag.id!).then(() => {
                     ElMessage({
                         showClose: true,
                         type: 'success',

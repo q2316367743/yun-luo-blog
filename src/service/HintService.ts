@@ -1,6 +1,5 @@
 import HintSetting from "@/entities/setting/HintSetting";
 import Constant from "@/global/Constant";
-import FileApi from "@/api/FileApi";
 import ObjectUtil from "@/utils/ObjectUtil";
 import {ElNotification} from "element-plus";
 

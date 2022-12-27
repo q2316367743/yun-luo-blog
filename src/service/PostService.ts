@@ -16,7 +16,7 @@ import Tag from '@/entities/Tag';
 import PostCategory from "@/entities/PostCategory";
 import Category from "@/entities/Category";
 
-import PostView from '@/views/PostView';
+import PostListView from '@/views/PostListView';
 import MessageEventEnum from "@/enumeration/MessageEventEnum";
 
 export default class PostService {
@@ -44,7 +44,7 @@ export default class PostService {
         this.postCategoryDb = postCategoryDb;
     }
 
-    async insert(post: PostView, folder: string, saveContent: boolean = true): Promise<void> {
+    async insert(post: PostListView, folder: string, saveContent: boolean = true): Promise<void> {
         // 如果没有路径，先生成目录和文件名
         console.log('如果没有文件名，先生成文件名')
         if (!post.fileName || post.fileName === '') {
@@ -75,7 +75,7 @@ export default class PostService {
         }
     }
 
-    async update(post: PostView): Promise<void> {
+    async update(post: PostListView): Promise<void> {
         // 先查询文章
         console.log('先查询文章', post.id);
         let oldPost = this.postDb.one({id: post.id});
@@ -201,7 +201,7 @@ export default class PostService {
         })
     }
 
-    async list(condition?: Partial<Post>): Promise<Array<PostView>> {
+    async list(condition?: Partial<Post>): Promise<Array<PostListView>> {
         let posts = this.postDb.list(condition);
         if (posts.length === 0) {
             return Promise.resolve([]);
@@ -220,7 +220,7 @@ export default class PostService {
             let view = {
                 ...post,
                 type: this.type
-            } as PostView;
+            } as PostListView;
             // 处理标签
             let postTags = postTagMap.get(post.id);
             let tagList = Array<string>();
@@ -260,7 +260,7 @@ export default class PostService {
         }
     }
 
-    async info(id: number): Promise<PostView | void> {
+    async info(id: number): Promise<PostListView | void> {
         let post = this.postDb.one({id: id});
         let view = await parsePost(this.type, post!.fileName);
         if (view) {
@@ -355,7 +355,7 @@ export default class PostService {
         return Promise.resolve();
     }
 
-    private viewToPost(postView: PostView | Post, isIncludeId: boolean = true): Post {
+    private viewToPost(postView: PostListView | Post, isIncludeId: boolean = true): Post {
         let post = {
             title: postView.title,
             fileName: postView.fileName,

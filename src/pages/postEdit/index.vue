@@ -82,9 +82,7 @@ import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
 
 import markdownIt from '@/plugins/markdownIt';
 
-import PostView from "@/views/PostView";
 import TagView from "@/views/TagView";
-import {categoryService, pageService, postService, tagService} from '@/global/BeanFactory';
 import imageStrategyContext from "@/strategy/image/ImageStrategyContext";
 
 import MarkdownEditor from '@/components/MarkdownEditor/index.vue'
@@ -96,6 +94,13 @@ import PostStatusEnum from "@/enumeration/PostStatusEnum";
 import Constant from "@/global/Constant";
 import PostSetting from "@/pages/postSetting/index.vue";
 import PostSettingPage from "@/pages/postSetting/index";
+
+// 导入API
+import PostApi from "@/api/PostApi";
+import CategoryApi from "@/api/CategoryApi";
+import TagApi from "@/api/TagApi";
+import PageApi from "@/api/PageApi";
+import PostInfoView from "@/views/PostInfoView";
 
 export default defineComponent({
     name: 'post-edit',
@@ -122,8 +127,8 @@ export default defineComponent({
             layout: '',
             path: '',
             status: PostStatusEnum.RELEASE,
-            date: new Date(),
-            updated: new Date(),
+            date: '',
+            updated: '',
             comments: false,
             tags: [],
             categories: [],
@@ -135,7 +140,7 @@ export default defineComponent({
             extra: new Array<Entry>(),
             expand: '',
             content: ''
-        } as PostView,
+        } as PostInfoView,
         categoryProps: {
             checkStrictly: true,
             value: 'name',
@@ -171,20 +176,15 @@ export default defineComponent({
         }
     },
     mounted() {
-        if (!this.$route.query.source) {
-            this.$router.push('/post/list');
-            ElMessageBox.alert('异常，来源不存在');
-            return
-        }
-        this.source = parseInt(this.$route.query.source as string);
-        tagService.list().then(tags => {
+        this.source = parseInt(this.$route.params.type as string);
+        TagApi.list().then(tags => {
             this.tags = tags;
         })
-        categoryService.list().then((categoryTree: Array<CategoryView>) => {
+        CategoryApi.list().then((categoryTree: Array<CategoryView>) => {
             this.categoryTree = categoryTree;
         })
         if (this.$route.query.id) {
-            let postId = parseInt(this.$route.query.id as string);
+            let postId = parseInt(this.$route.params.id as string);
             if (this.source === 1) {
                 this.postInfo(postId);
             } else if (this.source === 2) {
@@ -236,7 +236,7 @@ export default defineComponent({
     },
     methods: {
         postInfo(postId: number) {
-            postService.info(postId).then(post => {
+            PostApi.info(postId).then(post => {
                 if (post) {
                     // 存在文章，查询文章详情
                     this.post = post!;
@@ -253,7 +253,7 @@ export default defineComponent({
             });
         },
         pageInfo(postId: number) {
-            pageService.info(postId).then(page => {
+            PageApi.info(postId).then(page => {
                 if (page) {
                     // 存在文章，查询文章详情
                     this.post = page!;
@@ -368,9 +368,9 @@ export default defineComponent({
         },
         saveBySource(): Promise<void> {
             if (this.source === 1) {
-                return postService.update(this.post);
+                return PostApi.update(this.post);
             } else if (this.source === 2) {
-                return pageService.update(this.post);
+                return PageApi.update(this.post);
             } else {
                 return Promise.reject('来源未知');
             }
@@ -395,18 +395,13 @@ export default defineComponent({
         },
         publishBySource(): Promise<void> {
             if (this.source === 1) {
-                return Constant.FOLDER.PAGE().then(postPage => {
-                    this.post.type = Constant.NAME.POST
-                    postService.insert(this.post, postPage);
-                })
+                PostApi.insert(this.post);
             } else if (this.source === 2) {
-                return Constant.FOLDER.PAGE().then(pagePath => {
-                    this.post.type = Constant.NAME.PAGE
-                    pageService.insert(this.post, pagePath)
-                });
+                PageApi.insert(this.post)
             } else {
                 return Promise.reject('来源未知');
             }
+            return Promise.resolve();
         },
         settingDialogClose() {
             // 先获取配置
@@ -417,7 +412,7 @@ export default defineComponent({
                     ...postSetting.getView(),
                     title: this.post.title,
                     content: this.post.content,
-                } as PostView;
+                };
                 postSetting.setView(this.post);
                 console.log(this.post);
             }

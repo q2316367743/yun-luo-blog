@@ -2,7 +2,7 @@ import FileApi from "@/api/FileApi";
 import Entry from "@/global/Entry";
 import jsYaml from "js-yaml";
 import Constant from "@/global/Constant";
-import PostView from "@/views/PostView";
+import PostListView from "@/views/PostListView";
 import ArrayUtil from "@/utils/ArrayUtil";
 
 const knownKey = ['title', 'layout', 'status', 'date', 'updated', 'comments', 'tags',
@@ -15,7 +15,7 @@ const knownKey = ['title', 'layout', 'status', 'date', 'updated', 'comments', 't
  * @param renderContent 是否解析渲染内容，默认不解析
  * @return 文章详情
  */
-export async function parsePost(type: string, fileName: string, renderContent: boolean = true): Promise<PostView | void> {
+export async function parsePost(type: string, fileName: string, renderContent: boolean = true): Promise<PostListView | void> {
     // 默认当前时间
     let date = new Date();
     // 初始数据
@@ -34,7 +34,7 @@ export async function parsePost(type: string, fileName: string, renderContent: b
         type: type,
         extra: new Array<Entry>(),
         expand: ''
-    } as PostView;
+    } as PostListView;
     const contents = await FileApi.readFile(await FileApi.resolve(await Constant.FOLDER.BASE(), type, fileName));
     let lines = contents.split('\n');
     // 模式。0：开始，1：front-matter、2：extra、3：expand
@@ -130,7 +130,7 @@ export async function parsePost(type: string, fileName: string, renderContent: b
  * @param type 文章类型：posts/pages
  * @param post 文章内容
  */
-export async function savePost(type: string, post: PostView): Promise<void> {
+export async function savePost(type: string, post: PostListView): Promise<void> {
     // 内容
     let content = "";
     // 开始 front-matter
@@ -172,6 +172,6 @@ export async function deleteByPath(type: string, name: string): Promise<void> {
     return FileApi.removeFile(path);
 }
 
-export async function resolvePath(post: PostView): Promise<string> {
+export async function resolvePath(post: PostListView): Promise<string> {
     return Promise.resolve(FileApi.resolve(await Constant.FOLDER.BASE(), post.type, post.fileName));
 }

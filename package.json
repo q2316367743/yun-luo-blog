@@ -4,27 +4,17 @@
     "version": "0.3.3",
     "description": "云落博客",
     "homepage": "https://q2316367743.github.io/yun-luo-blog/",
-    "main": "electron/electron.js",
+    "main": "src/main.ts",
     "scripts": {
         "dev": "vite",
         "build": "vue-tsc --noEmit && vite build",
-        "preview": "vite preview",
-        "start": "electron .",
-        "packager": "electron-packager ./dist/ --platform=win32 --arch=x64 --overwrite",
-        "electron": "wait-on tcp:5173 && cross-env IS_DEV=true electron electron/electron.js",
-        "electron:dev": "concurrently -k \"cross-env BROWSER=none yarn dev\" \"yarn electron\"",
-        "electron:build.win": "yarn build && electron-builder --win --dir",
-        "electron:build.linux": "yarn build && electron-builder --linux tar.xz",
-        "electron:build.mac": "yarn build && electron-builder -mwl --dir"
+        "preview": "vite preview"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.0.6",
         "@vueuse/core": "^8.9.3",
-        "@vueuse/electron": "^9.0.2",
         "axios": "^0.27.2",
-        "compressing": "^1.6.2",
         "element-plus": "^2.2.9",
-        "fs-extra": "^10.1.0",
         "highlight.js": "^11.6.0",
         "js-yaml": "^4.1.0",
         "less": "^4.1.3",
@@ -42,8 +32,6 @@
         "mitt": "^3.0.0",
         "monaco-editor": "^0.33.0",
         "pinia": "^2.0.16",
-        "qiniu-js": "^3.4.1",
-        "ssh2-sftp-client": "^9.0.3",
         "vue": "^3.2.37",
         "vue-i18n": "^9.2.0",
         "vue-router": "4"
@@ -53,15 +41,9 @@
         "@types/markdown-it": "^12.2.3",
         "@types/node": "^18.0.5",
         "@vitejs/plugin-vue": "^3.0.0",
-        "concurrently": "^7.3.0",
-        "cross-env": "^7.0.3",
-        "electron": "^20.0.0",
-        "electron-builder": "^23.3.3",
-        "electron-packager": "^15.5.1",
         "typescript": "^4.6.4",
         "vite": "^3.0.0",
-        "vue-tsc": "^0.38.4",
-        "wait-on": "^6.0.1"
+        "vue-tsc": "^0.38.4"
     },
     "author": {
         "name": "Esion",
@@ -73,54 +55,5 @@
         "type": "git",
         "directory": "./",
         "url": "https://gitea.esion.xyz/Esion/yun-luo-blog"
-    },
-    "build": {
-        "appId": "xyz.esion.blog",
-        "productName": "云落博客",
-        "copyright": "Copyright © 2022 esion.xyz",
-        "mac": {
-            "category": "public.app-category.utilities",
-            "icon": "./electron/assets/ico/256.ico"
-        },
-        "win": {
-            "icon": "/electron/assets/ico/256.ico",
-            "target": [
-                {
-                    "target": "nsis",
-                    "arch": [
-                        "x64",
-                        "ia32"
-                    ]
-                }
-            ]
-        },
-        "linux": {
-            "icon": "./electron/assets/ico/256.ico"
-        },
-        "nsis": {
-            "oneClick": false,
-            "guid": "xyz.esion.blog",
-            "language": "zh-CN",
-            "perMachine": true,
-            "allowElevation": true,
-            "allowToChangeInstallationDirectory": true,
-            "installerIcon": "./electron/assets/ico/256.ico",
-            "uninstallerIcon": "./electron/assets/ico/256.ico",
-            "installerHeaderIcon": "./electron/assets/ico/256.ico",
-            "createDesktopShortcut": true,
-            "createStartMenuShortcut": true,
-            "shortcutName": "云落博客"
-        },
-        "files": [
-            "dist/**/*",
-            "electron/**/*"
-        ],
-        "directories": {
-            "buildResources": "assets",
-            "output": "dist_electron"
-        },
-        "electronDownload": {
-            "mirror": "https://npm.taobao.org/mirrors/electron/"
-        }
     }
 }

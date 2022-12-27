@@ -31,12 +31,12 @@ export default interface Post {
     /**
      * 建立日期 - 文件建立日期，时间戳
      */
-    date: number | Date | string;
+    date: string;
 
     /**
      * 更新日期 - 文件更新日期，时间戳
      */
-    updated: number | Date | string;
+    updated: string;
 
     /**
      * 开启文章的评论功能

@@ -50,14 +50,14 @@
 <script lang="ts">
 import {defineComponent, PropType} from "vue";
 import {Calendar, CollectionTag, PriceTag} from '@element-plus/icons-vue';
-import PostView from "@/views/PostView";
+import PostListView from "@/views/PostListView";
 import DateUtil from "@/utils/DateUtil";
 
 export default defineComponent({
     name: 'post-list-item',
     components: {Calendar, PriceTag, CollectionTag},
     props: {
-        post: Object as PropType<PostView>
+        post: Object as PropType<PostListView>
     },
     emits: ['item-click', 'option-info', 'option-remove'],
     data: () => ({}),
